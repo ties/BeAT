@@ -1,3 +1,12 @@
+#<begin django relative paths trick>
+import os
+import django
+# calculated paths for django and the site
+# used as starting points for various other paths
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+#<end django relative paths trick>
+
 # Django settings for BeAT project.
 
 DEBUG = True
@@ -79,6 +88,9 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 	#"C:/Users/Edwin/django projects/templates/beat"
+
+	#here's some relative paths
+	os.path.join(SITE_ROOT, 'templates') #all templates go in /templates/
 )
 
 INSTALLED_APPS = (
@@ -90,3 +102,8 @@ INSTALLED_APPS = (
 	'django.contrib.admin',
 	'beat.benchmarks'
 )
+
+
+
+
+STATIC_DOC_ROOT = os.path.join(SITE_ROOT, 'templates')
