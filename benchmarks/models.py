@@ -3,7 +3,7 @@ from django.db import models
 class Model(models.Model):	
 	Name = models.CharField(max_length=200)
 	Version = models.CharField(max_length=50)
-	Location = models.FilePathField(path="media/models") #example path for storing all models; required for FilePathField
+	Location = models.FilePathField(path="site_media/models") #example path for storing all models; required for FilePathField
 	
 	def __unicode__(self):
 		return self.Name + '.' + self.Version

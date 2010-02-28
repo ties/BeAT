@@ -1,12 +1,10 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
+import os
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
-
-
-from django.conf import settings
-
 
 urlpatterns = patterns('',
     # Example:
@@ -23,8 +21,12 @@ urlpatterns = patterns('',
 	(r'^logout/$', 'django.contrib.auth.views.logout_then_login'),
 	(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
 	
-	#static stuff
-	
-	(r'^tables/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
-	(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
 )
+
+# static media: DEVELOPMENT ONLY!
+if settings.DEBUG:
+    urlpatterns += patterns('django.views.static',
+    (r'^site_media/(?P<path>.*)$', 
+        'serve', {
+        'document_root': os.path.join(settings.SITE_ROOT, 'site_media'),
+        'show_indexes': True }),)

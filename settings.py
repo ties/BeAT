@@ -25,7 +25,7 @@ DATABASES = {
         'USER': 'beat',                      # Not used with sqlite3.
         'PASSWORD': 'bier',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '8001',                      # Set to empty string for default. Not used with sqlite3.
+        'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -53,7 +53,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/site_media/'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -102,8 +102,5 @@ INSTALLED_APPS = (
 	'django.contrib.admin',
 	'beat.benchmarks'
 )
-
-
-
 
 STATIC_DOC_ROOT = os.path.join(SITE_ROOT, 'templates')

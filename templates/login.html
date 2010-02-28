@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_broad.html" %}
 
 {% block content %}
 
@@ -22,4 +22,9 @@
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
+{% endblock %}
+
+{% block sidebar %}
+	{{ block.super }}
+	<p>moar stuff here!</p>
 {% endblock %}
