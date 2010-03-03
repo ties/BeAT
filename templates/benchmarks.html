@@ -1,0 +1,54 @@
+{% extends "base_site.html" %}
+{% block title %}Benchmarks{% endblock %}
+{% block content %}
+		<h2>Benchmark Table</h2>
+		
+			<form name="filterform" id="filterform" action="">
+				<table style="width:480px" id="filters" cellpadding="0" cellspacing="0">
+					<tr id="filterrow_0">
+						<td width="320" align="left">
+							<select size="1" class="filterAt" onchange="changedFilter(this);">
+								<option value="-1">&lt;empty&gt;</option>
+								<option value="0">Name</option>
+								<option value="1">Date</option>
+								<option value="2">Memory</option>
+								<option value="3">Runtime</option>
+								<option value="4">Options</option>
+							</select>
+							<ul class="mega">
+								<li class="mega">
+									<select size="1" class="filterWith" onchange="changedFilter(this);">
+										<option value="-1">&lt;empty&gt;</option>
+									</select>
+								</li>
+							</ul>
+							<input type="text" class="filterOn" onchange="changedFilter(this);">
+						</td>
+						<td align="right" style="width:160px">
+							<a class="add" id="add_0"><img src="{{ MEDIA_URL}}img/add_filter.png" alt="add"></a>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<div class="scroll">
+			<table class="benchmarks">
+				<tr>
+					<th>Model</th>
+					<th>States</th>
+					<th>Runtime</th>
+					<th>VSize</th>
+					<th>Finished</th>
+				</tr>
+				
+				{% for benchmark in benchmarks %}
+				<tr>
+					<td>{{ benchmark.model_ID }}</td>
+					<td>{{ benchmark.states_count }}</td>
+					<td>{{ benchmark.run_time }}</td>
+					<td>{{ benchmark.memory_used }}</td>
+					<td>true</td>
+				</tr>
+				{% endfor %}
+			</table>
+	</div>
+{% endblock %}
