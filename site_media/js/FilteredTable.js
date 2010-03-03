@@ -43,10 +43,10 @@ function addFilter(caller){
             </td>\n\
             <td align="right" style="width:160px">\n\
                 <a class="remove" id="rem_'+(callerid+1)+'">\n\
-                    <img src="./style/img/remove_filter.png" alt="remove">\n\
+                    <img src="/site_media/img/remove_filter.png" alt="remove">\n\
                 </a>\n\
                 <a class="add" id="add_'+(callerid+1)+'">\n\
-                    <img src="./style/img/add_filter.png" alt="add">\n\
+                    <img src="/site_media/img/add_filter.png" alt="add">\n\
                 </a>\n\
             </td>\n\
         </tr>');

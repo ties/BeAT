@@ -1,20 +1,12 @@
-.container{
-    height: 26em;
-    padding: 0px;
-    margin: 0px;
-    width: 500px;
-}
+
 .scroll {
-	height:26em;
+	height:40em;
 	overflow: auto;
 }
 table.benchmarks {
-	width: 480px;
 	border-collapse:collapse;
 	margin:0px;
 	padding:0px;
-        height: 26em;
-        overflow: auto;
 }
 
 .filterWith{
@@ -23,6 +15,11 @@ table.benchmarks {
 
 .filterOn, .filterAt{
     width: 80px;
+}
+
+#filters td, #filters tr, #filters th, #filters select, #filters input{
+	margin:0px;
+	padding:0px;
 }
 
 .remove img, .add img{
@@ -46,11 +43,11 @@ table.benchmarks {
 }
 
 .benchmarks tr th {
-	background: url('img/gradient_bg.jpg') repeat-x top left;
+	background: url('{{ MEDIA_URL }}img/gradient_bg.jpg') repeat-x top left;
 	text-align:center;
 }
 
-.benchmarks tr td{
+.benchmarks tr td, .benchmarks tr th{
 	border: 1px solid #ccc;
 }
 

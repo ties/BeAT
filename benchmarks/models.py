@@ -1,64 +1,65 @@
 from django.db import models
 
 class Model(models.Model):	
-	Name = models.CharField(max_length=200)
-	Version = models.CharField(max_length=50)
-	Location = models.FilePathField(path="site_media/models") #example path for storing all models; required for FilePathField
+	name = models.CharField(max_length=200)
+	version = models.CharField(max_length=50)
+	location = models.FilePathField(path="site_media/models")
 	
 	def __unicode__(self):
-		return self.Name + '.' + self.Version
+		return self.name + '.' + self.version
 	
 	#plug user management here by adding a link to an entry in a table containing usernames
 
 class Tool(models.Model):	
-	Name = models.CharField(max_length=200)
-	Version = models.CharField(max_length=50)
-	Option = models.ManyToManyField('Option', through='ToolOption')
+	name = models.CharField(max_length=200)
+	version = models.CharField(max_length=50)
 	
 	def __unicode__(self):
-		return self.Name + ' ' + self.Version
+		return self.name + ' ' + self.version
 
-class ToolOption(models.Model):
-	tool = models.ForeignKey('Tool')
+class BenchmarkOption(models.Model):
+	benchmark = models.ForeignKey('Benchmark')
 	option = models.ForeignKey('Option')
 
 class Option(models.Model):
-	Name = models.CharField(max_length=50)
+	name = models.CharField(max_length=50)
+	value = models.CharField(max_length=100)
 	
 	def __unicode__(self):
-		return u'-' + self.Name
+		return u'-' + self.name + '=' + self.value
 	
-class Hardware_Profile(models.Model):
-	Name = models.CharField(max_length=200)
-	Hardware = models.ManyToManyField('Hardware')
-	
-	def __unicode__(self):
-		return self.Name
-		
-	class Meta:
-		verbose_name = "Hardware Profile"
-		verbose_name_plural = "Hardware Profiles"
-		
 class Hardware(models.Model):
-	Name = models.CharField(max_length=200) #placeholder, should be replaced by a many2many relation in order to make a list of hardware
+	name = models.CharField(max_length=200) 
+	memory = models.IntegerField(verbose_name="memory (KB)")
+	cpu = models.CharField(max_length=200, verbose_name="CPU name")
+	disk_space = models.IntegerField()
+	os = models.CharField(max_length=200, verbose_name="operating system")
 
 	def __unicode__(self):
-		return self.Name
-		
+		return self.name + ' @' + str(self.memory) + 'KB RAM, ' + self.cpu + ', ' + self.os
+	
 	class Meta:
 		verbose_name_plural = "Hardware"
 
-class FactTable(models.Model):
+class BenchmarkHardware(models.Model):
+	benchmark = models.ForeignKey('Benchmark')
+	hardware = models.ForeignKey('Hardware')
+	
+	class Meta:
+		verbose_name_plural = "Benchmark Hardware"
+
+class Benchmark(models.Model):
 	#Idenifying elements
-	Model_ID = models.ForeignKey('Model')
-	Tool_ID = models.ForeignKey('Tool')
-	Hardware_ID = models.ForeignKey('Hardware_Profile')
-	Date_time = models.DateTimeField('Time started')
+	model_ID = models.ForeignKey('Model')
+	tool_ID = models.ForeignKey('Tool')
+	hardware_ID = models.ManyToManyField('Hardware', through="BenchmarkHardware", verbose_name="hardware")
+	option_ID = models.ManyToManyField('Option', through="BenchmarkOption", verbose_name="option")
+	date_time = models.DateTimeField('Time started')
 	#Data
-	Run_time = models.BigIntegerField()
-	Transition_count = models.BigIntegerField()
-	States_count = models.BigIntegerField()
-	Memory_used = models.IntegerField() #rounded to kilobytes
+	run_time = models.BigIntegerField(verbose_name="Run time (s)")
+	transition_count = models.BigIntegerField()
+	states_count = models.BigIntegerField()
+	memory_used = models.IntegerField(verbose_name="Memory (KB)") #rounded to kilobytes
 	
 	def __unicode__(self):
-		return self.Model_ID.__unicode__() + '-' + self.Tool_ID.Name.__unicode__()
+		return self.model_ID.__str__() + '-' + self.tool_ID.name.__str__()

@@ -7,7 +7,10 @@
       <!-- Framework CSS -->
       <link href="{{ MEDIA_URL }}css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
       <link href="{{ MEDIA_URL }}css/print.css" media="print" rel="stylesheet" type="text/css" />
-      
+      <link href="{{ MEDIA_URL }}css/style.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+      <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/FilteredTable.js"></script>
+
 	  <!--[if IE]><link href="{{ MEDIA_URL }}css/ie.css" media="screen, projection" rel="stylesheet" type="text/css" /><![endif]-->      	
 			<title>{% block title %}Benchmarking Analysis Toolkit{% endblock %}</title>	
       
@@ -54,10 +57,21 @@
 		{% block structure %}
 			
 				<div class="span-10">
-					<div class="blok">content goes here.</div>
+					<div class="blok"><h3>Lorem ipsum dolor sit amet</h3> consectetur adipiscing elit. Pellentesque vestibulum, ante ac facilisis cursus, ante est bibendum nulla, sed pulvinar erat dui in justo. Aliquam auctor adipiscing dui at tempor. Aliquam erat volutpat. Fusce eleifend arcu laoreet risus rhoncus fermentum suscipit turpis vehicula. Sed nisi lacus, mattis sit amet elementum dictum, facilisis quis mauris. Nullam sit amet enim mi, nec blandit mauris. Nullam sit amet lacus magna, eu vulputate nibh. Pellentesque nunc turpis, fringilla et sodales vel, sagittis a augue. Duis consequat lacus eu nisl faucibus interdum. In id sem in purus tempor bibendum in sit amet mi.
+
+Mauris quis diam sed quam ullamcorper mattis ac nec velit. Aliquam gravida cursus pellentesque. Mauris eleifend eros ac tortor feugiat quis rutrum justo blandit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla sapien turpis, ultrices id congue eu, semper sed felis. Pellentesque eu odio ligula, sed lobortis nisi. Ut posuere facilisis felis, in eleifend orci ultrices consectetur. Morbi id turpis a metus adipiscing gravida. Donec aliquet, est ut euismod varius, nisl erat porttitor odio, sit amet molestie nisi est ac mauris. Ut posuere aliquam ligula, eget molestie diam tristique eu. Mauris arcu mauris, mollis eget adipiscing et, hendrerit feugiat lectus.
+
+Aenean commodo tellus in leo volutpat pretium. Cras imperdiet tempor nulla nec feugiat. Aenean bibendum bibendum erat, et consectetur diam faucibus in. Vivamus molestie, est vitae lacinia tempus, ipsum elit faucibus nisi, vitae porttitor tellus purus vitae enim. Vivamus quis elit vitae est sollicitudin sagittis eget eget orci. Aliquam erat volutpat. Cras ac vulputate eros. Integer augue lorem, cursus eu mattis sit amet, accumsan sed enim. Suspendisse dapibus arcu nulla, a dapibus nisi. Suspendisse urna nibh, sollicitudin quis molestie a, porta eget sem. Nulla vulputate, purus ac consectetur consectetur, diam erat scelerisque mauris, scelerisque tempor velit diam ut elit. Ut in diam sapien. Fusce tristique erat at dui vestibulum suscipit at at risus. Fusce lobortis aliquet placerat. Phasellus quam magna, cursus sed interdum a, lobortis sed augue. Fusce sodales laoreet mi. Nulla scelerisque tellus ut tortor pharetra auctor. In sollicitudin orci ullamcorper dolor scelerisque vestibulum. Praesent nec sem eget est hendrerit tincidunt in ac diam. </div>
 				</div>
 				<div class="span-8">
-					<div class="blok">extra stuff goes here.</div>
+					<div class="blok"><h3>Nulla facilisi.</h3> Quisque facilisis quam sed felis hendrerit ac euismod eros ultricies. Aliquam vitae nunc at enim accumsan vehicula. Vestibulum tincidunt, lorem in cursus dignissim, massa ipsum laoreet dui, at facilisis ligula nisl vel sem. Donec lorem tortor, pharetra id imperdiet id, eleifend sit amet nunc. Ut vel libero tortor.
+					</div>
+					<div class="blok">
+						<h3>Nulla facilisi.</h3> Quisque facilisis quam sed felis hendrerit ac euismod eros ultricies. Aliquam vitae nunc at enim accumsan vehicula. Vestibulum tincidunt, lorem in cursus dignissim, massa ipsum laoreet dui, at facilisis ligula nisl vel sem. Donec lorem tortor, pharetra id imperdiet id, eleifend sit amet nunc. Ut vel libero tortor. Morbi metus metus, euismod sit amet auctor vel, egestas id purus. Duis volutpat rhoncus ullamcorper. Suspendisse ut lectus sem. Vivamus tempus enim a purus aliquam luctus aliquet ipsum pellentesque. 
+					</div>
+					<div class="blok">
+						<h3>Sed a leo ac turpis</h3> dapibus aliquam nec ac purus. Proin quis libero vitae erat ultricies commodo. Quisque dignissim consequat rutrum. Praesent elementum, ante id venenatis viverra, velit nibh consectetur diam, sit amet interdum elit dolor vitae orci. Nullam lorem nibh, sodales at congue quis, tempor vel diam. Cras ac nunc turpis, sed condimentum neque. Suspendisse potenti.
+					</div>
 				</div>
 			
 		{% endblock %}
@@ -67,8 +81,8 @@
 				<h1>Navigation</h1>
 				<ul>
 					<li><a href="{% url benchmarks.views.index %}">Index</a></li>
-					<li>Runs</li>
-					<li>Compare</li>
+					<li><a href="{% url benchmarks.views.tables %}">Benchmarks</a></li>
+					<li><a href="{% url benchmarks.views.benchmarks %}">Benchmarks #2</a></li>
 				</ul>
 				{% endblock %}
 			</div>

@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 
 	(r'^$', 'benchmarks.views.index'),
 	(r'^tables/$', 'benchmarks.views.tables'),
+	(r'^benchmarks/$', 'benchmarks.views.benchmarks'),
 	
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
