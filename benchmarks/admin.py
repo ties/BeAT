@@ -10,7 +10,7 @@ class OptionInline(admin.TabularInline):
 	extra = 1
 
 class BenchmarkAdmin(admin.ModelAdmin):
-	list_display = ('model_ID', 'tool_ID')
+	list_display = ('model_ID', 'tool_ID', 'date_time', 'run_time', 'memory_used', 'states_count', 'transition_count')
 	list_filter = ['date_time']
 	search_fields = ['model_ID__name', 'tool_ID__name']
 	fieldsets = [

@@ -43,7 +43,7 @@ table.benchmarks {
 }
 
 .benchmarks tr th {
-	background: url('{{ MEDIA_URL }}img/gradient_bg.jpg') repeat-x top left;
+	background: url('/site_media/img/gradient_bg.jpg') repeat-x top left;
 	text-align:center;
 }
 

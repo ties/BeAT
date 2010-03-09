@@ -31,18 +31,16 @@
 				<!-- USER PANEL -->
 				<div class="span-10 last">
 					<ul>	
-						{% if is_admin %}
+						{% if user.is_staff %}
 							<li><a href="/admin/">Admin</a></li>
 						{% endif %}
 						
-							{% if is_logged_in %}
-								<li><a href="{%url django.contrib.auth.views.logout_then_login %}">Log out</a></li>
-							{% else %}
-								<li><a href="#">Registreren</a></li>
-								<li><a href="{%url django.contrib.auth.views.login %}?next=/">Log in</a></li>
-							{% endif %}
-						
-								
+						{% if user.is_authenticated %}
+							<li><a href="{%url django.contrib.auth.views.logout_then_login %}">Log out</a></li>
+						{% else %}
+							<li><a href="#">Registreren</a></li>
+							<li><a href="{%url django.contrib.auth.views.login %}?next=/">Log in</a></li>
+						{% endif %}				
 					</ul>
 				</div>
 				<!-- END USER PANEL -->
