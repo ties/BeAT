@@ -7,22 +7,24 @@
 				<table style="width:480px" id="filters" cellpadding="0" cellspacing="0">
 					<tr id="filterrow_0">
 						<td width="320" align="left">
-							<select size="1" class="filterAt" onchange="changedFilter(this);">
-								<option value="-1">&lt;empty&gt;</option>
-								<option value="0">Name</option>
-								<option value="1">Date</option>
-								<option value="2">Memory</option>
-								<option value="3">Runtime</option>
-								<option value="4">Options</option>
+							<select size="1" class="filterType" onchange="changedFilter(this);">
+								<option value="empty">&lt;empty&gt;</option>
+								<option value="name">Name</option>
+								<option value="date">Date</option>
+								<option value="memory">Memory</option>
+								<option value="runtime">Runtime</option>
+								<option value="states">states</option>
+								<option value="transitions">transitions</option>
+								<option value="options">Options</option>
 							</select>
 							<ul class="mega">
 								<li class="mega">
-									<select size="1" class="filterWith" onchange="changedFilter(this);">
-										<option value="-1">&lt;empty&gt;</option>
+									<select size="1" class="filterStyle" onchange="changedFilter(this);">
+										<option value="empty">&lt;empty&gt;</option>
 									</select>
 								</li>
 							</ul>
-							<input type="text" class="filterOn" onchange="changedFilter(this);">
+							<input type="text" class="filterValue" onchange="changedFilter(this);">
 						</td>
 						<td align="right" style="width:160px">
 							<a class="add" id="add_0"><img src="{{ MEDIA_URL}}img/add_filter.png" alt="add"></a>

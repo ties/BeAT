@@ -9,11 +9,11 @@ table.benchmarks {
 	padding:0px;
 }
 
-.filterWith{
+.filterStyle{
     width: 120px;
 }
 
-.filterOn, .filterAt{
+.filterType, .filterValue, .optionValue{
     width: 80px;
 }
 
