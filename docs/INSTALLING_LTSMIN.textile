@@ -1,4 +1,4 @@
-h1. Installing LTSmin on a Debian Lenny box.
+h1. Installing LTSmin on a Debian box.
 
 h2. Required packages:
 
@@ -13,20 +13,19 @@ The following debian packages are required; If you are running a mix of stable/s
 
 h2. Dependencies
 
-LTSmin requires some dependencies to be usefull; MCRL2 was suggested, and MCRL was trivial to install (and required for the MPI benchmarks).
+LTSmin requires some dependencies to be useful. MCRL2 was suggested, and MCRL was trivial to install (and required for the MPI benchmarks).
 
 h3. building the dependencies
 
 Since both MCRL and MCRL2 are research projects, they are not available in debian packages. You need to build them yourself.
 
-Get MCRL 2.18.5 from [Their website:http://homepages.cwi.nl/~mcrl/mutool.html] and download mcrl2-200901 (no more recent version; Those are broken) from the [mcrl2 website:http://www.mcrl2.org/mcrl2/wiki/index.php/Home]
+Get MCRL 2.18.5 from [Their website:http://homepages.cwi.nl/~mcrl/mutool.html] and download mcrl2-200901 (not a more recent version; Those are broken) from the [mcrl2 website:http://www.mcrl2.org/mcrl2/wiki/index.php/Home]
 
 h5. Building mcrl2
 
 Mcrl2 is trivial to install.
 <pre>
-tar -jxf mcrl2-200901-src.tar.bz2
-cd mcrl2/
+tar -jxf mcrl2-200901-src.tar.bz2cd mcrl2/
 ./configure --prefix=[mcrl2 prefix directory]
 make
 make install
