@@ -46,6 +46,6 @@ h2. Configuring LTSmin
 
 Now you can configure ltsmin. Remember to plug in the path prefixes for mcrl and mcrl2.
 
-<bc>
+<pre>
 ./configure --disable-dependency-tracking --prefix /home/ties/bin/ltsmin --with-mcrl2=/home/ties/bin/mcrl2/ --with-mcrl=/home/ties/bin/mcrl-2.18.5/
-</bc>
+</pre>
