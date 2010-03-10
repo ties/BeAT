@@ -1,6 +1,6 @@
 h1. Installing LTSmin on a Debian box.
 
-This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) box. The install is from git, since the snapshot tarballs on the [ltsmin website:http://fmt.cs.utwente.nl/tools/ltsmin/] are **missing** the essential depedencies nipsvm and buddy.
+This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) box. The install is from git, since the snapshot tarballs on the "ltsmin website":http://fmt.cs.utwente.nl/tools/ltsmin/ are **missing** the essential depedencies nipsvm and buddy.
 
 If you end up with errors like the following:
 <pre>Making all in nips-vm
@@ -36,7 +36,7 @@ h3. building the dependencies
 
 Since both MCRL and MCRL2 are research projects, they are not available in debian packages. You need to build them yourself.
 
-Get MCRL 2.18.5 from [Their website:http://homepages.cwi.nl/~mcrl/mutool.html] and download mcrl2-200901 (not a more recent version; Those are broken) from the [mcrl2 website:http://www.mcrl2.org/mcrl2/wiki/index.php/Home]
+Get MCRL 2.18.5 from "their website":http://homepages.cwi.nl/~mcrl/mutool.html and download mcrl2-200901 (not a more recent version; Those are broken) from the "mcrl2 website":http://www.mcrl2.org/mcrl2/wiki/index.php/Home
 
 h5. Building mcrl2
 
