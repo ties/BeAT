@@ -1,6 +1,6 @@
 h1. Installing LTSmin on a Debian box.
 
-This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) box. The install is from git, since the snapshot tarballs on the "ltsmin website":http://fmt.cs.utwente.nl/tools/ltsmin/ are **missing** the essential depedencies nipsvm and buddy.
+This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) box. The install is from git, since the snapshot tarballs on the "ltsmin website":http://fmt.cs.utwente.nl/tools/ltsmin/ are _missing_ the essential depedencies nipsvm and buddy.
 
 If you end up with errors like the following:
 <pre>Making all in nips-vm
@@ -19,18 +19,24 @@ cd ltsmin && git submodule update --init</pre>
 
 h2. Required packages:
 
-The following debian packages are required; If you are running a mix of stable/squeeze, this **will** break.
+The following debian packages are required; If you are running a mix of stable/squeeze, this _will_ break.
 
 * build-essential
 * autoconf (for updating the configure file)
 * libtool (for configure)
 * libpopt0 libpopt-dev
 * zlib1g zlib1g-dev
-* xmlto asciidoc
+* xmlto
+* asciidoc (>= 8.4.4, get it from lenny-backports)
+* flex
+
+Note that you need _all_ these dependencies.
 
 h2. Dependencies
 
 LTSmin requires some dependencies to be useful. MCRL2 was suggested, and MCRL was trivial to install (and required for the MPI benchmarks).
+
+If you want documentation, you need Asciidoc > = 8.4.4. The current debian package has version 8.2.7, so you will need to compile it yourself, or get it from lenny-backports.
 
 h3. building the dependencies
 
@@ -44,18 +50,21 @@ Mcrl2 is trivial to install.
 <pre>tar -jxf mcrl2-200901-src.tar.bz2cd mcrl2/
 ./configure --prefix=[mcrl2 prefix directory]
 make
-make install</pre>
+make install
+</pre>
 
 h5. Building mcrl
 
-Mcrl is similarly trivial to install.
+Mcrl is similarly trivial to install. Remember to install the boost headers.
 <pre>tar -zxf mcrl-2.18.5.tar.gz
 cd mcrl-2.18.5/
 ./configure --prefix=[mcrl prefix]
-make install</pre>
+make install
+./build/bin/bjam --install --install-boost-headers</pre>
 
 h2. Configuring LTSmin
 
-Now you can configure ltsmin. Remember to plug in the path prefixes for mcrl and mcrl2.
+Now you can configure ltsmin. The following command will first autogenerate the configure script for LTSmin. The second line will configure LTSmin with the dependencies you just compiled. **Remember to plug in the path prefixes for mcrl and mcrl2.**
 
-<pre>./configure --disable-dependency-tracking --prefix /home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]</pre>
+<pre> ./ltsminreconf
+	./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]</pre>
