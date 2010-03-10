@@ -46,7 +46,7 @@
 				
 				{% for benchmark in benchmarks %}
 				<tr>
-					<td><input type="checkbox" name="compare_benchmarks" value="{{ benchmark.id }}" /></td>
+					<td><input type="checkbox" name="benchmarks" value="{{ benchmark.id }}" /></td>
 					<td>{{ benchmark.model_ID }}</td>
 					<td>{{ benchmark.states_count }}</td>
 					<td>{{ benchmark.run_time }}</td>
