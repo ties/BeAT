@@ -1,6 +1,6 @@
-.h1 Installing LTSmin on a Debian Lenny box.
+h1. Installing LTSmin on a Debian Lenny box.
 
-.h2 Required packages:
+h2. Required packages:
 
 The following debian packages are required; If you are running a mix of stable/squeeze, this **will** break.
 
@@ -11,17 +11,17 @@ The following debian packages are required; If you are running a mix of stable/s
 * zlib1g zlib1g-dev
 * xmlto asciidoc
 
-.h2 Dependencies
+h2. Dependencies
 
 LTSmin requires some dependencies to be usefull; MCRL2 was suggested, and MCRL was trivial to install (and required for the MPI benchmarks).
 
-.h3 building the dependencies
+h3. building the dependencies
 
 Since both MCRL and MCRL2 are research projects, they are not available in debian packages. You need to build them yourself.
 
 Get MCRL 2.18.5 from [Their website:http://homepages.cwi.nl/~mcrl/mutool.html] and download mcrl2-200901 (no more recent version; Those are broken) from the [mcrl2 website:http://www.mcrl2.org/mcrl2/wiki/index.php/Home]
 
-.h5 Building mcrl2
+h5. Building mcrl2
 
 Mcrl2 is trivial to install.
 <pre>
@@ -32,7 +32,7 @@ make
 make install
 </pre>
 
-.h5 Building mcrl
+h5. Building mcrl
 
 Mcrl is similarly trivial to install.
 <pre>
@@ -42,9 +42,9 @@ cd mcrl-2.18.5/
 make install
 </pre>
 
-.h2 Configuring LTSmin
+h2. Configuring LTSmin
 
 Now you can configure ltsmin. Remember to plug in the path prefixes for mcrl and mcrl2.
-<pre>
+
+pre.
 ./configure --disable-dependency-tracking --prefix /home/ties/bin/ltsmin --with-mcrl2=/home/ties/bin/mcrl2/ --with-mcrl=/home/ties/bin/mcrl-2.18.5/
-</pre>
