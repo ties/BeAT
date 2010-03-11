@@ -1,2 +1,4 @@
 #Ignore compiled python
 *.pyc
+#Ignore ltsmin-output files
+ltsmin-output\*.*

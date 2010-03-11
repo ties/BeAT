@@ -61,46 +61,79 @@ def write_to_db(data):
 	transitioncount should be -1 if not available
 	TODO: checks all row creations for dupes
 	"""
+	#model entry
 	name, version, location = data['model']
+	if not name or version == -1 or not location:
+		if verbose:
+			print "Warning: Model.name=",name,"Model.version=",version,"Model.location=",location
+		#name or version invalid -> raise an error
+		#for location, just leave it none
 	m = Model(name=name ,version=version, location=location)
-	m.save()
 
+	#tool entry
 	name, version = data['tool']
+	if not name or version == -1:
+		if verbose:
+			print "Warning: Tool.name=",name,"Tool.version=",version
+		#name or version invalid -> raise an error
 	t = Tool(name=name, version=version)
-	t.save()
 
+	#hardware entries
 	hwdata = data['hardware']
 	hardwarelist = []
-	create row for each hardware item
 	for tuple in hwdata:
-		#this should be properly constructed using the data in element
 		name, memory, cpu, disk_space, os = tuple
-		h = Hardware(name=name, memory=memory, cpu=cpu, disk_space=disk_space, os=os)
-		h.save()
+		if not name or memory == -1 or not cpu or disk_space ==-1 or not os:
+			if verbose:
+				print "Warning: HW.name=",name,"HW.memory=",memory,"HW.cpu",cpu,"HW.disk_space",disk_space,"HW.os",os
+			#name, memory, cpu or os invalid -> raise error (or continue?)
+			#disk_space invalid -> don't set
+		if disk_space > 0:
+			h = Hardware(name=name, memory=memory, cpu=cpu, disk_space=disk_space, os=os)
+		else:
+			h = Hardware(name=name, memory=memory, cpu=cpu, os=os)
 		hardwarelist.append(h)
 
+	#option entries
 	optiondata = data['options']
-	#create row for each option
 	optionlist = []
-	#create table for each hardware item
 	for tuple in optiondata:
-		#this should be properly constructed using the data in element
 		name, value = tuple
+		if not name or not value or value == -1:
+			if verbose:
+				print "Warning, invalid option: name",name,"value",value
+			continue #ignore this tuple and move on
 		o = Option(name=name,value=value)
-		o.save()
 		optionlist.append(o)
 	
 	#this one's always new
 	#add BenchmarkHardware and BenchmarkOption reference here
 	date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
-	if tcount == -1:
-		tcount = None
+	if date == -1 or utime == -1 or stime == -1 or etime == -1 or tcount == -1 or scount == -1 or mVSIZE == -1 or mRSS == -1:
+		if tcount == -1:
+			#tcount can be not defined.
+			tcount = None
+		else:
+			if verbose:
+				print "Warning, invalid value in benchmark"
+			#raise an error
+	
+	#if the code goes up 'till here we can save everything.
+	t.save()
+	m.save()
+	for hw in hardwarelist:
+		hw.save()
+	for o in optionlist:
+		o.save()
+	#now create and save the db object
 	b = Benchmark(model_id=m, tool_id=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
 	b.save()
-	#for option in optionlist:
-	#	b.option_id.add(option)
-	#for hardware in hardwarelist:
-	#	b.hardware_id.add(hardware)
+	#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
+	for option in optionlist:
+		b.option_id.add(option)
+	for hardware in hardwarelist:
+		b.hardware_id.add(hardware)
+	b.save()
 	
 #here are the new parsers
 #content should be a string containing the entire output here
@@ -141,22 +174,25 @@ def get_parser(content):
 # ######program starts here ######## #
 verbose = False
 
-print sys.argv
 for item in sys.argv:
 	if item.startswith('-v'):
 		print "Notice: Verbose switch provided. Get ready for lots of output!"
 		verbose = True
+	elif item.endswith('filereader.py'):
+		path = None
 	else:
 		path = item
 if not path:
-	print "Usage: filereader.py [-v] -p=file"
+	print "Error: no file provided.\nUsage: filereader.py [-v] file"
 	exit()
+if verbose:
+	print sys.argv
 try:
 	file = open(path, 'r')
 except IOError as detail:
 	#if something breaks, output the error and ask for retry
 	print 'Error: ', detail, '\n'
-	print "Usage: filereader.py [-v] -p=file"
+	print "Usage: filereader.py [-v] file"
 	exit()
 #we have a file to work with
 
@@ -178,6 +214,6 @@ if lines:
 elif verbose:
 	print "Warning: no lines were parsed from ", file
 file.close()
-#run the parser
-parser(''.join(lines), 'fileout_dir')
+#run the parser and write the result
+write_to_db(parser(''.join(lines), 'fileout_dir'))
 exit()
