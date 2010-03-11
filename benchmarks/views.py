@@ -13,7 +13,6 @@ def simple(request, id):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
-	from matplotlib.dates import DateFormatter
 	fig=Figure()
 	ax=fig.add_subplot(111)
 	
@@ -21,16 +20,18 @@ def simple(request, id):
 	benchmark_IDs = id.split('+')
 	benchmarks = Benchmark.objects.filter(pk__in=benchmark_IDs)
 	states = [b.states_count for b in benchmarks]
-	
 	# Plot data
-	width = 0.2
+	width = 0.4
 	ax.bar(numpy.arange(benchmarks.count()), states, width, align='center')
-	ax.set_xticks(numpy.arange(2))
+	ax.set_xticks(numpy.arange(benchmarks.count()))
+	ax.set_xticklabels(benchmarks, size='small', position=(0,0))
 	ax.set_ylabel('States')
 	ax.set_xlabel('Benchmark')
-	
+	ax.figure.set_figheight(2)
+	ax.grid(True)
 	# Output
 	canvas = FigureCanvas(fig)
+	fig.set_figsize_inches(6,6)
 	response = HttpResponse(content_type='image/png')
 	canvas.print_png(response)
 	return response
