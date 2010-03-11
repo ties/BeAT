@@ -33,7 +33,7 @@
 				</table>
 			</form>
 			<div class="scroll">
-			<form action="{% url benchmarks.views.compare %}" method="post">{% csrf_token %}
+			<form action="{% url benchmarks.views.compare_post %}" method="post">{% csrf_token %}
 			<table class="benchmarks">
 				<tr>
 					<th>&nbsp;</th>
@@ -49,8 +49,8 @@
 					<td><input type="checkbox" name="benchmarks" value="{{ benchmark.id }}" /></td>
 					<td>{{ benchmark.model_ID }}</td>
 					<td>{{ benchmark.states_count }}</td>
-					<td>{{ benchmark.run_time }}</td>
-					<td>{{ benchmark.memory_used }}</td>
+					<td>{{ benchmark.user_time }}</td>
+					<td>{{ benchmark.memory_VSIZE }}</td>
 					<td>true</td>
 				</tr>
 				{% endfor %}

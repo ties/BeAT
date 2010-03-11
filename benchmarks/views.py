@@ -1,13 +1,39 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
-from django.shortcuts import render_to_response
-from beat.benchmarks.models import Benchmark
-from django import forms
-from django.forms import widgets
+from django.shortcuts import render_to_response, redirect
+import datetime
 
-class CompareForm(forms.Form):
-	benchmarks = forms.ModelMultipleChoiceField(Benchmark.objects.all(), required=False, widget=widgets.CheckboxSelectMultiple)
+from beat.benchmarks.models import Benchmark
+from forms import CompareForm
+
+def simple(request, id):
+	
+	import numpy
+	# General library stuff
+	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+	from matplotlib.figure import Figure
+	from matplotlib.dates import DateFormatter
+	fig=Figure()
+	ax=fig.add_subplot(111)
+	
+	# DB stuff
+	benchmark_IDs = id.split('+')
+	benchmarks = Benchmark.objects.filter(pk__in=benchmark_IDs)
+	states = [b.states_count for b in benchmarks]
+	
+	# Plot data
+	width = 0.2
+	ax.bar(numpy.arange(benchmarks.count()), states, width, align='center')
+	ax.set_xticks(numpy.arange(2))
+	ax.set_ylabel('States')
+	ax.set_xlabel('Benchmark')
+	
+	# Output
+	canvas = FigureCanvas(fig)
+	response = HttpResponse(content_type='image/png')
+	canvas.print_png(response)
+	return response
 
 #@login_required(redirect_field_name='next')
 def index(request):
@@ -30,24 +56,23 @@ def benchmarks(request):
 	})
 	return HttpResponse(t.render(c))
 
-def compare(request):
+def compare_post(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
 			# Process the data in form.cleaned_data
 			b = form.cleaned_data['benchmarks']
-			t = loader.get_template('compare.html')
-			c = RequestContext(request, {
-				# benchmarks is an array of selected Benchmark objects,
-				# so properties of a single benchmark object can still be accessed.
-				'benchmarks' : b
-			})
-			return HttpResponse(t.render(c)) # Redirect after POST
-	#else:
-	#	form = CompareForm() # An unbound form
-	return render_to_response('compare.html', {
-		'form': form,
+			return HttpResponseRedirect('/compare/' + "+".join([str(bench.id) for bench in b]) + '/') # Redirect after POST
+	else:
+		return redirect(benchmarks.views.benchmarks)
+
+def compare(request, id):
+	t = loader.get_template('compare.html')
+	b = id.split('+')
+	c = RequestContext(request, {
+		'benchmarks' : b
 	})
+	return HttpResponse(t.render(c)) # Redirect after POST
 
 #@login_required()
 #def mudkip(request):

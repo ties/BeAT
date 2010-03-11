@@ -56,10 +56,14 @@ class Benchmark(models.Model):
 	option_ID = models.ManyToManyField('Option', through="BenchmarkOption", verbose_name="option")
 	date_time = models.DateTimeField('Time started')
 	#Data
-	run_time = models.BigIntegerField(verbose_name="Run time (s)")
-	transition_count = models.BigIntegerField()
+	user_time = models.BigIntegerField(verbose_name="User time (s)")
+	system_time = models.BigIntegerField(verbose_name="System time (s)")
+	elapsed_time = models.BigIntegerField(verbose_name="Elapsed time (s)")
+	
+	transition_count = models.BigIntegerField()	
 	states_count = models.BigIntegerField()
-	memory_used = models.IntegerField(verbose_name="Memory (KB)") #rounded to kilobytes
+	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
+	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)")
 	
 	def __unicode__(self):
 		return self.model_ID.__str__() + '-' + self.tool_ID.name.__str__()

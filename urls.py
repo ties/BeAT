@@ -13,16 +13,19 @@ urlpatterns = patterns('',
 	(r'^$', 'benchmarks.views.index'),
 	(r'^tables/$', 'benchmarks.views.tables'),
 	(r'^benchmarks/$', 'benchmarks.views.benchmarks'),
-	(r'^compare/$', 'benchmarks.views.compare'),
-	
-    # Uncomment the next line to enable the admin:
-    (r'^admin/', include(admin.site.urls)),
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+	(r'^compare/$', 'benchmarks.views.compare_post'),
+	(r'^compare/(?P<id>(\d+(\+\d)*))/$', 'benchmarks.views.compare'),
+	(r'^compare/(?P<id>(\d+(\+\d)*))/benchmark.png$', 'benchmarks.views.simple'),
+
+	# Uncomment the next line to enable the admin:
+	(r'^admin/', include(admin.site.urls)),
+	(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 	
 	# Auth pages
 	(r'^logout/$', 'django.contrib.auth.views.logout_then_login'),
 	(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
 	
+	# Graphs
 )
 
 # static media: DEVELOPMENT ONLY!

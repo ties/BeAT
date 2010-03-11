@@ -100,7 +100,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
 	'django.contrib.admin',
-	'beat.benchmarks'
+	'beat.benchmarks',
+	'beat.graphs'
 )
 
 STATIC_DOC_ROOT = os.path.join(SITE_ROOT, 'templates')
