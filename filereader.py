@@ -66,11 +66,15 @@ class FileReader:
 	def parse(self, lines):
 		contents = ''.join(lines[1:])#all lines 'cept the first
 		if self.verbose>1:
+			print "Notice: Reading run details..."
+		options, start = self.parse_run_details(lines)
+		if self.verbose>1:
+			print "Notice: Complete!"
 			print "Notice: Finding parser..."
-		parse_info = self.get_parser(lines[0]) #the first line is used here
+		parse_info = options['parser']#self.get_parser(lines[0]) #the first line is used here
 		if self.verbose>1:
 			print "Notice: Found parser!"
-		options = parse_info[2]	#fetch the options specified by the first line
+		
 		regex = parse_info[3]	#expression to parse
 		
 		if self.verbose>1:
@@ -82,6 +86,75 @@ class FileReader:
 			print "Notice: Read successful!"
 		self.write_to_db(data)
 	#end of parse
+	
+	def parse_run_details(self, lines):
+		#this should examine the lines and read run details
+		#for now, just a dummy
+		s = self.get_parser(''.join(lines))
+		result = ({
+			'parser' : s,
+			'model_name' : 'test',
+			'model_version' : 1,
+			'model_location' : 'test.txt',
+			'tool_name': s[0],
+			'tool_version': 1,
+			'hardware': [('computer', 1000000, 'AMD Athlon 64 3500+', 10000000, 'Ubuntu 9.10')],
+			'options': [('fileout_dir', True), ('algorithm', s[1])],
+			'date': datetime.datetime.now(),
+		}, 1)
+		return result
+		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
+	#end of parse_options
+	
+	#content should be the entire log as a string
+	#run_details should be a dictionary containing the keys: model_name, model_version, model_location, tool_name, tool_version, hardware, options, date
+	#regex should be the regular expression to extract data from content. The regex should contain the groups etime, utime, stime, tcount, scount, vsize, rss. 
+	#	these are: elapsed, user, system times, state and transition count, memory vsize and memory rss
+	#	only transition count may be left out.
+	def parse_single_output(self, content, run_details, regex):
+		m = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
+		if self.verbose>1:
+			print "Notice: regex match gives: ", m
+		if m:
+			match = {
+				'model':(run_details.get('model_name'), run_details.get('model_version'), run_details.get('model_location')),
+				'tool':(run_details.get('tool_name'), run_details.get('tool_version')),
+				'hardware':run_details.get('hardware'),
+				'options':run_details.get('options'),
+				'benchmark':(run_details.get('date'),m['etime'],m['utime'],m['stime'],m.get('tcount'),m['scount'],m['vsize'],m['rss']),
+			}
+			#the following ensures 'hardware' and 'options' always contain something iteratable
+			if not match['hardware']:
+				match['hardware'] = []
+			if not match['options']:
+				match['options'] = []
+		elif self.verbose:
+			print "Warning: Parse error. The input failed to match on the regex."
+		if self.verbose>1:
+			print "Notice: resulting dictionary: ", match
+		return match
+
+	# This dictionary contains all known parsers
+	# format:
+	#{
+	#	ID : (tool, algorithm, {'option0':True, 'option1':'hello world'}, parse_function, parse_regex),
+	#}
+	parsers = {
+		'nips2lts-grey' : ("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+#		'nips2lts-grey-fileout-dir' : ("nips", "grey", {"fileout_dir": True,}, parse_nips_grey, r'nips2lts-grey: NIPS language module initialized\n.*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+#		'dve2lts-grey' : ("dve", "grey"), {}, parse_single_output,  r'dve2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+	}
+	
+	def get_parser(self, content):
+		type = content.split('\n', 1)[0] # = first line
+		if self.verbose>1:
+			print "Notice: " + type + " is the parser, according to the file."
+		try:
+			return self.parsers[type]
+		except KeyError:
+			print "Error: parsing of the data in the specified file is not yet supported."
+			exit()
+	#end of get_parser
 	
 	def write_to_db(self, data):
 		#model entry
@@ -141,6 +214,12 @@ class FileReader:
 					print "Warning: invalid value in benchmark"
 				#raise an error?
 		
+		#temp test stuff
+		etime = 5
+		utime = 3
+		stime = 1
+		#/temp test stuff
+		
 		#if the code goes up 'till here we can save everything.
 		t.save()
 		m.save()
@@ -149,68 +228,20 @@ class FileReader:
 		for o in optionlist:
 			o.save()
 		#now create and save the db object
-		b = Benchmark(model_id=m, tool_id=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
+		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
 		b.save()
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
 		for option in optionlist:
-			b.option_id.add(option)
+			bo = BenchmarkOption(benchmark=b, option=option)
+			bo.save()
 		for hardware in hardwarelist:
-			b.hardware_id.add(hardware)
+			bh = BenchmarkHardware(benchmark=b, hardware=hardware)
+			bh.save()
 		b.save()
 	#end of write_to_db
-	
-	#content should be the entire log as a string
-	#run_details should be a dictionary containing the keys: model_name, model_version, model_location, tool_name, tool_version, hardware, options, date
-	#regex should be the regular expression to extract data from content. The regex should contain the groups etime, utime, stime, tcount, scount, vsize, rss. 
-	#	these are: elapsed, user, system times, state and transition count, memory vsize and memory rss
-	#	only transition count may be left out.
-	def parse_single_output(self, content, run_details, regex):
-		m = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
-		if self.verbose>1:
-			print "Notice: regex match gives: ", m
-		if m:
-			match = {
-				'model':(run_details.get('model_name'), run_details.get('model_version'), run_details.get('model_location')),
-				'tool':(run_details.get('tool_name'), run_details.get('tool_version')),
-				'hardware':run_details.get('hardware'),
-				'options':run_details.get('options'),
-				'benchmark':(run_details.get('date'),m['etime'],m['utime'],m['stime'],m.get('tcount'),m['scount'],m['vsize'],m['rss']),
-			}
-			#the following ensures 'hardware' and 'options' always contain something iteratable
-			if not match['hardware']:
-				match['hardware'] = []
-			if not match['options']:
-				match['options'] = []
-		elif self.verbose:
-			print "Warning: Parse error. The input failed to match on the regex."
-		if self.verbose>1:
-			print "Notice: resulting dictionary: ", match
-		return match
 
-	# This dictionary contains all known parsers
-	# format:
-	#{
-	#	ID : (tool, algorithm, {'option0':True, 'option1':'hello world'}, parse_function, parse_regex),
-	#}
-	parsers = {
-		'nips2lts-grey' : ("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-#		'nips2lts-grey-fileout-dir' : ("nips", "grey", {"fileout_dir": True,}, parse_nips_grey, r'nips2lts-grey: NIPS language module initialized\n.*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-#		'dve2lts-grey' : ("dve", "grey"), {}, parse_single_output,  r'dve2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-	}
-	
-	def get_parser(self, content):
-		type = content.split('\n', 1)[0] # = first line
-		if self.verbose>1:
-			print "Notice: " + type + " is the parser, according to the file."
-		try:
-			return self.parsers[type]
-		except KeyError:
-			print "Error: parsing of the data in the specified file is not yet supported."
-			exit()
-	#end of get_parser
-	
 	def main(self):
-		(options, args) = self.parse_options()
+		(options, args) = self.parse_app_options()
 		self.verbose = options.verbose
 		file_list = args
 		if self.verbose:
@@ -236,7 +267,7 @@ class FileReader:
 		
 	#end of main
 	
-	def parse_options(self):
+	def parse_app_options(self):
 		parser = OptionParser()
 		parser.add_option("-q", "--quiet",
 			action="store_const", const=0, dest="verbose", help = "Do not print anything.")
@@ -245,7 +276,7 @@ class FileReader:
 		parser.add_option("--noisy",
 			action="store_const", const=2, dest="verbose", help = "Print everything.")
 		return parser.parse_args()
-	#end of parse_options
+	#end of parse_app_options
 
 #run the main method
 if __name__ == '__main__':
