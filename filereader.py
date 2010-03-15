@@ -4,13 +4,15 @@ Hopefully, the intermediate format will be implemented, which makes the process 
 For now, only nips2lts-grey and nips2lts-grey that writes to a .dir output file are supported.
 Hardware, Options, timestamp and other stuff that is to be taken from the (not yet approved) commandline script is still missing.
 """
+#imports of python-libs
 import re
 import datetime
 import sys
 from optparse import OptionParser
-
+#imports of code we wrote
 from benchmarks.models import *
 
+from parsers import *
 
 class FileReader:
 	verbose = 0 #default: no messages except errors
@@ -66,140 +68,89 @@ class FileReader:
 	def parse(self, lines):
 		contents = ''.join(lines[1:])#all lines 'cept the first
 		if self.verbose>1:
+			print "Notice: Reading run details..."
+		options, start = self.parse_run_details(lines)
+		if self.verbose>1:
+			print "Notice: Complete!"
 			print "Notice: Finding parser..."
-		parse_info = self.get_parser(lines[0]) #the first line is used here
+		parse_info = options['parser']#self.get_parser(lines[0]) #the first line is used here
 		if self.verbose>1:
 			print "Notice: Found parser!"
-		parser = parse_info[3]	#fetch the parser
-		options = parse_info[2]	#fetch the options specified by the first line
-		regex = parse_info[4]	#expression to parse
+		
+		regex = parse_info[3]	#expression to parse
 		
 		if self.verbose>1:
 			print "Notice: Option(s) are:",options
 			print "Notice: Regex is:",regex
 			print "Notice: Reading data..."
-		data = parser(self, contents, options, regex)
+		data = self.parse_single_output(contents, options, regex)
 		if self.verbose>1:
 			print "Notice: Read successful!"
 		self.write_to_db(data)
 	#end of parse
 	
-	def write_to_db(self, data):
-		#model entry
-		name, version, location = data['model']
-		if not name or version == -1 or not location:
-			if self.verbose:
-				print "Warning: Model.name=",name,"Model.version=",version,"Model.location=",location
-			#name or version invalid -> raise an error
-			#for location, just leave it none
-		m = Model(name=name ,version=version, location=location)
-
-		#tool entry
-		name, version = data['tool']
-		if not name or version == -1:
-			if self.verbose:
-				print "Warning: Tool.name=",name,"Tool.version=",version
-			#name or version invalid -> raise an error
-		t = Tool(name=name, version=version)
-
-		#hardware entries
-		hwdata = data['hardware']
-		hardwarelist = []
-		for tuple in hwdata:
-			name, memory, cpu, disk_space, os = tuple
-			if not name or memory == -1 or not cpu or disk_space ==-1 or not os:
-				if self.verbose:
-					print "Warning: HW.name=",name,"HW.memory=",memory,"HW.cpu",cpu,"HW.disk_space",disk_space,"HW.os",os
-				#name, memory, cpu or os invalid -> raise error (or continue?)
-			#disk_space invalid -> don't set
-			if disk_space > 0:
-				h = Hardware(name=name, memory=memory, cpu=cpu, disk_space=disk_space, os=os)
-			else:
-				h = Hardware(name=name, memory=memory, cpu=cpu, os=os)
-			hardwarelist.append(h)
-
-		#option entries
-		optiondata = data['options']
-		optionlist = []
-		for tuple in optiondata:
-			name, value = tuple
-			if not name or not value or value == -1:
-				if self.verbose:
-					print "Warning: invalid option: name",name,"value",value
-				continue #ignore this tuple and move on
-			o = Option(name=name,value=value)
-			optionlist.append(o)
-		
-		#this one's always new
-		#add BenchmarkHardware and BenchmarkOption reference here
-		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
-		if date == -1 or utime == -1 or stime == -1 or etime == -1 or tcount == -1 or scount == -1 or mVSIZE == -1 or mRSS == -1:
-			if tcount == -1:
-				#tcount can be not defined.
-				tcount = None
-			else:
-				if self.verbose:
-					print "Warning: invalid value in benchmark"
-				#raise an error?
-		
-		#if the code goes up 'till here we can save everything.
-		t.save()
-		m.save()
-		for hw in hardwarelist:
-			hw.save()
-		for o in optionlist:
-			o.save()
-		#now create and save the db object
-		b = Benchmark(model_id=m, tool_id=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
-		b.save()
-		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
-		for option in optionlist:
-			b.option_id.add(option)
-		for hardware in hardwarelist:
-			b.hardware_id.add(hardware)
-		b.save()
-	#end of write_to_db
+	def parse_run_details(self, lines):
+		#this should examine the lines and read run details
+		#for now, just a dummy
+		s = self.get_parser(''.join(lines))
+		result = ({
+			'parser' : s,
+			'model_name' : 'test',
+			'model_version' : 1,
+			'model_location' : 'test.txt',
+			'tool_name': s[0],
+			'tool_version': 1,
+			'hardware': [('computer', 1000000, 'AMD Athlon 64 3500+', 10000000, 'Ubuntu 9.10')],
+			'options': [('fileout_dir', True), ('algorithm', s[1])],
+			'date': datetime.datetime.now(),
+		}, 1)
+		return result
+		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
+	#end of parse_options
 	
-	
-	def parse_nips_grey(self, content, options, regex):
-		if not options: #options is empty, so default options were given to the tool
-			m1 = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
-		elif options['fileout_dir']:
-			m1 = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
+	#content should be the entire log as a string
+	#run_details should be a dictionary containing the keys: model_name, model_version, model_location, tool_name, tool_version, hardware, options, date
+	#regex should be the regular expression to extract data from content. The regex should contain the groups etime, utime, stime, tcount, scount, vsize, rss. 
+	#	these are: elapsed, user, system times, state and transition count, memory vsize and memory rss
+	#	only transition count may be left out.
+	def parse_single_output(self, content, run_details, regex):
+		m = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
 		if self.verbose>1:
-			print "Notice: match (at start)= ", m1
-		if m1:
+			print "Notice: regex match gives: ", m
+		if m:
 			match = {
-				'model':('test', -1, None),
-				'tool':('nips2lts-grey', -1),
-				'hardware':[],
-				'options':[],
-				'benchmark':(-1,m1['etime'], m1['utime'],m1['stime'],m1['tcount'],m1['scount'],m1['vsize'],m1['rss']),
+				'model':(run_details.get('model_name'), run_details.get('model_version'), run_details.get('model_location')),
+				'tool':(run_details.get('tool_name'), run_details.get('tool_version')),
+				'hardware':run_details.get('hardware'),
+				'options':run_details.get('options'),
+				'benchmark':(run_details.get('date'),m['etime'],m['utime'],m['stime'],m.get('tcount'),m['scount'],m['vsize'],m['rss']),
 			}
-			#translate options: each key/value should become a tuple
-			for t in options:
-				match['options'].append((t,options[t]))
+			#the following ensures 'hardware' and 'options' always contain something iteratable
+			if not match['hardware']:
+				match['hardware'] = []
+			if not match['options']:
+				match['options'] = []
+		elif self.verbose:
+			print "Warning: Parse error. The input failed to match on the regex."
 		if self.verbose>1:
-			print "Notice: match (at end)= ", match
+			print "Notice: resulting dictionary: ", match
 		return match
-	#end of parse_nips_grey
-	
-	
+
 	# This dictionary contains all known parsers
 	# format:
 	#{
-	#	ID : (tool, algorithm, {'option0':True, 'option1':True}, parse_function, parse_regex),
+	#	ID : (tool, algorithm, {'option0':True, 'option1':'hello world'}, parse_function, parse_regex),
 	#}
 	parsers = {
-		'nips2lts-grey' : ("nips", "grey", {}, parse_nips_grey, r'nips2lts-grey: NIPS language module initialized\n.*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) transitions\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-		'nips2lts-grey-fileout-dir' : ("nips", "grey", {"fileout_dir": True,}, parse_nips_grey, r'nips2lts-grey: NIPS language module initialized\n.*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) transitions.*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-		
+		'nips2lts-grey' : ("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+#		'nips2lts-grey-fileout-dir' : ("nips", "grey", {"fileout_dir": True,}, parse_nips_grey, r'nips2lts-grey: NIPS language module initialized\n.*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+#		'dve2lts-grey' : ("dve", "grey"), {}, parse_single_output,  r'dve2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
 	}
 	
 	def get_parser(self, content):
 		type = content.split('\n', 1)[0] # = first line
 		if self.verbose>1:
-			print type
+			print "Notice: " + type + " is the parser, according to the file."
 		try:
 			return self.parsers[type]
 		except KeyError:
@@ -207,10 +158,134 @@ class FileReader:
 			exit()
 	#end of get_parser
 	
+	def check_data_validity(self, data):
+		valid = True
+		#Model
+		name, version, location = data['model']
+		if not name or not version or not location:
+			if self.verbose:
+				print "Warning: Data may be wrong: Model.name=",name,"Model.version=",version,"Model.location=",location
+			valid=False
+		#Tool
+		name, version = data['tool']
+		if not name or not version:
+			if self.verbose:
+				print "Warning: Data may be invalid: Tool.name=",name,"Tool.version=",version
+			valid=False
+			#name or version invalid -> raise an error
+		#Hardware
+		hwdata = data['hardware']
+		for tuple in hwdata:
+			name, memory, cpu, disk_space, os = tuple
+			if not name or memory <0 or not cpu or disk_space <0 or not os:
+				if self.verbose:
+					print "Warning: Data may be invalid: HW.name=",name,"HW.memory=",memory,"HW.cpu",cpu,"HW.disk_space",disk_space,"HW.os",os
+				valid=False
+				#name, memory, cpu or os invalid -> raise error (or continue?)
+			#disk_space invalid -> don't set
+		#Option
+		optiondata = data['options']
+		for tuple in optiondata:
+			name, value = tuple
+			if not name or not value:
+				if self.verbose:
+					print "Warning: invalid option: name",name,"value",value
+				valid=False
+		#Benchmark
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
+		if date == -1 or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
+			if tcount == -1:
+				#tcount can be undefined.
+				tcount = None
+				data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
+			else:
+				if self.verbose:
+					print "Warning: invalid value in benchmark"
+				#raise an error?
+				valid=False
+		return (valid, data)
+	#end of check_data_validity
+	
+	def write_to_db(self, data):
+		valid, data = self.check_data_validity(data)
+		if not valid:
+			print "Error: invalid data."
+			if self.verbose>=1:
+				print "Notice: the data: ", data
+		elif self.verbose>1:
+			print "Notice: Validity checked and passed, writing to DB..."
+		#model entry
+		name, version, location = data['model']
+		#a model is identified by name and version.
+		m, created = Model.objects.get_or_create(name=name, version=version, defaults={'location': location})
+		if created and verbose>1:
+			print "Notice: created a new Model entry"
+		
+		#tool entry
+		name, version = data['tool']
+		t, created = Tool.objects.get_or_create(name=name, version=version)
+		if created and verbose>1:
+			print "Notice: created a new Tool entry"
+		
+		#hardware entries
+		hwdata = data['hardware']
+		hardwarelist = []
+		for tuple in hwdata:
+			name, memory, cpu, disk_space, os = tuple
+			if disk_space > 0:
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': disk_space})
+				#if the DB did contain h but missed disk_space information:
+				if not created and h.disk_space==0:
+					h.disk_space = disk_space
+					h.save()
+				if created and verbose>1:
+					print "Notice: created a new Hardware entry"
+			else:
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
+				if created and verbose>1:
+					print "Notice: created a new Hardware entry"
+			hardwarelist.append(h)
+		
+		#option entries
+		optiondata = data['options']
+		optionlist = []
+		for tuple in optiondata:
+			name, value = tuple
+			if not name or not value:
+				if self.verbose:
+					print "Warning: invalid option: name",name,"value",value
+			o, created = Option.objects.get_or_create(name=name, value=value)
+			if created and verbose>1:
+				print "Notice: created a new Option entry"
+			optionlist.append(o)
+		
+		#this one's always new
+		#add BenchmarkHardware and BenchmarkOption reference here
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
+
+		#now create and save the db object
+		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS, finished=True)
+		b.save()
+		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
+		for option in optionlist:
+			bo = BenchmarkOption(benchmark=b, option=option)
+			bo.save()
+		for hardware in hardwarelist:
+			bh = BenchmarkHardware(benchmark=b, hardware=hardware)
+			bh.save()
+		b.save()
+	#end of write_to_db
+
 	def main(self):
-		(options, args) = self.parse_options()
+		#fetch user-defined patterns
+		execute(self)
+		print self.pattern_list
+		(options, args) = self.parse_app_options()
 		self.verbose = options.verbose
 		file_list = args
+		if not file_list:
+			print "Error: No file provided."
+			exit()
 		if self.verbose:
 			print "Verbose mode active at level:", self.verbose, "\nLevel 1 text is preceded by 'Warning:', Level 2 by 'Notice:'"
 		#when we want multiple files, a loop should be here
@@ -234,7 +309,7 @@ class FileReader:
 		
 	#end of main
 	
-	def parse_options(self):
+	def parse_app_options(self):
 		parser = OptionParser()
 		parser.add_option("-q", "--quiet",
 			action="store_const", const=0, dest="verbose", help = "Do not print anything.")
@@ -243,8 +318,37 @@ class FileReader:
 		parser.add_option("--noisy",
 			action="store_const", const=2, dest="verbose", help = "Print everything.")
 		return parser.parse_args()
-	#end of parse_options
+	#end of parse_app_options
+	
+	pattern_list = []
+	
+	def patterns(self, *args):
+		for tuple in args:
+			tool, algorithm, option_dict, regex, identification = tuple
+			self.pattern_list.append((identification, (tool, algorithm, option_dict, regex)))
+		return self.pattern_list
+	#end of patterns
+#end of FileReader
 
 #run the main method
 if __name__ == '__main__':
 	sys.exit(FileReader.main(FileReader()))
+	
+	
+	
+	
+"""
+def patterns(*args):
+	pattern_list = []
+	for t in args:
+		if isinstance(t, (list, tuple)):
+			t = url(prefix=prefix, *t)
+		elif isinstance(t, RegexURLPattern):
+			t.add_prefix(prefix)
+		pattern_list.append(t)
+	return pattern_list
+	
+parsepatterns = patterns(
+	("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+)
+"""
