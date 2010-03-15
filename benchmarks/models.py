@@ -59,6 +59,8 @@ class Benchmark(models.Model):
 	user_time = models.FloatField(verbose_name="User time (s)")
 	system_time = models.FloatField(verbose_name="System time (s)")
 	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
+
+	finished = models.BooleanField(verbose_name="Run successfully finished?")
 	
 	transition_count = models.BigIntegerField(verbose_name="Transitions", null=True) #this may be null
 	states_count = models.BigIntegerField(verbose_name="States")

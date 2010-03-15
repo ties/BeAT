@@ -158,79 +158,113 @@ class FileReader:
 			exit()
 	#end of get_parser
 	
+	def check_data_validity(self, data):
+		valid = True
+		#Model
+		name, version, location = data['model']
+		if not name or not version or not location:
+			if self.verbose:
+				print "Warning: Data may be wrong: Model.name=",name,"Model.version=",version,"Model.location=",location
+			valid=False
+		#Tool
+		name, version = data['tool']
+		if not name or not version:
+			if self.verbose:
+				print "Warning: Data may be invalid: Tool.name=",name,"Tool.version=",version
+			valid=False
+			#name or version invalid -> raise an error
+		#Hardware
+		hwdata = data['hardware']
+		for tuple in hwdata:
+			name, memory, cpu, disk_space, os = tuple
+			if not name or memory <0 or not cpu or disk_space <0 or not os:
+				if self.verbose:
+					print "Warning: Data may be invalid: HW.name=",name,"HW.memory=",memory,"HW.cpu",cpu,"HW.disk_space",disk_space,"HW.os",os
+				valid=False
+				#name, memory, cpu or os invalid -> raise error (or continue?)
+			#disk_space invalid -> don't set
+		#Option
+		optiondata = data['options']
+		for tuple in optiondata:
+			name, value = tuple
+			if not name or not value:
+				if self.verbose:
+					print "Warning: invalid option: name",name,"value",value
+				valid=False
+		#Benchmark
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
+		if date == -1 or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
+			if tcount == -1:
+				#tcount can be undefined.
+				tcount = None
+				data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
+			else:
+				if self.verbose:
+					print "Warning: invalid value in benchmark"
+				#raise an error?
+				valid=False
+		return (valid, data)
+	#end of check_data_validity
+	
 	def write_to_db(self, data):
+		valid, data = self.check_data_validity(data)
+		if not valid:
+			print "Error: invalid data."
+			if self.verbose>=1:
+				print "Notice: the data: ", data
+		elif self.verbose>1:
+			print "Notice: Validity checked and passed, writing to DB..."
 		#model entry
 		name, version, location = data['model']
-		if not name or version == -1 or not location:
-			if self.verbose:
-				print "Warning: Model.name=",name,"Model.version=",version,"Model.location=",location
-			#name or version invalid -> raise an error
-			#for location, just leave it none
-		m = Model(name=name ,version=version, location=location)
-
+		#a model is identified by name and version.
+		m, created = Model.objects.get_or_create(name=name, version=version, defaults={'location': location})
+		if created and verbose>1:
+			print "Notice: created a new Model entry"
+		
 		#tool entry
 		name, version = data['tool']
-		if not name or version == -1:
-			if self.verbose:
-				print "Warning: Tool.name=",name,"Tool.version=",version
-			#name or version invalid -> raise an error
-		t = Tool(name=name, version=version)
-
+		t, created = Tool.objects.get_or_create(name=name, version=version)
+		if created and verbose>1:
+			print "Notice: created a new Tool entry"
+		
 		#hardware entries
 		hwdata = data['hardware']
 		hardwarelist = []
 		for tuple in hwdata:
 			name, memory, cpu, disk_space, os = tuple
-			if not name or memory == -1 or not cpu or disk_space ==-1 or not os:
-				if self.verbose:
-					print "Warning: HW.name=",name,"HW.memory=",memory,"HW.cpu",cpu,"HW.disk_space",disk_space,"HW.os",os
-				#name, memory, cpu or os invalid -> raise error (or continue?)
-			#disk_space invalid -> don't set
 			if disk_space > 0:
-				h = Hardware(name=name, memory=memory, cpu=cpu, disk_space=disk_space, os=os)
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': disk_space})
+				#if the DB did contain h but missed disk_space information:
+				if not created and h.disk_space==0:
+					h.disk_space = disk_space
+					h.save()
+				if created and verbose>1:
+					print "Notice: created a new Hardware entry"
 			else:
-				h = Hardware(name=name, memory=memory, cpu=cpu, os=os)
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
+				if created and verbose>1:
+					print "Notice: created a new Hardware entry"
 			hardwarelist.append(h)
-
+		
 		#option entries
 		optiondata = data['options']
 		optionlist = []
 		for tuple in optiondata:
 			name, value = tuple
-			if not name or not value or value == -1:
+			if not name or not value:
 				if self.verbose:
 					print "Warning: invalid option: name",name,"value",value
-				continue #ignore this tuple and move on
-			o = Option(name=name,value=value)
+			o, created = Option.objects.get_or_create(name=name, value=value)
+			if created and verbose>1:
+				print "Notice: created a new Option entry"
 			optionlist.append(o)
 		
 		#this one's always new
 		#add BenchmarkHardware and BenchmarkOption reference here
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
-		if date == -1 or utime == -1 or stime == -1 or etime == -1 or tcount == -1 or scount == -1 or mVSIZE == -1 or mRSS == -1:
-			if tcount == -1:
-				#tcount can be not defined.
-				tcount = None
-			else:
-				if self.verbose:
-					print "Warning: invalid value in benchmark"
-				#raise an error?
-		
-		#temp test stuff
-		etime = 5
-		utime = 3
-		stime = 1
-		#/temp test stuff
-		
-		#if the code goes up 'till here we can save everything.
-		t.save()
-		m.save()
-		for hw in hardwarelist:
-			hw.save()
-		for o in optionlist:
-			o.save()
+
 		#now create and save the db object
-		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
+		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS, finished=True)
 		b.save()
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
 		for option in optionlist:
