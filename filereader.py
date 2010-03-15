@@ -12,6 +12,8 @@ from optparse import OptionParser
 #imports of code we wrote
 from benchmarks.models import *
 
+from parsers import *
+
 class FileReader:
 	verbose = 0 #default: no messages except errors
 	#def __init__(self):
@@ -241,9 +243,15 @@ class FileReader:
 	#end of write_to_db
 
 	def main(self):
+		#fetch user-defined patterns
+		execute(self)
+		print self.pattern_list
 		(options, args) = self.parse_app_options()
 		self.verbose = options.verbose
 		file_list = args
+		if not file_list:
+			print "Error: No file provided."
+			exit()
 		if self.verbose:
 			print "Verbose mode active at level:", self.verbose, "\nLevel 1 text is preceded by 'Warning:', Level 2 by 'Notice:'"
 		#when we want multiple files, a loop should be here
@@ -277,7 +285,36 @@ class FileReader:
 			action="store_const", const=2, dest="verbose", help = "Print everything.")
 		return parser.parse_args()
 	#end of parse_app_options
+	
+	pattern_list = []
+	
+	def patterns(self, *args):
+		for tuple in args:
+			tool, algorithm, option_dict, regex, identification = tuple
+			self.pattern_list.append((identification, (tool, algorithm, option_dict, regex)))
+		return self.pattern_list
+	#end of patterns
+#end of FileReader
 
 #run the main method
 if __name__ == '__main__':
 	sys.exit(FileReader.main(FileReader()))
+	
+	
+	
+	
+"""
+def patterns(*args):
+	pattern_list = []
+	for t in args:
+		if isinstance(t, (list, tuple)):
+			t = url(prefix=prefix, *t)
+		elif isinstance(t, RegexURLPattern):
+			t.add_prefix(prefix)
+		pattern_list.append(t)
+	return pattern_list
+	
+parsepatterns = patterns(
+	("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+)
+"""

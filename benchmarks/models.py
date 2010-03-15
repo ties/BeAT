@@ -30,9 +30,9 @@ class Option(models.Model):
 	
 class Hardware(models.Model):
 	name = models.CharField(max_length=200) 
-	memory = models.IntegerField(verbose_name="memory (KB)")
+	memory = models.BigIntegerField(verbose_name="memory (KB)")
 	cpu = models.CharField(max_length=200, verbose_name="CPU name")
-	disk_space = models.IntegerField()
+	disk_space = models.BigIntegerField(verbose_name="disk space (KB)")
 	os = models.CharField(max_length=200, verbose_name="operating system")
 
 	def __unicode__(self):
@@ -56,14 +56,14 @@ class Benchmark(models.Model):
 	option_ID = models.ManyToManyField('Option', through="BenchmarkOption", verbose_name="option")
 	date_time = models.DateTimeField('Time started')
 	#Data
-	user_time = models.BigIntegerField(verbose_name="User time (s)")
-	system_time = models.BigIntegerField(verbose_name="System time (s)")
-	elapsed_time = models.BigIntegerField(verbose_name="Elapsed time (s)")
+	user_time = models.FloatField(verbose_name="User time (s)")
+	system_time = models.FloatField(verbose_name="System time (s)")
+	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
 	
-	transition_count = models.BigIntegerField()	
-	states_count = models.BigIntegerField()
+	transition_count = models.BigIntegerField(verbose_name="Transitions", null=True) #this may be null
+	states_count = models.BigIntegerField(verbose_name="States")
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
-	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)")
+	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)")	#rounded to kilobytes
 	
 	def __unicode__(self):
 		return self.model_ID.__str__() + '-' + self.tool_ID.name.__str__()
