@@ -18,7 +18,7 @@ class FileReader:
 	verbose = 0 #default: no messages except errors
 	#def __init__(self):
 	#	contructor
-	def match_regex(self, regex, input, flags=None, disable_verbose=False):
+	def match_regex(self, regex, input, flags=None):
 		"""
 		This function compiles (with flags, if given) and matches the regex on the input.
 		If the regex does not use groups (ie. the groupdict() method returns None), this method will return True.
@@ -50,6 +50,7 @@ class FileReader:
 	#end of match_regex
 	
 	def get_lines(self, file):
+		"This function simply reads all lines from the file in question."
 		lines = []
 		line = None
 		loop_end = False
@@ -66,44 +67,51 @@ class FileReader:
 	#end of get_lines
 
 	def parse(self, lines):
-		contents = ''.join(lines[1:])#all lines 'cept the first
 		if self.verbose>1:
 			print "Notice: Reading run details..."
-		options, start = self.parse_run_details(lines)
+		#read the run information
+		information, start = self.parse_run_details(lines)
 		if self.verbose>1:
 			print "Notice: Complete!"
 			print "Notice: Finding parser..."
-		parse_info = options['parser']#self.get_parser(lines[0]) #the first line is used here
+		#find the parse_tuple
+		parse_info = information['parse_tuple']
 		if self.verbose>1:
 			print "Notice: Found parser!"
-		
+		#grab te regex that we'll parse
 		regex = parse_info[3]	#expression to parse
 		
 		if self.verbose>1:
-			print "Notice: Option(s) are:",options
+			print "Notice: Option(s) are:",information['options']
 			print "Notice: Regex is:",regex
 			print "Notice: Reading data..."
-		data = self.parse_single_output(contents, options, regex)
+		#parse the log content
+		data = self.parse_single_output(''.join(lines[10:]), information, regex)
 		if self.verbose>1:
 			print "Notice: Read successful!"
-		self.write_to_db(data)
+		return data
 	#end of parse
 	
 	def parse_run_details(self, lines):
-		#this should examine the lines and read run details
-		#for now, just a dummy
-		s = self.get_parser(''.join(lines))
+		#datetime still missing
+		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nCall: (?P<call>.*)\n'
+		m = self.match_regex(regex, ''.join(lines[:10]), re.MULTILINE + re.DOTALL)
+		call = m['call'].split(' ')
+		s = self.get_parser(call[0])
 		result = ({
-			'parser' : s,
-			'model_name' : 'test',
+			'parse_tuple' : s,
+			'model_name' : "test",
 			'model_version' : 1,
 			'model_location' : 'test.txt',
 			'tool_name': s[0],
 			'tool_version': 1,
-			'hardware': [('computer', 1000000, 'AMD Athlon 64 3500+', 10000000, 'Ubuntu 9.10')],
-			'options': [('fileout_dir', True), ('algorithm', s[1])],
-			'date': datetime.datetime.now(),
-		}, 1)
+			'hardware': [(m['name'], m['memory_kb'], m['processor'], 0, m['OS']+" "+m['Kernel_n']+" "+m['Kernel_r']+" "+m['Kernel_v'])],
+			'options': [('algorithm', s[1])],
+			'date': -1,#m['datetime'], #todo convert this to a datetime.datetime instance
+		}, 9)
+		#copy over the other options:
+		for x in s[2]:
+			result['options'].append((x, s[2][x]))
 		return result
 		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
 	#end of parse_options
@@ -148,14 +156,13 @@ class FileReader:
 	}
 	
 	def get_parser(self, content):
-		type = content.split('\n', 1)[0] # = first line
 		if self.verbose>1:
-			print "Notice: " + type + " is the parser, according to the file."
-		try:
-			return self.parsers[type]
-		except KeyError:
-			print "Error: parsing of the data in the specified file is not yet supported."
-			exit()
+			print "Notice: " + content + " is the parser, according to the file."
+		for tuple in self.pattern_list:
+			if tuple[0] == content:
+				return tuple[1]
+		print "Error: parsing of the data in the specified file is not yet supported."
+		exit()
 	#end of get_parser
 	
 	def check_data_validity(self, data):
@@ -277,9 +284,7 @@ class FileReader:
 	#end of write_to_db
 
 	def main(self):
-		#fetch user-defined patterns
-		execute(self)
-		print self.pattern_list
+		#parse the filereader options
 		(options, args) = self.parse_app_options()
 		self.verbose = options.verbose
 		file_list = args
@@ -288,6 +293,13 @@ class FileReader:
 			exit()
 		if self.verbose:
 			print "Verbose mode active at level:", self.verbose, "\nLevel 1 text is preceded by 'Warning:', Level 2 by 'Notice:'"
+
+		#fetch the patterns from the external file
+		execute(self)
+		if self.verbose>1:
+			print "Notice: pattern list is: ", self.pattern_list
+
+		#start of file-reading
 		#when we want multiple files, a loop should be here
 		path = file_list[0]
 		if self.verbose>1:
@@ -298,16 +310,38 @@ class FileReader:
 			#if something breaks, output the error and ask for retry
 			print 'Error: ', detail, '\n'
 			exit()
-		#we have a file to work with
-		#read the lines here
+		#file fetched, read it now:
 		lines = self.get_lines(file)
 		file.close()
 		if self.verbose>1:
 			print "Notice: Read complete"
 			print "Notice: Start parsing"
-		self.parse(lines)
-		
+		#figure out the runs that are in here
+		runs = self.find_runs(lines)
+		#parse each:
+		for run in runs:
+			data = self.parse(run)
+			self.write_to_db(data)
+		#end of file-reading
 	#end of main
+	
+	def find_runs(self, lines):
+		"This function will return a list of strings, each containing a complete run. The last item is an empty string if the file is correctly formatted"
+		runs = []
+		j=0
+		new_run = True
+		for line in lines:
+			if line.startswith("REPORT ENDS HERE"):
+				j+=1
+				new_run=True
+			elif new_run:
+				runs.append([])
+				runs[j].append(line)
+				new_run=False
+			else:
+				runs[j].append(line)
+		return runs
+	#end of find_runs
 	
 	def parse_app_options(self):
 		parser = OptionParser()
@@ -324,7 +358,7 @@ class FileReader:
 	
 	def patterns(self, *args):
 		for tuple in args:
-			tool, algorithm, option_dict, regex, identification = tuple
+			identification, tool, algorithm, option_dict, regex = tuple
 			self.pattern_list.append((identification, (tool, algorithm, option_dict, regex)))
 		return self.pattern_list
 	#end of patterns
@@ -333,22 +367,3 @@ class FileReader:
 #run the main method
 if __name__ == '__main__':
 	sys.exit(FileReader.main(FileReader()))
-	
-	
-	
-	
-"""
-def patterns(*args):
-	pattern_list = []
-	for t in args:
-		if isinstance(t, (list, tuple)):
-			t = url(prefix=prefix, *t)
-		elif isinstance(t, RegexURLPattern):
-			t.add_prefix(prefix)
-		pattern_list.append(t)
-	return pattern_list
-	
-parsepatterns = patterns(
-	("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-)
-"""
