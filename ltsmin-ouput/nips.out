@@ -7,7 +7,7 @@ Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
 Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
-Call: nips2lts-grey leader.b leader.dir
+Call: memtime nips2lts-grey leader.b leader.dir
 nips2lts-grey: NIPS language module initialized
 nips2lts-grey: Writing output to leader.dir
 nips2lts-grey: loading model from leader.b
@@ -70,4 +70,6 @@ nips2lts-grey: level 46 has 2 states, explored 113 states 181 trans
 nips2lts-grey: level 47 has 1 states, explored 115 states 183 trans
 nips2lts-grey: state space has 48 levels 116 states 183 transitions
 nips2lts-grey: finishing the writing
+Exit [0]
+0.00 user, 0.01 system, 0.30 elapsed -- Max VSize = 3644KB, Max RSS = 84KB
 REPORT ENDS HERE

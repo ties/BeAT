@@ -97,7 +97,10 @@ class FileReader:
 		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nCall: (?P<call>.*)\n'
 		m = self.match_regex(regex, ''.join(lines[:10]), re.MULTILINE + re.DOTALL)
 		call = m['call'].split(' ')
-		s = self.get_parser(call[0])
+		if call[0] == 'memtime':
+			s = self.get_parser(call[1])
+		else:
+			s = self.get_parser(call[0])
 		result = ({
 			'parse_tuple' : s,
 			'model_name' : "test",
@@ -144,17 +147,6 @@ class FileReader:
 			print "Notice: resulting dictionary: ", match
 		return match
 
-	# This dictionary contains all known parsers
-	# format:
-	#{
-	#	ID : (tool, algorithm, {'option0':True, 'option1':'hello world'}, parse_function, parse_regex),
-	#}
-	parsers = {
-		'nips2lts-grey' : ("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-#		'nips2lts-grey-fileout-dir' : ("nips", "grey", {"fileout_dir": True,}, parse_nips_grey, r'nips2lts-grey: NIPS language module initialized\n.*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-#		'dve2lts-grey' : ("dve", "grey"), {}, parse_single_output,  r'dve2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-	}
-	
 	def get_parser(self, content):
 		if self.verbose>1:
 			print "Notice: " + content + " is the parser, according to the file."
@@ -214,11 +206,13 @@ class FileReader:
 	#end of check_data_validity
 	
 	def write_to_db(self, data):
+		#check the data
 		valid, data = self.check_data_validity(data)
 		if not valid:
 			print "Error: invalid data."
 			if self.verbose>=1:
 				print "Notice: the data: ", data
+			exit()
 		elif self.verbose>1:
 			print "Notice: Validity checked and passed, writing to DB..."
 		#model entry
@@ -367,3 +361,22 @@ class FileReader:
 #run the main method
 if __name__ == '__main__':
 	sys.exit(FileReader.main(FileReader()))
+	
+	
+	
+	
+"""
+def patterns(*args):
+	pattern_list = []
+	for t in args:
+		if isinstance(t, (list, tuple)):
+			t = url(prefix=prefix, *t)
+		elif isinstance(t, RegexURLPattern):
+			t.add_prefix(prefix)
+		pattern_list.append(t)
+	return pattern_list
+	
+parsepatterns = patterns(
+	("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
+)
+"""
