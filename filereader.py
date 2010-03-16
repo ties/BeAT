@@ -71,7 +71,13 @@ class FileReader:
 		if self.verbose>1:
 			print "Notice: Reading run details..."
 		#read the run information
-		information, start = self.parse_run_details(lines)
+		tmp = self.parse_run_details(lines)
+		if tmp:
+			information, start = tmp
+		else:
+			#tmp = None
+			#so skip to the next run by returning None
+			return None
 		if self.verbose>1:
 			print "Notice: Complete!"
 			print "Notice: Finding parser..."
@@ -103,6 +109,9 @@ class FileReader:
 		else:
 			s = self.get_parser(call[0])
 		
+		if not s:
+			#unknown type; return None
+			return None
 		#fetch datetime info and create an object out of it
 		dt = m['datetime'].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
@@ -160,7 +169,7 @@ class FileReader:
 			if tuple[0] == content:
 				return tuple[1]
 		print "Error: parsing of the data in the specified file is not yet supported."
-		exit()
+		return None
 	#end of get_parser
 	
 	def check_data_validity(self, data):
@@ -198,14 +207,14 @@ class FileReader:
 				valid=False
 		#Benchmark
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
-		if date == -1 or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
-			if tcount == -1:
+		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
+			if not tcount or tcount == -1:
 				#tcount can be undefined.
 				tcount = None
 				data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
 			else:
 				if self.verbose:
-					print "Warning: invalid value in benchmark"
+					print "Warning: invalid value in benchmark", (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
 				#raise an error?
 				valid=False
 		return (valid, data)
@@ -324,7 +333,14 @@ class FileReader:
 		#parse each:
 		for run in runs:
 			data = self.parse(run)
-			self.write_to_db(data)
+			if data:
+				try:
+					self.write_to_db(data)
+				except:
+					#an error occured, skip this part
+					print "Warning, a parse failed"
+			elif self.verbose>=1:
+				print "Warning, a parse failed"
 		#end of file-reading
 	#end of main
 	
