@@ -1,2 +1,6 @@
 #Ignore compiled python
 *.pyc
+#Project and temp files from UltraEdit
+*.prj
+*.pui
+*.bak
