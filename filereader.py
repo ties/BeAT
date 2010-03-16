@@ -11,8 +11,9 @@ import sys
 from optparse import OptionParser
 #imports of code we wrote
 from benchmarks.models import *
-
 from parsers import *
+
+RUN_DETAILS_HEADER = 11
 
 class FileReader:
 	verbose = 0 #default: no messages except errors
@@ -86,7 +87,7 @@ class FileReader:
 			print "Notice: Regex is:",regex
 			print "Notice: Reading data..."
 		#parse the log content
-		data = self.parse_single_output(''.join(lines[10:]), information, regex)
+		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information, regex)
 		if self.verbose>1:
 			print "Notice: Read successful!"
 		return data
@@ -94,13 +95,18 @@ class FileReader:
 	
 	def parse_run_details(self, lines):
 		#datetime still missing
-		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nCall: (?P<call>.*)\n'
-		m = self.match_regex(regex, ''.join(lines[:10]), re.MULTILINE + re.DOTALL)
+		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
+		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
 		call = m['call'].split(' ')
 		if call[0] == 'memtime':
 			s = self.get_parser(call[1])
 		else:
 			s = self.get_parser(call[0])
+		
+		#fetch datetime info and create an object out of it
+		dt = m['datetime'].split(' ')
+		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
+		
 		result = ({
 			'parse_tuple' : s,
 			'model_name' : "test",
@@ -110,7 +116,7 @@ class FileReader:
 			'tool_version': 1,
 			'hardware': [(m['name'], m['memory_kb'], m['processor'], 0, m['OS']+" "+m['Kernel_n']+" "+m['Kernel_r']+" "+m['Kernel_v'])],
 			'options': [('algorithm', s[1])],
-			'date': -1,#m['datetime'], #todo convert this to a datetime.datetime instance
+			'date': dt,
 		}, 9)
 		#copy over the other options:
 		for x in s[2]:
@@ -278,6 +284,9 @@ class FileReader:
 	#end of write_to_db
 
 	def main(self):
+		"""Main function for this app
+		This just controls everything.
+		"""
 		#parse the filereader options
 		(options, args) = self.parse_app_options()
 		self.verbose = options.verbose
@@ -320,7 +329,10 @@ class FileReader:
 	#end of main
 	
 	def find_runs(self, lines):
-		"This function will return a list of strings, each containing a complete run. The last item is an empty string if the file is correctly formatted"
+		"""Splits the argument on runs
+		This function will return a list of lists, each containing a complete run.
+		The last item is an empty string if the file is correctly formatted
+		"""
 		runs = []
 		j=0
 		new_run = True
@@ -338,6 +350,13 @@ class FileReader:
 	#end of find_runs
 	
 	def parse_app_options(self):
+		"""Parse options using python's optparse
+		This will set verbose, print the --help message and read the arguments as per optparse.
+		Three options are currently available:
+		--quiet (verbosity errors only)
+		--verbose (verbosity errors and warnings)
+		--noisy (verbosity full)
+		"""
 		parser = OptionParser()
 		parser.add_option("-q", "--quiet",
 			action="store_const", const=0, dest="verbose", help = "Do not print anything.")
@@ -361,22 +380,3 @@ class FileReader:
 #run the main method
 if __name__ == '__main__':
 	sys.exit(FileReader.main(FileReader()))
-	
-	
-	
-	
-"""
-def patterns(*args):
-	pattern_list = []
-	for t in args:
-		if isinstance(t, (list, tuple)):
-			t = url(prefix=prefix, *t)
-		elif isinstance(t, RegexURLPattern):
-			t.add_prefix(prefix)
-		pattern_list.append(t)
-	return pattern_list
-	
-parsepatterns = patterns(
-	("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-)
-"""
