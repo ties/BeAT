@@ -9,7 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Example:
     # (r'^beat/', include('beat.foo.urls')),
-
+	(r'^benchmarks/ajax/', include('beat.benchmarks.ajax_urls')),
 	(r'^$', 'benchmarks.views.index'),
 	(r'^tables/$', 'benchmarks.views.tables'),
 	(r'^benchmarks/$', 'benchmarks.views.benchmarks'),

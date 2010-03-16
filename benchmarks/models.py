@@ -8,6 +8,10 @@ class Model(models.Model):
 	def __unicode__(self):
 		return self.name + '.' + self.version
 	
+	#function so that the serializers put the name and version in the json instead of the foreign key
+	def natural_key(self):
+		return (self.name,self.version)
+	
 	#plug user management here by adding a link to an entry in a table containing usernames
 
 class Tool(models.Model):	
