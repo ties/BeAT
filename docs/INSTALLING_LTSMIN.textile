@@ -54,7 +54,7 @@ Mcrl2 is trivial to install.
 ./configure --prefix=[mcrl2 prefix directory]
 make
 make install
-</pre>
+./build/bin/bjam --install --install-boost-headers</pre>
 
 h5. Building mcrl
 
@@ -62,8 +62,7 @@ Mcrl is similarly trivial to install. Remember to install the boost headers.
 <pre>tar -zxf mcrl-2.18.5.tar.gz
 cd mcrl-2.18.5/
 ./configure --prefix=[mcrl prefix]
-make install
-./build/bin/bjam --install --install-boost-headers</pre>
+make install</pre>
 
 h5. Building divine-cluster
 
