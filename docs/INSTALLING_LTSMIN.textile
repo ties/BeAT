@@ -3,6 +3,8 @@ h1. Installing LTSmin on a Debian box.
 This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) box. 
 The install is from git, since the snapshot tarballs on the "ltsmin website":http://fmt.cs.utwente.nl/tools/ltsmin/ are _missing_ the essential depedencies nipsvm and buddy.
 
+If you need memtime:http://fmt.cs.utwente.nl/tools/scm/memtime.git, you can build the updated version from "fmt git":http://fmt.cs.utwente.nl/tools/scm/memtime.git
+
 If you end up with errors like the following:
 <pre>Making all in nips-vm
 make[1]: Entering directory `/home/ties/downloads/ltsmin/nips-vm'
