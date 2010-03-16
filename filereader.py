@@ -280,7 +280,7 @@ class FileReader:
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 
 		#now create and save the db object
-		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS, finished=True)
+		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
 		b.save()
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
 		for option in optionlist:
@@ -338,7 +338,7 @@ class FileReader:
 					self.write_to_db(data)
 				except:
 					#an error occured, skip this part
-					print "Warning, a parse failed"
+					print "Warning: a parse failed"
 			elif self.verbose>=1:
 				print "Warning, a parse failed"
 		#end of file-reading
