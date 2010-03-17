@@ -3,9 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
 from django.shortcuts import render_to_response, redirect
 import datetime
-
 from beat.benchmarks.models import Benchmark
-from forms import CompareForm
+from forms import *
 
 def simple(request, id):
 	
@@ -13,7 +12,7 @@ def simple(request, id):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
-	fig=Figure()
+	fig=Figure(facecolor='w')
 	ax=fig.add_subplot(111)
 	
 	# DB stuff
@@ -24,19 +23,65 @@ def simple(request, id):
 	width = 0.4
 	ax.bar(numpy.arange(benchmarks.count()), states, width, align='center')
 	ax.set_xticks(numpy.arange(benchmarks.count()))
-	ax.set_xticklabels(benchmarks, size='small', position=(0,0))
+	ax.set_xticklabels(benchmarks, size='small')
 	ax.set_ylabel('States')
 	ax.set_xlabel('Benchmark')
-	ax.figure.set_figheight(2)
+	#ax.figure.set_figheight(2)
 	ax.grid(True)
 	# Output
+	fig.set_size_inches(6,6)
 	canvas = FigureCanvas(fig)
-	fig.set_figsize_inches(6,6)
 	response = HttpResponse(content_type='image/png')
 	canvas.print_png(response)
 	return response
 
-#@login_required(redirect_field_name='next')
+def graph_model(request):
+	
+	import numpy as np
+	# General library stuff
+	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+	from matplotlib.lines import Line2D
+	from matplotlib.figure import Figure
+	
+	#DB stuff
+	from django.db.models import Count
+	from beat.benchmarks.models import Model
+
+	fig=Figure(facecolor='w')
+	ax=fig.add_subplot(111)
+	
+	colors = ('b', 'g', 'r', 'c', 'm', 'y', 'k')
+	linestyles = ['_', '-', '--', ':']
+	markers = ['+','*','x']
+	styles = linestyles + markers
+
+	#states = [b.states_count for b in benchmarks]
+	# Plot data
+	axisNum = 0
+	models = Model.objects.values('name').annotate(num_models=Count('name'))
+	for m in models:
+		axisNum += 1
+		style = styles[axisNum % len(styles) ]
+		color = colors[axisNum % len(colors) ]
+		benchmarks = Benchmark.objects.filter(model_ID__name__exact = m['name'])
+		lines = ax.plot(
+			[b.model_ID.version for b in benchmarks], 
+			[b.states_count for b in benchmarks], 
+			'o' + style + color)
+
+	#Mark-up
+	ax.set_title('States vs Version')
+	ax.legend([m['name'] for m in models])
+	ax.set_ylabel('States')
+	ax.set_xlabel('Version')
+	print (lines)
+	# Output
+	canvas = FigureCanvas(fig)
+	response = HttpResponse(content_type='image/png')
+	canvas.print_png(response)
+	return response
+
+	#@login_required(redirect_field_name='next')
 def index(request):
 	
 	t = loader.get_template('base.html')
@@ -67,6 +112,19 @@ def compare_post(request):
 	else:
 		return redirect(benchmarks.views.benchmarks)
 
+def compare_model(request):
+	if request.method == 'POST': # If the form has been submitted...
+		form = CompareModelsForm(request.POST) # A form bound to the POST data
+		if form.is_valid(): # All validation rules pass
+			return HttpResponseRedirect('/benchmarks/') # Redirect after POST
+	else:
+		form = CompareModelsForm() # An unbound form
+		
+	return render_to_response('compare_models.html', {
+		'form': form, 
+	}, context_instance=RequestContext(request))
+
+	
 def compare(request, id):
 	t = loader.get_template('compare.html')
 	b = id.split('+')
