@@ -234,13 +234,13 @@ class FileReader:
 		name, version, location = data['model']
 		#a model is identified by name and version.
 		m, created = Model.objects.get_or_create(name=name, version=version, defaults={'location': location})
-		if created and verbose>1:
+		if created and self.verbose>1:
 			print "Notice: created a new Model entry"
 		
 		#tool entry
 		name, version = data['tool']
 		t, created = Tool.objects.get_or_create(name=name, version=version)
-		if created and verbose>1:
+		if created and self.verbose>1:
 			print "Notice: created a new Tool entry"
 		
 		#hardware entries
@@ -254,11 +254,11 @@ class FileReader:
 				if not created and h.disk_space==0:
 					h.disk_space = disk_space
 					h.save()
-				if created and verbose>1:
+				if created and self.verbose>1:
 					print "Notice: created a new Hardware entry"
 			else:
 				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
-				if created and verbose>1:
+				if created and self.verbose>1:
 					print "Notice: created a new Hardware entry"
 			hardwarelist.append(h)
 		
@@ -271,7 +271,7 @@ class FileReader:
 				if self.verbose:
 					print "Warning: invalid option: name",name,"value",value
 			o, created = Option.objects.get_or_create(name=name, value=value)
-			if created and verbose>1:
+			if created and self.verbose>1:
 				print "Notice: created a new Option entry"
 			optionlist.append(o)
 		
@@ -336,9 +336,11 @@ class FileReader:
 			if data:
 				try:
 					self.write_to_db(data)
-				except:
+				except Exception as detail:
 					#an error occured, skip this part
-					print "Warning: a parse failed"
+					if self.verbose>=1:
+						print "Warning: a parse failed"
+						print detail
 			elif self.verbose>=1:
 				print "Warning, a parse failed"
 		#end of file-reading
