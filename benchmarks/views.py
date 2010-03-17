@@ -35,8 +35,7 @@ def simple(request, id):
 	canvas.print_png(response)
 	return response
 
-def graph_model(request):
-	
+def graph_model(request, models=None, type='States count', options=None):
 	import numpy as np
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -51,32 +50,42 @@ def graph_model(request):
 	ax=fig.add_subplot(111)
 	
 	colors = ('b', 'g', 'r', 'c', 'm', 'y', 'k')
-	linestyles = ['_', '-', '--', ':']
-	markers = ['+','*','x']
-	styles = linestyles + markers
+	styles = ['_', '-', '--', ':']
+	markers = ['+','o','x']
 
 	#states = [b.states_count for b in benchmarks]
 	# Plot data
 	axisNum = 0
-	models = Model.objects.values('name').annotate(num_models=Count('name'))
-	for m in models:
+	modelNames = Model.objects.values('name').annotate(num_models=Count('name'))
+	for m in modelNames:
 		axisNum += 1
 		style = styles[axisNum % len(styles) ]
 		color = colors[axisNum % len(colors) ]
+		marker = markers[axisNum % len(markers) ]
+		
 		benchmarks = Benchmark.objects.filter(model_ID__name__exact = m['name'])
+		if models is not None:
+			benchmarks = benchmarks.filter(model_ID__name in models)
+		types = {
+			'Transition count': [b.transition_count for b in benchmarks],
+			'States count': [b.states_count for b in benchmarks],
+			'Memory VSIZE': [b.memory_VSIZE for b in benchmarks],
+			'Memory RSS': [b.memory_RSS for b in benchmarks],
+		}[type]
 		lines = ax.plot(
 			[b.model_ID.version for b in benchmarks], 
-			[b.states_count for b in benchmarks], 
-			'o' + style + color)
+			types, 
+			marker + style + color,
+			label = m['name'])
 
 	#Mark-up
-	ax.set_title('States vs Version')
-	ax.legend([m['name'] for m in models])
-	ax.set_ylabel('States')
+	ax.set_title(type + ' vs Version')
+	ax.legend()
+	ax.set_ylabel(type)
 	ax.set_xlabel('Version')
-	print (lines)
 	# Output
 	canvas = FigureCanvas(fig)
+	fig.savefig('benchmark.png')
 	response = HttpResponse(content_type='image/png')
 	canvas.print_png(response)
 	return response
