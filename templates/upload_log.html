@@ -1,0 +1,12 @@
+{% extends "base_site.html" %}
+{% block title %}Upload log{% endblock %}
+{% block content %}
+		<h2>Upload log</h2>
+		
+		<!-- START CONTENT HERE -->
+		<form enctype="multipart/form-data" action="/upload/" method="post">{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Submit" />
+		</form>
+		<!-- END OF CONTENT -->
+{% endblock %}

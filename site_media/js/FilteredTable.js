@@ -1,8 +1,12 @@
 //local variables that define what the contents of the select-elements are in the filter
-var text_filterStyle = '<option value="0">Equal to</option><option value="1">Contains</option><option value="2">Begins with</option><option value="3">Ends with</option>';
-var date_filterStyle = '<option value="0">On</option><option value="1">Before</option><option value="2">After</option>';
-var number_filterStyle = '<option value="0">Equal to</option><option value="1">Greater than</option><option value="2">Smaller than</option>';
+var name_filterStyle = '<option value="model_ID__name__iexact">Equal to</option><option value="model_ID__name__icontains">Contains</option><option value="model_ID__name__istartswith">Begins with</option><option value="model_ID__name__iendswith">Ends with</option>';
+var date_filterStyle = '<option value="date_time__exact">On</option><option value="date_time__lte">Before</option><option value="date_time__gte">After</option>';
+var memory_filterStyle = '<option value="memory_VSIZE__exact">Equal to</option><option value="memory_VSIZE__gte">Greater than</option><option value="memory_VSIZE__lte">Less than</option>';
+var runtime_filterStyle = '<option value="elapsed_time__exact">Equal to</option><option value="elapsed_time__gte">Greater than</option><option value="elapsed_time__lte">Less than</option>';
+var states_filterStyle = '<option value="states_count__exact">Equal to</option><option value="states_count__gte">Greater than</option><option value="states_count__lte">Less than</option>';
+var transitions_filterStyle = '<option value="transition_count__exact">Equal to</option><option value="transition_count__gte">Greater than</option><option value="transition_count__lte">Less than</option>';
 var options_filterStyle = '<option value="0">Options (hover)</option>';
+var empty_filterStyle = '<option value="empty">&lt;empty&gt;</option>';
 
 /*
  * Function to add a filterrow to the filtertable, will be placed after the caller
@@ -121,31 +125,47 @@ function changedFilter(elem){
 		var value = elem.value;
 		
 		switch(value){
-			//The text filter
-			case "name":
+			case "empty":
 				//set the text
-				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(text_filterStyle);
+				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html('<option value="empty">&lt;empty&gt;</option>');
 				//remove the hover-div if it exists
 				$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 				//show the filterOn-textinput if it was hidden
 				$(elem).siblings('input.filterValue').show();
 			break;
-			//The date filter
+			case "name":
+				//set the text
+				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(name_filterStyle);
+				//remove the hover-div if it exists
+				$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
+				//show the filterOn-textinput if it was hidden
+				$(elem).siblings('input.filterValue').show();
+			break;
 			case "date":
 				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(date_filterStyle);
 				$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 				$(elem).siblings('input.filterValue').show();
 			break;
-			//The number filter
 			case "memory":
-			case "runtime":
-			case "states":
-			case "transitions":
-				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(number_filterStyle);
+				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(memory_filterStyle);
 				$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 				$(elem).siblings('input.filterValue').show();
 			break;
-			//The options filter
+			case "runtime":
+				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(runtime_filterStyle);
+				$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
+				$(elem).siblings('input.filterValue').show();
+			break;
+			case "states":
+				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(states_filterStyle);
+				$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
+				$(elem).siblings('input.filterValue').show();
+			break;
+			case "transitions":
+				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(transitions_filterStyle);
+				$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
+				$(elem).siblings('input.filterValue').show();
+			break;
 			case "options":
 				$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(options_filterStyle);
 				//hide the filterOn-textinput
@@ -167,12 +187,73 @@ function changedFilter(elem){
 }
 
 function filter(){
-	var data = collectData();
-	alert(data);
+	var d = collectData();
+	if (d!=""){
+		$.ajax({
+			url: 'ajax/filter/',
+			data: d,
+			beforeSend: function(){
+							$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
+						},
+			success: function(a){
+						var headers = '<tr>\n\
+											<th>&nbsp;</th>\n\
+											<th>Model</th>\n\
+											<th>States</th>\n\
+											<th>Runtime</th>\n\
+											<th>VSize</th>\n\
+											<th>Finished</th>\n\
+										</tr>';
+						$("table.benchmarks").empty();
+						$("table.benchmarks").append(headers);
+						$(a).each(function(i,json){
+							$("table.benchmarks").append('<tr>\n\
+								<td><input type="checkbox" name="benchmarks" value="'+json.pk+'" /></td>\n\
+								<td>'+json.fields.model_ID[0]+'.'+json.fields.model_ID[1]+'</td>\n\
+								<td>'+json.fields.states_count+'</td>\n\
+								<td>'+json.fields.elapsed_time+'</td>\n\
+								<td>'+json.fields.memory_VSIZE+'</td>\n\
+								<td>true</td></tr>');
+						});
+					},
+			error: function(XMLHttpRequest,textStatus,errorThrown){
+						alert("Error: "+textStatus);
+					},
+			complete: function(){
+							$("#ajaxload").empty();
+						},
+			dataType: 'json'
+		});
+	}
 }
 
 function collectData(){
+	var res = "";
+	var count = 0;
+	var filterrows = $('#filters tr');
 	
+	for (var i=0;i<filterrows.length;i++){
+		var type = $("#filterrow_"+i+" .filterType").attr('value');
+		if (type!="empty"){
+			res+="filter"+count+"="+type;
+			if (type=="options"){
+				var checkboxes = $("#filterrow_"+i+" .optionName");
+				var values = $("#filterrow_"+i+" .optionValue");
+				for (var j=0;j<checkboxes.length;j++){
+					if (checkboxes[j].checked==true){
+						res+=","+checkboxes[j].value;
+						res+=","+values[j].value;
+					}
+				}
+			}else{
+				res+=","+$("#filterrow_"+i+" .filterStyle").attr('value');
+				res+=","+$("#filterrow_"+i+" .filterValue").attr('value');
+			}
+			if (i+1 < filterrows.length)	res+="&";
+			count++;
+		}
+	}
+	return res;
 }
 
 /*

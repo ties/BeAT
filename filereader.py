@@ -11,14 +11,15 @@ import sys
 from optparse import OptionParser
 #imports of code we wrote
 from benchmarks.models import *
-
 from parsers import *
+
+RUN_DETAILS_HEADER = 11
 
 class FileReader:
 	verbose = 0 #default: no messages except errors
 	#def __init__(self):
 	#	contructor
-	def match_regex(self, regex, input, flags=None, disable_verbose=False):
+	def match_regex(self, regex, input, flags=None):
 		"""
 		This function compiles (with flags, if given) and matches the regex on the input.
 		If the regex does not use groups (ie. the groupdict() method returns None), this method will return True.
@@ -50,6 +51,7 @@ class FileReader:
 	#end of match_regex
 	
 	def get_lines(self, file):
+		"This function simply reads all lines from the file in question."
 		lines = []
 		line = None
 		loop_end = False
@@ -66,44 +68,68 @@ class FileReader:
 	#end of get_lines
 
 	def parse(self, lines):
-		contents = ''.join(lines[1:])#all lines 'cept the first
 		if self.verbose>1:
 			print "Notice: Reading run details..."
-		options, start = self.parse_run_details(lines)
+		#read the run information
+		tmp = self.parse_run_details(lines)
+		if tmp:
+			information, start = tmp
+		else:
+			#tmp = None
+			#so skip to the next run by returning None
+			return None
 		if self.verbose>1:
 			print "Notice: Complete!"
 			print "Notice: Finding parser..."
-		parse_info = options['parser']#self.get_parser(lines[0]) #the first line is used here
+		#find the parse_tuple
+		parse_info = information['parse_tuple']
 		if self.verbose>1:
 			print "Notice: Found parser!"
-		
+		#grab te regex that we'll parse
 		regex = parse_info[3]	#expression to parse
 		
 		if self.verbose>1:
-			print "Notice: Option(s) are:",options
+			print "Notice: Option(s) are:",information['options']
 			print "Notice: Regex is:",regex
 			print "Notice: Reading data..."
-		data = self.parse_single_output(contents, options, regex)
+		#parse the log content
+		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information, regex)
 		if self.verbose>1:
 			print "Notice: Read successful!"
-		self.write_to_db(data)
+		return data
 	#end of parse
 	
 	def parse_run_details(self, lines):
-		#this should examine the lines and read run details
-		#for now, just a dummy
-		s = self.get_parser(''.join(lines))
+		#datetime still missing
+		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
+		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
+		call = m['call'].split(' ')
+		if call[0] == 'memtime':
+			s = self.get_parser(call[1])
+		else:
+			s = self.get_parser(call[0])
+		
+		if not s:
+			#unknown type; return None
+			return None
+		#fetch datetime info and create an object out of it
+		dt = m['datetime'].split(' ')
+		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
+		
 		result = ({
-			'parser' : s,
-			'model_name' : 'test',
+			'parse_tuple' : s,
+			'model_name' : "test",
 			'model_version' : 1,
 			'model_location' : 'test.txt',
 			'tool_name': s[0],
 			'tool_version': 1,
-			'hardware': [('computer', 1000000, 'AMD Athlon 64 3500+', 10000000, 'Ubuntu 9.10')],
-			'options': [('fileout_dir', True), ('algorithm', s[1])],
-			'date': datetime.datetime.now(),
-		}, 1)
+			'hardware': [(m['name'], m['memory_kb'], m['processor'], 0, m['OS']+" "+m['Kernel_n']+" "+m['Kernel_r']+" "+m['Kernel_v'])],
+			'options': [('algorithm', s[1])],
+			'date': dt,
+		}, 9)
+		#copy over the other options:
+		for x in s[2]:
+			result['options'].append((x, s[2][x]))
 		return result
 		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
 	#end of parse_options
@@ -136,26 +162,14 @@ class FileReader:
 			print "Notice: resulting dictionary: ", match
 		return match
 
-	# This dictionary contains all known parsers
-	# format:
-	#{
-	#	ID : (tool, algorithm, {'option0':True, 'option1':'hello world'}, parse_function, parse_regex),
-	#}
-	parsers = {
-		'nips2lts-grey' : ("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-#		'nips2lts-grey-fileout-dir' : ("nips", "grey", {"fileout_dir": True,}, parse_nips_grey, r'nips2lts-grey: NIPS language module initialized\n.*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-#		'dve2lts-grey' : ("dve", "grey"), {}, parse_single_output,  r'dve2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-	}
-	
 	def get_parser(self, content):
-		type = content.split('\n', 1)[0] # = first line
 		if self.verbose>1:
-			print "Notice: " + type + " is the parser, according to the file."
-		try:
-			return self.parsers[type]
-		except KeyError:
-			print "Error: parsing of the data in the specified file is not yet supported."
-			exit()
+			print "Notice: " + content + " is the parser, according to the file."
+		for tuple in self.pattern_list:
+			if tuple[0] == content:
+				return tuple[1]
+		print "Error: parsing of the data in the specified file is not yet supported."
+		return None
 	#end of get_parser
 	
 	def check_data_validity(self, data):
@@ -193,38 +207,40 @@ class FileReader:
 				valid=False
 		#Benchmark
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
-		if date == -1 or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
-			if tcount == -1:
+		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
+			if not tcount or tcount == -1:
 				#tcount can be undefined.
 				tcount = None
 				data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
 			else:
 				if self.verbose:
-					print "Warning: invalid value in benchmark"
+					print "Warning: invalid value in benchmark", (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
 				#raise an error?
 				valid=False
 		return (valid, data)
 	#end of check_data_validity
 	
 	def write_to_db(self, data):
+		#check the data
 		valid, data = self.check_data_validity(data)
 		if not valid:
 			print "Error: invalid data."
 			if self.verbose>=1:
 				print "Notice: the data: ", data
+			exit()
 		elif self.verbose>1:
 			print "Notice: Validity checked and passed, writing to DB..."
 		#model entry
 		name, version, location = data['model']
 		#a model is identified by name and version.
 		m, created = Model.objects.get_or_create(name=name, version=version, defaults={'location': location})
-		if created and verbose>1:
+		if created and self.verbose>1:
 			print "Notice: created a new Model entry"
 		
 		#tool entry
 		name, version = data['tool']
 		t, created = Tool.objects.get_or_create(name=name, version=version)
-		if created and verbose>1:
+		if created and self.verbose>1:
 			print "Notice: created a new Tool entry"
 		
 		#hardware entries
@@ -238,11 +254,11 @@ class FileReader:
 				if not created and h.disk_space==0:
 					h.disk_space = disk_space
 					h.save()
-				if created and verbose>1:
+				if created and self.verbose>1:
 					print "Notice: created a new Hardware entry"
 			else:
 				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
-				if created and verbose>1:
+				if created and self.verbose>1:
 					print "Notice: created a new Hardware entry"
 			hardwarelist.append(h)
 		
@@ -255,7 +271,7 @@ class FileReader:
 				if self.verbose:
 					print "Warning: invalid option: name",name,"value",value
 			o, created = Option.objects.get_or_create(name=name, value=value)
-			if created and verbose>1:
+			if created and self.verbose>1:
 				print "Notice: created a new Option entry"
 			optionlist.append(o)
 		
@@ -264,7 +280,7 @@ class FileReader:
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 
 		#now create and save the db object
-		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS, finished=True)
+		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
 		b.save()
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
 		for option in optionlist:
@@ -277,9 +293,10 @@ class FileReader:
 	#end of write_to_db
 
 	def main(self):
-		#fetch user-defined patterns
-		execute(self)
-		print self.pattern_list
+		"""Main function for this app
+		This just controls everything.
+		"""
+		#parse the filereader options
 		(options, args) = self.parse_app_options()
 		self.verbose = options.verbose
 		file_list = args
@@ -288,6 +305,13 @@ class FileReader:
 			exit()
 		if self.verbose:
 			print "Verbose mode active at level:", self.verbose, "\nLevel 1 text is preceded by 'Warning:', Level 2 by 'Notice:'"
+
+		#fetch the patterns from the external file
+		execute(self)
+		if self.verbose>1:
+			print "Notice: pattern list is: ", self.pattern_list
+
+		#start of file-reading
 		#when we want multiple files, a loop should be here
 		path = file_list[0]
 		if self.verbose>1:
@@ -298,18 +322,59 @@ class FileReader:
 			#if something breaks, output the error and ask for retry
 			print 'Error: ', detail, '\n'
 			exit()
-		#we have a file to work with
-		#read the lines here
+		#file fetched, read it now:
 		lines = self.get_lines(file)
 		file.close()
 		if self.verbose>1:
 			print "Notice: Read complete"
 			print "Notice: Start parsing"
-		self.parse(lines)
-		
+		#figure out the runs that are in here
+		runs = self.find_runs(lines)
+		#parse each:
+		for run in runs:
+			data = self.parse(run)
+			if data:
+				try:
+					self.write_to_db(data)
+				except Exception as detail:
+					#an error occured, skip this part
+					if self.verbose>=1:
+						print "Warning: a parse failed"
+						print detail
+			elif self.verbose>=1:
+				print "Warning, a parse failed"
+		#end of file-reading
 	#end of main
 	
+	def find_runs(self, lines):
+		"""Splits the argument on runs
+		This function will return a list of lists, each containing a complete run.
+		The last item is an empty string if the file is correctly formatted
+		"""
+		runs = []
+		j=0
+		new_run = True
+		for line in lines:
+			if line.startswith("REPORT ENDS HERE"):
+				j+=1
+				new_run=True
+			elif new_run:
+				runs.append([])
+				runs[j].append(line)
+				new_run=False
+			else:
+				runs[j].append(line)
+		return runs
+	#end of find_runs
+	
 	def parse_app_options(self):
+		"""Parse options using python's optparse
+		This will set verbose, print the --help message and read the arguments as per optparse.
+		Three options are currently available:
+		--quiet (verbosity errors only)
+		--verbose (verbosity errors and warnings)
+		--noisy (verbosity full)
+		"""
 		parser = OptionParser()
 		parser.add_option("-q", "--quiet",
 			action="store_const", const=0, dest="verbose", help = "Do not print anything.")
@@ -324,7 +389,7 @@ class FileReader:
 	
 	def patterns(self, *args):
 		for tuple in args:
-			tool, algorithm, option_dict, regex, identification = tuple
+			identification, tool, algorithm, option_dict, regex = tuple
 			self.pattern_list.append((identification, (tool, algorithm, option_dict, regex)))
 		return self.pattern_list
 	#end of patterns
@@ -333,22 +398,3 @@ class FileReader:
 #run the main method
 if __name__ == '__main__':
 	sys.exit(FileReader.main(FileReader()))
-	
-	
-	
-	
-"""
-def patterns(*args):
-	pattern_list = []
-	for t in args:
-		if isinstance(t, (list, tuple)):
-			t = url(prefix=prefix, *t)
-		elif isinstance(t, RegexURLPattern):
-			t.add_prefix(prefix)
-		pattern_list.append(t)
-	return pattern_list
-	
-parsepatterns = patterns(
-	("nips", "grey", {}, r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB'),
-)
-"""

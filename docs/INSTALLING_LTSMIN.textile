@@ -1,7 +1,6 @@
 h1. Installing LTSmin on a Debian box.
 
-This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) box. 
-The install is from git, since the snapshot tarballs on the "ltsmin website":http://fmt.cs.utwente.nl/tools/ltsmin/ are _missing_ the essential depedencies nipsvm and buddy.
+This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) box. The install is from git, since the snapshot tarballs on the "ltsmin website":http://fmt.cs.utwente.nl/tools/ltsmin/ are _missing_ the essential depedencies nipsvm and buddy.
 
 If you need memtime:http://fmt.cs.utwente.nl/tools/scm/memtime.git, you can build the updated version from "fmt git":http://fmt.cs.utwente.nl/tools/scm/memtime.git
 
@@ -64,25 +63,13 @@ cd mcrl-2.18.5/
 ./configure --prefix=[mcrl prefix]
 make install</pre>
 
-h5. Building divine-cluster
-
-* download divine-cluster 0.8.3 from the "divine website":http://divine.fi.muni.cz/page.php?page=download . Download version 0.8.3
-* Apply the LTSmin patch to divine-cluster 0.8.3. Get the patch at "LTSmin git":http://fmt.cs.utwente.nl/gitweb/?p=ltsmin.git;a=blob_plain;f=contrib/divine-cluster-0.8.3-ltsmin.patch;h=7862d34b6a3ae7b8a3db5a2ced0c0e1741036dca;hb=HEAD
-
-You have the prerequisites. Now you need to make+install divine-cluster.
-<pre>cd divine-0.8.3
-patch -p1 < ../divine-cluster-0.8.3-ltsmin.patch
-./configure --prefix=[divine prefix]
-make
-make install</pre>
-
 h2. Configuring LTSmin
 
 Now you can configure ltsmin. The following command will first autogenerate the configure script for LTSmin. The second line will configure LTSmin with the dependencies you just compiled. **Remember to plug in the path prefixes for mcrl and mcrl2.**
 
 <pre> ./ltsminreconf
-	./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]/mCRL --with-divine=[divine prefix]
+<<<<<<< .mine	./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]/mCRL --with-divine=[divine prefix]
 	make
 	make install</pre>
 	
-Append /mCRL to the path of mCRL. If you compile LTSmin with divine-cluster *and* mCRL, /mCRL needs to be added to the end of mCRL's path for it to compile.
+Append /mCRL to the path of mCRL. If you compile LTSmin with divine-cluster *and* mCRL, /mCRL needs to be added to the end of mCRL's path for it to compile.=======	./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]</pre>>>>>>>> .theirs

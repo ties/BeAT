@@ -8,6 +8,10 @@ class Model(models.Model):
 	def __unicode__(self):
 		return self.name + '.' + self.version
 	
+	#function so that the serializers put the name and version in the json instead of the foreign key
+	def natural_key(self):
+		return (self.name,self.version)
+	
 	#plug user management here by adding a link to an entry in a table containing usernames
 
 class Tool(models.Model):	
@@ -60,7 +64,8 @@ class Benchmark(models.Model):
 	system_time = models.FloatField(verbose_name="System time (s)")
 	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
 
-	finished = models.BooleanField(verbose_name="Run successfully finished?")
+#	fix this one later
+#	finished = models.BooleanField(verbose_name="Run successfully finished?")
 	
 	transition_count = models.BigIntegerField(verbose_name="Transitions", null=True) #this may be null
 	states_count = models.BigIntegerField(verbose_name="States")
