@@ -28,15 +28,19 @@ def simple(request, id):
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
 	fig=Figure(facecolor='w')
-	ax=fig.add_subplot(111)
+	ax=fig.add_subplot(211)
 	
 	# DB stuff
 	benchmark_IDs = Comparison.objects.get(pk=id)
 	benchmarks = Benchmark.objects.filter(pk__in=benchmark_IDs.benchmarks.split(','))
 	states = [b.states_count for b in benchmarks]
+	elapsed_time = [b.elapsed_time for b in benchmarks]
+	memory_vsize = [b.memory_VSIZE for b in benchmarks]
+	
 	# Plot data
 	width = 0.4
-	ax.bar(numpy.arange(benchmarks.count()), states, width, align='center')
+	numBench = benchmarks.count()
+	ax.bar(numpy.arange(numBench), states, width, align='center')
 	ax.set_xticks(numpy.arange(benchmarks.count()))
 	ax.set_xticklabels(benchmarks, size='small')
 	ax.set_ylabel('States')
@@ -44,7 +48,13 @@ def simple(request, id):
 	#ax.figure.set_figheight(2)
 	ax.grid(True)
 	# Output
-	fig.set_size_inches(6,6)
+	ax=fig.add_subplot(212)
+	ax.plot(elapsed_time, memory_vsize, 'ro')
+	ax.set_ylabel('Elapsed Time')
+	ax.set_xlabel('Memory VSIZE')
+	
+	
+	#fig.set_size_inches(4,8)
 	canvas = FigureCanvas(fig)
 	response = HttpResponse(content_type='image/png')
 	canvas.print_png(response)
