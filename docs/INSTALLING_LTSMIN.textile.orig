@@ -68,8 +68,12 @@ h2. Configuring LTSmin
 Now you can configure ltsmin. The following command will first autogenerate the configure script for LTSmin. The second line will configure LTSmin with the dependencies you just compiled. **Remember to plug in the path prefixes for mcrl and mcrl2.**
 
 <pre> ./ltsminreconf
-./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]/mCRL --with-divine=[divine prefix]
-make
-make install</pre>
+<<<<<<< HEAD
+	./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]/mCRL --with-divine=[divine prefix]
+	make
+	make install</pre>
 	
 Append /mCRL to the path of mCRL. If you compile LTSmin with divine-cluster *and* mCRL, /mCRL needs to be added to the end of mCRL's path for it to compile.
+=======
+	./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]</pre>
+>>>>>>> origin/master
