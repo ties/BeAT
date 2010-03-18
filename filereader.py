@@ -280,7 +280,7 @@ class FileReader:
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 
 		#now create and save the db object
-		b = Benchmark(model_ID=m, tool_ID=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
+		b = Benchmark(model=m, tool=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
 		b.save()
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
 		for option in optionlist:

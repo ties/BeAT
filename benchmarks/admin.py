@@ -10,11 +10,11 @@ class OptionInline(admin.TabularInline):
 	extra = 1
 
 class BenchmarkAdmin(admin.ModelAdmin):
-	list_display = ('model_ID', 'tool_ID', 'date_time', 'user_time', 'system_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
+	list_display = ('model', 'tool', 'date_time', 'finished','user_time', 'system_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
 	list_filter = ['date_time']
-	search_fields = ['model_ID__name', 'tool_ID__name']
+	search_fields = ['model__name', 'tool__name']
 	fieldsets = [
-		('Configuration', {'fields': ['model_ID','tool_ID']}),
+		('Configuration', {'fields': ['model','tool','finished']}),
 		('Date information', {'fields': ['date_time']}),
 		('Output data', {'fields': ['user_time', 'system_time', 'elapsed_time','transition_count','states_count','memory_VSIZE', 'memory_RSS']}),
 	]
@@ -25,4 +25,4 @@ admin.site.register(Tool)
 admin.site.register(Hardware)
 admin.site.register(Option)
 admin.site.register(Benchmark, BenchmarkAdmin)
-
+admin.site.register(Comparison)

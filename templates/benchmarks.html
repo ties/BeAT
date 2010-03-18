@@ -2,6 +2,8 @@
 {% block title %}Benchmarks{% endblock %}
 {% block content %}
 		<h2>Benchmark Table</h2>
+		
+		<!-- FILTER TABLE -->
 		<form onsubmit="return false;">
 			<table style="width:480px" id="filters" cellpadding="0" cellspacing="0">
 				<tr id="filterrow_0">
@@ -32,8 +34,11 @@
 			</table>
 			<input type="submit" value="Filter" onclick="filter();" /><span id="ajaxload"></span>
 		</form>
+		<!-- END FILTER TABLE -->
+		
+		<!-- BENCHMARK TABLE -->
 		<div class="scroll">
-			<form action="{% url benchmarks.views.compare_post %}" method="post">{% csrf_token %}
+			<form action="{% url benchmarks.views.compare %}" method="post">{% csrf_token %}
 				<table class="benchmarks">
 					<tr>
 						<th>&nbsp;</th>
@@ -47,15 +52,16 @@
 					{% for benchmark in benchmarks %}
 					<tr>
 						<td><input type="checkbox" name="benchmarks" value="{{ benchmark.id }}" /></td>
-						<td>{{ benchmark.model_ID }}</td>
+						<td>{{ benchmark.model }}</td>
 						<td>{{ benchmark.states_count }}</td>
 						<td>{{ benchmark.elapsed_time }}</td>
 						<td>{{ benchmark.memory_VSIZE }}</td>
-						<td>true</td>
+						<td>{{ benchmark.finished }}</td>
 					</tr>
 					{% endfor %}
 				</table>
 				<input type="submit" value="Compare" />
 			</form>
 		</div>
+		<!-- END BENCHMARK TABLE -->
 {% endblock %}

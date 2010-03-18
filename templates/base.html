@@ -38,7 +38,7 @@
 						{% if user.is_authenticated %}
 							<li><a href="{%url django.contrib.auth.views.logout_then_login %}">Log out</a></li>
 						{% else %}
-							<li><a href="#">Registreren</a></li>
+							<li><a href="#">Register</a></li>
 							<li><a href="{%url django.contrib.auth.views.login %}?next=/">Log in</a></li>
 						{% endif %}				
 					</ul>

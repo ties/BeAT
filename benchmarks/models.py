@@ -1,6 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class Model(models.Model):	
+class Model(models.Model):
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
 	location = models.FilePathField(path="site_media/models")
@@ -54,23 +55,29 @@ class BenchmarkHardware(models.Model):
 
 class Benchmark(models.Model):
 	#Idenifying elements
-	model_ID = models.ForeignKey('Model')
-	tool_ID = models.ForeignKey('Tool')
-	hardware_ID = models.ManyToManyField('Hardware', through="BenchmarkHardware", verbose_name="hardware")
-	option_ID = models.ManyToManyField('Option', through="BenchmarkOption", verbose_name="option")
+	model = models.ForeignKey('Model')
+	tool = models.ForeignKey('Tool')
+	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
+	option = models.ManyToManyField('Option', through="BenchmarkOption")
 	date_time = models.DateTimeField('Time started')
+	finished = models.BooleanField(verbose_name="Run finished")
+	
 	#Data
 	user_time = models.FloatField(verbose_name="User time (s)")
 	system_time = models.FloatField(verbose_name="System time (s)")
 	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
-
-#	fix this one later
-#	finished = models.BooleanField(verbose_name="Run successfully finished?")
-	
-	transition_count = models.BigIntegerField(verbose_name="Transitions", null=True) #this may be null
+	transition_count = models.BigIntegerField(verbose_name="Transitions", blank=True) #this may be null
 	states_count = models.BigIntegerField(verbose_name="States")
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
-	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)")	#rounded to kilobytes
+	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	
 	def __unicode__(self):
-		return self.model_ID.__str__() + '-' + self.tool_ID.name.__str__()
+		return self.model.__str__() + '-' + self.tool.name.__str__()
+
+class Comparison(models.Model):
+	user = models.ForeignKey(User)
+	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
+	date = models.DateField(auto_now=True,auto_now_add=True)
+	
+	def __unicode__(self):
+		return self.user.__str__() + '-' + self.benchmarks

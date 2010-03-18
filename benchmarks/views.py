@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
 from django.shortcuts import render_to_response, redirect
 import datetime
-from beat.benchmarks.models import Benchmark
+from beat.benchmarks.models import Benchmark, Comparison
 from forms import *
 
 # Log upload
@@ -31,8 +31,8 @@ def simple(request, id):
 	ax=fig.add_subplot(111)
 	
 	# DB stuff
-	benchmark_IDs = id.split('+')
-	benchmarks = Benchmark.objects.filter(pk__in=benchmark_IDs)
+	benchmark_IDs = Comparison.objects.get(pk=id)
+	benchmarks = Benchmark.objects.filter(pk__in=benchmark_IDs.benchmarks.split(','))
 	states = [b.states_count for b in benchmarks]
 	# Plot data
 	width = 0.4
@@ -78,9 +78,9 @@ def graph_model(request, models=None, type='States count', options=None):
 		color = colors[axisNum % len(colors) ]
 		marker = markers[axisNum % len(markers) ]
 		
-		benchmarks = Benchmark.objects.filter(model_ID__name__exact = m['name'])
+		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
 		if models is not None:
-			benchmarks = benchmarks.filter(model_ID__name in models)
+			benchmarks = benchmarks.filter(model__name in models)
 		types = {
 			'Transition count': [b.transition_count for b in benchmarks],
 			'States count': [b.states_count for b in benchmarks],
@@ -88,7 +88,7 @@ def graph_model(request, models=None, type='States count', options=None):
 			'Memory RSS': [b.memory_RSS for b in benchmarks],
 		}[type]
 		lines = ax.plot(
-			[b.model_ID.version for b in benchmarks], 
+			[b.model.version for b in benchmarks], 
 			types, 
 			marker + style + color,
 			label = m['name'])
@@ -127,13 +127,15 @@ def benchmarks(request):
 	})
 	return HttpResponse(t.render(c))
 
-def compare_post(request):
+def compare(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareForm(request.POST) # A form bound to the POST data
-		if form.is_valid(): # All validation rules pass
+		if (form.is_valid()):
 			# Process the data in form.cleaned_data
 			b = form.cleaned_data['benchmarks']
-			return HttpResponseRedirect('/compare/' + "+".join([str(bench.id) for bench in b]) + '/') # Redirect after POST
+			comparison = Comparison(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])))
+			comparison.save()
+			return render_to_response('compare.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
 	else:
 		return redirect(benchmarks.views.benchmarks)
 
@@ -141,7 +143,7 @@ def compare_model(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
-			return render_to_response('compare_models.html', context_instance=RequestContext(request)) # Redirect after POST
+			return render_to_response('compare_models.html', context_instance=RequestContext(request))
 	else:
 		form = CompareModelsForm() # An unbound form
 		
@@ -150,13 +152,13 @@ def compare_model(request):
 	}, context_instance=RequestContext(request))
 
 	
-def compare(request, id):
-	t = loader.get_template('compare.html')
-	b = id.split('+')
-	c = RequestContext(request, {
-		'benchmarks' : b
-	})
-	return HttpResponse(t.render(c)) # Redirect after POST
+#def compare(request, id):
+#	t = loader.get_template('compare.html')
+#	c = RequestContext(request, {
+#		'benchmarks' : b,
+#		'id' : id
+#	})
+#	return HttpResponse(t.render(c))
 
 #@login_required()
 #def mudkip(request):
