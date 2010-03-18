@@ -105,3 +105,4 @@ INSTALLED_APPS = (
 )
 
 STATIC_DOC_ROOT = os.path.join(SITE_ROOT, 'templates')
+STATIC_MEDIA_ROOT = os.path.join(SITE_ROOT, 'site_media')

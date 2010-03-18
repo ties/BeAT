@@ -9,3 +9,7 @@ class CompareForm(forms.Form):
 	
 class CompareModelsForm(forms.Form):
 	models = forms.ModelMultipleChoiceField(Model.objects.all())
+	
+class UploadLogForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    file  = forms.FileField()

@@ -19,6 +19,9 @@ urlpatterns = patterns('',
 	(r'^compare/model/$', 'benchmarks.views.compare_model'),
 	(r'^compare/model/benchmark.png$', 'benchmarks.views.graph_model'),
 
+	# File upload
+	(r'^upload/', 'benchmarks.views.upload_log'),
+	
 	# Uncomment the next line to enable the admin:
 	(r'^admin/', include(admin.site.urls)),
 	(r'^admin/doc/', include('django.contrib.admindocs.urls')),

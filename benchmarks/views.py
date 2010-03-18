@@ -6,6 +6,21 @@ import datetime
 from beat.benchmarks.models import Benchmark
 from forms import *
 
+# Log upload
+from beat.benchmarks.log_upload import handle_uploaded_file
+
+# Log upload
+def upload_log(request):
+	if request.method == 'POST':
+		form = UploadLogForm(request.POST, request.FILES)
+		if form.is_valid():
+			title = form.cleaned_data['title']
+			handle_uploaded_file(request.FILES['file'], title)
+			return HttpResponseRedirect('/')
+	else:
+		form = UploadLogForm()
+	return render_to_response('upload_log.html', {'form': form}, context_instance=RequestContext(request))
+
 def simple(request, id):
 	
 	import numpy
@@ -85,10 +100,11 @@ def graph_model(request, models=None, type='States count', options=None):
 	ax.set_xlabel('Version')
 	# Output
 	canvas = FigureCanvas(fig)
-	fig.savefig('benchmark.png')
+	#fig.savefig('benchmark.pdf')
 	response = HttpResponse(content_type='image/png')
 	canvas.print_png(response)
 	return response
+
 
 	#@login_required(redirect_field_name='next')
 def index(request):
@@ -125,11 +141,11 @@ def compare_model(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
-			return HttpResponseRedirect('/benchmarks/') # Redirect after POST
+			return render_to_response('compare_models.html', context_instance=RequestContext(request)) # Redirect after POST
 	else:
 		form = CompareModelsForm() # An unbound form
 		
-	return render_to_response('compare_models.html', {
+	return render_to_response('compare_models_form.html', {
 		'form': form, 
 	}, context_instance=RequestContext(request))
 
