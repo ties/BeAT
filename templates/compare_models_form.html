@@ -1,0 +1,9 @@
+{% extends "base_site.html" %}
+{% block title %}Benchmarks{% endblock %}
+{% block content %}
+		<h2>Compare</h2>
+		<form action="/compare/model/" method="post">{% csrf_token %}
+			{{ form.as_p }}
+		<input type="submit" value="Submit" />
+		</form>
+{% endblock %}
