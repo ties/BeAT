@@ -59,7 +59,7 @@ class Benchmark(models.Model):
 	tool = models.ForeignKey('Tool')
 	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
 	option = models.ManyToManyField('Option', through="BenchmarkOption")
-	date_time = models.DateTimeField('Time started')
+	date_time = models.DateTimeField(verbose_name="Time started")
 	finished = models.BooleanField(verbose_name="Run finished")
 	
 	#Data
@@ -77,7 +77,7 @@ class Benchmark(models.Model):
 class Comparison(models.Model):
 	user = models.ForeignKey(User)
 	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
-	date = models.DateField(auto_now=True,auto_now_add=True)
+	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	
 	def __unicode__(self):
 		return self.user.__str__() + '-' + self.benchmarks

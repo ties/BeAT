@@ -8,6 +8,13 @@ class CompareForm(forms.Form):
 	benchmarks = forms.ModelMultipleChoiceField(Benchmark.objects.all(), required=False, widget=widgets.CheckboxSelectMultiple)
 	
 class CompareModelsForm(forms.Form):
+	DATA_TYPES = (
+		('transitions', 'Transition count'),
+		('states', 'States count'),
+		('vsize', 'Memory VSIZE'),
+		('rss', 'Memory RSS'),
+	)
+	type = forms.ChoiceField(choices=DATA_TYPES, label='Data type')
 	models = forms.ModelMultipleChoiceField(Model.objects.all())
 	
 class UploadLogForm(forms.Form):

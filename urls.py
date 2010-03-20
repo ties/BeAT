@@ -11,13 +11,15 @@ urlpatterns = patterns('',
     # (r'^beat/', include('beat.foo.urls')),
 	(r'^benchmarks/ajax/', include('beat.benchmarks.ajax_urls')),
 	(r'^$', 'benchmarks.views.index'),
-	(r'^tables/$', 'benchmarks.views.tables'),
 	(r'^benchmarks/$', 'benchmarks.views.benchmarks'),
-	#(r'^compare/(?P<id>(\d+(\+\d)*))/$', 'benchmarks.views.compare'),
 	(r'^compare$', 'benchmarks.views.compare'),
+	(r'^compare/(?P<id>\d+)/$', 'benchmarks.views.compare_detail'),
+	
+	# User content
+	(r'^user/compare/$', 'benchmarks.views.user_comparisons'),
 	(r'^compare/benchmark-(?P<id>\d+).png$', 'benchmarks.views.simple'),
 	(r'^compare/model/$', 'benchmarks.views.compare_model'),
-	(r'^compare/model/benchmark.png$', 'benchmarks.views.graph_model'),
+	(r'^compare/model/benchmark-(?P<type>[a-z]+).png$', 'benchmarks.views.graph_model'),
 
 	# File upload
 	(r'^upload/', 'benchmarks.views.upload_log'),

@@ -1,10 +1,11 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_list_or_404
 import datetime
 from beat.benchmarks.models import Benchmark, Comparison
 from forms import *
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 # Log upload
 from beat.benchmarks.log_upload import handle_uploaded_file
@@ -47,12 +48,12 @@ def simple(request, id):
 	ax.set_xlabel('Benchmark')
 	#ax.figure.set_figheight(2)
 	ax.grid(True)
+	
 	# Output
 	ax=fig.add_subplot(212)
 	ax.plot(elapsed_time, memory_vsize, 'ro')
 	ax.set_ylabel('Elapsed Time')
 	ax.set_xlabel('Memory VSIZE')
-	
 	
 	#fig.set_size_inches(4,8)
 	canvas = FigureCanvas(fig)
@@ -60,9 +61,9 @@ def simple(request, id):
 	canvas.print_png(response)
 	return response
 
-def graph_model(request, models=None, type='States count', options=None):
-	import numpy as np
+def graph_model(request, models=None, type='states', options=None):
 	# General library stuff
+	import numpy as np
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
 	from matplotlib.figure import Figure
@@ -78,7 +79,6 @@ def graph_model(request, models=None, type='States count', options=None):
 	styles = ['_', '-', '--', ':']
 	markers = ['+','o','x']
 
-	#states = [b.states_count for b in benchmarks]
 	# Plot data
 	axisNum = 0
 	modelNames = Model.objects.values('name').annotate(num_models=Count('name'))
@@ -92,10 +92,10 @@ def graph_model(request, models=None, type='States count', options=None):
 		if models is not None:
 			benchmarks = benchmarks.filter(model__name in models)
 		types = {
-			'Transition count': [b.transition_count for b in benchmarks],
-			'States count': [b.states_count for b in benchmarks],
-			'Memory VSIZE': [b.memory_VSIZE for b in benchmarks],
-			'Memory RSS': [b.memory_RSS for b in benchmarks],
+			'transitions': [b.transition_count for b in benchmarks],
+			'states': [b.states_count for b in benchmarks],
+			'vsize': [b.memory_VSIZE for b in benchmarks],
+			'rss': [b.memory_RSS for b in benchmarks],
 		}[type]
 		lines = ax.plot(
 			[b.model.version for b in benchmarks], 
@@ -108,6 +108,7 @@ def graph_model(request, models=None, type='States count', options=None):
 	ax.legend()
 	ax.set_ylabel(type)
 	ax.set_xlabel('Version')
+	
 	# Output
 	canvas = FigureCanvas(fig)
 	#fig.savefig('benchmark.pdf')
@@ -115,63 +116,58 @@ def graph_model(request, models=None, type='States count', options=None):
 	canvas.print_png(response)
 	return response
 
-
 	#@login_required(redirect_field_name='next')
 def index(request):
-	
-	t = loader.get_template('base.html')
-	c = RequestContext(request, {
-	})
-	return HttpResponse(t.render(c));
+	return render_to_response('base.html', context_instance=RequestContext(request))
 
-def tables(request):
-	t = loader.get_template('index_tables.html')
-	c = RequestContext(request, {})
-	return HttpResponse(t.render(c));
-
-def benchmarks(request):
+@login_required
+def benchmarks(request, numResults=25):
 	benches = Benchmark.objects.all()
-	t = loader.get_template('benchmarks.html')
-	c = RequestContext(request, {
-		'benchmarks' : benches
-	})
-	return HttpResponse(t.render(c))
+	paginator = Paginator(benches, numResults, orphans=10)
+	
+	# Make sure page request is an int. If not, deliver first page.
+	try:
+		page = int(request.GET.get('page', '1'))
+	except ValueError:
+		page = 1
 
+	# If page request (9999) is out of range, deliver last page of results.
+	try:
+		benches = paginator.page(page)
+	except (EmptyPage, InvalidPage):
+		benches = paginator.page(paginator.num_pages)
+
+	return render_to_response('benchmarks.html', { 'benchmarks' : benches }, context_instance=RequestContext(request))
+
+@login_required()
 def compare(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareForm(request.POST) # A form bound to the POST data
 		if (form.is_valid()):
 			# Process the data in form.cleaned_data
 			b = form.cleaned_data['benchmarks']
-			comparison = Comparison(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])))
-			comparison.save()
+			comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])))
 			return render_to_response('compare.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
 	else:
 		return redirect(benchmarks.views.benchmarks)
 
+def compare_detail(request, id):
+	return render_to_response('compare.html', { 'id' : id }, context_instance=RequestContext(request))
+	
+@login_required()
+def user_comparisons(request):
+	c = get_list_or_404(Comparison, user=request.user.id)
+	return render_to_response('user_compare.html', { 'comparisons' : c }, context_instance=RequestContext(request))
+	
 def compare_model(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
-			return render_to_response('compare_models.html', context_instance=RequestContext(request))
+			type = form.cleaned_data['type']
+			return render_to_response('compare_models.html', { 'type' : type }, context_instance=RequestContext(request))
 	else:
 		form = CompareModelsForm() # An unbound form
 		
 	return render_to_response('compare_models_form.html', {
 		'form': form, 
 	}, context_instance=RequestContext(request))
-
-	
-#def compare(request, id):
-#	t = loader.get_template('compare.html')
-#	c = RequestContext(request, {
-#		'benchmarks' : b,
-#		'id' : id
-#	})
-#	return HttpResponse(t.render(c))
-
-#@login_required()
-#def mudkip(request):
-
-#def index(request):
-#	return HttpResponse('Hello world.')

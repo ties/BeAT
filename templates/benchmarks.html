@@ -49,16 +49,45 @@
 						<th>Finished</th>
 					</tr>
 					
-					{% for benchmark in benchmarks %}
+					{% for benchmark in benchmarks.object_list %}
 					<tr>
-						<td><input type="checkbox" name="benchmarks" value="{{ benchmark.id }}" /></td>
-						<td>{{ benchmark.model }}</td>
+						<td><input type="checkbox" name="benchmarks" id="{{ benchmark.id }}" value="{{ benchmark.id }}" /></td>
+						
+						<td><label for="{{ benchmark.id }}">{{ benchmark.model }}</label></td>
 						<td>{{ benchmark.states_count }}</td>
 						<td>{{ benchmark.elapsed_time }}</td>
 						<td>{{ benchmark.memory_VSIZE }}</td>
 						<td>{{ benchmark.finished }}</td>
+						
 					</tr>
 					{% endfor %}
+				
+					<!-- PAGINATION START -->
+					<tr>
+						<th colspan="6">
+							
+							
+							{% if benchmarks.has_previous %}
+								<a href="?page=1">|<</a>
+								<a href="?page={{ benchmarks.previous_page_number }}"><<</a>
+							{% else %}
+								|< <<
+							{% endif %}
+
+							Page {{ benchmarks.number }} of {{ benchmarks.paginator.num_pages }}
+
+							{% if benchmarks.has_next %}
+								<a href="?page={{ benchmarks.next_page_number }}">>></a>
+								<a href="?page=benchmarks.num_pages">>|</a>
+							{% else %}
+								>> >|
+							{% endif %}
+							
+							<br />
+							Showing {{ benchmarks.start_index }} - {{ benchmarks.end_index }} of {{ benchmarks.paginator.count }}
+						</th>
+					</tr>
+					<!-- PAGINATION END -->
 				</table>
 				<input type="submit" value="Compare" />
 			</form>

@@ -3,7 +3,9 @@
 {% block content %}
 		<h2>Compare</h2>
 		<form action="/compare/model/" method="post">{% csrf_token %}
-			{{ form.as_p }}
+			<table>
+			{{ form.as_table }}
+			</table>
 		<input type="submit" value="Submit" />
 		</form>
 {% endblock %}

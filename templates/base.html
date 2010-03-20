@@ -83,6 +83,12 @@ Aenean commodo tellus in leo volutpat pretium. Cras imperdiet tempor nulla nec f
 					<li><a href="{% url benchmarks.views.compare_model %}">Models</a></li>
 					<li><a href="{% url benchmarks.views.upload_log%}">Upload</a></li>
 				</ul>
+				{% if user.is_authenticated %}
+				<h1>Personal content</h1>
+				<ul>
+					<li><a href="{%url benchmarks.views.user_comparisons %}">My comparisons</a></li>
+				</ul>
+				{% endif %}
 				{% endblock %}
 			</div>
 			<!-- END SIDEBAR -->
