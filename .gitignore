@@ -1,5 +1,7 @@
 #Ignore compiled python
 *.pyc
+#db journal file, created by calls to the db that fail
+*.db-journal
 #Project and temp files from UltraEdit
 *.prj
 *.pui

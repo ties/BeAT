@@ -292,14 +292,21 @@ class FileReader:
 		b.save()
 	#end of write_to_db
 
-	def main(self):
+	def main(self, file_arg=None, verbosity=0):
 		"""Main function for this app
 		This just controls everything.
+		If called by other apps rather than from the commandline, file_arg should contain a list of strings that contain a path to specify a file.
+				See the python documentation for open() for more information.
+			verbosity should only be set if debugging functionality is required (then, use verbosity=2)
 		"""
-		#parse the filereader options
-		(options, args) = self.parse_app_options()
-		self.verbose = options.verbose
-		file_list = args
+		if file_arg:
+			self.verbose = verbosity
+			file_list = file_arg
+		else:
+			#parse the filereader options
+			(options, args) = self.parse_app_options()
+			self.verbose = options.verbose
+			file_list = args
 		if not file_list:
 			print "Error: No file provided."
 			exit()
@@ -394,6 +401,10 @@ class FileReader:
 		return self.pattern_list
 	#end of patterns
 #end of FileReader
+
+def execute_filereader(file_arg, verbosity):
+	"Function to start up a filereader. See the FileReader.main() documentation. file_arg should be a list, verbosity an int."
+	FileReader.main(FileReader(), file_arg, verbosity)	
 
 #run the main method
 if __name__ == '__main__':
