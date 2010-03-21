@@ -8,6 +8,7 @@ Hardware, Options, timestamp and other stuff that is to be taken from the (not y
 import re
 import datetime
 import sys
+import os
 from optparse import OptionParser
 #imports of code we wrote
 from benchmarks.models import *
@@ -22,7 +23,7 @@ V_SILENT = -1
 class FileReader:
 	#convenience function that checks verbosity
 	def print_message(self, level, text):
-		if self.verbose <= level:
+		if self.verbose >= level:
 			print text
 	#end of print_message
 	verbose = V_QUIET #default: no messages except errors
@@ -108,28 +109,40 @@ class FileReader:
 		call = m['call'].split(' ')
 		if call[0] == 'memtime':
 			s = self.get_parser(call[1])
+			call = call[2:]
 		else:
 			s = self.get_parser(call[0])
-		
+			call = call[1:]
 		if not s:
 			#unknown type; return None
 			return None
+		#s will look like this: (tool, algorithm, option_dict, regex, opt, longopt)
 		#fetch datetime info and create an object out of it
 		dt = m['datetime'].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
+		
+		#read the options/args for the tool
+		import getopt
+		if s[5]:
+			optlist, args = getopt.gnu_getopt(call, s[4], s[5])
+		else:
+			optlist, args = getopt.gnu_getopt(call, s[4])
+		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
+		optlist.append(('algorithm', s[1]))
+		(head, tail) = os.path.split(args[0])
 		
 		#TODO:
 		#parse model name and possibly version!
 		#tool version, too
 		result = ({
 			'parse_tuple' : s,
-			'model_name' : "test",
+			'model_name' : tail,
 			'model_version' : 1,
 			'model_location' : 'test.txt',
 			'tool_name': s[0],
 			'tool_version': 1,
 			'hardware': [(m['name'], m['memory_kb'], m['processor'], 0, m['OS']+" "+m['Kernel_n']+" "+m['Kernel_r']+" "+m['Kernel_v'])],
-			'options': [('algorithm', s[1])],
+			'options': optlist,
 			'date': dt,
 		}, 9)
 		#copy over the other options:
@@ -388,8 +401,8 @@ class FileReader:
 	
 	def patterns(self, *args):
 		for tuple in args:
-			identification, tool, algorithm, option_dict, regex = tuple
-			self.pattern_list.append((identification, (tool, algorithm, option_dict, regex)))
+			identification, tool, algorithm, option_dict, regex, opt, longopt = tuple
+			self.pattern_list.append((identification, (tool, algorithm, option_dict, regex, opt, longopt)))
 		return self.pattern_list
 	#end of patterns
 #end of FileReader
