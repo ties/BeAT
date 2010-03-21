@@ -91,7 +91,7 @@ class FileReader:
 		parse_info = information['parse_tuple']
 		self.print_message(V_NOISY, "Notice: Found parser!")
 		#grab te regex that we'll parse
-		regex = parse_info[3]	#expression to parse
+		regex = parse_info[2]	#expression to parse
 		
 		self.print_message(V_NOISY, "Notice: Option(s) are: %s\nNotice: Regex is: %s\nNotice: Reading data..." %(information['options'], regex))
 		
@@ -116,20 +116,28 @@ class FileReader:
 		if not s:
 			#unknown type; return None
 			return None
-		#s will look like this: (tool, algorithm, option_dict, regex, opt, longopt)
+		#s will look like this: (tool, algorithm, regex, opt, longopt)
+		
 		#fetch datetime info and create an object out of it
 		dt = m['datetime'].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
 		
 		#read the options/args for the tool
 		import getopt
-		if s[5]:
-			optlist, args = getopt.gnu_getopt(call, s[4], s[5])
+		if s[4]:
+			optlist, args = getopt.gnu_getopt(call, s[3], s[4])
 		else:
-			optlist, args = getopt.gnu_getopt(call, s[4])
+			optlist, args = getopt.gnu_getopt(call, s[3])
+		counter = 0
+		for t in optlist:
+			o, v = t
+			if not v:	#no parameter
+				optlist[counter]=(o,True)
+			counter+=1
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		optlist.append(('algorithm', s[1]))
 		(head, tail) = os.path.split(args[0])
+		#tail contains the filename of the model
 		
 		#TODO:
 		#parse model name and possibly version!
@@ -145,9 +153,6 @@ class FileReader:
 			'options': optlist,
 			'date': dt,
 		}, 9)
-		#copy over the other options:
-		for x in s[2]:
-			result['options'].append((x, s[2][x]))
 		return result
 		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
 	#end of parse_options
@@ -401,8 +406,8 @@ class FileReader:
 	
 	def patterns(self, *args):
 		for tuple in args:
-			identification, tool, algorithm, option_dict, regex, opt, longopt = tuple
-			self.pattern_list.append((identification, (tool, algorithm, option_dict, regex, opt, longopt)))
+			identification, tool, algorithm, regex, opt, longopt = tuple
+			self.pattern_list.append((identification, (tool, algorithm, regex, opt, longopt)))
 		return self.pattern_list
 	#end of patterns
 #end of FileReader

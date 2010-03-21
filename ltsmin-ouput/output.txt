@@ -8,7 +8,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 24 43 736654
-Call: memtime lpo2lts-grey ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/t42.dir 2>&1
+Call: memtime lpo2lts-grey -c ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/t42.dir 2>&1
 lpo2lts-grey: Writing output to ./ltsmin-models/mucrl/t42.dir
 lpo2lts-grey: loading model from ./ltsmin-models/mucrl/f42.tbf
 lpo2lts-grey: Start compiling ...
