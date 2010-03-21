@@ -16,7 +16,7 @@ def upload_log(request):
 		form = UploadLogForm(request.POST, request.FILES)
 		if form.is_valid():
 			title = form.cleaned_data['title']
-			handle_uploaded_file(request.FILES['file'], title)
+			print handle_uploaded_file(request.FILES['file'], title)
 			return HttpResponseRedirect('/')
 	else:
 		form = UploadLogForm()

@@ -14,9 +14,18 @@ from benchmarks.models import *
 from parsers import *
 
 RUN_DETAILS_HEADER = 11
+V_NOISY = 2
+V_VERBOSE = 1
+V_QUIET = 0
+V_SILENT = -1
 
 class FileReader:
-	verbose = 0 #default: no messages except errors
+	#convenience function that checks verbosity
+	def print_message(self, level, text):
+		if self.verbose <= level:
+			print text
+	#end of print_message
+	verbose = V_QUIET #default: no messages except errors
 	#def __init__(self):
 	#	contructor
 	def match_regex(self, regex, input, flags=None):
@@ -43,10 +52,10 @@ class FileReader:
 				#no groups
 				list = True
 			return list
-		elif self.verbose:
-			print "Warning: Regex ", regex, " on input ", input, "has an empty dictionary."
+		else:
+			self.print_message(V_VERBOSE, "Warning: Regex  %s on input %s has an empty dictionary."%(regex, input))
 			if flags:
-				print "\tFlags argument to compiler: ", flags
+				self.print_message(V_NOISY,"\tFlags argument to compiler: %s"%(flags))
 		return None
 	#end of match_regex
 	
@@ -61,15 +70,13 @@ class FileReader:
 			try:
 				line = file.next()
 			except StopIteration:
-				if self.verbose>1:
-					print "Notice: end of file encountered"
+				self.print_message(V_NOISY, "Notice: end of file encountered")
 				loop_end = True
 		return lines
 	#end of get_lines
 
-	def parse(self, lines):
-		if self.verbose>1:
-			print "Notice: Reading run details..."
+	def parse(self, lines):	
+		self.print_message(V_NOISY, "Notice: Reading run details...")
 		#read the run information
 		tmp = self.parse_run_details(lines)
 		if tmp:
@@ -78,24 +85,19 @@ class FileReader:
 			#tmp = None
 			#so skip to the next run by returning None
 			return None
-		if self.verbose>1:
-			print "Notice: Complete!"
-			print "Notice: Finding parser..."
+		self.print_message(V_NOISY, "Notice: Complete!\nNotice: Finding parser...")
 		#find the parse_tuple
 		parse_info = information['parse_tuple']
-		if self.verbose>1:
-			print "Notice: Found parser!"
+		self.print_message(V_NOISY, "Notice: Found parser!")
 		#grab te regex that we'll parse
 		regex = parse_info[3]	#expression to parse
 		
-		if self.verbose>1:
-			print "Notice: Option(s) are:",information['options']
-			print "Notice: Regex is:",regex
-			print "Notice: Reading data..."
+		self.print_message(V_NOISY, "Notice: Option(s) are: %s\nNotice: Regex is: %s\nNotice: Reading data..." %(information['options'], regex))
+		
 		#parse the log content
 		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information, regex)
-		if self.verbose>1:
-			print "Notice: Read successful!"
+		self.print_message(V_NOISY, "Notice: Read successful!")
+		
 		return data
 	#end of parse
 	
@@ -116,6 +118,9 @@ class FileReader:
 		dt = m['datetime'].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
 		
+		#TODO:
+		#parse model name and possibly version!
+		#tool version, too
 		result = ({
 			'parse_tuple' : s,
 			'model_name' : "test",
@@ -141,8 +146,7 @@ class FileReader:
 	#	only transition count may be left out.
 	def parse_single_output(self, content, run_details, regex):
 		m = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
-		if self.verbose>1:
-			print "Notice: regex match gives: ", m
+		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
 		if m:
 			match = {
 				'model':(run_details.get('model_name'), run_details.get('model_version'), run_details.get('model_location')),
@@ -156,19 +160,17 @@ class FileReader:
 				match['hardware'] = []
 			if not match['options']:
 				match['options'] = []
-		elif self.verbose:
-			print "Warning: Parse error. The input failed to match on the regex."
-		if self.verbose>1:
-			print "Notice: resulting dictionary: ", match
+		else:
+			self.print_message(V_QUIET, "Warning: Parse error. The input failed to match on the regex.")
+		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
 		return match
 
 	def get_parser(self, content):
-		if self.verbose>1:
-			print "Notice: " + content + " is the parser, according to the file."
+		self.print_message(V_NOISY, "Notice: %s is the parser, according to the file."%(content))
 		for tuple in self.pattern_list:
 			if tuple[0] == content:
 				return tuple[1]
-		print "Error: parsing of the data in the specified file is not yet supported."
+		self.print_message(V_SILENT, "Error: Unknown run type. Skipping.")
 		return None
 	#end of get_parser
 	
@@ -177,44 +179,38 @@ class FileReader:
 		#Model
 		name, version, location = data['model']
 		if not name or not version or not location:
-			if self.verbose:
-				print "Warning: Data may be wrong: Model.name=",name,"Model.version=",version,"Model.location=",location
+			self.print_message(V_VERBOSE, "Warning: Data invalid. Model.name=%s Model.version=%s Model.location=%s"%(name, version,location))
 			valid=False
 		#Tool
 		name, version = data['tool']
 		if not name or not version:
-			if self.verbose:
-				print "Warning: Data may be invalid: Tool.name=",name,"Tool.version=",version
+			self.print_message(V_VERBOSE, "Warning: Data invalid. Tool.name=%s Tool.version=%s"%(name, version))
 			valid=False
 			#name or version invalid -> raise an error
 		#Hardware
 		hwdata = data['hardware']
 		for tuple in hwdata:
 			name, memory, cpu, disk_space, os = tuple
-			if not name or memory <0 or not cpu or disk_space <0 or not os:
-				if self.verbose:
-					print "Warning: Data may be invalid: HW.name=",name,"HW.memory=",memory,"HW.cpu",cpu,"HW.disk_space",disk_space,"HW.os",os
+			#memory may not be zero, disk_space may be.
+			if not name or memory <=0 or not cpu or disk_space <0 or not os:
+				self.print_message(V_VERBOSE, "Warning: Data invalid. HW.name=%s HW.memory=%s HW.cpu=%s HW.disk_space=%s HW.os=%s" %(name, memory, cpu, disk_space, os))
 				valid=False
-				#name, memory, cpu or os invalid -> raise error (or continue?)
-			#disk_space invalid -> don't set
 		#Option
 		optiondata = data['options']
 		for tuple in optiondata:
 			name, value = tuple
 			if not name or not value:
-				if self.verbose:
-					print "Warning: invalid option: name",name,"value",value
+				self.print_message(V_VERBOSE, "Warning: invalid option: name=%s value=%s"%(name,value))
 				valid=False
 		#Benchmark
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
 			if not tcount or tcount == -1:
 				#tcount can be undefined.
-				tcount = None
+				tcount = 0
 				data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
 			else:
-				if self.verbose:
-					print "Warning: invalid value in benchmark", (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
+				self.print_message(V_VERBOSE, "Warning: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
 				#raise an error?
 				valid=False
 		return (valid, data)
@@ -224,24 +220,24 @@ class FileReader:
 		#check the data
 		valid, data = self.check_data_validity(data)
 		if not valid:
-			print "Error: invalid data."
-			if self.verbose>=1:
-				print "Notice: the data: ", data
-			exit()
-		elif self.verbose>1:
-			print "Notice: Validity checked and passed, writing to DB..."
+			if self.verbose:
+				raise FileReaderError("Error: some invalid data provided.", debug_data=data)
+			else:
+				raise FileReaderError("Error: some invalid data provided.")
+		else:
+			self.print_message(V_NOISY, "Notice: Validity checked and passed, writing to DB...")
 		#model entry
 		name, version, location = data['model']
 		#a model is identified by name and version.
 		m, created = Model.objects.get_or_create(name=name, version=version, defaults={'location': location})
-		if created and self.verbose>1:
-			print "Notice: created a new Model entry"
+		if created:
+			self.print_message(V_NOISY, "Notice: created a new Model entry:%s,%s"%(name,version))
 		
 		#tool entry
 		name, version = data['tool']
 		t, created = Tool.objects.get_or_create(name=name, version=version)
-		if created and self.verbose>1:
-			print "Notice: created a new Tool entry"
+		if created:
+			self.print_message(V_NOISY, "Notice: created a new Tool entry:%s,%s"%(name,version))
 		
 		#hardware entries
 		hwdata = data['hardware']
@@ -254,12 +250,10 @@ class FileReader:
 				if not created and h.disk_space==0:
 					h.disk_space = disk_space
 					h.save()
-				if created and self.verbose>1:
-					print "Notice: created a new Hardware entry"
 			else:
 				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
-				if created and self.verbose>1:
-					print "Notice: created a new Hardware entry"
+			if created:
+				self.print_message(V_VERBOSE, "Notice: created a new Hardware entry:%s"%(name))
 			hardwarelist.append(h)
 		
 		#option entries
@@ -267,12 +261,9 @@ class FileReader:
 		optionlist = []
 		for tuple in optiondata:
 			name, value = tuple
-			if not name or not value:
-				if self.verbose:
-					print "Warning: invalid option: name",name,"value",value
 			o, created = Option.objects.get_or_create(name=name, value=value)
 			if created and self.verbose>1:
-				print "Notice: created a new Option entry"
+				self.print_message(V_VERBOSE, "Notice: created a new Option entry:%s,%s"%(name,value))
 			optionlist.append(o)
 		
 		#this one's always new
@@ -299,57 +290,56 @@ class FileReader:
 				See the python documentation for open() for more information.
 			verbosity should only be set if debugging functionality is required (then, use verbosity=2)
 		"""
+		#if file_arg is specified, this is an external call and we should look for paths there
 		if file_arg:
 			self.verbose = verbosity
 			file_list = file_arg
+		#else, just use the parse_app_options function
 		else:
-			#parse the filereader options
 			(options, args) = self.parse_app_options()
 			self.verbose = options.verbose
 			file_list = args
 		if not file_list:
-			print "Error: No file provided."
-			exit()
-		if self.verbose:
-			print "Verbose mode active at level:", self.verbose, "\nLevel 1 text is preceded by 'Warning:', Level 2 by 'Notice:'"
+			if self.verbose:
+				raise FileReaderError("Error: No file provided.", debug_data=args)
+			else:
+				raise FileReaderError("Error: No file provided.")
+		self.print_message(V_VERBOSE, "Verbosity level: %s"%(self.verbose))
 
 		#fetch the patterns from the external file
 		execute(self)
-		if self.verbose>1:
-			print "Notice: pattern list is: ", self.pattern_list
+		self.print_message(V_NOISY, "Notice: the user-provided pattern list is: %s"% (self.pattern_list))
 
 		#start of file-reading
 		#when we want multiple files, a loop should be here
 		path = file_list[0]
-		if self.verbose>1:
-			print "Notice: Reading from file: " + path
-		try:
-			file = open(path, 'r')
-		except IOError as detail:
-			#if something breaks, output the error and ask for retry
-			print 'Error: ', detail, '\n'
-			exit()
-		#file fetched, read it now:
-		lines = self.get_lines(file)
-		file.close()
-		if self.verbose>1:
-			print "Notice: Read complete"
-			print "Notice: Start parsing"
+		self.print_message(V_NOISY, "Notice: Reading from file: %s"%(path))
+		lines=[]
+		with open(path, 'r') as file:
+			for line in file:
+				lines.append(line)
+		self.print_message(V_NOISY, "Notice: Read complete\nNotice: Start parsing")
 		#figure out the runs that are in here
 		runs = self.find_runs(lines)
+		runcounter=0
 		#parse each:
 		for run in runs:
 			data = self.parse(run)
 			if data:
 				try:
 					self.write_to_db(data)
-				except Exception as detail:
+				except FileReaderError as f:
+					if f.db_altered:
+						self.print_message(V_SILENT, "Warning: an error occured while writing to the database! %s"%(f.error))
+					else:
+						self.print_message(V_QUIET, "Warning: FileReaderError: %s" %( f.error))
+					self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
+				except:
 					#an error occured, skip this part
-					if self.verbose>=1:
-						print "Warning: a parse failed"
-						print detail
-			elif self.verbose>=1:
-				print "Warning, a parse failed"
+					self.print_message(V_QUIET, "Warning: parsing of run %s failed"%(runcounter))
+			else:
+				self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
+			runcounter+=1
 		#end of file-reading
 	#end of main
 	
@@ -383,12 +373,14 @@ class FileReader:
 		--noisy (verbosity full)
 		"""
 		parser = OptionParser()
+		parser.add_option("--silent", 
+			action="store_const", const=V_SILENT, dest = "verbose", help = "Print only dangerous errors (like database integrity warnings).")
 		parser.add_option("-q", "--quiet",
-			action="store_const", const=0, dest="verbose", help = "Do not print anything.")
+			action="store_const", const=V_QUIET, dest="verbose", help = "Only print errors and bad warnings.")
 		parser.add_option("-v", "--verbose",
-			action="store_const", const=1, dest="verbose", help = "Print helpful things.")
+			action="store_const", const=V_VERBOSE, dest="verbose", help = "Print helpful things.")
 		parser.add_option("--noisy",
-			action="store_const", const=2, dest="verbose", help = "Print everything.")
+			action="store_const", const=V_NOISY, dest="verbose", help = "Print everything.")
 		return parser.parse_args()
 	#end of parse_app_options
 	
@@ -402,9 +394,25 @@ class FileReader:
 	#end of patterns
 #end of FileReader
 
-def execute_filereader(file_arg, verbosity):
-	"Function to start up a filereader. See the FileReader.main() documentation. file_arg should be a list, verbosity an int."
-	FileReader.main(FileReader(), file_arg, verbosity)	
+class FileReaderError(Exception):
+	def __init__(self, error, db_altered=False, debug_data=None):
+		self.error = error
+		self.db_altered = db_altered
+		self.debug_data = debug_data
+	def __str__(self):
+		if db_altered:
+			if debug_data:
+				return "Warning, the database was altered before this error was encountered.\n" + error + "\n" + debug_data
+			else:
+				return "Warning, the database was altered before this error was encountered.\n" + error
+		else:
+			if debug_data:
+				return error +"\n"+debug_data
+			else:
+				return error
+#end of FileReaderError
+
+
 
 #run the main method
 if __name__ == '__main__':
