@@ -387,6 +387,7 @@ class FileReader:
 		#figure out the runs that are in here
 		runs = self.find_runs(lines)
 		runcounter=0
+		errorcounter=0
 		#parse each:
 		for run in runs:
 			data = self.parse(run)
@@ -396,16 +397,21 @@ class FileReader:
 				except FileReaderError as f:
 					if f.db_altered:
 						self.print_message(V_SILENT, "Warning: an error occured while writing to the database! %s"%(f.error))
+						return -1
 					else:
 						self.print_message(V_QUIET, "Warning: FileReaderError: %s" %( f.error))
+						errorcounter+=1
 					self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
 				except:
 					#an error occured, skip this part
 					self.print_message(V_QUIET, "Warning: parsing of run %s failed"%(runcounter))
+					errorcounter+=1
 			else:
 				self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
+				errorcounter+=1
 			runcounter+=1
 		#end of file-reading
+		return errorcounter
 	#end of main
 	
 	def find_runs(self, lines):
@@ -481,4 +487,6 @@ class FileReaderError(Exception):
 
 #run the main method
 if __name__ == '__main__':
-	sys.exit(FileReader.main(FileReader()))
+	exitcode = FileReader.main(FileReader())
+	print exitcode
+	sys.exit(exitcode)

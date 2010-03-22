@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
 from django.shortcuts import render_to_response, redirect, get_list_or_404
 import datetime
+from filereader import FileReader
 from beat.benchmarks.models import Benchmark, Comparison
 from forms import *
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
@@ -17,7 +18,12 @@ def upload_log(request):
 		if form.is_valid():
 			title = form.cleaned_data['title']
 			handle_uploaded_file(request.FILES['file'], title)
-			return HttpResponseRedirect('/')
+			try:
+				FileReader.main(FileReader(), ['C:\Vakken\OWP\\beat\site_media\upload\logs\\' + "%s"%(request.FILES['file'])], 2)
+			except:
+				return HttpResponse('error')
+			else:
+				return HttpResponse('ok')
 	else:
 		form = UploadLogForm()
 	return render_to_response('upload_log.html', {'form': form}, context_instance=RequestContext(request))
@@ -26,44 +32,7 @@ def simple(request, id):
 	
 	import numpy
 	# General library stuff
-	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-	from matplotlib.figure import Figure
-	fig=Figure(facecolor='w')
-	ax=fig.add_subplot(211)
-	
-	# DB stuff
-	benchmark_IDs = Comparison.objects.get(pk=id)
-	benchmarks = Benchmark.objects.filter(pk__in=benchmark_IDs.benchmarks.split(','))
-	states = [b.states_count for b in benchmarks]
-	elapsed_time = [b.elapsed_time for b in benchmarks]
-	memory_vsize = [b.memory_VSIZE for b in benchmarks]
-	
-	# Plot data
-	width = 0.4
-	numBench = benchmarks.count()
-	ax.bar(numpy.arange(numBench), states, width, align='center')
-	ax.set_xticks(numpy.arange(benchmarks.count()))
-	ax.set_xticklabels(benchmarks, size='small')
-	ax.set_ylabel('States')
-	ax.set_xlabel('Benchmark')
-	#ax.figure.set_figheight(2)
-	ax.grid(True)
-	
-	# Output
-	ax=fig.add_subplot(212)
-	ax.plot(elapsed_time, memory_vsize, 'ro')
-	ax.set_ylabel('Elapsed Time')
-	ax.set_xlabel('Memory VSIZE')
-	
-	#fig.set_size_inches(4,8)
-	canvas = FigureCanvas(fig)
-	response = HttpResponse(content_type='image/png')
-	canvas.print_png(response)
-	return response
-
-def graph_model(request, models=None, type='states', options=None):
-	# General library stuff
-	import numpy as np
+	from mat numpy as np
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
 	from matplotlib.figure import Figure
