@@ -21,25 +21,36 @@ V_QUIET = 0
 V_SILENT = -1
 
 class FileReader:
-	#convenience function that checks verbosity
+	verbose = V_QUIET #default mode: no messages except errors
+	
 	def print_message(self, level, text):
+		"""Function to print, based on verbosity level
+		Arguments:
+			level		the level from which this message should be printed
+			text		the message
+		
+		Both arguments are required.
+		Returns:
+			This function returns nothing.
+		"""
 		if self.verbose >= level:
 			print text
 	#end of print_message
-	verbose = V_QUIET #default: no messages except errors
-	#def __init__(self):
-	#	contructor
+
 	def match_regex(self, regex, input, flags=None):
-		"""
+		"""Matches a given regex on the input, given flags
 		This function compiles (with flags, if given) and matches the regex on the input.
-		If the regex does not use groups (ie. the groupdict() method returns None), this method will return True.
-		In other words, the function returns whether the regex matches, and if it does, returns the dictionary.
-		This works because a non-empty dictionary evaluates to true.
-		The disable_verbose option allows the caller to explicitly disable verbose output.
+		If the regex does not use groups (ie. the groupdict() method returns None), this method will return True on a match.
+		In other words, the function returns whether the regex matches, and returns the dictionary, if any.
+		Arguments:
+			regex		a regular expression string( r'' )
+			input		any string to be matched on
+			flags		a value to be passed to re.compile(), defaults to None.
 		
-		regex should be a regular expression string( r'' )
-		input should be any string
-		flags will be passed directly to the regex compiler
+		regex and input are required arguments.
+		Returns:
+			On a match, a dictionary, or true if this dictionary is empty.
+			Otherwise, returns None.
 		"""
 		#compile
 		if flags:
@@ -61,7 +72,7 @@ class FileReader:
 	#end of match_regex
 	
 	def get_lines(self, file):
-		"This function simply reads all lines from the file in question."
+		"""This function simply reads all lines from the specified file."""
 		lines = []
 		line = None
 		loop_end = False
@@ -76,15 +87,22 @@ class FileReader:
 		return lines
 	#end of get_lines
 
-	def parse(self, lines):	
+	def parse(self, lines):
+		"""Parse runs from the specified lines.
+		Arguments:
+			lines		a list of strings, including newlines
+		
+		Returns:
+			None when some (non-fatal) error occurs, or:
+			A dictionary, as specified by parse_single_output.
+		"""
 		self.print_message(V_NOISY, "Notice: Reading run details...")
 		#read the run information
 		tmp = self.parse_run_details(lines)
 		if tmp:
-			information, start = tmp
+			information = tmp
 		else:
-			#tmp = None
-			#so skip to the next run by returning None
+			#something went wrong, skip ahead to the next run
 			return None
 		self.print_message(V_NOISY, "Notice: Complete!\nNotice: Finding parser...")
 		#find the parse_tuple
@@ -103,7 +121,25 @@ class FileReader:
 	#end of parse
 	
 	def parse_run_details(self, lines):
-		#datetime still missing
+		"""Parses the header of a run from the lines specified
+		Arguments:
+			lines		a list containing at least RUN_DETAILS_HEADER elements, which specify a header.
+			
+		Returns:
+			None when some (non-fatal) error occurs, or:
+			A dictionary, as follows:
+				'parse_tuple'		the tuple that contains information for parsing, like elements of pattern_list
+				'model_name'		the name of the model
+				'model_version' 	the version of the model
+				'model_location'	the location of the model
+				'tool_name'			the name of the tool
+				'tool_version' 		the version of the tool
+				'hardware'			a list containing hardware platforms, specified as a tuple:
+										(name, memory kb, processor, disk space, OS)
+				'options'			a list of options, specified by a tuple:
+										(name, value)
+				'date'				the date this benchmark was run. see datetime.datetime in the python doc
+		"""
 		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
 		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
 		call = m['call'].split(' ')
@@ -114,15 +150,15 @@ class FileReader:
 			s = self.get_parser(call[0])
 			call = call[1:]
 		if not s:
-			#unknown type; return None
+			#get_parser returned None
 			return None
-		#s will look like this: (tool, algorithm, regex, opt, longopt)
+		#s will look like this from here: (tool, algorithm, regex, opt, longopt)
 		
 		#fetch datetime info and create an object out of it
 		dt = m['datetime'].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
 		
-		#read the options/args for the tool
+		#read the options/args for the tool and convert them into a nice list
 		import getopt
 		if s[4]:
 			optlist, args = getopt.gnu_getopt(call, s[3], s[4])
@@ -139,10 +175,7 @@ class FileReader:
 		(head, tail) = os.path.split(args[0])
 		#tail contains the filename of the model
 		
-		#TODO:
-		#parse model name and possibly version!
-		#tool version, too
-		result = ({
+		result = {
 			'parse_tuple' : s,
 			'model_name' : tail,
 			'model_version' : 1,
@@ -152,7 +185,7 @@ class FileReader:
 			'hardware': [(m['name'], m['memory_kb'], m['processor'], 0, m['OS']+" "+m['Kernel_n']+" "+m['Kernel_r']+" "+m['Kernel_v'])],
 			'options': optlist,
 			'date': dt,
-		}, 9)
+		}
 		return result
 		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
 	#end of parse_options
@@ -163,6 +196,22 @@ class FileReader:
 	#	these are: elapsed, user, system times, state and transition count, memory vsize and memory rss
 	#	only transition count may be left out.
 	def parse_single_output(self, content, run_details, regex):
+		"""Parses informations from the tool log.
+		Arguments:
+			content			the log contents as a string.
+			run_details		the details for the run that generated this log, as returned by parse_run_details()
+			regex			the regular expression that can be used to parse this log
+		Returns:
+			A dictionary containing everything that needs to go into the database:
+				'model'		a tuple:
+								(name, version, location)
+				'tool'		a tuple:
+								(name, version)
+				'hardware'	a list containing tuples as specified in run_details['hardware']
+				'options'	a list containing tuples as specified in run_details['options']
+				'benchmark'	a tuple:
+								(datetime, etime, utime, stime, tcount, scount, vsize, rss)
+		"""
 		m = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
 		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
 		if m:
@@ -204,7 +253,6 @@ class FileReader:
 		if not name or not version:
 			self.print_message(V_VERBOSE, "Warning: Data invalid. Tool.name=%s Tool.version=%s"%(name, version))
 			valid=False
-			#name or version invalid -> raise an error
 		#Hardware
 		hwdata = data['hardware']
 		for tuple in hwdata:
@@ -224,12 +272,11 @@ class FileReader:
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
 			if not tcount or tcount == -1:
-				#tcount can be undefined.
+				#tcount can be undefined, but may be zero.
 				tcount = 0
 				data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
 			else:
 				self.print_message(V_VERBOSE, "Warning: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
-				#raise an error?
 				valid=False
 		return (valid, data)
 	#end of check_data_validity
