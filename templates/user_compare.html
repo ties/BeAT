@@ -4,7 +4,11 @@
 		<h2>My Comparisons</h2>
 		<ul>
 		{% for c in comparisons %}
-			<li><a href="{% url benchmarks.views.compare_detail c.id %}">{{ c }}</a> - ({{ c.date_time|date:"SHORT_DATE_FORMAT" }} - {{ c.date_time|time:"H:i" }})</li>
+			<li>
+				<a href="{% url benchmarks.views.compare_detail c.id %}">{{ c }}</a> 
+				- ({{ c.date_time|date:"SHORT_DATE_FORMAT" }} - {{ c.date_time|time:"H:i" }})
+				- <a href="{% url benchmarks.views.user_comparison_delete  c.id %}">delete</a>
+			</li>
 		{% endfor %}
 		</ul>
 {% endblock %}

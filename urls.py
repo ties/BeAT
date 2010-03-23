@@ -17,6 +17,9 @@ urlpatterns = patterns('',
 	
 	# User content
 	(r'^user/compare/$', 'benchmarks.views.user_comparisons'),
+	(r'^user/compare/delete/(?P<id>\d+)/$', 'benchmarks.views.user_comparison_delete'),
+	
+	# Comparisons
 	(r'^compare/benchmark-(?P<id>\d+).png$', 'benchmarks.views.simple'),
 	(r'^compare/model/$', 'benchmarks.views.compare_model'),
 	(r'^compare/model/benchmark-(?P<type>[a-z]+).png$', 'benchmarks.views.graph_model'),

@@ -51,15 +51,14 @@ def simple(request, id):
 	ax.set_xticks(numpy.arange(benchmarks.count()))
 	ax.set_xticklabels(benchmarks, size='small')
 	ax.set_ylabel('States')
-	ax.set_xlabel('Benchmark')
 	#ax.figure.set_figheight(2)
 	ax.grid(True)
 	
 	# Output
 	ax=fig.add_subplot(212)
 	ax.plot(elapsed_time, memory_vsize, 'ro')
-	ax.set_ylabel('Elapsed Time')
-	ax.set_xlabel('Memory VSIZE')
+	ax.set_xlabel('Elapsed Time')
+	ax.set_ylabel('Memory VSIZE')
 	
 	#fig.set_size_inches(4,8)
 	canvas = FigureCanvas(fig)
@@ -82,7 +81,7 @@ def graph_model(request, models=None, type='states', options=None):
 	ax=fig.add_subplot(111)
 	
 	colors = ('b', 'g', 'r', 'c', 'm', 'y', 'k')
-	styles = ['_', '-', '--', ':']
+	styles = ['-', '--', ':']
 	markers = ['+','o','x']
 
 	# Plot data
@@ -111,7 +110,9 @@ def graph_model(request, models=None, type='states', options=None):
 
 	#Mark-up
 	ax.set_title(type + ' vs Version')
-	ax.legend()
+	leg = ax.legend()
+	for t in leg.get_texts():
+		t.set_fontsize('small')
 	ax.set_ylabel(type)
 	ax.set_xlabel('Version')
 	
@@ -164,6 +165,11 @@ def compare_detail(request, id):
 def user_comparisons(request):
 	c = get_list_or_404(Comparison, user=request.user.id)
 	return render_to_response('user_compare.html', { 'comparisons' : c }, context_instance=RequestContext(request))
+	
+def user_comparison_delete(request, id):
+	c = Comparison.objects.get(pk=id)
+	c.delete()
+	return redirect('/user/compare/')
 	
 def compare_model(request):
 	if request.method == 'POST': # If the form has been submitted...

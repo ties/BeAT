@@ -16,6 +16,7 @@ class CompareModelsForm(forms.Form):
 	)
 	type = forms.ChoiceField(choices=DATA_TYPES, label='Data type')
 	models = forms.ModelMultipleChoiceField(Model.objects.all())
+
 	
 class UploadLogForm(forms.Form):
     title = forms.CharField(max_length=50)
