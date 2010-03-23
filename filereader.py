@@ -336,32 +336,21 @@ class FileReader:
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 
 		#now create and save the db object
-		b = Benchmark(model=m, tool=t, date_time=date, user_time=utime, system_time=stime, elapsed_time=etime, transition_count=tcount, states_count=scount, memory_VSIZE=mVSIZE, memory_RSS=mRSS)
-		b.save()
-		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark.
-		for option in optionlist:
-			bo = BenchmarkOption(benchmark=b, option=option)
-			bo.save()
-		for hardware in hardwarelist:
-			bh = BenchmarkHardware(benchmark=b, hardware=hardware)
-			bh.save()
-		b.save()
-		#code below is still broken!
-		#b, created = Benchmark.objects.get_or_create(model=m, tool=t, date_time=date, 
-		#	defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
-		#		'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
-		#		'memory_RSS':mRSS, 'finished':True})
-
+		b, created = Benchmark.objects.get_or_create(model=m, tool=t, date_time=date, 
+			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
+				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
+				'memory_RSS':mRSS, 'finished':True}
+		)
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark. and only if newly created
-		#if created:
-		#	self.print_message(V_NOISY,"Notice: created Benchmark entry: %s"%(b))
-		#	for option in optionlist:
-		#		bo = BenchmarkOption(benchmark=b, option=option)
-		#		bo.save()
-		#	for hardware in hardwarelist:
-		#		bh = BenchmarkHardware(benchmark=b, hardware=hardware)
-		#		bh.save()
-		#	b.save()
+		if created:
+			self.print_message(V_NOISY,"Notice: created Benchmark entry: %s on %s, time: "%(t.name, m.name, date))
+			for option in optionlist:
+				bo = BenchmarkOption(benchmark=b, option=option)
+				bo.save()
+			for hardware in hardwarelist:
+				bh = BenchmarkHardware(benchmark=b, hardware=hardware)
+				bh.save()
+			b.save()
 		#done!
 	#end of write_to_db
 
