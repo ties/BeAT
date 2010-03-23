@@ -15,10 +15,10 @@ from benchmarks.models import *
 from parsers import *
 
 RUN_DETAILS_HEADER = 11
-V_NOISY = 2
-V_VERBOSE = 1
-V_QUIET = 0
-V_SILENT = -1
+V_NOISY = 2		#PRINT EVERYTHING
+V_VERBOSE = 1	#print lots
+V_QUIET = 0		#print errors only
+V_SILENT = -1	#print fatal errors only
 
 class FileReader:
 	verbose = V_QUIET #default mode: no messages except errors
