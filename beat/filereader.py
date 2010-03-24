@@ -304,7 +304,9 @@ class FileReader:
 		
 		#tool entry
 		name, version = data['tool']
-		t, created = Tool.objects.get_or_create(name=name, version=version)
+		#a=Parser(regex=r'test', possible_options='test')
+		#print a
+		t, created = Tool.objects.get_or_create(name=name, version=version)#, parse_method=a)
 		if created:
 			self.print_message(V_NOISY, "Notice: created a new Tool entry:%s, %s"%(name,version))
 		else:

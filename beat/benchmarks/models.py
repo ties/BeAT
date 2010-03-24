@@ -13,17 +13,17 @@ class Model(models.Model):
 	def natural_key(self):
 		return (self.name,self.version)
 	
-class Parser(models.Model):
-	regex = models.CharField(max_length=500)
-	possible_options = models.CharField(max_length=500)
+#class Parser(models.Model):
+	#regex = models.CharField(max_length=500)
+	#possible_options = models.CharField(max_length=500)
 	
-	def __unicode__(self):
-		return self.regex
+	#def __unicode__(self):
+	#	return self.regex
 
 class Tool(models.Model):	
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
-	parse_method = models.ForeignKey('Parser')
+	#parse_method = models.ForeignKey('Parser')
 	
 	def __unicode__(self):
 		return self.name + ' ' + self.version
@@ -88,4 +88,3 @@ class Comparison(models.Model):
 	def __unicode__(self):
 		return self.user.__str__() + '-' + self.benchmarks
 		
-class 

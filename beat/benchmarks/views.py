@@ -8,6 +8,9 @@ from beat.benchmarks.models import Benchmark, Comparison
 from forms import *
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
+# MatPlotLib
+import numpy as np
+
 # Log upload
 from beat.benchmarks.log_upload import handle_uploaded_file
 
@@ -19,7 +22,7 @@ def upload_log(request):
 			title = form.cleaned_data['title']
 			handle_uploaded_file(request.FILES['file'], title)
 			try:
-				FileReader.main(FileReader(), ['C:\Vakken\OWP\\beat\site_media\upload\logs\\' + "%s"%(request.FILES['file'])], 2)
+				FileReader.main(FileReader(), [os.path.join(beat.settings.STATIC_MEDIA_ROOT, 'upload', 'logs') + "%s"%(request.FILES['file'])], 2)
 			except:
 				return HttpResponse('error')
 			else:
@@ -28,9 +31,64 @@ def upload_log(request):
 		form = UploadLogForm()
 	return render_to_response('upload_log.html', {'form': form}, context_instance=RequestContext(request))
 
+def scatterplot(request):
+	# General library stuff
+	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+	from matplotlib.figure import Figure
+	import math
+	fig=Figure(facecolor='w')
+	ax=fig.add_subplot(211)
+	
+	# ELAPSED TIME
+	b1 = Benchmark.objects.filter(tool__name__exact='lpo')
+	b2 = Benchmark.objects.filter(tool__name__exact='nips').filter(model__in=[b.model.pk for b in b1])
+	b1 = b1.filter(model__in=[b.model.pk for b in b2])
+	
+	t1 = [b.elapsed_time for b in b1]
+	t2 = [b.elapsed_time for b in b2]
+	
+	# Draw a linear function from .001 until the first power of 10 greater than max_value
+	max_value_t = max(max(b1.values('elapsed_time')),max(b2.values('elapsed_time')))['elapsed_time']
+	max_value_t = math.pow(10,math.ceil(math.log10(max_value_t)))
+	ax.plot(np.arange(0,max_value_t,step=.001),np.arange(0,max_value_t,step=.001),'b-')
+	
+	# Plot data
+	ax.plot(t1, t2, 'ro')
+	
+	# Axes mark up
+	ax.set_xscale('log')
+	ax.set_yscale('log')
+	ax.set_xlabel('lpo')
+	ax.set_ylabel('nips')
+	ax.set_title('Runtime (s)', size='small')
+	ax.grid(True)
+		
+	# MEMORY
+	ax=fig.add_subplot(212)
+	m1 = [b.memory_VSIZE for b in b1]
+	m2 = [b.memory_VSIZE for b in b2]
+	
+	max_value_m = max(max(b1.values('memory_VSIZE')),max(b2.values('memory_VSIZE')))['memory_VSIZE']
+	max_value_m = math.pow(10,math.ceil(math.log10(max_value_m)))
+	ax.plot(np.arange(0,max_value_m),np.arange(0,max_value_m),'b-')
+	
+	ax.set_xscale('log')
+	ax.set_yscale('log')
+	ax.set_xlabel('lpo')
+	ax.set_ylabel('nips')
+	ax.grid(True)
+	
+	ax.plot(m1,m2,'ro')
+	ax.set_title('Memory VSIZE (kb)', size='small')
+	
+	fig.set_size_inches(5,10)
+	canvas = FigureCanvas(fig)
+	response = HttpResponse(content_type='image/png')
+	canvas.print_png(response)
+	return response
+
 def simple(request, id):
 	
-	import numpy
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
@@ -47,8 +105,8 @@ def simple(request, id):
 	# Plot data
 	width = 0.4
 	numBench = benchmarks.count()
-	ax.bar(numpy.arange(numBench), states, width, align='center')
-	ax.set_xticks(numpy.arange(benchmarks.count()))
+	ax.bar(np.arange(numBench), states, width, align='center')
+	ax.set_xticks(np.arange(benchmarks.count()))
 	ax.set_xticklabels(benchmarks, size='small')
 	ax.set_ylabel('States')
 	#ax.figure.set_figheight(2)
@@ -68,7 +126,6 @@ def simple(request, id):
 
 def graph_model(request, models=None, type='states', options=None):
 	# General library stuff
-	import numpy as np
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
 	from matplotlib.figure import Figure
