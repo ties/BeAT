@@ -21,6 +21,7 @@ V_QUIET = 0		#print errors only
 V_SILENT = -1	#print fatal errors only
 
 class FileReader:
+	log = []
 	verbose = V_QUIET #default mode: no messages except errors
 	
 	def print_message(self, level, text):
@@ -34,7 +35,7 @@ class FileReader:
 			This function returns nothing.
 		"""
 		if self.verbose >= level:
-			print text
+			self.log.append(text)
 	#end of print_message
 
 	def match_regex(self, regex, input, flags=None):
@@ -88,7 +89,7 @@ class FileReader:
 	#end of get_lines
 
 	def parse(self, lines):
-		"""Parse runs from the specified lines.
+		"""Parse a run from the specified lines.
 		Arguments:
 			lines		a list of strings, including newlines
 		
@@ -248,6 +249,7 @@ class FileReader:
 		if not name or not version or not location:
 			self.print_message(V_VERBOSE, "Warning: Data invalid. Model.name=%s Model.version=%s Model.location=%s"%(name, version,location))
 			valid=False
+
 		#Tool
 		name, version = data['tool']
 		if not name or not version:
@@ -296,14 +298,18 @@ class FileReader:
 		#a model is identified by name and version.
 		m, created = Model.objects.get_or_create(name=name, version=version, defaults={'location': location})
 		if created:
-			self.print_message(V_NOISY, "Notice: created a new Model entry:%s,%s"%(name,version))
+			self.print_message(V_NOISY, "Notice: created a new Model entry:%s, %s"%(name,version))
+		else:
+			self.print_message(V_NOISY, "Notice: Model already exists:%s, %s"%(name,version))
 		
 		#tool entry
 		name, version = data['tool']
 		t, created = Tool.objects.get_or_create(name=name, version=version)
 		if created:
-			self.print_message(V_NOISY, "Notice: created a new Tool entry:%s,%s"%(name,version))
-		
+			self.print_message(V_NOISY, "Notice: created a new Tool entry:%s, %s"%(name,version))
+		else:
+			self.print_message(V_NOISY, "Notice: Tool already exists:%s, %s"%(name,version))
+			
 		#hardware entries
 		hwdata = data['hardware']
 		hardwarelist = []
@@ -318,7 +324,9 @@ class FileReader:
 			else:
 				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
 			if created:
-				self.print_message(V_VERBOSE, "Notice: created a new Hardware entry:%s"%(name))
+				self.print_message(V_NOISY, "Notice: created a new Hardware entry:%s"%(name))
+			else:
+				self.print_message(V_NOISY, "Notice: Hardware already exists:%s"%(name))
 			hardwarelist.append(h)
 		
 		#option entries
@@ -328,13 +336,15 @@ class FileReader:
 			name, value = tuple
 			o, created = Option.objects.get_or_create(name=name, value=value)
 			if created and self.verbose>1:
-				self.print_message(V_VERBOSE, "Notice: created a new Option entry:%s,%s"%(name,value))
+				self.print_message(V_VERBOSE, "Notice: created a new Option entry:%s, %s"%(name,value))
+			else:
+				self.print_message(V_VERBOSE, "Notice: Option already exists:%s, %s"%(name,value))
+			
 			optionlist.append(o)
 		
 		#this one's always new
 		#add BenchmarkHardware and BenchmarkOption reference here
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
-
 		#now create and save the db object
 		b, created = Benchmark.objects.get_or_create(model=m, tool=t, date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
@@ -343,7 +353,7 @@ class FileReader:
 		)
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark. and only if newly created
 		if created:
-			self.print_message(V_NOISY,"Notice: created Benchmark entry: %s on %s, time: "%(t.name, m.name, date))
+			self.print_message(V_NOISY,"Notice: created Benchmark entry: %s on %s, which ran on: %s"%(t.name, m.name, date))
 			for option in optionlist:
 				bo = BenchmarkOption(benchmark=b, option=option)
 				bo.save()
@@ -351,6 +361,9 @@ class FileReader:
 				bh = BenchmarkHardware(benchmark=b, hardware=hardware)
 				bh.save()
 			b.save()
+		else:
+			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
+
 		#done!
 	#end of write_to_db
 
@@ -383,40 +396,45 @@ class FileReader:
 
 		#start of file-reading
 		#when we want multiple files, a loop should be here
-		path = file_list[0]
-		self.print_message(V_NOISY, "Notice: Reading from file: %s"%(path))
-		lines=[]
-		with open(path, 'r') as file:
-			for line in file:
-				lines.append(line)
+		all_data=[]
+		for path in file_list:
+			lines=[]
+			#path = file_list[0]
+			self.print_message(V_NOISY, "Notice: Reading from file: %s"%(path))
+			with open(path, 'r') as file:
+				for line in file:
+					lines.append(line)
+			all_data.append(lines)
+
 		self.print_message(V_NOISY, "Notice: Read complete\nNotice: Start parsing")
-		#figure out the runs that are in here
-		runs = self.find_runs(lines)
+		#find all the runs
 		runcounter=0
 		errorcounter=0
-		#parse each:
-		for run in runs:
-			data = self.parse(run)
-			if data:
-				try:
-					self.write_to_db(data)
-				except FileReaderError as f:
-					if f.db_altered:
-						self.print_message(V_SILENT, "Warning: an error occured while writing to the database! %s"%(f.error))
-						return -1
-					else:
-						self.print_message(V_QUIET, "Warning: FileReaderError: %s" %( f.error))
+		for lines in all_data:
+			runs = self.find_runs(lines)
+			#parse each:
+			for run in runs:
+				data = self.parse(run)
+				if data:
+					try:
+						self.write_to_db(data)
+					except FileReaderError as f:
+						if f.db_altered:
+							self.print_message(V_SILENT, "Warning: an error occured while writing to the database! %s"%(f.error))
+							return -1
+						else:
+							self.print_message(V_QUIET, "Warning: FileReaderError: %s" %( f.error))
+							errorcounter+=1
+						self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
+					except Exception, e:
+						#an error occured, skip this part
+						self.print_message(V_QUIET, "Warning: parsing of run %s failed by unexpected error"%(runcounter))
+						print e
 						errorcounter+=1
-					self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
-				except Exception, e:
-					#an error occured, skip this part
-					self.print_message(V_QUIET, "Warning: parsing of run %s failed"%(runcounter))
-					print e
+				else:
+					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
 					errorcounter+=1
-			else:
-				self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
-				errorcounter+=1
-			runcounter+=1
+				runcounter+=1
 		#end of file-reading
 		return errorcounter
 	#end of main
@@ -494,6 +512,9 @@ class FileReaderError(Exception):
 
 #run the main method
 if __name__ == '__main__':
-	exitcode = FileReader.main(FileReader())
-	print exitcode
+	f = FileReader()
+	exitcode = f.main()
+	print "%s\nLog: "%( exitcode)
+	for l in f.log:
+		print l
 	sys.exit(exitcode)

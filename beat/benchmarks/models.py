@@ -18,6 +18,9 @@ class Model(models.Model):
 class Tool(models.Model):	
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
+	#regex = models.CharField(max_length=5000)
+	#possible_options = models.
+	#think up something for this.
 	
 	def __unicode__(self):
 		return self.name + ' ' + self.version
@@ -60,7 +63,6 @@ class Benchmark(models.Model):
 	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
 	option = models.ManyToManyField('Option', through="BenchmarkOption")
 	date_time = models.DateTimeField(verbose_name="Time started")
-	finished = models.BooleanField(verbose_name="Run finished")
 	
 	#Data
 	user_time = models.FloatField(verbose_name="User time (s)")
@@ -70,6 +72,7 @@ class Benchmark(models.Model):
 	states_count = models.BigIntegerField(verbose_name="States")
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
+	finished = models.BooleanField(verbose_name="Run finished")
 	
 	def __unicode__(self):
 		return self.model.__str__() + '-' + self.tool.name.__str__()

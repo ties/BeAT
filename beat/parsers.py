@@ -7,14 +7,17 @@ def execute(obj):
 		#(identification, tool_name, algorithm_name, regular_expression, short_parameters, long_parameters),
 		#here's an example:
 		(
-			#identifier, name, 
+			#identifier, tool name, algorithm name:
 			"nips2lts-grey", "nips", "grey", 
+			#regex:
 			r'nips2lts-grey: .*\nnips2lts-grey: state space has \d+ levels '
 				+'(?P<scount>\d+) states (?P<tcount>\d+).*\nExit \[[0-9]+\]\n'
 				+'(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, '
 				+'(?P<etime>[0-9\.]+) elapsed --( Max | )VSize = '
 				+'(?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
+			#short params:
 			'dcr:vqh',
+			#long params:
 			[
 				'strategy=', 'state=', 'deadlock', 'trace=', #options
 				'cache', 'regroup=',#greybox

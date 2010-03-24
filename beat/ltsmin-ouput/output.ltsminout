@@ -1,0 +1,1488 @@
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 24 43 736654
+Call: memtime lpo2lts-grey -c ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/t42.dir 2>&1
+lpo2lts-grey: Writing output to ./ltsmin-models/mucrl/t42.dir
+lpo2lts-grey: loading model from ./ltsmin-models/mucrl/f42.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model ./ltsmin-models/mucrl/f42.tbf loaded
+lpo2lts-grey: length is 44, there are 48 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: opening ./ltsmin-models/mucrl/t42.dir
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 trans
+lpo2lts-grey: level 1 has 8 states, explored 1 states 8 trans
+lpo2lts-grey: level 2 has 32 states, explored 9 states 64 trans
+lpo2lts-grey: level 3 has 80 states, explored 41 states 256 trans
+lpo2lts-grey: level 4 has 152 states, explored 121 states 672 trans
+lpo2lts-grey: level 5 has 256 states, explored 273 states 1392 trans
+lpo2lts-grey: level 6 has 400 states, explored 529 states 2544 trans
+lpo2lts-grey: level 7 has 608 states, explored 929 states 4272 trans
+lpo2lts-grey: level 8 has 952 states, explored 1537 states 6944 trans
+lpo2lts-grey: level 9 has 1416 states, explored 2489 states 11112 trans
+lpo2lts-grey: level 10 has 2080 states, explored 3905 states 17392 trans
+lpo2lts-grey: level 11 has 2968 states, explored 5985 states 26744 trans
+lpo2lts-grey: level 12 has 4152 states, explored 8953 states 40560 trans
+lpo2lts-grey: level 13 has 5560 states, explored 13105 states 60240 trans
+lpo2lts-grey: level 14 has 6944 states, explored 18665 states 86544 trans
+lpo2lts-grey: level 15 has 8080 states, explored 25609 states 118736 trans
+lpo2lts-grey: level 16 has 8728 states, explored 33689 states 154648 trans
+lpo2lts-grey: level 17 has 8880 states, explored 42417 states 191720 trans
+lpo2lts-grey: level 18 has 8728 states, explored 51297 states 227768 trans
+lpo2lts-grey: level 19 has 8360 states, explored 60025 states 261736 trans
+lpo2lts-grey: level 20 has 7896 states, explored 68385 states 293024 trans
+lpo2lts-grey: level 21 has 7616 states, explored 76281 states 321728 trans
+lpo2lts-grey: level 22 has 7728 states, explored 83897 states 349328 trans
+lpo2lts-grey: level 23 has 7864 states, explored 91625 states 377144 trans
+lpo2lts-grey: level 24 has 7712 states, explored 99489 states 405312 trans
+lpo2lts-grey: level 25 has 7360 states, explored 107201 states 432408 trans
+lpo2lts-grey: level 26 has 7248 states, explored 114561 states 458192 trans
+lpo2lts-grey: level 27 has 7808 states, explored 121809 states 484536 trans
+lpo2lts-grey: level 28 has 9208 states, explored 129617 states 514888 trans
+lpo2lts-grey: level 29 has 11192 states, explored 138825 states 552512 trans
+lpo2lts-grey: level 30 has 13288 states, explored 150017 states 598832 trans
+lpo2lts-grey: level 31 has 14976 states, explored 163305 states 652920 trans
+lpo2lts-grey: level 32 has 16056 states, explored 178281 states 712128 trans
+lpo2lts-grey: level 33 has 16400 states, explored 194337 states 773368 trans
+lpo2lts-grey: level 34 has 16024 states, explored 210737 states 833432 trans
+lpo2lts-grey: level 35 has 14872 states, explored 226761 states 889952 trans
+lpo2lts-grey: level 36 has 13272 states, explored 241633 states 940744 trans
+lpo2lts-grey: level 37 has 11640 states, explored 254905 states 985080 trans
+lpo2lts-grey: level 38 has 10368 states, explored 266545 states 1024112 trans
+lpo2lts-grey: level 39 has 9200 states, explored 276913 states 1059304 trans
+lpo2lts-grey: level 40 has 7944 states, explored 286113 states 1090904 trans
+lpo2lts-grey: level 41 has 6760 states, explored 294057 states 1117904 trans
+lpo2lts-grey: level 42 has 5736 states, explored 300817 states 1140288 trans
+lpo2lts-grey: level 43 has 5144 states, explored 306553 states 1159080 trans
+lpo2lts-grey: level 44 has 5192 states, explored 311697 states 1176448 trans
+lpo2lts-grey: level 45 has 5680 states, explored 316889 states 1194648 trans
+lpo2lts-grey: level 46 has 6384 states, explored 322569 states 1214744 trans
+lpo2lts-grey: level 47 has 6928 states, explored 328953 states 1236704 trans
+lpo2lts-grey: level 48 has 7344 states, explored 335881 states 1260032 trans
+lpo2lts-grey: level 49 has 7520 states, explored 343225 states 1284200 trans
+lpo2lts-grey: level 50 has 7296 states, explored 350745 states 1308216 trans
+lpo2lts-grey: level 51 has 6512 states, explored 358041 states 1330768 trans
+lpo2lts-grey: level 52 has 5392 states, explored 364553 states 1350272 trans
+lpo2lts-grey: level 53 has 4088 states, explored 369945 states 1365968 trans
+lpo2lts-grey: level 54 has 2800 states, explored 374033 states 1377656 trans
+lpo2lts-grey: level 55 has 1656 states, explored 376833 states 1385672 trans
+lpo2lts-grey: level 56 has 856 states, explored 378489 states 1390448 trans
+lpo2lts-grey: level 57 has 504 states, explored 379345 states 1393072 trans
+lpo2lts-grey: level 58 has 344 states, explored 379849 states 1394696 trans
+lpo2lts-grey: level 59 has 184 states, explored 380193 states 1395688 trans
+lpo2lts-grey: level 60 has 96 states, explored 380377 states 1396160 trans
+lpo2lts-grey: level 61 has 48 states, explored 380473 states 1396336 trans
+lpo2lts-grey: level 62 has 40 states, explored 380521 states 1396416 trans
+lpo2lts-grey: level 63 has 32 states, explored 380561 states 1396480 trans
+lpo2lts-grey: level 64 has 16 states, explored 380593 states 1396512 trans
+lpo2lts-grey: state space has 65 levels 380609 states 1396512 transitions
+lpo2lts-grey: finishing the writing
+Exit [0]
+57.28 user, 0.48 system, 58.13 elapsed -- Max VSize = 42976KB, Max RSS = 20948KB
+REPORT ENDS HERE
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 25 42 005837
+Call: memtime lpo-reach ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/f42.etf 2>&1
+lpo-reach: Exploration order is bfs
+lpo-reach: opening ./ltsmin-models/mucrl/f42.tbf
+lpo-reach: Start compiling ...
+lpo-reach: .... end compiling.
+lpo-reach: creating a new string index
+lpo-reach: creating a new string index
+lpo-reach: model ./ltsmin-models/mucrl/f42.tbf loaded
+lpo-reach: Creating an AtermDD list domain.
+lpo-reach: length is 44, there are 48 groups
+lpo-reach: got initial state
+lpo-reach: level 0 has 1 states ( 46 nodes )
+lpo-reach: visited 0 has 1 states ( 46 nodes )
+lpo-reach: level 1 has 8 states ( 244 nodes )
+lpo-reach: visited 1 has 9 states ( 254 nodes )
+lpo-reach: level 2 has 32 states ( 763 nodes )
+lpo-reach: visited 2 has 41 states ( 854 nodes )
+lpo-reach: level 3 has 80 states ( 1608 nodes )
+lpo-reach: visited 3 has 121 states ( 2030 nodes )
+lpo-reach: level 4 has 152 states ( 2695 nodes )
+lpo-reach: visited 4 has 273 states ( 3868 nodes )
+lpo-reach: level 5 has 256 states ( 4007 nodes )
+lpo-reach: visited 5 has 529 states ( 6368 nodes )
+lpo-reach: level 6 has 400 states ( 5746 nodes )
+lpo-reach: visited 6 has 929 states ( 9528 nodes )
+lpo-reach: level 7 has 608 states ( 8029 nodes )
+lpo-reach: visited 7 has 1537 states ( 13680 nodes )
+lpo-reach: level 8 has 952 states ( 10897 nodes )
+lpo-reach: visited 8 has 2489 states ( 19111 nodes )
+lpo-reach: level 9 has 1416 states ( 15222 nodes )
+lpo-reach: visited 9 has 3905 states ( 26499 nodes )
+lpo-reach: level 10 has 2080 states ( 20707 nodes )
+lpo-reach: visited 10 has 5985 states ( 36825 nodes )
+lpo-reach: level 11 has 2968 states ( 27017 nodes )
+lpo-reach: visited 11 has 8953 states ( 49939 nodes )
+lpo-reach: level 12 has 4152 states ( 33281 nodes )
+lpo-reach: visited 12 has 13105 states ( 65664 nodes )
+lpo-reach: level 13 has 5560 states ( 39030 nodes )
+lpo-reach: visited 13 has 18665 states ( 84389 nodes )
+lpo-reach: level 14 has 6944 states ( 44367 nodes )
+lpo-reach: visited 14 has 25609 states ( 107473 nodes )
+lpo-reach: level 15 has 8080 states ( 47649 nodes )
+lpo-reach: visited 15 has 33689 states ( 134250 nodes )
+lpo-reach: level 16 has 8728 states ( 50197 nodes )
+lpo-reach: visited 16 has 42417 states ( 163355 nodes )
+lpo-reach: level 17 has 8880 states ( 51928 nodes )
+lpo-reach: visited 17 has 51297 states ( 192277 nodes )
+lpo-reach: level 18 has 8728 states ( 51692 nodes )
+lpo-reach: visited 18 has 60025 states ( 219973 nodes )
+lpo-reach: level 19 has 8360 states ( 50441 nodes )
+lpo-reach: visited 19 has 68385 states ( 246618 nodes )
+lpo-reach: level 20 has 7896 states ( 47203 nodes )
+lpo-reach: visited 20 has 76281 states ( 270118 nodes )
+lpo-reach: level 21 has 7616 states ( 47021 nodes )
+lpo-reach: visited 21 has 83897 states ( 291838 nodes )
+lpo-reach: level 22 has 7728 states ( 49079 nodes )
+lpo-reach: visited 22 has 91625 states ( 313106 nodes )
+lpo-reach: level 23 has 7864 states ( 48751 nodes )
+lpo-reach: visited 23 has 99489 states ( 332921 nodes )
+lpo-reach: level 24 has 7712 states ( 49960 nodes )
+lpo-reach: visited 24 has 107201 states ( 354154 nodes )
+lpo-reach: level 25 has 7360 states ( 52368 nodes )
+lpo-reach: visited 25 has 114561 states ( 377002 nodes )
+lpo-reach: level 26 has 7248 states ( 57602 nodes )
+lpo-reach: visited 26 has 121809 states ( 400642 nodes )
+lpo-reach: level 27 has 7808 states ( 65456 nodes )
+lpo-reach: visited 27 has 129617 states ( 425004 nodes )
+lpo-reach: level 28 has 9208 states ( 74140 nodes )
+lpo-reach: visited 28 has 138825 states ( 450127 nodes )
+lpo-reach: level 29 has 11192 states ( 81979 nodes )
+lpo-reach: visited 29 has 150017 states ( 476564 nodes )
+lpo-reach: level 30 has 13288 states ( 86669 nodes )
+lpo-reach: visited 30 has 163305 states ( 504919 nodes )
+lpo-reach: level 31 has 14976 states ( 85638 nodes )
+lpo-reach: visited 31 has 178281 states ( 535419 nodes )
+lpo-reach: level 32 has 16056 states ( 84587 nodes )
+lpo-reach: visited 32 has 194337 states ( 567560 nodes )
+lpo-reach: level 33 has 16400 states ( 83142 nodes )
+lpo-reach: visited 33 has 210737 states ( 598758 nodes )
+lpo-reach: level 34 has 16024 states ( 80420 nodes )
+lpo-reach: visited 34 has 226761 states ( 628809 nodes )
+lpo-reach: level 35 has 14872 states ( 74381 nodes )
+lpo-reach: visited 35 has 241633 states ( 656507 nodes )
+lpo-reach: level 36 has 13272 states ( 65074 nodes )
+lpo-reach: visited 36 has 254905 states ( 677900 nodes )
+lpo-reach: level 37 has 11640 states ( 58612 nodes )
+lpo-reach: visited 37 has 266545 states ( 693985 nodes )
+lpo-reach: level 38 has 10368 states ( 54962 nodes )
+lpo-reach: visited 38 has 276913 states ( 706226 nodes )
+lpo-reach: level 39 has 9200 states ( 49647 nodes )
+lpo-reach: visited 39 has 286113 states ( 716648 nodes )
+lpo-reach: level 40 has 7944 states ( 46183 nodes )
+lpo-reach: visited 40 has 294057 states ( 727182 nodes )
+lpo-reach: level 41 has 6760 states ( 44295 nodes )
+lpo-reach: visited 41 has 300817 states ( 739298 nodes )
+lpo-reach: level 42 has 5736 states ( 43588 nodes )
+lpo-reach: visited 42 has 306553 states ( 749858 nodes )
+lpo-reach: level 43 has 5144 states ( 44248 nodes )
+lpo-reach: visited 43 has 311697 states ( 759675 nodes )
+lpo-reach: level 44 has 5192 states ( 45385 nodes )
+lpo-reach: visited 44 has 316889 states ( 766955 nodes )
+lpo-reach: level 45 has 5680 states ( 48316 nodes )
+lpo-reach: visited 45 has 322569 states ( 774308 nodes )
+lpo-reach: level 46 has 6384 states ( 49749 nodes )
+lpo-reach: visited 46 has 328953 states ( 783476 nodes )
+lpo-reach: level 47 has 6928 states ( 48463 nodes )
+lpo-reach: visited 47 has 335881 states ( 793026 nodes )
+lpo-reach: level 48 has 7344 states ( 48184 nodes )
+lpo-reach: visited 48 has 343225 states ( 802289 nodes )
+lpo-reach: level 49 has 7520 states ( 47445 nodes )
+lpo-reach: visited 49 has 350745 states ( 810400 nodes )
+lpo-reach: level 50 has 7296 states ( 44902 nodes )
+lpo-reach: visited 50 has 358041 states ( 818226 nodes )
+lpo-reach: level 51 has 6512 states ( 40446 nodes )
+lpo-reach: visited 51 has 364553 states ( 824945 nodes )
+lpo-reach: level 52 has 5392 states ( 36003 nodes )
+lpo-reach: visited 52 has 369945 states ( 827868 nodes )
+lpo-reach: level 53 has 4088 states ( 29417 nodes )
+lpo-reach: visited 53 has 374033 states ( 827987 nodes )
+lpo-reach: level 54 has 2800 states ( 22160 nodes )
+lpo-reach: visited 54 has 376833 states ( 824941 nodes )
+lpo-reach: level 55 has 1656 states ( 15660 nodes )
+lpo-reach: visited 55 has 378489 states ( 821797 nodes )
+lpo-reach: level 56 has 856 states ( 9231 nodes )
+lpo-reach: visited 56 has 379345 states ( 819153 nodes )
+lpo-reach: level 57 has 504 states ( 7546 nodes )
+lpo-reach: visited 57 has 379849 states ( 817908 nodes )
+lpo-reach: level 58 has 344 states ( 4688 nodes )
+lpo-reach: visited 58 has 380193 states ( 817316 nodes )
+lpo-reach: level 59 has 184 states ( 3493 nodes )
+lpo-reach: visited 59 has 380377 states ( 817371 nodes )
+lpo-reach: level 60 has 96 states ( 1630 nodes )
+lpo-reach: visited 60 has 380473 states ( 817379 nodes )
+lpo-reach: level 61 has 48 states ( 1016 nodes )
+lpo-reach: visited 61 has 380521 states ( 817262 nodes )
+lpo-reach: level 62 has 40 states ( 663 nodes )
+lpo-reach: visited 62 has 380561 states ( 817306 nodes )
+lpo-reach: level 63 has 32 states ( 576 nodes )
+lpo-reach: visited 63 has 380593 states ( 817218 nodes )
+lpo-reach: level 64 has 16 states ( 163 nodes )
+lpo-reach: visited 64 has 380609 states ( 817234 nodes )
+lpo-reach: Exploration took 3120 group checks and 3120 next state calls
+lpo-reach: reachability took 209.080 real 207.370 user 1.070 sys
+state space has 380609 states
+( 817234 final BDD nodes; 827987 peak nodes; 86669 peak nodes per level )
+lpo-reach: Symbolic tables have 3384 reachable transitions
+lpo-reach: dumping type leaf
+lpo-reach: dumping type action
+lpo-reach: writing output took 0.220 real 0.220 user 0.000 sys
+Exit [0]
+208.51 user, 1.17 system, 210.36 elapsed -- Max VSize = 223036KB, Max RSS = 202840KB
+REPORT ENDS HERE
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 29 12 461213
+Call: memtime ltsmin ./ltsmin-models/mucrl/f42.dir 2>&1
+setting lts_write_segments to 1
+original LTS has 380609 states,  1396512 transitions, and 2 labels
+reading took 0.330 real 0.280 user 0.040 sys
+reduction took 7.230 real 7.200 user 0.040 sys
+reduced LTS has 10706 states and  33995 transitions
+Exit [0]
+7.48 user, 0.09 system, 7.65 elapsed -- Max VSize = 54308KB, Max RSS = 35088KB
+REPORT ENDS HERE
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 29 20 259352
+Call: memtime nips2lts-grey ./ltsmin-models/nips/leader.b ./ltsmin-models/nips/leader.dir 2>&1
+nips2lts-grey: NIPS language module initialized
+nips2lts-grey: Writing output to ./ltsmin-models/nips/leader.dir
+nips2lts-grey: loading model from ./ltsmin-models/nips/leader.b
+nips2lts-grey: Fully initialized state found: 2 states explored, 2 transitions.
+nips2lts-grey: creating a new string index
+nips2lts-grey: creating a new string index
+nips2lts-grey: creating a new string index
+nips2lts-grey: creating a new string index
+nips2lts-grey: length is 6, there are 3 groups
+nips2lts-grey: There are 0 state labels and 1 edge labels
+nips2lts-grey: got initial state
+nips2lts-grey: opening ./ltsmin-models/nips/leader.dir
+nips2lts-grey: level 0 has 1 states, explored 0 states 0 trans
+nips2lts-grey: level 1 has 2 states, explored 1 states 2 trans
+nips2lts-grey: level 2 has 3 states, explored 3 states 6 trans
+nips2lts-grey: level 3 has 4 states, explored 6 states 12 trans
+nips2lts-grey: level 4 has 3 states, explored 10 states 18 trans
+nips2lts-grey: level 5 has 2 states, explored 13 states 22 trans
+nips2lts-grey: level 6 has 1 states, explored 15 states 24 trans
+nips2lts-grey: level 7 has 2 states, explored 16 states 26 trans
+nips2lts-grey: level 8 has 3 states, explored 18 states 30 trans
+nips2lts-grey: level 9 has 4 states, explored 21 states 36 trans
+nips2lts-grey: level 10 has 5 states, explored 25 states 44 trans
+nips2lts-grey: level 11 has 6 states, explored 30 states 54 trans
+nips2lts-grey: level 12 has 5 states, explored 36 states 64 trans
+nips2lts-grey: level 13 has 4 states, explored 41 states 72 trans
+nips2lts-grey: level 14 has 3 states, explored 45 states 78 trans
+nips2lts-grey: level 15 has 2 states, explored 48 states 82 trans
+nips2lts-grey: level 16 has 3 states, explored 50 states 86 trans
+nips2lts-grey: level 17 has 4 states, explored 53 states 92 trans
+nips2lts-grey: level 18 has 5 states, explored 57 states 100 trans
+nips2lts-grey: level 19 has 6 states, explored 62 states 110 trans
+nips2lts-grey: level 20 has 6 states, explored 68 states 121 trans
+nips2lts-grey: level 21 has 5 states, explored 74 states 131 trans
+nips2lts-grey: level 22 has 4 states, explored 79 states 139 trans
+nips2lts-grey: level 23 has 3 states, explored 83 states 145 trans
+nips2lts-grey: level 24 has 2 states, explored 86 states 149 trans
+nips2lts-grey: level 25 has 1 states, explored 88 states 151 trans
+nips2lts-grey: level 26 has 1 states, explored 89 states 152 trans
+nips2lts-grey: level 27 has 1 states, explored 90 states 153 trans
+nips2lts-grey: level 28 has 1 states, explored 91 states 154 trans
+nips2lts-grey: level 29 has 1 states, explored 92 states 155 trans
+nips2lts-grey: level 30 has 1 states, explored 93 states 156 trans
+nips2lts-grey: level 31 has 1 states, explored 94 states 157 trans
+nips2lts-grey: level 32 has 1 states, explored 95 states 158 trans
+nips2lts-grey: level 33 has 1 states, explored 96 states 159 trans
+nips2lts-grey: level 34 has 1 states, explored 97 states 160 trans
+nips2lts-grey: level 35 has 1 states, explored 98 states 161 trans
+nips2lts-grey: level 36 has 1 states, explored 99 states 162 trans
+nips2lts-grey: level 37 has 1 states, explored 100 states 163 trans
+nips2lts-grey: level 38 has 1 states, explored 101 states 164 trans
+nips2lts-grey: level 39 has 1 states, explored 102 states 165 trans
+nips2lts-grey: level 40 has 1 states, explored 103 states 166 trans
+nips2lts-grey: level 41 has 1 states, explored 104 states 167 trans
+nips2lts-grey: level 42 has 2 states, explored 105 states 169 trans
+nips2lts-grey: level 43 has 2 states, explored 107 states 172 trans
+nips2lts-grey: level 44 has 2 states, explored 109 states 175 trans
+nips2lts-grey: level 45 has 2 states, explored 111 states 178 trans
+nips2lts-grey: level 46 has 2 states, explored 113 states 181 trans
+nips2lts-grey: level 47 has 1 states, explored 115 states 183 trans
+nips2lts-grey: state space has 48 levels 116 states 183 transitions
+nips2lts-grey: finishing the writing
+Exit [0]
+0.00 user, 0.02 system, 0.10 elapsed -- Max VSize = 3644KB, Max RSS = 156KB
+REPORT ENDS HERE
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 29 20 583645
+Call: memtime nips-reach ./ltsmin-models/nips/leader.b ./ltsmin-models/nips/leader.etf 2>&1
+nips-reach: Exploration order is bfs
+nips-reach: NIPS language module initialized
+nips-reach: opening ./ltsmin-models/nips/leader.b
+nips-reach: Fully initialized state found: 2 states explored, 2 transitions.
+nips-reach: creating a new string index
+nips-reach: creating a new string index
+nips-reach: creating a new string index
+nips-reach: creating a new string index
+nips-reach: Creating an AtermDD list domain.
+nips-reach: length is 6, there are 3 groups
+nips-reach: got initial state
+nips-reach: level 0 has 1 states ( 8 nodes )
+nips-reach: visited 0 has 1 states ( 8 nodes )
+nips-reach: level 1 has 2 states ( 10 nodes )
+nips-reach: visited 1 has 3 states ( 11 nodes )
+nips-reach: level 2 has 3 states ( 12 nodes )
+nips-reach: visited 2 has 6 states ( 15 nodes )
+nips-reach: level 3 has 4 states ( 17 nodes )
+nips-reach: visited 3 has 10 states ( 23 nodes )
+nips-reach: level 4 has 3 states ( 15 nodes )
+nips-reach: visited 4 has 13 states ( 22 nodes )
+nips-reach: level 5 has 2 states ( 12 nodes )
+nips-reach: visited 5 has 15 states ( 20 nodes )
+nips-reach: level 6 has 1 states ( 8 nodes )
+nips-reach: visited 6 has 16 states ( 22 nodes )
+nips-reach: level 7 has 2 states ( 12 nodes )
+nips-reach: visited 7 has 18 states ( 25 nodes )
+nips-reach: level 8 has 3 states ( 15 nodes )
+nips-reach: visited 8 has 21 states ( 29 nodes )
+nips-reach: level 9 has 4 states ( 17 nodes )
+nips-reach: visited 9 has 25 states ( 34 nodes )
+nips-reach: level 10 has 5 states ( 19 nodes )
+nips-reach: visited 10 has 30 states ( 43 nodes )
+nips-reach: level 11 has 6 states ( 24 nodes )
+nips-reach: visited 11 has 36 states ( 53 nodes )
+nips-reach: level 12 has 5 states ( 19 nodes )
+nips-reach: visited 12 has 41 states ( 58 nodes )
+nips-reach: level 13 has 4 states ( 16 nodes )
+nips-reach: visited 13 has 45 states ( 56 nodes )
+nips-reach: level 14 has 3 states ( 15 nodes )
+nips-reach: visited 14 has 48 states ( 54 nodes )
+nips-reach: level 15 has 2 states ( 10 nodes )
+nips-reach: visited 15 has 50 states ( 56 nodes )
+nips-reach: level 16 has 3 states ( 15 nodes )
+nips-reach: visited 16 has 53 states ( 60 nodes )
+nips-reach: level 17 has 4 states ( 16 nodes )
+nips-reach: visited 17 has 57 states ( 65 nodes )
+nips-reach: level 18 has 5 states ( 19 nodes )
+nips-reach: visited 18 has 62 states ( 71 nodes )
+nips-reach: level 19 has 6 states ( 21 nodes )
+nips-reach: visited 19 has 68 states ( 78 nodes )
+nips-reach: level 20 has 6 states ( 23 nodes )
+nips-reach: visited 20 has 74 states ( 77 nodes )
+nips-reach: level 21 has 5 states ( 18 nodes )
+nips-reach: visited 21 has 79 states ( 82 nodes )
+nips-reach: level 22 has 4 states ( 16 nodes )
+nips-reach: visited 22 has 83 states ( 82 nodes )
+nips-reach: level 23 has 3 states ( 14 nodes )
+nips-reach: visited 23 has 86 states ( 79 nodes )
+nips-reach: level 24 has 2 states ( 12 nodes )
+nips-reach: visited 24 has 88 states ( 75 nodes )
+nips-reach: level 25 has 1 states ( 8 nodes )
+nips-reach: visited 25 has 89 states ( 76 nodes )
+nips-reach: level 26 has 1 states ( 8 nodes )
+nips-reach: visited 26 has 90 states ( 77 nodes )
+nips-reach: level 27 has 1 states ( 8 nodes )
+nips-reach: visited 27 has 91 states ( 78 nodes )
+nips-reach: level 28 has 1 states ( 8 nodes )
+nips-reach: visited 28 has 92 states ( 79 nodes )
+nips-reach: level 29 has 1 states ( 8 nodes )
+nips-reach: visited 29 has 93 states ( 80 nodes )
+nips-reach: level 30 has 1 states ( 8 nodes )
+nips-reach: visited 30 has 94 states ( 81 nodes )
+nips-reach: level 31 has 1 states ( 8 nodes )
+nips-reach: visited 31 has 95 states ( 82 nodes )
+nips-reach: level 32 has 1 states ( 8 nodes )
+nips-reach: visited 32 has 96 states ( 83 nodes )
+nips-reach: level 33 has 1 states ( 8 nodes )
+nips-reach: visited 33 has 97 states ( 84 nodes )
+nips-reach: level 34 has 1 states ( 8 nodes )
+nips-reach: visited 34 has 98 states ( 88 nodes )
+nips-reach: level 35 has 1 states ( 8 nodes )
+nips-reach: visited 35 has 99 states ( 89 nodes )
+nips-reach: level 36 has 1 states ( 8 nodes )
+nips-reach: visited 36 has 100 states ( 90 nodes )
+nips-reach: level 37 has 1 states ( 8 nodes )
+nips-reach: visited 37 has 101 states ( 91 nodes )
+nips-reach: level 38 has 1 states ( 8 nodes )
+nips-reach: visited 38 has 102 states ( 95 nodes )
+nips-reach: level 39 has 1 states ( 8 nodes )
+nips-reach: visited 39 has 103 states ( 96 nodes )
+nips-reach: level 40 has 1 states ( 8 nodes )
+nips-reach: visited 40 has 104 states ( 97 nodes )
+nips-reach: level 41 has 1 states ( 8 nodes )
+nips-reach: visited 41 has 105 states ( 99 nodes )
+nips-reach: level 42 has 2 states ( 11 nodes )
+nips-reach: visited 42 has 107 states ( 102 nodes )
+nips-reach: level 43 has 2 states ( 10 nodes )
+nips-reach: visited 43 has 109 states ( 105 nodes )
+nips-reach: level 44 has 2 states ( 10 nodes )
+nips-reach: visited 44 has 111 states ( 106 nodes )
+nips-reach: level 45 has 2 states ( 10 nodes )
+nips-reach: visited 45 has 113 states ( 107 nodes )
+nips-reach: level 46 has 2 states ( 10 nodes )
+nips-reach: visited 46 has 115 states ( 108 nodes )
+nips-reach: level 47 has 1 states ( 8 nodes )
+nips-reach: visited 47 has 116 states ( 107 nodes )
+nips-reach: Exploration took 144 group checks and 144 next state calls
+nips-reach: reachability took 0.020 real 0.020 user 0.000 sys
+state space has 116 states
+( 107 final BDD nodes; 108 peak nodes; 24 peak nodes per level )
+nips-reach: Symbolic tables have 90 reachable transitions
+nips-reach: dumping type globals
+nips-reach: dumping type process
+nips-reach: dumping type channel
+nips-reach: dumping type label
+nips-reach: writing output took 0.000 real 0.000 user 0.000 sys
+Exit [0]
+0.02 user, 0.03 system, 0.10 elapsed -- Max VSize = 3644KB, Max RSS = 180KB
+REPORT ENDS HERE
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 29 20 760990
+Call: memtime etf2lts-grey ./ltsmin-models/nips/leader.etf ./ltsmin-models/nips/leader.etf.dir 2>&1
+etf2lts-grey: ETF language module initialized
+etf2lts-grey: Writing output to ./ltsmin-models/nips/leader.etf.dir
+etf2lts-grey: loading model from ./ltsmin-models/nips/leader.etf
+etf2lts-grey: The state length is 6
+etf2lts-grey: done
+etf2lts-grey: There are 1 edge labels
+etf2lts-grey: done
+etf2lts-grey: initial state found
+etf2lts-grey: skipping empty trans section
+etf2lts-grey: reading values for sort globals
+etf2lts-grey: read 2 values
+etf2lts-grey: reading values for sort process
+etf2lts-grey: read 49 values
+etf2lts-grey: reading values for sort channel
+etf2lts-grey: read 12 values
+etf2lts-grey: reading values for sort label
+etf2lts-grey: read 1 values
+etf2lts-grey: parsing finished
+etf2lts-grey: success!
+etf2lts-grey: creating a new string index
+etf2lts-grey: creating a new string index
+etf2lts-grey: creating a new string index
+etf2lts-grey: creating a new string index
+etf2lts-grey: parsing table 0
+etf2lts-grey: length is 4
+etf2lts-grey: table 0 has 50 states and 43 transitions
+etf2lts-grey: parsing table 1
+etf2lts-grey: length is 4
+etf2lts-grey: table 1 has 55 states and 47 transitions
+etf2lts-grey: Setting values for type 0 (channel)
+etf2lts-grey: Setting values for type 1 (process)
+etf2lts-grey: Setting values for type 2 (globals)
+etf2lts-grey: Setting values for type 3 (label)
+etf2lts-grey: length is 6, there are 2 groups
+etf2lts-grey: There are 0 state labels and 1 edge labels
+etf2lts-grey: got initial state
+etf2lts-grey: opening ./ltsmin-models/nips/leader.etf.dir
+etf2lts-grey: level 0 has 1 states, explored 0 states 0 trans
+etf2lts-grey: level 1 has 2 states, explored 1 states 2 trans
+etf2lts-grey: level 2 has 3 states, explored 3 states 6 trans
+etf2lts-grey: level 3 has 4 states, explored 6 states 12 trans
+etf2lts-grey: level 4 has 3 states, explored 10 states 18 trans
+etf2lts-grey: level 5 has 2 states, explored 13 states 22 trans
+etf2lts-grey: level 6 has 1 states, explored 15 states 24 trans
+etf2lts-grey: level 7 has 2 states, explored 16 states 26 trans
+etf2lts-grey: level 8 has 3 states, explored 18 states 30 trans
+etf2lts-grey: level 9 has 4 states, explored 21 states 36 trans
+etf2lts-grey: level 10 has 5 states, explored 25 states 44 trans
+etf2lts-grey: level 11 has 6 states, explored 30 states 54 trans
+etf2lts-grey: level 12 has 5 states, explored 36 states 64 trans
+etf2lts-grey: level 13 has 4 states, explored 41 states 72 trans
+etf2lts-grey: level 14 has 3 states, explored 45 states 78 trans
+etf2lts-grey: level 15 has 2 states, explored 48 states 82 trans
+etf2lts-grey: level 16 has 3 states, explored 50 states 86 trans
+etf2lts-grey: level 17 has 4 states, explored 53 states 92 trans
+etf2lts-grey: level 18 has 5 states, explored 57 states 100 trans
+etf2lts-grey: level 19 has 6 states, explored 62 states 110 trans
+etf2lts-grey: level 20 has 6 states, explored 68 states 121 trans
+etf2lts-grey: level 21 has 5 states, explored 74 states 131 trans
+etf2lts-grey: level 22 has 4 states, explored 79 states 139 trans
+etf2lts-grey: level 23 has 3 states, explored 83 states 145 trans
+etf2lts-grey: level 24 has 2 states, explored 86 states 149 trans
+etf2lts-grey: level 25 has 1 states, explored 88 states 151 trans
+etf2lts-grey: level 26 has 1 states, explored 89 states 152 trans
+etf2lts-grey: level 27 has 1 states, explored 90 states 153 trans
+etf2lts-grey: level 28 has 1 states, explored 91 states 154 trans
+etf2lts-grey: level 29 has 1 states, explored 92 states 155 trans
+etf2lts-grey: level 30 has 1 states, explored 93 states 156 trans
+etf2lts-grey: level 31 has 1 states, explored 94 states 157 trans
+etf2lts-grey: level 32 has 1 states, explored 95 states 158 trans
+etf2lts-grey: level 33 has 1 states, explored 96 states 159 trans
+etf2lts-grey: level 34 has 1 states, explored 97 states 160 trans
+etf2lts-grey: level 35 has 1 states, explored 98 states 161 trans
+etf2lts-grey: level 36 has 1 states, explored 99 states 162 trans
+etf2lts-grey: level 37 has 1 states, explored 100 states 163 trans
+etf2lts-grey: level 38 has 1 states, explored 101 states 164 trans
+etf2lts-grey: level 39 has 1 states, explored 102 states 165 trans
+etf2lts-grey: level 40 has 1 states, explored 103 states 166 trans
+etf2lts-grey: level 41 has 1 states, explored 104 states 167 trans
+etf2lts-grey: level 42 has 2 states, explored 105 states 169 trans
+etf2lts-grey: level 43 has 2 states, explored 107 states 172 trans
+etf2lts-grey: level 44 has 2 states, explored 109 states 175 trans
+etf2lts-grey: level 45 has 2 states, explored 111 states 178 trans
+etf2lts-grey: level 46 has 2 states, explored 113 states 181 trans
+etf2lts-grey: level 47 has 1 states, explored 115 states 183 trans
+etf2lts-grey: state space has 48 levels 116 states 183 transitions
+etf2lts-grey: finishing the writing
+Exit [0]
+0.01 user, 0.02 system, 0.10 elapsed -- Max VSize = 3644KB, Max RSS = 136KB
+REPORT ENDS HERE
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 29 20 983136
+Call: memtime etf-reach ./ltsmin-models/etf/micro.etf 2>&1
+etf-reach: Exploration order is bfs
+etf-reach: ETF language module initialized
+etf-reach: opening ./ltsmin-models/etf/micro.etf
+etf-reach: The state length is 39
+etf-reach: done
+etf-reach: There are 1 edge labels
+etf-reach: done
+etf-reach: initial state found
+etf-reach: reading values for sort leaf
+etf-reach: read 56 values
+etf-reach: reading values for sort action
+etf-reach: read 46 values
+etf-reach: parsing finished
+etf-reach: success!
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: parsing table 0
+etf-reach: length is 13
+etf-reach: table 0 has 115 states and 166 transitions
+etf-reach: parsing table 1
+etf-reach: length is 4
+etf-reach: table 1 has 40 states and 83 transitions
+etf-reach: parsing table 2
+etf-reach: length is 18
+etf-reach: table 2 has 320 states and 192 transitions
+etf-reach: parsing table 3
+etf-reach: length is 9
+etf-reach: table 3 has 160 states and 96 transitions
+etf-reach: parsing table 4
+etf-reach: length is 13
+etf-reach: table 4 has 115 states and 166 transitions
+etf-reach: parsing table 5
+etf-reach: length is 4
+etf-reach: table 5 has 40 states and 83 transitions
+etf-reach: parsing table 6
+etf-reach: length is 18
+etf-reach: table 6 has 320 states and 192 transitions
+etf-reach: parsing table 7
+etf-reach: length is 9
+etf-reach: table 7 has 160 states and 96 transitions
+etf-reach: parsing table 8
+etf-reach: length is 13
+etf-reach: table 8 has 115 states and 166 transitions
+etf-reach: parsing table 9
+etf-reach: length is 4
+etf-reach: table 9 has 40 states and 83 transitions
+etf-reach: parsing table 10
+etf-reach: length is 18
+etf-reach: table 10 has 320 states and 192 transitions
+etf-reach: parsing table 11
+etf-reach: length is 9
+etf-reach: table 11 has 160 states and 96 transitions
+etf-reach: parsing table 12
+etf-reach: length is 23
+etf-reach: table 12 has 1904 states and 1280 transitions
+etf-reach: parsing table 13
+etf-reach: length is 18
+etf-reach: table 13 has 128 states and 64 transitions
+etf-reach: parsing table 14
+etf-reach: length is 15
+etf-reach: table 14 has 58 states and 29 transitions
+etf-reach: parsing table 15
+etf-reach: length is 17
+etf-reach: table 15 has 520 states and 898 transitions
+etf-reach: parsing table 16
+etf-reach: length is 13
+etf-reach: table 16 has 145 states and 148 transitions
+etf-reach: parsing table 17
+etf-reach: length is 9
+etf-reach: table 17 has 8 states and 8 transitions
+etf-reach: parsing table 18
+etf-reach: length is 14
+etf-reach: table 18 has 832 states and 640 transitions
+etf-reach: parsing table 19
+etf-reach: length is 9
+etf-reach: table 19 has 64 states and 32 transitions
+etf-reach: parsing table 20
+etf-reach: length is 8
+etf-reach: table 20 has 171 states and 426 transitions
+etf-reach: parsing table 21
+etf-reach: length is 4
+etf-reach: table 21 has 63 states and 95 transitions
+etf-reach: Setting values for type 0 (leaf)
+etf-reach: Setting values for type 1 (action)
+etf-reach: Creating an AtermDD list domain.
+etf-reach: length is 39, there are 22 groups
+etf-reach: got initial state
+etf-reach: level 0 has 1 states ( 41 nodes )
+etf-reach: visited 0 has 1 states ( 41 nodes )
+etf-reach: level 1 has 15 states ( 92 nodes )
+etf-reach: visited 1 has 16 states ( 93 nodes )
+etf-reach: level 2 has 102 states ( 203 nodes )
+etf-reach: visited 2 has 118 states ( 207 nodes )
+etf-reach: level 3 has 460 states ( 398 nodes )
+etf-reach: visited 3 has 578 states ( 405 nodes )
+etf-reach: level 4 has 1639 states ( 680 nodes )
+etf-reach: visited 4 has 2217 states ( 675 nodes )
+etf-reach: level 5 has 5029 states ( 1151 nodes )
+etf-reach: visited 5 has 7246 states ( 1127 nodes )
+etf-reach: level 6 has 13703 states ( 1663 nodes )
+etf-reach: visited 6 has 20949 states ( 1671 nodes )
+etf-reach: level 7 has 34203 states ( 2342 nodes )
+etf-reach: visited 7 has 55152 states ( 2330 nodes )
+etf-reach: level 8 has 78946 states ( 3053 nodes )
+etf-reach: visited 8 has 134098 states ( 3106 nodes )
+etf-reach: level 9 has 170661 states ( 4079 nodes )
+etf-reach: visited 9 has 304759 states ( 4142 nodes )
+etf-reach: level 10 has 348448 states ( 5349 nodes )
+etf-reach: visited 10 has 653207 states ( 5389 nodes )
+etf-reach: level 11 has 676302 states ( 6786 nodes )
+etf-reach: visited 11 has 1329509 states ( 6768 nodes )
+etf-reach: level 12 has 1254036 states ( 8532 nodes )
+etf-reach: visited 12 has 2583545 states ( 8671 nodes )
+etf-reach: level 13 has 2231478 states ( 10667 nodes )
+etf-reach: visited 13 has 4815023 states ( 10825 nodes )
+etf-reach: level 14 has 3823659 states ( 13148 nodes )
+etf-reach: visited 14 has 8638682 states ( 13501 nodes )
+etf-reach: level 15 has 6328421 states ( 16205 nodes )
+etf-reach: visited 15 has 14967103 states ( 16673 nodes )
+etf-reach: level 16 has 10143083 states ( 19593 nodes )
+etf-reach: visited 16 has 25110186 states ( 20183 nodes )
+etf-reach: level 17 has 15777261 states ( 23435 nodes )
+etf-reach: visited 17 has 40887447 states ( 24142 nodes )
+etf-reach: level 18 has 23859548 states ( 27630 nodes )
+etf-reach: visited 18 has 64746995 states ( 28502 nodes )
+etf-reach: level 19 has 35134637 states ( 32198 nodes )
+etf-reach: visited 19 has 99881632 states ( 33256 nodes )
+etf-reach: level 20 has 50446040 states ( 37255 nodes )
+etf-reach: visited 20 has 150327672 states ( 38481 nodes )
+etf-reach: level 21 has 70702555 states ( 42577 nodes )
+etf-reach: visited 21 has 221030227 states ( 43932 nodes )
+etf-reach: level 22 has 96824832 states ( 48414 nodes )
+etf-reach: visited 22 has 317855059 states ( 49905 nodes )
+etf-reach: level 23 has 129673201 states ( 54527 nodes )
+etf-reach: visited 23 has 447528260 states ( 56139 nodes )
+etf-reach: level 24 has 169959580 states ( 60589 nodes )
+etf-reach: visited 24 has 617487840 states ( 62346 nodes )
+etf-reach: level 25 has 218150384 states ( 66550 nodes )
+etf-reach: visited 25 has 835638224 states ( 68503 nodes )
+etf-reach: level 26 has 274367666 states ( 72041 nodes )
+etf-reach: visited 26 has 1110005890 states ( 74231 nodes )
+etf-reach: level 27 has 338291342 states ( 77146 nodes )
+etf-reach: visited 27 has 1448297232 states ( 79574 nodes )
+etf-reach: level 28 has 409083200 states ( 81696 nodes )
+etf-reach: visited 28 has 1857380432 states ( 84447 nodes )
+etf-reach: level 29 has 485347486 states ( 86089 nodes )
+etf-reach: visited 29 has 2342727918 states ( 89225 nodes )
+etf-reach: level 30 has 565135560 states ( 89909 nodes )
+etf-reach: visited 30 has 2907863478 states ( 93493 nodes )
+etf-reach: level 31 has 646011613 states ( 93392 nodes )
+etf-reach: visited 31 has 3553875091 states ( 97526 nodes )
+etf-reach: level 32 has 725164615 states ( 96564 nodes )
+etf-reach: visited 32 has 4279039706 states ( 101267 nodes )
+etf-reach: level 33 has 799562714 states ( 99573 nodes )
+etf-reach: visited 33 has 5078602420 states ( 104974 nodes )
+etf-reach: level 34 has 866151083 states ( 102624 nodes )
+etf-reach: visited 34 has 5944753503 states ( 108801 nodes )
+etf-reach: level 35 has 922078241 states ( 105677 nodes )
+etf-reach: visited 35 has 6866831744 states ( 112586 nodes )
+etf-reach: level 36 has 964934933 states ( 108875 nodes )
+etf-reach: visited 36 has 7831766677 states ( 116398 nodes )
+etf-reach: level 37 has 992961195 states ( 112104 nodes )
+etf-reach: visited 37 has 8824727872 states ( 120013 nodes )
+etf-reach: level 38 has 1005203103 states ( 115075 nodes )
+etf-reach: visited 38 has 9829930975 states ( 123597 nodes )
+etf-reach: level 39 has 1001602247 states ( 118212 nodes )
+etf-reach: visited 39 has 10831533222 states ( 127215 nodes )
+etf-reach: level 40 has 982999525 states ( 120843 nodes )
+etf-reach: visited 40 has 11814532747 states ( 130491 nodes )
+etf-reach: level 41 has 951070862 states ( 123362 nodes )
+etf-reach: visited 41 has 12765603609 states ( 133581 nodes )
+etf-reach: level 42 has 908172389 states ( 125671 nodes )
+etf-reach: visited 42 has 13673775998 states ( 136165 nodes )
+etf-reach: level 43 has 857122042 states ( 127392 nodes )
+etf-reach: visited 43 has 14530898040 states ( 138217 nodes )
+etf-reach: level 44 has 800950495 states ( 128881 nodes )
+etf-reach: visited 44 has 15331848535 states ( 139956 nodes )
+etf-reach: level 45 has 742641154 states ( 130047 nodes )
+etf-reach: visited 45 has 16074489689 states ( 141214 nodes )
+etf-reach: level 46 has 684881187 states ( 130915 nodes )
+etf-reach: visited 46 has 16759370876 states ( 142231 nodes )
+etf-reach: level 47 has 629858278 states ( 131457 nodes )
+etf-reach: visited 47 has 17389229154 states ( 142704 nodes )
+etf-reach: level 48 has 579131114 states ( 131294 nodes )
+etf-reach: visited 48 has 17968360268 states ( 142871 nodes )
+etf-reach: level 49 has 533580999 states ( 130652 nodes )
+etf-reach: visited 49 has 18501941267 states ( 142670 nodes )
+etf-reach: level 50 has 493440510 states ( 129782 nodes )
+etf-reach: visited 50 has 18995381777 states ( 141874 nodes )
+etf-reach: level 51 has 458381622 states ( 128189 nodes )
+etf-reach: visited 51 has 19453763399 states ( 140572 nodes )
+etf-reach: level 52 has 427659077 states ( 126049 nodes )
+etf-reach: visited 52 has 19881422476 states ( 138878 nodes )
+etf-reach: level 53 has 400280711 states ( 123686 nodes )
+etf-reach: visited 53 has 20281703187 states ( 136837 nodes )
+etf-reach: level 54 has 375187939 states ( 120884 nodes )
+etf-reach: visited 54 has 20656891126 states ( 134467 nodes )
+etf-reach: level 55 has 351399741 states ( 117656 nodes )
+etf-reach: visited 55 has 21008290867 states ( 131742 nodes )
+etf-reach: level 56 has 328120202 states ( 113985 nodes )
+etf-reach: visited 56 has 21336411069 states ( 128677 nodes )
+etf-reach: level 57 has 304811696 states ( 110133 nodes )
+etf-reach: visited 57 has 21641222765 states ( 125205 nodes )
+etf-reach: level 58 has 281208445 states ( 105941 nodes )
+etf-reach: visited 58 has 21922431210 states ( 121276 nodes )
+etf-reach: level 59 has 257301327 states ( 101516 nodes )
+etf-reach: visited 59 has 22179732537 states ( 117082 nodes )
+etf-reach: level 60 has 233280207 states ( 96786 nodes )
+etf-reach: visited 60 has 22413012744 states ( 112456 nodes )
+etf-reach: level 61 has 209472113 states ( 91908 nodes )
+etf-reach: visited 61 has 22622484857 states ( 107659 nodes )
+etf-reach: level 62 has 186267541 states ( 86890 nodes )
+etf-reach: visited 62 has 22808752398 states ( 102630 nodes )
+etf-reach: level 63 has 164042881 states ( 81703 nodes )
+etf-reach: visited 63 has 22972795279 states ( 97490 nodes )
+etf-reach: level 64 has 143115403 states ( 76554 nodes )
+etf-reach: visited 64 has 23115910682 states ( 92192 nodes )
+etf-reach: level 65 has 123707549 states ( 71143 nodes )
+etf-reach: visited 65 has 23239618231 states ( 86571 nodes )
+etf-reach: level 66 has 105955020 states ( 65856 nodes )
+etf-reach: visited 66 has 23345573251 states ( 80942 nodes )
+etf-reach: level 67 has 89912458 states ( 60725 nodes )
+etf-reach: visited 67 has 23435485709 states ( 75052 nodes )
+etf-reach: level 68 has 75558094 states ( 55724 nodes )
+etf-reach: visited 68 has 23511043803 states ( 69252 nodes )
+etf-reach: level 69 has 62827043 states ( 50537 nodes )
+etf-reach: visited 69 has 23573870846 states ( 63657 nodes )
+etf-reach: level 70 has 51628703 states ( 45503 nodes )
+etf-reach: visited 70 has 23625499549 states ( 58416 nodes )
+etf-reach: level 71 has 41864544 states ( 40824 nodes )
+etf-reach: visited 71 has 23667364093 states ( 53268 nodes )
+etf-reach: level 72 has 33436151 states ( 36376 nodes )
+etf-reach: visited 72 has 23700800244 states ( 48010 nodes )
+etf-reach: level 73 has 26246829 states ( 32380 nodes )
+etf-reach: visited 73 has 23727047073 states ( 43152 nodes )
+etf-reach: level 74 has 20206736 states ( 28686 nodes )
+etf-reach: visited 74 has 23747253809 states ( 38504 nodes )
+etf-reach: level 75 has 15225116 states ( 25152 nodes )
+etf-reach: visited 75 has 23762478925 states ( 34075 nodes )
+etf-reach: level 76 has 11205521 states ( 21776 nodes )
+etf-reach: visited 76 has 23773684446 states ( 30009 nodes )
+etf-reach: level 77 has 8042650 states ( 18811 nodes )
+etf-reach: visited 77 has 23781727096 states ( 26314 nodes )
+etf-reach: level 78 has 5620770 states ( 15965 nodes )
+etf-reach: visited 78 has 23787347866 states ( 23014 nodes )
+etf-reach: level 79 has 3820061 states ( 13437 nodes )
+etf-reach: visited 79 has 23791167927 states ( 20083 nodes )
+etf-reach: level 80 has 2522389 states ( 11399 nodes )
+etf-reach: visited 80 has 23793690316 states ( 17482 nodes )
+etf-reach: level 81 has 1616331 states ( 9500 nodes )
+etf-reach: visited 81 has 23795306647 states ( 15157 nodes )
+etf-reach: level 82 has 1003563 states ( 7765 nodes )
+etf-reach: visited 82 has 23796310210 states ( 13169 nodes )
+etf-reach: level 83 has 602600 states ( 6352 nodes )
+etf-reach: visited 83 has 23796912810 states ( 11503 nodes )
+etf-reach: level 84 has 348960 states ( 5248 nodes )
+etf-reach: visited 84 has 23797261770 states ( 9977 nodes )
+etf-reach: level 85 has 194159 states ( 4111 nodes )
+etf-reach: visited 85 has 23797455929 states ( 8663 nodes )
+etf-reach: level 86 has 103271 states ( 3116 nodes )
+etf-reach: visited 86 has 23797559200 states ( 7725 nodes )
+etf-reach: level 87 has 52062 states ( 2421 nodes )
+etf-reach: visited 87 has 23797611262 states ( 6885 nodes )
+etf-reach: level 88 has 24621 states ( 1779 nodes )
+etf-reach: visited 88 has 23797635883 states ( 6168 nodes )
+etf-reach: level 89 has 10799 states ( 1189 nodes )
+etf-reach: visited 89 has 23797646682 states ( 5747 nodes )
+etf-reach: level 90 has 4309 states ( 835 nodes )
+etf-reach: visited 90 has 23797650991 states ( 5416 nodes )
+etf-reach: level 91 has 1521 states ( 563 nodes )
+etf-reach: visited 91 has 23797652512 states ( 5104 nodes )
+etf-reach: level 92 has 453 states ( 329 nodes )
+etf-reach: visited 92 has 23797652965 states ( 4902 nodes )
+etf-reach: level 93 has 103 states ( 182 nodes )
+etf-reach: visited 93 has 23797653068 states ( 4794 nodes )
+etf-reach: level 94 has 15 states ( 105 nodes )
+etf-reach: visited 94 has 23797653083 states ( 4701 nodes )
+etf-reach: level 95 has 1 states ( 41 nodes )
+etf-reach: visited 95 has 23797653084 states ( 4646 nodes )
+etf-reach: Exploration took 2112 group checks and 2112 next state calls
+etf-reach: reachability took 572.970 real 570.030 user 1.970 sys
+state space has 23797653084 states
+( 4646 final BDD nodes; 142871 peak nodes; 131457 peak nodes per level )
+Exit [0]
+570.18 user, 1.98 system, 573.15 elapsed -- Max VSize = 212676KB, Max RSS = 194236KB
+REPORT ENDS HERE
+Nodename: thiezorz.student.utwente.nl
+Hardware-name: x86_64
+OS: GNU/Linux
+Kernel-name: Linux
+Kernel-release: 2.6.26-2-amd64
+Kernel-version: #1 SMP Thu Feb 11 00:59:32 UTC 2010
+Hardware-platform: unknown
+Processor: unknown
+Memory-total: 1028804
+DateTime: 2010 03 16 13 38 54 220630
+Call: memtime etf-reach ./ltsmin-models/etf/cyclic_scheduler.15.1.etf 2>&1
+etf-reach: Exploration order is bfs
+etf-reach: ETF language module initialized
+etf-reach: opening ./ltsmin-models/etf/cyclic_scheduler.15.1.etf
+etf-reach: The state length is 60
+etf-reach: done
+etf-reach: There are 0 edge labels
+etf-reach: done
+etf-reach: initial state found
+etf-reach: skipping empty trans section
+etf-reach: reading values for sort customer_0
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_0
+etf-reach: read 4 values
+etf-reach: reading values for sort byte
+etf-reach: read 0 values
+etf-reach: reading values for sort customer_1
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_1
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_2
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_2
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_3
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_3
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_4
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_4
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_5
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_5
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_6
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_6
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_7
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_7
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_8
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_8
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_9
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_9
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_10
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_10
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_11
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_11
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_12
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_12
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_13
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_13
+etf-reach: read 4 values
+etf-reach: reading values for sort customer_14
+etf-reach: read 3 values
+etf-reach: reading values for sort scheduler_14
+etf-reach: read 4 values
+etf-reach: parsing finished
+etf-reach: success!
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: creating a new string index
+etf-reach: parsing table 0
+etf-reach: length is 7
+etf-reach: table 0 has 30 states and 22 transitions
+etf-reach: parsing table 1
+etf-reach: length is 2
+etf-reach: table 1 has 4 states and 2 transitions
+etf-reach: parsing table 2
+etf-reach: length is 7
+etf-reach: table 2 has 36 states and 27 transitions
+etf-reach: parsing table 3
+etf-reach: length is 4
+etf-reach: table 3 has 2 states and 1 transitions
+etf-reach: parsing table 4
+etf-reach: length is 2
+etf-reach: table 4 has 4 states and 2 transitions
+etf-reach: parsing table 5
+etf-reach: length is 7
+etf-reach: table 5 has 30 states and 22 transitions
+etf-reach: parsing table 6
+etf-reach: length is 4
+etf-reach: table 6 has 2 states and 1 transitions
+etf-reach: parsing table 7
+etf-reach: length is 2
+etf-reach: table 7 has 4 states and 2 transitions
+etf-reach: parsing table 8
+etf-reach: length is 7
+etf-reach: table 8 has 30 states and 22 transitions
+etf-reach: parsing table 9
+etf-reach: length is 4
+etf-reach: table 9 has 2 states and 1 transitions
+etf-reach: parsing table 10
+etf-reach: length is 2
+etf-reach: table 10 has 4 states and 2 transitions
+etf-reach: parsing table 11
+etf-reach: length is 7
+etf-reach: table 11 has 30 states and 22 transitions
+etf-reach: parsing table 12
+etf-reach: length is 4
+etf-reach: table 12 has 2 states and 1 transitions
+etf-reach: parsing table 13
+etf-reach: length is 2
+etf-reach: table 13 has 4 states and 2 transitions
+etf-reach: parsing table 14
+etf-reach: length is 7
+etf-reach: table 14 has 30 states and 22 transitions
+etf-reach: parsing table 15
+etf-reach: length is 4
+etf-reach: table 15 has 2 states and 1 transitions
+etf-reach: parsing table 16
+etf-reach: length is 2
+etf-reach: table 16 has 4 states and 2 transitions
+etf-reach: parsing table 17
+etf-reach: length is 7
+etf-reach: table 17 has 30 states and 22 transitions
+etf-reach: parsing table 18
+etf-reach: length is 4
+etf-reach: table 18 has 2 states and 1 transitions
+etf-reach: parsing table 19
+etf-reach: length is 2
+etf-reach: table 19 has 4 states and 2 transitions
+etf-reach: parsing table 20
+etf-reach: length is 7
+etf-reach: table 20 has 30 states and 22 transitions
+etf-reach: parsing table 21
+etf-reach: length is 4
+etf-reach: table 21 has 2 states and 1 transitions
+etf-reach: parsing table 22
+etf-reach: length is 2
+etf-reach: table 22 has 4 states and 2 transitions
+etf-reach: parsing table 23
+etf-reach: length is 7
+etf-reach: table 23 has 30 states and 22 transitions
+etf-reach: parsing table 24
+etf-reach: length is 4
+etf-reach: table 24 has 2 states and 1 transitions
+etf-reach: parsing table 25
+etf-reach: length is 2
+etf-reach: table 25 has 4 states and 2 transitions
+etf-reach: parsing table 26
+etf-reach: length is 7
+etf-reach: table 26 has 30 states and 22 transitions
+etf-reach: parsing table 27
+etf-reach: length is 4
+etf-reach: table 27 has 2 states and 1 transitions
+etf-reach: parsing table 28
+etf-reach: length is 2
+etf-reach: table 28 has 4 states and 2 transitions
+etf-reach: parsing table 29
+etf-reach: length is 7
+etf-reach: table 29 has 30 states and 22 transitions
+etf-reach: parsing table 30
+etf-reach: length is 4
+etf-reach: table 30 has 2 states and 1 transitions
+etf-reach: parsing table 31
+etf-reach: length is 2
+etf-reach: table 31 has 4 states and 2 transitions
+etf-reach: parsing table 32
+etf-reach: length is 7
+etf-reach: table 32 has 30 states and 22 transitions
+etf-reach: parsing table 33
+etf-reach: length is 4
+etf-reach: table 33 has 2 states and 1 transitions
+etf-reach: parsing table 34
+etf-reach: length is 2
+etf-reach: table 34 has 4 states and 2 transitions
+etf-reach: parsing table 35
+etf-reach: length is 7
+etf-reach: table 35 has 30 states and 22 transitions
+etf-reach: parsing table 36
+etf-reach: length is 4
+etf-reach: table 36 has 2 states and 1 transitions
+etf-reach: parsing table 37
+etf-reach: length is 2
+etf-reach: table 37 has 4 states and 2 transitions
+etf-reach: parsing table 38
+etf-reach: length is 7
+etf-reach: table 38 has 30 states and 22 transitions
+etf-reach: parsing table 39
+etf-reach: length is 4
+etf-reach: table 39 has 2 states and 1 transitions
+etf-reach: parsing table 40
+etf-reach: length is 2
+etf-reach: table 40 has 4 states and 2 transitions
+etf-reach: parsing table 41
+etf-reach: length is 7
+etf-reach: table 41 has 30 states and 22 transitions
+etf-reach: parsing table 42
+etf-reach: length is 4
+etf-reach: table 42 has 2 states and 1 transitions
+etf-reach: parsing table 43
+etf-reach: length is 2
+etf-reach: table 43 has 4 states and 2 transitions
+etf-reach: Setting values for type 0 (customer_13)
+etf-reach: Setting values for type 1 (byte)
+etf-reach: Setting values for type 2 (scheduler_13)
+etf-reach: Setting values for type 3 (scheduler_12)
+etf-reach: Setting values for type 4 (customer_12)
+etf-reach: Setting values for type 5 (scheduler_11)
+etf-reach: Setting values for type 6 (customer_11)
+etf-reach: Setting values for type 7 (scheduler_10)
+etf-reach: Setting values for type 8 (customer_10)
+etf-reach: Setting values for type 9 (scheduler_9)
+etf-reach: Setting values for type 10 (customer_9)
+etf-reach: Setting values for type 11 (scheduler_8)
+etf-reach: Setting values for type 12 (customer_8)
+etf-reach: Setting values for type 13 (scheduler_7)
+etf-reach: Setting values for type 14 (customer_7)
+etf-reach: Setting values for type 15 (scheduler_6)
+etf-reach: Setting values for type 16 (customer_6)
+etf-reach: Setting values for type 17 (scheduler_5)
+etf-reach: Setting values for type 18 (customer_5)
+etf-reach: Setting values for type 19 (scheduler_4)
+etf-reach: Setting values for type 20 (customer_4)
+etf-reach: Setting values for type 21 (scheduler_3)
+etf-reach: Setting values for type 22 (customer_3)
+etf-reach: Setting values for type 23 (scheduler_2)
+etf-reach: Setting values for type 24 (customer_2)
+etf-reach: Setting values for type 25 (scheduler_1)
+etf-reach: Setting values for type 26 (customer_1)
+etf-reach: Setting values for type 27 (scheduler_0)
+etf-reach: Setting values for type 28 (customer_0)
+etf-reach: Setting values for type 29 (scheduler_14)
+etf-reach: Setting values for type 30 (customer_14)
+etf-reach: Creating an AtermDD list domain.
+etf-reach: length is 60, there are 44 groups
+etf-reach: got initial state
+etf-reach: level 0 has 1 states ( 62 nodes )
+etf-reach: visited 0 has 1 states ( 62 nodes )
+etf-reach: level 1 has 1 states ( 62 nodes )
+etf-reach: visited 1 has 2 states ( 64 nodes )
+etf-reach: level 2 has 1 states ( 62 nodes )
+etf-reach: visited 2 has 3 states ( 69 nodes )
+etf-reach: level 3 has 2 states ( 68 nodes )
+etf-reach: visited 3 has 5 states ( 75 nodes )
+etf-reach: level 4 has 2 states ( 72 nodes )
+etf-reach: visited 4 has 7 states ( 82 nodes )
+etf-reach: level 5 has 3 states ( 76 nodes )
+etf-reach: visited 5 has 10 states ( 92 nodes )
+etf-reach: level 6 has 4 states ( 86 nodes )
+etf-reach: visited 6 has 14 states ( 103 nodes )
+etf-reach: level 7 has 5 states ( 93 nodes )
+etf-reach: visited 7 has 19 states ( 114 nodes )
+etf-reach: level 8 has 7 states ( 100 nodes )
+etf-reach: visited 8 has 26 states ( 128 nodes )
+etf-reach: level 9 has 9 states ( 113 nodes )
+etf-reach: visited 9 has 35 states ( 143 nodes )
+etf-reach: level 10 has 12 states ( 124 nodes )
+etf-reach: visited 10 has 47 states ( 159 nodes )
+etf-reach: level 11 has 16 states ( 135 nodes )
+etf-reach: visited 11 has 63 states ( 178 nodes )
+etf-reach: level 12 has 21 states ( 153 nodes )
+etf-reach: visited 12 has 84 states ( 199 nodes )
+etf-reach: level 13 has 28 states ( 169 nodes )
+etf-reach: visited 13 has 112 states ( 221 nodes )
+etf-reach: level 14 has 37 states ( 185 nodes )
+etf-reach: visited 14 has 149 states ( 246 nodes )
+etf-reach: level 15 has 49 states ( 207 nodes )
+etf-reach: visited 15 has 198 states ( 272 nodes )
+etf-reach: level 16 has 65 states ( 227 nodes )
+etf-reach: visited 16 has 263 states ( 299 nodes )
+etf-reach: level 17 has 86 states ( 246 nodes )
+etf-reach: visited 17 has 349 states ( 328 nodes )
+etf-reach: level 18 has 114 states ( 271 nodes )
+etf-reach: visited 18 has 463 states ( 358 nodes )
+etf-reach: level 19 has 151 states ( 294 nodes )
+etf-reach: visited 19 has 614 states ( 389 nodes )
+etf-reach: level 20 has 200 states ( 317 nodes )
+etf-reach: visited 20 has 814 states ( 423 nodes )
+etf-reach: level 21 has 265 states ( 346 nodes )
+etf-reach: visited 21 has 1079 states ( 458 nodes )
+etf-reach: level 22 has 351 states ( 373 nodes )
+etf-reach: visited 22 has 1430 states ( 494 nodes )
+etf-reach: level 23 has 465 states ( 400 nodes )
+etf-reach: visited 23 has 1895 states ( 533 nodes )
+etf-reach: level 24 has 616 states ( 434 nodes )
+etf-reach: visited 24 has 2511 states ( 574 nodes )
+etf-reach: level 25 has 816 states ( 466 nodes )
+etf-reach: visited 25 has 3327 states ( 616 nodes )
+etf-reach: level 26 has 1081 states ( 497 nodes )
+etf-reach: visited 26 has 4408 states ( 660 nodes )
+etf-reach: level 27 has 1432 states ( 537 nodes )
+etf-reach: visited 27 has 5840 states ( 708 nodes )
+etf-reach: level 28 has 1897 states ( 619 nodes )
+etf-reach: visited 28 has 7737 states ( 798 nodes )
+etf-reach: level 29 has 2513 states ( 740 nodes )
+etf-reach: visited 29 has 10250 states ( 928 nodes )
+etf-reach: level 30 has 3329 states ( 848 nodes )
+etf-reach: visited 30 has 13579 states ( 1036 nodes )
+etf-reach: level 31 has 4410 states ( 934 nodes )
+etf-reach: visited 31 has 17989 states ( 1122 nodes )
+etf-reach: level 32 has 5842 states ( 998 nodes )
+etf-reach: visited 32 has 23831 states ( 1186 nodes )
+etf-reach: level 33 has 7738 states ( 1052 nodes )
+etf-reach: visited 33 has 31569 states ( 1232 nodes )
+etf-reach: level 34 has 10236 states ( 1086 nodes )
+etf-reach: visited 34 has 41805 states ( 1258 nodes )
+etf-reach: level 35 has 13460 states ( 1095 nodes )
+etf-reach: visited 35 has 55265 states ( 1259 nodes )
+etf-reach: level 36 has 17413 states ( 1096 nodes )
+etf-reach: visited 36 has 72678 states ( 1244 nodes )
+etf-reach: level 37 has 21860 states ( 1076 nodes )
+etf-reach: visited 37 has 94538 states ( 1208 nodes )
+etf-reach: level 38 has 26384 states ( 1040 nodes )
+etf-reach: visited 38 has 120922 states ( 1155 nodes )
+etf-reach: level 39 has 30689 states ( 993 nodes )
+etf-reach: visited 39 has 151611 states ( 1084 nodes )
+etf-reach: level 40 has 34863 states ( 921 nodes )
+etf-reach: visited 40 has 186474 states ( 1050 nodes )
+etf-reach: level 41 has 39258 states ( 884 nodes )
+etf-reach: visited 41 has 225732 states ( 1069 nodes )
+etf-reach: level 42 has 44148 states ( 899 nodes )
+etf-reach: visited 42 has 269880 states ( 1084 nodes )
+etf-reach: level 43 has 49623 states ( 910 nodes )
+etf-reach: visited 43 has 319503 states ( 1099 nodes )
+etf-reach: level 44 has 55748 states ( 920 nodes )
+etf-reach: visited 44 has 375251 states ( 1119 nodes )
+etf-reach: level 45 has 62641 states ( 937 nodes )
+etf-reach: visited 45 has 437892 states ( 1137 nodes )
+etf-reach: level 46 has 70404 states ( 948 nodes )
+etf-reach: visited 46 has 508296 states ( 1153 nodes )
+etf-reach: level 47 has 79116 states ( 958 nodes )
+etf-reach: visited 47 has 587412 states ( 1173 nodes )
+etf-reach: level 48 has 88896 states ( 972 nodes )
+etf-reach: visited 48 has 676308 states ( 1201 nodes )
+etf-reach: level 49 has 99897 states ( 992 nodes )
+etf-reach: visited 49 has 776205 states ( 1229 nodes )
+etf-reach: level 50 has 112264 states ( 1001 nodes )
+etf-reach: visited 50 has 888469 states ( 1251 nodes )
+etf-reach: level 51 has 126152 states ( 1012 nodes )
+etf-reach: visited 51 has 1014621 states ( 1281 nodes )
+etf-reach: level 52 has 141757 states ( 1025 nodes )
+etf-reach: visited 52 has 1156378 states ( 1316 nodes )
+etf-reach: level 53 has 159300 states ( 1047 nodes )
+etf-reach: visited 53 has 1315678 states ( 1352 nodes )
+etf-reach: level 54 has 179013 states ( 1066 nodes )
+etf-reach: visited 54 has 1494691 states ( 1389 nodes )
+etf-reach: level 55 has 201160 states ( 1080 nodes )
+etf-reach: visited 55 has 1695851 states ( 1426 nodes )
+etf-reach: level 56 has 226049 states ( 1094 nodes )
+etf-reach: visited 56 has 1921900 states ( 1467 nodes )
+etf-reach: level 57 has 254021 states ( 1119 nodes )
+etf-reach: visited 57 has 2175921 states ( 1511 nodes )
+etf-reach: level 58 has 285452 states ( 1140 nodes )
+etf-reach: visited 58 has 2461373 states ( 1556 nodes )
+etf-reach: level 59 has 320770 states ( 1159 nodes )
+etf-reach: visited 59 has 2782143 states ( 1604 nodes )
+etf-reach: level 60 has 360460 states ( 1177 nodes )
+etf-reach: visited 60 has 3142603 states ( 1654 nodes )
+etf-reach: level 61 has 405062 states ( 1200 nodes )
+etf-reach: visited 61 has 3547665 states ( 1703 nodes )
+etf-reach: level 62 has 455181 states ( 1219 nodes )
+etf-reach: visited 62 has 4002846 states ( 1752 nodes )
+etf-reach: level 63 has 511501 states ( 1240 nodes )
+etf-reach: visited 63 has 4514347 states ( 1809 nodes )
+etf-reach: level 64 has 574791 states ( 1263 nodes )
+etf-reach: visited 64 has 5089138 states ( 1870 nodes )
+etf-reach: level 65 has 645912 states ( 1288 nodes )
+etf-reach: visited 65 has 5735050 states ( 1927 nodes )
+etf-reach: level 66 has 725832 states ( 1310 nodes )
+etf-reach: visited 66 has 6460882 states ( 1983 nodes )
+etf-reach: level 67 has 815641 states ( 1329 nodes )
+etf-reach: visited 67 has 7276523 states ( 2044 nodes )
+etf-reach: level 68 has 916563 states ( 1354 nodes )
+etf-reach: visited 68 has 8193086 states ( 2111 nodes )
+etf-reach: level 69 has 1029972 states ( 1385 nodes )
+etf-reach: visited 69 has 9223058 states ( 2178 nodes )
+etf-reach: level 70 has 1157413 states ( 1405 nodes )
+etf-reach: visited 70 has 10380471 states ( 2238 nodes )
+etf-reach: level 71 has 1300623 states ( 1427 nodes )
+etf-reach: visited 71 has 11681094 states ( 2305 nodes )
+etf-reach: level 72 has 1461553 states ( 1505 nodes )
+etf-reach: visited 72 has 13142647 states ( 2429 nodes )
+etf-reach: level 73 has 1642395 states ( 1593 nodes )
+etf-reach: visited 73 has 14785042 states ( 2557 nodes )
+etf-reach: level 74 has 1845613 states ( 1726 nodes )
+etf-reach: visited 74 has 16630655 states ( 2725 nodes )
+etf-reach: level 75 has 2073976 states ( 1839 nodes )
+etf-reach: visited 75 has 18704631 states ( 2875 nodes )
+etf-reach: level 76 has 2330595 states ( 1946 nodes )
+etf-reach: visited 76 has 21035226 states ( 3014 nodes )
+etf-reach: level 77 has 2618965 states ( 2039 nodes )
+etf-reach: visited 77 has 23654191 states ( 3133 nodes )
+etf-reach: level 78 has 2943003 states ( 2123 nodes )
+etf-reach: visited 78 has 26597194 states ( 3244 nodes )
+etf-reach: level 79 has 3307046 states ( 2193 nodes )
+etf-reach: visited 79 has 29904240 states ( 3347 nodes )
+etf-reach: level 80 has 3715704 states ( 2264 nodes )
+etf-reach: visited 80 has 33619944 states ( 3447 nodes )
+etf-reach: level 81 has 4173343 states ( 2325 nodes )
+etf-reach: visited 81 has 37793287 states ( 3532 nodes )
+etf-reach: level 82 has 4682873 states ( 2379 nodes )
+etf-reach: visited 82 has 42476160 states ( 3608 nodes )
+etf-reach: level 83 has 5243601 states ( 2426 nodes )
+etf-reach: visited 83 has 47719761 states ( 3680 nodes )
+etf-reach: level 84 has 5848356 states ( 2467 nodes )
+etf-reach: visited 84 has 53568117 states ( 3750 nodes )
+etf-reach: level 85 has 6480861 states ( 2492 nodes )
+etf-reach: visited 85 has 60048978 states ( 3803 nodes )
+etf-reach: level 86 has 7114992 states ( 2513 nodes )
+etf-reach: visited 86 has 67163970 states ( 3852 nodes )
+etf-reach: level 87 has 7717436 states ( 2523 nodes )
+etf-reach: visited 87 has 74881406 states ( 3896 nodes )
+etf-reach: level 88 has 8253958 states ( 2529 nodes )
+etf-reach: visited 88 has 83135364 states ( 3934 nodes )
+etf-reach: level 89 has 8697482 states ( 2515 nodes )
+etf-reach: visited 89 has 91832846 states ( 3954 nodes )
+etf-reach: level 90 has 9034754 states ( 2553 nodes )
+etf-reach: visited 90 has 100867600 states ( 3953 nodes )
+etf-reach: level 91 has 9268646 states ( 2602 nodes )
+etf-reach: visited 91 has 110136246 states ( 3932 nodes )
+etf-reach: level 92 has 9415207 states ( 2640 nodes )
+etf-reach: visited 92 has 119551453 states ( 3908 nodes )
+etf-reach: level 93 has 9497122 states ( 2648 nodes )
+etf-reach: visited 93 has 129048575 states ( 3871 nodes )
+etf-reach: level 94 has 9536746 states ( 2634 nodes )
+etf-reach: visited 94 has 138585321 states ( 3816 nodes )
+etf-reach: level 95 has 9551577 states ( 2600 nodes )
+etf-reach: visited 95 has 148136898 states ( 3746 nodes )
+etf-reach: level 96 has 9553228 states ( 2563 nodes )
+etf-reach: visited 96 has 157690126 states ( 3669 nodes )
+etf-reach: level 97 has 9548796 states ( 2517 nodes )
+etf-reach: visited 97 has 167238922 states ( 3580 nodes )
+etf-reach: level 98 has 9542529 states ( 2473 nodes )
+etf-reach: visited 98 has 176781451 states ( 3521 nodes )
+etf-reach: level 99 has 9536613 states ( 2436 nodes )
+etf-reach: visited 99 has 186318064 states ( 3502 nodes )
+etf-reach: level 100 has 9531530 states ( 2425 nodes )
+etf-reach: visited 100 has 195849594 states ( 3521 nodes )
+etf-reach: level 101 has 9526785 states ( 2443 nodes )
+etf-reach: visited 101 has 205376379 states ( 3531 nodes )
+etf-reach: level 102 has 9521805 states ( 2455 nodes )
+etf-reach: visited 102 has 214898184 states ( 3537 nodes )
+etf-reach: level 103 has 9516316 states ( 2468 nodes )
+etf-reach: visited 103 has 224414500 states ( 3539 nodes )
+etf-reach: level 104 has 9510190 states ( 2472 nodes )
+etf-reach: visited 104 has 233924690 states ( 3554 nodes )
+etf-reach: level 105 has 9503297 states ( 2486 nodes )
+etf-reach: visited 105 has 243427987 states ( 3576 nodes )
+etf-reach: level 106 has 9495534 states ( 2497 nodes )
+etf-reach: visited 106 has 252923521 states ( 3604 nodes )
+etf-reach: level 107 has 9486822 states ( 2517 nodes )
+etf-reach: visited 107 has 262410343 states ( 3623 nodes )
+etf-reach: level 108 has 9477042 states ( 2530 nodes )
+etf-reach: visited 108 has 271887385 states ( 3640 nodes )
+etf-reach: level 109 has 9466041 states ( 2538 nodes )
+etf-reach: visited 109 has 281353426 states ( 3659 nodes )
+etf-reach: level 110 has 9453674 states ( 2547 nodes )
+etf-reach: visited 110 has 290807100 states ( 3694 nodes )
+etf-reach: level 111 has 9439786 states ( 2574 nodes )
+etf-reach: visited 111 has 300246886 states ( 3726 nodes )
+etf-reach: level 112 has 9424181 states ( 2589 nodes )
+etf-reach: visited 112 has 309671067 states ( 3756 nodes )
+etf-reach: level 113 has 9406638 states ( 2604 nodes )
+etf-reach: visited 113 has 319077705 states ( 3786 nodes )
+etf-reach: level 114 has 9386925 states ( 2619 nodes )
+etf-reach: visited 114 has 328464630 states ( 3829 nodes )
+etf-reach: level 115 has 9364778 states ( 2649 nodes )
+etf-reach: visited 115 has 337829408 states ( 3865 nodes )
+etf-reach: level 116 has 9339889 states ( 2667 nodes )
+etf-reach: visited 116 has 347169297 states ( 3907 nodes )
+etf-reach: level 117 has 9311917 states ( 2688 nodes )
+etf-reach: visited 117 has 356481214 states ( 3955 nodes )
+etf-reach: level 118 has 9280486 states ( 2707 nodes )
+etf-reach: visited 118 has 365761700 states ( 4007 nodes )
+etf-reach: level 119 has 9245168 states ( 2733 nodes )
+etf-reach: visited 119 has 375006868 states ( 4049 nodes )
+etf-reach: level 120 has 9205478 states ( 2749 nodes )
+etf-reach: visited 120 has 384212346 states ( 4091 nodes )
+etf-reach: level 121 has 9160876 states ( 2765 nodes )
+etf-reach: visited 121 has 393373222 states ( 4137 nodes )
+etf-reach: level 122 has 9110757 states ( 2783 nodes )
+etf-reach: visited 122 has 402483979 states ( 4199 nodes )
+etf-reach: level 123 has 9054437 states ( 2817 nodes )
+etf-reach: visited 123 has 411538416 states ( 4259 nodes )
+etf-reach: level 124 has 8991147 states ( 2835 nodes )
+etf-reach: visited 124 has 420529563 states ( 4316 nodes )
+etf-reach: level 125 has 8920026 states ( 2852 nodes )
+etf-reach: visited 125 has 429449589 states ( 4376 nodes )
+etf-reach: level 126 has 8840106 states ( 2870 nodes )
+etf-reach: visited 126 has 438289695 states ( 4443 nodes )
+etf-reach: level 127 has 8750297 states ( 2897 nodes )
+etf-reach: visited 127 has 447039992 states ( 4503 nodes )
+etf-reach: level 128 has 8649375 states ( 2918 nodes )
+etf-reach: visited 128 has 455689367 states ( 4569 nodes )
+etf-reach: level 129 has 8535966 states ( 2937 nodes )
+etf-reach: visited 129 has 464225333 states ( 4635 nodes )
+etf-reach: level 130 has 8408525 states ( 2954 nodes )
+etf-reach: visited 130 has 472633858 states ( 4702 nodes )
+etf-reach: level 131 has 8265315 states ( 3021 nodes )
+etf-reach: visited 131 has 480899173 states ( 4787 nodes )
+etf-reach: level 132 has 8104385 states ( 3075 nodes )
+etf-reach: visited 132 has 489003558 states ( 4864 nodes )
+etf-reach: level 133 has 7923543 states ( 3157 nodes )
+etf-reach: visited 133 has 496927101 states ( 4955 nodes )
+etf-reach: level 134 has 7720325 states ( 3221 nodes )
+etf-reach: visited 134 has 504647426 states ( 5040 nodes )
+etf-reach: level 135 has 7491962 states ( 3284 nodes )
+etf-reach: visited 135 has 512139388 states ( 5102 nodes )
+etf-reach: level 136 has 7235343 states ( 3321 nodes )
+etf-reach: visited 136 has 519374731 states ( 5141 nodes )
+etf-reach: level 137 has 6946973 states ( 3349 nodes )
+etf-reach: visited 137 has 526321704 states ( 5157 nodes )
+etf-reach: level 138 has 6622935 states ( 3367 nodes )
+etf-reach: visited 138 has 532944639 states ( 5161 nodes )
+etf-reach: level 139 has 6258892 states ( 3387 nodes )
+etf-reach: visited 139 has 539203531 states ( 5135 nodes )
+etf-reach: level 140 has 5850234 states ( 3373 nodes )
+etf-reach: visited 140 has 545053765 states ( 5090 nodes )
+etf-reach: level 141 has 5392595 states ( 3346 nodes )
+etf-reach: visited 141 has 550446360 states ( 5020 nodes )
+etf-reach: level 142 has 4883065 states ( 3296 nodes )
+etf-reach: visited 142 has 555329425 states ( 4932 nodes )
+etf-reach: level 143 has 4322337 states ( 3243 nodes )
+etf-reach: visited 143 has 559651762 states ( 4807 nodes )
+etf-reach: level 144 has 3717582 states ( 3157 nodes )
+etf-reach: visited 144 has 563369344 states ( 4656 nodes )
+etf-reach: level 145 has 3085077 states ( 3057 nodes )
+etf-reach: visited 145 has 566454421 states ( 4476 nodes )
+etf-reach: level 146 has 2450946 states ( 2930 nodes )
+etf-reach: visited 146 has 568905367 states ( 4281 nodes )
+etf-reach: level 147 has 1848502 states ( 2796 nodes )
+etf-reach: visited 147 has 570753869 states ( 4057 nodes )
+etf-reach: level 148 has 1311980 states ( 2632 nodes )
+etf-reach: visited 148 has 572065849 states ( 3810 nodes )
+etf-reach: level 149 has 868456 states ( 2460 nodes )
+etf-reach: visited 149 has 572934305 states ( 3528 nodes )
+etf-reach: level 150 has 531183 states ( 2258 nodes )
+etf-reach: visited 150 has 573465488 states ( 3226 nodes )
+etf-reach: level 151 has 297276 states ( 2048 nodes )
+etf-reach: visited 151 has 573762764 states ( 2894 nodes )
+etf-reach: level 152 has 150610 states ( 1806 nodes )
+etf-reach: visited 152 has 573913374 states ( 2546 nodes )
+etf-reach: level 153 has 68240 states ( 1557 nodes )
+etf-reach: visited 153 has 573981614 states ( 2170 nodes )
+etf-reach: level 154 has 27251 states ( 1284 nodes )
+etf-reach: visited 154 has 574008865 states ( 1771 nodes )
+etf-reach: level 155 has 9416 states ( 999 nodes )
+etf-reach: visited 155 has 574018281 states ( 1377 nodes )
+etf-reach: level 156 has 2746 states ( 695 nodes )
+etf-reach: visited 156 has 574021027 states ( 1084 nodes )
+etf-reach: level 157 has 652 states ( 444 nodes )
+etf-reach: visited 157 has 574021679 states ( 915 nodes )
+etf-reach: level 158 has 119 states ( 283 nodes )
+etf-reach: visited 158 has 574021798 states ( 809 nodes )
+etf-reach: level 159 has 15 states ( 169 nodes )
+etf-reach: visited 159 has 574021813 states ( 702 nodes )
+etf-reach: level 160 has 1 states ( 62 nodes )
+etf-reach: visited 160 has 574021814 states ( 645 nodes )
+etf-reach: Exploration took 7084 group checks and 7084 next state calls
+etf-reach: reachability took 12.370 real 12.200 user 0.060 sys
+state space has 574021814 states
+( 645 final BDD nodes; 5161 peak nodes; 3387 peak nodes per level )
+Exit [0]
+12.27 user, 0.10 system, 12.55 elapsed -- Max VSize = 60952KB, Max RSS = 42560KB
+REPORT ENDS HERE
