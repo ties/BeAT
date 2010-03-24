@@ -13,14 +13,17 @@ class Model(models.Model):
 	def natural_key(self):
 		return (self.name,self.version)
 	
-	#plug user management here by adding a link to an entry in a table containing usernames
+class Parser(models.Model):
+	regex = models.CharField(max_length=500)
+	possible_options = models.CharField(max_length=500)
+	
+	def __unicode__(self):
+		return self.regex
 
 class Tool(models.Model):	
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
-	#regex = models.CharField(max_length=5000)
-	#possible_options = models.
-	#think up something for this.
+	parse_method = models.ForeignKey('Parser')
 	
 	def __unicode__(self):
 		return self.name + ' ' + self.version
@@ -84,3 +87,5 @@ class Comparison(models.Model):
 	
 	def __unicode__(self):
 		return self.user.__str__() + '-' + self.benchmarks
+		
+class 
