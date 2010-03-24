@@ -22,6 +22,7 @@ class BenchmarkAdmin(admin.ModelAdmin):
 	
 admin.site.register(Model)
 admin.site.register(Tool)
+admin.site.register(Parser)
 admin.site.register(Hardware)
 admin.site.register(Option)
 admin.site.register(Benchmark, BenchmarkAdmin)
