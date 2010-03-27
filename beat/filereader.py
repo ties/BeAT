@@ -58,8 +58,19 @@ class FileReader:
 		if match:
 			list = match.groupdict()
 			if not list:
-				#no groups
-				list = True
+				#no named groups
+				#find possible non-named groups.
+				list = []
+				i=0
+				#this is kind of ugly:
+				try:
+					while True:
+						list.append(match.group(i))#will eventually throw an exception
+						i+=1
+				except IndexError: #thrown when i = number of groups
+					if i!=0: #some groups were specified, return their contents
+						return list
+				list = True #no groups were specified at all
 			return list
 		else:
 			self.print_message(V_VERBOSE, "Warning: Regex  %s on input %s has an empty dictionary."%(regex, input))
@@ -92,25 +103,19 @@ class FileReader:
 				None when some (non-fatal) error occurs, or:
 				A dictionary, as specified by parse_single_output.
 		"""
-		self.print_message(V_NOISY, "Notice: Reading run details...")
+		self.print_message(V_NOISY, "Notice: Reading run details and finding parser...")
 		#read the run information
-		tmp = self.parse_run_details(lines)
-		if tmp:
-			information = tmp
-		else:
+		information = self.parse_run_details(lines)
+		if not information:
 			#something went wrong, skip ahead to the next run
 			return None
-		self.print_message(V_NOISY, "Notice: Complete!\nNotice: Finding parser...")
-		#find the parse_tuple
-		parse_info = information['parse_tuple']
-		self.print_message(V_NOISY, "Notice: Found parser!")
+		self.print_message(V_NOISY, "Notice: Complete!")
 		#grab te regex that we'll parse
-		regex = parse_info[2]
 		
 		self.print_message(V_NOISY, "Notice: Option(s) are: %s\nNotice: Regex is: %s\nNotice: Reading data..." %(information['options'], regex))
 		
 		#parse the log content
-		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information, regex)
+		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information)
 		self.print_message(V_NOISY, "Notice: Read successful!")
 		
 		return data
@@ -124,12 +129,13 @@ class FileReader:
 			Returns:
 			None when some (non-fatal) error occurs, or:
 			A dictionary, as follows:
-				'parse_tuple'		the tuple that contains information for parsing, like elements of pattern_list
+				'parse_regex'		the regex to parse the log
 				'model_name'		the name of the model
 				'model_version' 	the version of the model
 				'model_location'	the location of the model
 				'tool_name'			the name of the tool
 				'tool_version' 		the version of the tool
+				'algorithm'			the name of the algorithm
 				'hardware'			a list containing hardware platforms, specified as a tuple:
 										(name, memory kb, processor, disk space, OS)
 				'options'			a list of options, specified by a tuple:
@@ -140,46 +146,21 @@ class FileReader:
 		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
 		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
 		#deduce options, algorithm, tool
-		call = m['call'].split(' ')
-		if call[0] == 'memtime':
-			s = self.get_parser(call[1])
-			call = call[2:]
-		else:
-			s = self.get_parser(call[0])
-			call = call[1:]
-		if not s:
-			#don't know how to parse
-			return None
-		#s will look like this from here: (tool, algorithm, regex, opt, longopt)
+		(parser, s, optlist, modelname) = self.parse_call(call)
+		#s[1] = tool name and s[2] =algorithm name
 		
 		#fetch datetime info and create an object out of it
 		dt = m['datetime'].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
-		
-		#read the options/args for the tool and convert them into a nice list
-		import getopt
-		if s[4]:
-			optlist, args = getopt.gnu_getopt(call, s[3], s[4])
-		else:
-			optlist, args = getopt.gnu_getopt(call, s[3])
-		counter = 0
-		for t in optlist:
-			o, v = t
-			if not v:	#no parameter
-				optlist[counter]=(o,True)
-			counter+=1
-		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
-		optlist.append(('algorithm', s[1]))
-		(head, tail) = os.path.split(args[0])
-		#tail contains the filename of the model
-		
+
 		result = {
-			'parse_tuple' : s,
-			'model_name' : tail,
+			'parse_regex' : parser,
+			'model_name' : modelname,
 			'model_version' : 1,
 			'model_location' : 'test.txt',
-			'tool_name': s[0],
+			'tool_name': s[1],
 			'tool_version': 1,
+			'algorithm': s[2],
 			'hardware': [(m['name'], m['memory_kb'], m['processor'], 0, m['OS']+" "+m['Kernel_n']+" "+m['Kernel_r']+" "+m['Kernel_v'])],
 			'options': optlist,
 			'date': dt,
@@ -193,12 +174,11 @@ class FileReader:
 	#regex should be the regular expression to extract data from content. The regex should contain the groups etime, utime, stime, tcount, scount, vsize, rss. 
 	#	these are: elapsed, user, system times, state and transition count, memory vsize and memory rss
 	#	only transition count may be left out.
-	def parse_single_output(self, content, run_details, regex):
+	def parse_single_output(self, content, run_details):
 		"""Parses informations from the tool log.
 			Arguments:
 				content			the log contents as a string.
 				run_details		the details for the run that generated this log, as returned by parse_run_details()
-				regex			the regular expression that can be used to parse this log
 			Returns:
 				A dictionary containing everything that needs to go into the database:
 					'model'		a tuple:
@@ -210,12 +190,13 @@ class FileReader:
 					'benchmark'	a tuple:
 									(datetime, etime, utime, stime, tcount, scount, vsize, rss)
 		"""
-		m = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
+		m = self.match_regex(information['parse_regex'], content, re.MULTILINE + re.DOTALL)
 		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
 		if m:
 			match = {
 				'model':(run_details.get('model_name'), run_details.get('model_version'), run_details.get('model_location')),
 				'tool':(run_details.get('tool_name'), run_details.get('tool_version')),
+				'algorithm':run_details.get('algorithm'),
 				'hardware':run_details.get('hardware'),
 				'options':run_details.get('options'),
 				'benchmark':(run_details.get('date'),m['etime'],m['utime'],m['stime'],m.get('tcount'),m['scount'],m['vsize'],m['rss']),
@@ -225,37 +206,59 @@ class FileReader:
 				match['hardware'] = []
 			if not match['options']:
 				match['options'] = []
+			else:
+				#here, ExtraValues can be parsed
+				pass
 		else:
 			self.print_message(V_QUIET, "Warning: Parse error. The input failed to match on the regex.")
 		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
 		return match
 	#end of parse_single_output
 	
-	#OLDOLDOLD
-	def get_parser(self, content):
-		self.print_message(V_NOISY, "Notice: %s is the parser, according to the file."%(content))
-		for tuple in self.pattern_list:
-			if tuple[0] == content:
-				return tuple[1]
-		self.print_message(V_SILENT, "Error: Unknown run type. Skipping.")
-		return None
-	#end of get_parser
-	#OLDOLDOLD
-	
 	#returns a tuple of the regex to parse the specified log and the possible options for the tool
 	#as specified in the AlgorithmTool table, or None if unknown
-	def get_parser(self, tool_name, tool_version, algorithm_name):
+	def get_parser_and_opts(self, call):
+		s = self.match_regex(r'^memtime (.*?)(?:2|-)(.*?)(?:$| .*$)', call)
+		#s is like: [call, toolname, algorithmname]
+		#we don't know how to get the tool version yet
 		try:
-			t = Tool.objects.get(name=tool_name, version=tool_version)
-			a = Algorithm.objects.get(name=algorithm_name)
-			ta = AlgorithmTool.objects.get(tool=t, algorithm=a)
+			t = Tool.objects.get(name=s[1], version=1)
+			a = Algorithm.objects.get(name=s[2])
+			at = AlgorithmTool.objects.get(tool=t, algorithm=a)
+			shortopts = ''
+			#long options
+			opts = ta.valid_options.split(' ')
+			#read short options
+			for option in opts:
+				o = Option.objects.get(name=option)
+				rs = RegisteredShortcuts.objects.get(algorithm_tool=at, option=o)
+				shortopts+=rs.shortcut
+			opts.append(shortopts)
 		except DoesNotExist:
 			self.print_message(V_QUIET, "Error: unknown log: %s %s (version %s)" %(tool_name, tool_version, algorithm_name))
 			return None
 		except MultipleObjectsReturned:
 			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(tool_name, tool_version, algorithm_name))
 			return None
-		return (ta.regex, ta.valid_options)
+		
+		#read the options/args for the tool and convert them into a nice list
+		import getopt
+		#run this on everything, but ignore 'memtime' (first line)
+		optlist, args = getopt.gnu_getopt(call[1:], shortopts, opts)
+		counter = 0
+		for t in optlist:
+			o, v = t
+			if not v:	#no parameter
+				optlist[counter]=(o,True)
+			if len(o) == 1: #option length 1 -> shortcut
+				rs = RegisteredShortcuts.objects.get(algorithm_tool=at, shortcut=p)
+				optlist[counter]=(rs.option.name, v)
+			counter+=1
+		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
+		(head, tail) = os.path.split(args[0])
+		#tail contains the filename of the model
+		
+		return (at.regex, s, optlist, tail)
 	#end of get_parser
 	
 	def check_data_validity(self, data):
@@ -272,12 +275,14 @@ class FileReader:
 			a = Algorithm.objects.get(name=name)
 		except (MultipleObjectsReturned, DoesNotExist) as e:
 			self.print_message(V_VERBOSE, "Warning: %s"%(e))
+			valid=False
 		#Tool
 		name, version = data['tool']
 		try:
 			t = Tool.objects.get(name=name, version=version)
 		except (MultipleObjectsReturned, DoesNotExist) as e:
 			self.print_message(V_VERBOSE, "Warning: %s"%(e))
+			valid = False
 		#Hardware
 		hwdata = data['hardware']
 		for tuple in hwdata:
