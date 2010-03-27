@@ -1,8 +1,4 @@
 """
-This file reader is just an initial version.
-Hopefully, the intermediate format will be implemented, which makes the process of parsing a lot easier.
-For now, only nips2lts-grey and nips2lts-grey that writes to a .dir output file are supported.
-Hardware, Options, timestamp and other stuff that is to be taken from the (not yet approved) commandline script is still missing.
 """
 #imports of python-libs
 import re
@@ -90,12 +86,11 @@ class FileReader:
 
 	def parse(self, lines):
 		"""Parse a run from the specified lines.
-		Arguments:
-			lines		a list of strings, including newlines
-		
-		Returns:
-			None when some (non-fatal) error occurs, or:
-			A dictionary, as specified by parse_single_output.
+			Arguments:
+				lines		a list of strings, including newlines
+			Returns:
+				None when some (non-fatal) error occurs, or:
+				A dictionary, as specified by parse_single_output.
 		"""
 		self.print_message(V_NOISY, "Notice: Reading run details...")
 		#read the run information
@@ -110,7 +105,7 @@ class FileReader:
 		parse_info = information['parse_tuple']
 		self.print_message(V_NOISY, "Notice: Found parser!")
 		#grab te regex that we'll parse
-		regex = parse_info[2]	#expression to parse
+		regex = parse_info[2]
 		
 		self.print_message(V_NOISY, "Notice: Option(s) are: %s\nNotice: Regex is: %s\nNotice: Reading data..." %(information['options'], regex))
 		
@@ -123,10 +118,10 @@ class FileReader:
 	
 	def parse_run_details(self, lines):
 		"""Parses the header of a run from the lines specified
-		Arguments:
-			lines		a list containing at least RUN_DETAILS_HEADER elements, which specify a header.
-			
-		Returns:
+			Arguments:
+				lines		a list containing at least RUN_DETAILS_HEADER elements, which specify a header.
+				
+			Returns:
 			None when some (non-fatal) error occurs, or:
 			A dictionary, as follows:
 				'parse_tuple'		the tuple that contains information for parsing, like elements of pattern_list
@@ -141,8 +136,10 @@ class FileReader:
 										(name, value)
 				'date'				the date this benchmark was run. see datetime.datetime in the python doc
 		"""
+		#define regex and run it
 		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
 		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
+		#deduce options, algorithm, tool
 		call = m['call'].split(' ')
 		if call[0] == 'memtime':
 			s = self.get_parser(call[1])
@@ -151,7 +148,7 @@ class FileReader:
 			s = self.get_parser(call[0])
 			call = call[1:]
 		if not s:
-			#get_parser returned None
+			#don't know how to parse
 			return None
 		#s will look like this from here: (tool, algorithm, regex, opt, longopt)
 		
@@ -198,20 +195,20 @@ class FileReader:
 	#	only transition count may be left out.
 	def parse_single_output(self, content, run_details, regex):
 		"""Parses informations from the tool log.
-		Arguments:
-			content			the log contents as a string.
-			run_details		the details for the run that generated this log, as returned by parse_run_details()
-			regex			the regular expression that can be used to parse this log
-		Returns:
-			A dictionary containing everything that needs to go into the database:
-				'model'		a tuple:
-								(name, version, location)
-				'tool'		a tuple:
-								(name, version)
-				'hardware'	a list containing tuples as specified in run_details['hardware']
-				'options'	a list containing tuples as specified in run_details['options']
-				'benchmark'	a tuple:
-								(datetime, etime, utime, stime, tcount, scount, vsize, rss)
+			Arguments:
+				content			the log contents as a string.
+				run_details		the details for the run that generated this log, as returned by parse_run_details()
+				regex			the regular expression that can be used to parse this log
+			Returns:
+				A dictionary containing everything that needs to go into the database:
+					'model'		a tuple:
+									(name, version, location)
+					'tool'		a tuple:
+									(name, version)
+					'hardware'	a list containing tuples as specified in run_details['hardware']
+					'options'	a list containing tuples as specified in run_details['options']
+					'benchmark'	a tuple:
+									(datetime, etime, utime, stime, tcount, scount, vsize, rss)
 		"""
 		m = self.match_regex(regex, content, re.MULTILINE + re.DOTALL)
 		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
@@ -232,7 +229,9 @@ class FileReader:
 			self.print_message(V_QUIET, "Warning: Parse error. The input failed to match on the regex.")
 		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
 		return match
-
+	#end of parse_single_output
+	
+	#OLDOLDOLD
 	def get_parser(self, content):
 		self.print_message(V_NOISY, "Notice: %s is the parser, according to the file."%(content))
 		for tuple in self.pattern_list:
@@ -240,6 +239,23 @@ class FileReader:
 				return tuple[1]
 		self.print_message(V_SILENT, "Error: Unknown run type. Skipping.")
 		return None
+	#end of get_parser
+	#OLDOLDOLD
+	
+	#returns a tuple of the regex to parse the specified log and the possible options for the tool
+	#as specified in the AlgorithmTool table, or None if unknown
+	def get_parser(self, tool_name, tool_version, algorithm_name):
+		try:
+			t = Tool.objects.get(name=tool_name, version=tool_version)
+			a = Algorithm.objects.get(name=algorithm_name)
+			ta = AlgorithmTool.objects.get(tool=t, algorithm=a)
+		except DoesNotExist:
+			self.print_message(V_QUIET, "Error: unknown log: %s %s (version %s)" %(tool_name, tool_version, algorithm_name))
+			return None
+		except MultipleObjectsReturned:
+			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(tool_name, tool_version, algorithm_name))
+			return None
+		return (ta.regex, ta.valid_options)
 	#end of get_parser
 	
 	def check_data_validity(self, data):
@@ -250,11 +266,18 @@ class FileReader:
 			self.print_message(V_VERBOSE, "Warning: Data invalid. Model.name=%s Model.version=%s Model.location=%s"%(name, version,location))
 			valid=False
 
+		#Algorithm
+		name = data['algorithm']
+		try:
+			a = Algorithm.objects.get(name=name)
+		except (MultipleObjectsReturned, DoesNotExist) as e:
+			self.print_message(V_VERBOSE, "Warning: %s"%(e))
 		#Tool
 		name, version = data['tool']
-		if not name or not version:
-			self.print_message(V_VERBOSE, "Warning: Data invalid. Tool.name=%s Tool.version=%s"%(name, version))
-			valid=False
+		try:
+			t = Tool.objects.get(name=name, version=version)
+		except (MultipleObjectsReturned, DoesNotExist) as e:
+			self.print_message(V_VERBOSE, "Warning: %s"%(e))
 		#Hardware
 		hwdata = data['hardware']
 		for tuple in hwdata:
@@ -270,6 +293,11 @@ class FileReader:
 			if not name or not value:
 				self.print_message(V_VERBOSE, "Warning: invalid option: name=%s value=%s"%(name,value))
 				valid=False
+			try:
+				o = Option.objects.get(name=name)
+			except (MultipleObjectsReturned, DoesNotExist) as e:
+				self.print_message(V_VERBOSE, "Warning: %s"%(e))
+				valid = False
 		#Benchmark
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
@@ -301,17 +329,16 @@ class FileReader:
 			self.print_message(V_NOISY, "Notice: created a new Model entry:%s, %s"%(name,version))
 		else:
 			self.print_message(V_NOISY, "Notice: Model already exists:%s, %s"%(name,version))
-		
+		#algorithm entry
+		name = data['algorithm']
+		#an algorithm only has a name
+		a = Algorithm.objects.get(name=name)
+
 		#tool entry
 		name, version = data['tool']
-		a, created =Parser.objects.get_or_create(regex=r'test', possible_options='test')
-		print a
-		t, created = Tool.objects.get_or_create(name=name, version=version, parse_method=a)
-		if created:
-			self.print_message(V_NOISY, "Notice: created a new Tool entry:%s, %s"%(name,version))
-		else:
-			self.print_message(V_NOISY, "Notice: Tool already exists:%s, %s"%(name,version))
-			
+		#a tool has a name and version
+		t = Tool.objects.get(name=name, version = version)
+
 		#hardware entries
 		hwdata = data['hardware']
 		hardwarelist = []
@@ -331,24 +358,10 @@ class FileReader:
 				self.print_message(V_NOISY, "Notice: Hardware already exists:%s"%(name))
 			hardwarelist.append(h)
 		
-		#option entries
-		optiondata = data['options']
-		optionlist = []
-		for tuple in optiondata:
-			name, value = tuple
-			o, created = Option.objects.get_or_create(name=name, value=value)
-			if created and self.verbose>1:
-				self.print_message(V_VERBOSE, "Notice: created a new Option entry:%s, %s"%(name,value))
-			else:
-				self.print_message(V_VERBOSE, "Notice: Option already exists:%s, %s"%(name,value))
-			
-			optionlist.append(o)
-		
-		#this one's always new
-		#add BenchmarkHardware and BenchmarkOption reference here
+		#benchmark entry
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 		#now create and save the db object
-		b, created = Benchmark.objects.get_or_create(model=m, tool=t, date_time=date, 
+		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
 				'memory_RSS':mRSS, 'finished':True}
@@ -356,25 +369,30 @@ class FileReader:
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark. and only if newly created
 		if created:
 			self.print_message(V_NOISY,"Notice: created Benchmark entry: %s on %s, which ran on: %s"%(t.name, m.name, date))
-			for option in optionlist:
-				bo = BenchmarkOption(benchmark=b, option=option)
-				bo.save()
 			for hardware in hardwarelist:
 				bh = BenchmarkHardware(benchmark=b, hardware=hardware)
 				bh.save()
 			b.save()
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
-
-		#done!
+		#optionvalue entries
+		optiondata = data['options']
+		for tuple in optiondata:
+			name, value = tuple
+			o = Option.objects.get(name=name)
+			ov, created = OptionValue.objects.get_or_create(option=o, value=value, benchmark=b)
+			if created:
+				self.print_message(V_VERBOSE, "Notice: created a new OptionValue entry.")
+			else:
+				self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
 	#end of write_to_db
 
 	def main(self, file_arg=None, verbosity=0):
 		"""Main function for this app
-		This just controls everything.
-		If called by other apps rather than from the commandline, file_arg should contain a list of strings that contain a path to specify a file.
-				See the python documentation for open() for more information.
-			verbosity should only be set if debugging functionality is required (then, use verbosity=2)
+			This just controls everything.
+			If called by other apps rather than from the commandline, file_arg should contain a list of strings that contain a path to specify a file.
+					See the python documentation for open() for more information.
+				verbosity should only be set if debugging functionality is required (then, use verbosity=2)
 		"""
 		#if file_arg is specified, this is an external call and we should look for paths there
 		if file_arg:
@@ -385,6 +403,7 @@ class FileReader:
 			(options, args) = self.parse_app_options()
 			self.verbose = options.verbose
 			file_list = args
+		#check if file(s) were provided
 		if not file_list:
 			if self.verbose:
 				raise FileReaderError("Error: No file provided.", debug_data=args)
@@ -395,9 +414,8 @@ class FileReader:
 		#fetch the patterns from the external file
 		execute(self)
 		self.print_message(V_NOISY, "Notice: the user-provided pattern list is: %s"% (self.pattern_list))
-
+		
 		#start of file-reading
-		#when we want multiple files, a loop should be here
 		all_data=[]
 		for path in file_list:
 			lines=[]
@@ -412,26 +430,30 @@ class FileReader:
 		#find all the runs
 		runcounter=0
 		errorcounter=0
+		#for each group of lines, ie. each parsed file:
 		for lines in all_data:
 			runs = self.find_runs(lines)
-			#parse each:
+			#parse each run inside:
 			for run in runs:
 				data = self.parse(run)
+				#check if something was returned
 				if data:
 					try:
 						self.write_to_db(data)
 					except FileReaderError as f:
+						#some known error occured, check how bad it is
 						if f.db_altered:
+							#major panic!
 							self.print_message(V_SILENT, "Warning: an error occured while writing to the database! %s"%(f.error))
 							return -1
 						else:
+							#it's just a failed write, probably invalid data
 							self.print_message(V_QUIET, "Warning: FileReaderError: %s" %( f.error))
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
 					except Exception, e:
-						#an error occured, skip this part
-						self.print_message(V_QUIET, "Warning: parsing of run %s failed by unexpected error"%(runcounter))
-						print e
+						#an unknown error occured, skip this part
+						self.print_message(V_QUIET, "Warning: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
 						errorcounter+=1
 				else:
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
@@ -451,13 +473,16 @@ class FileReader:
 		new_run = True
 		for line in lines:
 			if line.startswith("REPORT ENDS HERE"):
+				#chop here
 				j+=1
 				new_run=True
 			elif new_run:
+				#new run, so we need to do some extra stuff
 				runs.append([])
 				runs[j].append(line)
 				new_run=False
 			else:
+				#just another line of run j.
 				runs[j].append(line)
 		return runs
 	#end of find_runs

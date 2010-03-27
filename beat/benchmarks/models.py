@@ -12,33 +12,44 @@ class Model(models.Model):
 	#function so that the serializers put the name and version in the json instead of the foreign key
 	def natural_key(self):
 		return (self.name,self.version)
-	
-class Parser(models.Model):
-	regex = models.CharField(max_length=500)
-	possible_options = models.CharField(max_length=500)
+
+class Comparison(models.Model):
+	user = models.ForeignKey(User)
+	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
+	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	
 	def __unicode__(self):
-		return self.regex
+		return self.user.__str__() + '-' + self.benchmarks
 
-class Tool(models.Model):	
-	name = models.CharField(max_length=200)
-	version = models.CharField(max_length=50)
-	parse_method = models.ForeignKey('Parser')
-	
-	def __unicode__(self):
-		return self.name + ' ' + self.version
-
-class BenchmarkOption(models.Model):
+class OptionValue(models.Model):
 	benchmark = models.ForeignKey('Benchmark')
 	option = models.ForeignKey('Option')
+	value = models.CharField(max_length=100)
 
 class Option(models.Model):
 	name = models.CharField(max_length=50)
-	value = models.CharField(max_length=100)
+
+class Benchmark(models.Model):
+	#Idenifying elements
+	model = models.ForeignKey('Model')
+	tool = models.ForeignKey('Tool')
+	algorithm = models.ForeignKey('Algorithm')
+	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
+	date_time = models.DateTimeField(verbose_name="Time started")
+	
+	#Data
+	user_time = models.FloatField(verbose_name="User time (s)")
+	system_time = models.FloatField(verbose_name="System time (s)")
+	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
+	transition_count = models.BigIntegerField(verbose_name="Transitions", blank=True, null=True) #this may be null
+	states_count = models.BigIntegerField(verbose_name="States")
+	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
+	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
+	finished = models.BooleanField(verbose_name="Run finished")
 	
 	def __unicode__(self):
-		return u'-' + self.name + '=' + self.value
-	
+		return self.model.__str__() + '-' + self.tool.name.__str__()
+
 class Hardware(models.Model):
 	name = models.CharField(max_length=200) 
 	memory = models.BigIntegerField(verbose_name="memory (KB)")
@@ -59,32 +70,40 @@ class BenchmarkHardware(models.Model):
 	class Meta:
 		verbose_name_plural = "Benchmark Hardware"
 
-class Benchmark(models.Model):
-	#Idenifying elements
-	model = models.ForeignKey('Model')
-	tool = models.ForeignKey('Tool')
-	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
-	option = models.ManyToManyField('Option', through="BenchmarkOption")
-	date_time = models.DateTimeField(verbose_name="Time started")
-	
-	#Data
-	user_time = models.FloatField(verbose_name="User time (s)")
-	system_time = models.FloatField(verbose_name="System time (s)")
-	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
-	transition_count = models.BigIntegerField(verbose_name="Transitions", blank=True) #this may be null
-	states_count = models.BigIntegerField(verbose_name="States")
-	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
-	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
-	finished = models.BooleanField(verbose_name="Run finished")
+class ExtraValue(models.Model):
+	benchmark = models.ForeignKey('Benchmark')
+	name = models.CharField(max_length=200)
+	value = models.CharField(max_length=200)
 	
 	def __unicode__(self):
-		return self.model.__str__() + '-' + self.tool.name.__str__()
+		return self.name + ' ' + self.value
 
-class Comparison(models.Model):
-	user = models.ForeignKey(User)
-	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
-	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
+class Tool(models.Model):	
+	name = models.CharField(max_length=200)
+	version = models.CharField(max_length=50)
 	
 	def __unicode__(self):
-		return self.user.__str__() + '-' + self.benchmarks
-		
+		return self.name + ' ' + self.version
+
+class OptionTool(models.Model):
+	option = models.ForeignKey('Option')
+	tool = models.ForeignKey('Tool')
+	regex = models.ForeignKey('Regex')
+
+class AlgorithmTool(models.Model):
+	algorithm = models.ForeignKey('Algorithm')
+	tool = models.ForeignKey('Tool')
+	regex = models.ForeignKey('Regex')
+	valid_options = models.CharField(max_length=2000)
+
+class Algorithm(models.Model):
+	name = models.CharField(max_length=50)
+
+class Regex(models.Model):
+	regex = models.CharField(max_length=500)
+	def __unicode__(self):
+		return self.regex
+class RegisteredShortcuts(models.Model):
+	algorithm_tool = models.ForeignKey('AlgorithmTool')
+	option = models.ForeignKey('Option')
+	shortcut = models.CharField(max_length=1)
