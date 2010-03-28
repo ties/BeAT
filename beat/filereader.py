@@ -8,7 +8,6 @@ import os
 from optparse import OptionParser
 #imports of code we wrote
 from benchmarks.models import *
-from parsers import *
 
 RUN_DETAILS_HEADER = 11
 V_NOISY = 2		#PRINT EVERYTHING
@@ -415,10 +414,6 @@ class FileReader:
 			else:
 				raise FileReaderError("Error: No file provided.")
 		self.print_message(V_VERBOSE, "Verbosity level: %s"%(self.verbose))
-
-		#fetch the patterns from the external file
-		execute(self)
-		self.print_message(V_NOISY, "Notice: the user-provided pattern list is: %s"% (self.pattern_list))
 		
 		#start of file-reading
 		all_data=[]
@@ -511,15 +506,6 @@ class FileReader:
 			action="store_const", const=V_NOISY, dest="verbose", help = "Print everything.")
 		return parser.parse_args()
 	#end of parse_app_options
-	
-	pattern_list = []
-	
-	def patterns(self, *args):
-		for tuple in args:
-			identification, tool, algorithm, regex, opt, longopt = tuple
-			self.pattern_list.append((identification, (tool, algorithm, regex, opt, longopt)))
-		return self.pattern_list
-	#end of patterns
 #end of FileReader
 
 class FileReaderError(Exception):
