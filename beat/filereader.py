@@ -5,6 +5,7 @@ import re
 import datetime
 import sys
 import os
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from optparse import OptionParser
 #imports of code we wrote
 from benchmarks.models import *
@@ -145,7 +146,11 @@ class FileReader:
 		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
 		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
 		#deduce options, algorithm, tool
-		(parser, s, optlist, modelname) = self.parse_call(call)
+		tmp = self.parse_call(m['call'])
+		if tmp:
+			(parser, s, optlist, modelname) = tmp
+		else:#tmp is none, so something went wrong in parse_call()
+			return None
 		#s[1] = tool name and s[2] =algorithm name
 		
 		#fetch datetime info and create an object out of it
@@ -214,10 +219,9 @@ class FileReader:
 		return match
 	#end of parse_single_output
 	
-	#returns a tuple of the regex to parse the specified log and the possible options for the tool
-	#as specified in the AlgorithmTool table, or None if unknown
-	def get_parser_and_opts(self, call):
-		s = self.match_regex(r'^memtime (.*?)(?:2|-)(.*?)(?:$| .*$)', call)
+	def parse_call(self, call):
+		s = self.match_regex(r'^memtime (.*?)((?:2|-).*?)(?:$| .*$)', call)
+		print s
 		#s is like: [call, toolname, algorithmname]
 		#we don't know how to get the tool version yet
 		try:
@@ -230,14 +234,14 @@ class FileReader:
 			#read short options
 			for option in opts:
 				o = Option.objects.get(name=option)
-				rs = RegisteredShortcuts.objects.get(algorithm_tool=at, option=o)
+				rs = RegisteredShortcut.objects.get(algorithm_tool=at, option=o)
 				shortopts+=rs.shortcut
 			opts.append(shortopts)
-		except DoesNotExist:
-			self.print_message(V_QUIET, "Error: unknown log: %s %s (version %s)" %(tool_name, tool_version, algorithm_name))
+		except ObjectDoesNotExist:
+			self.print_message(V_QUIET, "Error: unknown log: %s %s (version %s)" %(s[1], 1, s[2]))
 			return None
 		except MultipleObjectsReturned:
-			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(tool_name, tool_version, algorithm_name))
+			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))
 			return None
 		
 		#read the options/args for the tool and convert them into a nice list
@@ -250,7 +254,7 @@ class FileReader:
 			if not v:	#no parameter
 				optlist[counter]=(o,True)
 			if len(o) == 1: #option length 1 -> shortcut
-				rs = RegisteredShortcuts.objects.get(algorithm_tool=at, shortcut=p)
+				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
 				optlist[counter]=(rs.option.name, v)
 			counter+=1
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
@@ -272,14 +276,14 @@ class FileReader:
 		name = data['algorithm']
 		try:
 			a = Algorithm.objects.get(name=name)
-		except (MultipleObjectsReturned, DoesNotExist) as e:
+		except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
 			self.print_message(V_VERBOSE, "Warning: %s"%(e))
 			valid=False
 		#Tool
 		name, version = data['tool']
 		try:
 			t = Tool.objects.get(name=name, version=version)
-		except (MultipleObjectsReturned, DoesNotExist) as e:
+		except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
 			self.print_message(V_VERBOSE, "Warning: %s"%(e))
 			valid = False
 		#Hardware
@@ -299,7 +303,7 @@ class FileReader:
 				valid=False
 			try:
 				o = Option.objects.get(name=name)
-			except (MultipleObjectsReturned, DoesNotExist) as e:
+			except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
 				self.print_message(V_VERBOSE, "Warning: %s"%(e))
 				valid = False
 		#Benchmark
@@ -365,7 +369,7 @@ class FileReader:
 		#benchmark entry
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 		#now create and save the db object
-		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a date_time=date, 
+		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a, date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
 				'memory_RSS':mRSS, 'finished':True}

@@ -101,9 +101,14 @@ class Algorithm(models.Model):
 
 class Regex(models.Model):
 	regex = models.CharField(max_length=500)
+
 	def __unicode__(self):
 		return self.regex
-class RegisteredShortcuts(models.Model):
+
+	class Meta:
+		verbose_name_plural = "Regexes"
+
+class RegisteredShortcut(models.Model):
 	algorithm_tool = models.ForeignKey('AlgorithmTool')
 	option = models.ForeignKey('Option')
 	shortcut = models.CharField(max_length=1)
