@@ -5,14 +5,18 @@ class HardwareInline(admin.TabularInline):
 	model = BenchmarkHardware
 	extra = 1
 
-#class OptionToolInline(admin.TabularInline):
-#	model = OptionTool
-#	extra = 1
+class OptionToolInline(admin.TabularInline):
+	model = OptionTool
+	extra = 1
 
-#class AlgorithmToolInline(admin.TabularInline):
-#	model = AlgorithmTool
-#	extra = 1
+class AlgorithmToolInline(admin.TabularInline):
+	model = AlgorithmTool
+	extra = 1
 	
+class ToolAdmin(admin.ModelAdmin):
+	list_display = ('name', 'version')
+	
+	inlines = [OptionToolInline, AlgorithmToolInline]
 	
 class BenchmarkAdmin(admin.ModelAdmin):
 	list_display = ('model', 'tool', 'algorithm', 'date_time', 'finished','user_time', 'system_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
@@ -28,7 +32,7 @@ class BenchmarkAdmin(admin.ModelAdmin):
 	
 	
 admin.site.register(Model)
-admin.site.register(Tool)
+admin.site.register(Tool, ToolAdmin)
 admin.site.register(Regex)
 admin.site.register(Hardware)
 admin.site.register(Option)
@@ -39,6 +43,6 @@ admin.site.register(Algorithm)
 admin.site.register(RegisteredShortcut)
 admin.site.register(ExtraValue)
 
-admin.site.register(OptionTool)
-admin.site.register(AlgorithmTool)
+#admin.site.register(OptionTool)
+#admin.site.register(AlgorithmTool)
 admin.site.register(OptionValue)

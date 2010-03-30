@@ -25,9 +25,15 @@ class OptionValue(models.Model):
 	benchmark = models.ForeignKey('Benchmark')
 	option = models.ForeignKey('Option')
 	value = models.CharField(max_length=100)
+	def __unicode__(self):
+		return "%s = %s"%(self.option.name, self.value)
 
+	
 class Option(models.Model):
 	name = models.CharField(max_length=50)
+	
+	def __unicode__(self):
+		return self.name
 
 class Benchmark(models.Model):
 	#Idenifying elements
@@ -89,16 +95,25 @@ class OptionTool(models.Model):
 	option = models.ForeignKey('Option')
 	tool = models.ForeignKey('Tool')
 	regex = models.ForeignKey('Regex')
+	
+	def __unicode__(self):
+		return "%s with option %s" %(self.tool.name, self.option.name)
 
 class AlgorithmTool(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
 	tool = models.ForeignKey('Tool')
 	regex = models.ForeignKey('Regex')
 	valid_options = models.CharField(max_length=2000)
-
+	
+	def __unicode__(self):
+		return "%s with option %s" %(self.algorithm.name, self.option.name)
+	
 class Algorithm(models.Model):
 	name = models.CharField(max_length=50)
-
+	
+	def __unicode__(self):
+		return self.name
+	
 class Regex(models.Model):
 	regex = models.CharField(max_length=500)
 
