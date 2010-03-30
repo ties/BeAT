@@ -12,6 +12,6 @@ from datetime import datetime
 """
 def ajaxfilter(request):
 	if (request.method=='GET'):
-		qs = filter(Benchmark.objects.all(),request.GET)
+		qs = filter(Benchmark.objects.all(),convertfilters(request.GET))
 		data = serializers.serialize("json", qs,use_natural_keys=True)
 		return HttpResponse(data, mimetype="application/json")

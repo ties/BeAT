@@ -1,10 +1,10 @@
 //local variables that define what the contents of the select-elements are in the filter
-var name_filterStyle = '<option value="model_ID__name__iexact">Equal to</option><option value="model_ID__name__icontains">Contains</option><option value="model_ID__name__istartswith">Begins with</option><option value="model_ID__name__iendswith">Ends with</option>';
-var date_filterStyle = '<option value="date_time__exact">On</option><option value="date_time__lte">Before</option><option value="date_time__gte">After</option>';
-var memory_filterStyle = '<option value="memory_VSIZE__exact">Equal to</option><option value="memory_VSIZE__gte">Greater than</option><option value="memory_VSIZE__lte">Less than</option>';
-var runtime_filterStyle = '<option value="elapsed_time__exact">Equal to</option><option value="elapsed_time__gte">Greater than</option><option value="elapsed_time__lte">Less than</option>';
-var states_filterStyle = '<option value="states_count__exact">Equal to</option><option value="states_count__gte">Greater than</option><option value="states_count__lte">Less than</option>';
-var transitions_filterStyle = '<option value="transition_count__exact">Equal to</option><option value="transition_count__gte">Greater than</option><option value="transition_count__lte">Less than</option>';
+var name_filterStyle = '<option value="equal">Equal to</option><option value="contains">Contains</option><option value="beginswith">Begins with</option><option value="endswith">Ends with</option>';
+var date_filterStyle = '<option value="on">On</option><option value="before">Before</option><option value="after">After</option>';
+var memory_filterStyle = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
+var runtime_filterStyle = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
+var states_filterStyle = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
+var transitions_filterStyle = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
 var options_filterStyle = '<option value="0">Options (hover)</option>';
 var empty_filterStyle = '<option value="empty">&lt;empty&gt;</option>';
 
@@ -188,6 +188,7 @@ function changedFilter(elem){
 
 function filter(){
 	var d = collectData();
+	alert(d);
 	if (d!=""){
 		$.ajax({
 			url: 'ajax/filter/',
@@ -196,7 +197,7 @@ function filter(){
 							$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
 						},
 			success: function(a){
-						var headers = '<tr>\n\
+						/*var headers = '<tr>\n\
 											<th>&nbsp;</th>\n\
 											<th>Model</th>\n\
 											<th>States</th>\n\
@@ -214,7 +215,8 @@ function filter(){
 								<td>'+json.fields.elapsed_time+'</td>\n\
 								<td>'+json.fields.memory_VSIZE+'</td>\n\
 								<td>true</td></tr>');
-						});
+						});*/
+						alert(a);
 					},
 			error: function(XMLHttpRequest,textStatus,errorThrown){
 						alert("Error: "+textStatus);
@@ -233,24 +235,22 @@ function collectData(){
 	var filterrows = $('#filters tr');
 	
 	for (var i=0;i<filterrows.length;i++){
+		//get the type
 		var type = $("#filterrow_"+i+" .filterType").attr('value');
 		if (type!="empty"){
-			res+="filter"+count+"="+type;
 			if (type=="options"){
 				var checkboxes = $("#filterrow_"+i+" .optionName");
 				var values = $("#filterrow_"+i+" .optionValue");
 				for (var j=0;j<checkboxes.length;j++){
 					if (checkboxes[j].checked==true){
-						res+=","+checkboxes[j].value;
-						res+=","+values[j].value;
+						res+="filter"+count+"=options,"+checkboxes[j].value+","+values[j].value+"&";
+						count++;
 					}
 				}
 			}else{
-				res+=","+$("#filterrow_"+i+" .filterStyle").attr('value');
-				res+=","+$("#filterrow_"+i+" .filterValue").attr('value');
+				res+="filter"+count+"="+type+","+$("#filterrow_"+i+" .filterStyle").attr('value')+","+$("#filterrow_"+i+" .filterValue").attr('value')+"&";
+				count++;
 			}
-			if (i+1 < filterrows.length)	res+="&";
-			count++;
 		}
 	}
 	return res;
