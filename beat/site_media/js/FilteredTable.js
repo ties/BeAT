@@ -173,7 +173,7 @@ function changedFilter(elem){
 				//insert the hover-div
 				$(elem).siblings('ul.mega').children('li.mega').children('select').after('\
 					<div>\n\
-						<input type="checkbox" value="option 1" class="optionName">Option 1 <input type="text" class="optionValue"><br>\n\
+						<input type="checkbox" value="cache" class="optionName">cache<input type="text" class="optionValue"><br>\n\
 						<input type="checkbox" value="option 7" class="optionName">Option 7 <input type="text" class="optionValue"><br>\n\
 						<input type="checkbox" value="option 6" class="optionName">Option 6 <input type="text" class="optionValue"><br>\n\
 						<input type="checkbox" value="option 5" class="optionName">Option 5 <input type="text" class="optionValue"><br>\n\
