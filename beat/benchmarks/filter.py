@@ -5,11 +5,22 @@ class Filter:
 		self.filterValue = filterValue
 	
 	def apply(self,qs):
-		print "apply:"
+		
+		
+		
 		f = ""
 		if self.filterType==u'name':
 			f+="model__name"
-		elif self.filterType==u'date'
+		elif self.filterType==u'date':
+			f+="date_time"
+		elif self.filterType==u'memory':
+			f+="memory_VSIZE"
+		elif self.filterType==u'runtime':
+			f+="elapsed_time"
+		elif self.filterType==u'states':
+			f+="states_count"
+		elif self.filterType==u'transitions':
+			f+="transition_count"
 		
 		if self.filterStyle==u'equal':
 			f+="__iexact"
@@ -43,23 +54,10 @@ class Filter:
 	@todo add options to filter
 """
 def convertfilters(filters):
-	print "convertfilters"
 	result = []
 	for k,v in filters.iteritems():
 		arr = v.split(',')
 		result.append(Filter(arr[0],arr[1],arr[2]))
-		print "added filter:"+v
-		#if arr[0]==u'options':
-		#	i = 1
-		#	while i<len(arr):
-				#voeg de opties toe aan het resultaat
-		#		i = i+2
-		#else:
-			#convert the values to strings or integers
-		#	if arr[0]==u'name' or arr[0]==u'date':
-		#		result[str(arr[1])] = str(arr[2])
-		#	elif arr[0]==u'memory' or arr[0]==u'runtime' or arr[0]==u'states' or arr[0]==u'transitions':
-		#		result[str(arr[1])] = int(arr[2])
 	return result
 
 """
