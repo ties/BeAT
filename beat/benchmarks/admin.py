@@ -6,7 +6,7 @@ class HardwareInline(admin.TabularInline):
 	extra = 1
 
 class OptionValueInline(admin.TabularInline):
-	model = OptionValue
+	model = BenchmarkOptionValue
 	extra = 1
 
 class AlgorithmToolInline(admin.TabularInline):

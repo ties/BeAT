@@ -1,14 +1,16 @@
 class Filter:
-	def __init__(self, filterType, filterStyle, filterValue):
+	def __init__(self, filterType, filterStyle, filterValue, row):
 		self.filterType = filterType
 		self.filterStyle = filterStyle
 		self.filterValue = filterValue
+		self.row = row
 	
 	def apply(self,qs):
 		
 		if self.filterType==u'options':
-			print "options"
-			print qs.optionvalue_set
+			print "options: "+self.filterStyle+","+self.filterValue
+			
+			qs = qs.filter(optionvalue__option__name__iexact=str(self.filterStyle),optionvalue__value__iexact=str(self.filterValue))
 		else:
 			f = ""
 			if self.filterType==u'name':
@@ -60,7 +62,7 @@ def convertfilters(filters):
 	result = []
 	for k,v in filters.iteritems():
 		arr = v.split(',')
-		result.append(Filter(arr[0],arr[1],arr[2]))
+		result.append(Filter(arr[0],arr[1],arr[2],arr[3]))
 	return result
 
 """

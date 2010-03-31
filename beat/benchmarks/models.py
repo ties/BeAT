@@ -40,7 +40,7 @@ class Benchmark(models.Model):
 	tool = models.ForeignKey('Tool')
 	algorithm = models.ForeignKey('Algorithm')
 	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
-	optionvalue = models.ManyToManyField('OptionValue')
+	optionvalue = models.ManyToManyField('OptionValue', through="BenchmarkOptionValue")
 	date_time = models.DateTimeField(verbose_name="Time started")
 	
 	#Data
@@ -77,6 +77,13 @@ class BenchmarkHardware(models.Model):
 	
 	class Meta:
 		verbose_name_plural = "Benchmark Hardware"
+
+class BenchmarkOptionValue(models.Model):
+	benchmark = models.ForeignKey('Benchmark')
+	optionvalue = models.ForeignKey('OptionValue')
+	
+	class Meta:
+		verbose_name_plural = "Benchmark OptionValue"
 
 class ExtraValue(models.Model):
 	benchmark = models.ForeignKey('Benchmark')

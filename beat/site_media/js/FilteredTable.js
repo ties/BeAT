@@ -204,26 +204,27 @@ function filter(){
 							$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
 						},
 			success: function(a){
-						/*var headers = '<tr>\n\
-											<th>&nbsp;</th>\n\
-											<th>Model</th>\n\
-											<th>States</th>\n\
-											<th>Runtime</th>\n\
-											<th>VSize</th>\n\
-											<th>Finished</th>\n\
-										</tr>';
+						var headers = '<tr>\n\
+								<th>&nbsp;</th>\n\
+								<th>Model</th>\n\
+								<th>States</th>\n\
+								<th>Runtime</th>\n\
+								<th>Memory (RSS)</th>\n\
+								<th>Finished</th>\n\
+							</tr>';
+						
 						$("table.benchmarks").empty();
 						$("table.benchmarks").append(headers);
 						$(a).each(function(i,json){
 							$("table.benchmarks").append('<tr>\n\
 								<td><input type="checkbox" name="benchmarks" value="'+json.pk+'" /></td>\n\
-								<td>'+json.fields.model_ID[0]+'.'+json.fields.model_ID[1]+'</td>\n\
+								<td><label for="{{ benchmark.id }}">'+json.fields.model[0]+'.'+json.fields.model[1]+'</label></td>\n\
 								<td>'+json.fields.states_count+'</td>\n\
-								<td>'+json.fields.elapsed_time+'</td>\n\
-								<td>'+json.fields.memory_VSIZE+'</td>\n\
-								<td>true</td></tr>');
-						});*/
-						alert(a);
+								<td>'+json.fields.total_time+'</td>\n\
+								<td>'+json.fields.memory_RSS+'</td>\n\
+								<td>'+json.fields.finished+'</td></tr>');
+						});
+						
 					},
 			error: function(XMLHttpRequest,textStatus,errorThrown){
 						alert("Error: "+textStatus);
@@ -250,12 +251,12 @@ function collectData(){
 				var values = $("#filterrow_"+i+" .optionValue");
 				for (var j=0;j<checkboxes.length;j++){
 					if (checkboxes[j].checked==true){
-						res+="filter"+count+"=options,"+checkboxes[j].value+","+values[j].value+"&";
+						res+="filter"+count+"=options,"+checkboxes[j].value+","+values[j].value+","+i+"&";
 						count++;
 					}
 				}
 			}else{
-				res+="filter"+count+"="+type+","+$("#filterrow_"+i+" .filterStyle").attr('value')+","+$("#filterrow_"+i+" .filterValue").attr('value')+"&";
+				res+="filter"+count+"="+type+","+$("#filterrow_"+i+" .filterStyle").attr('value')+","+$("#filterrow_"+i+" .filterValue").attr('value')+","+i+"&";
 				count++;
 			}
 		}
