@@ -221,7 +221,6 @@ class FileReader:
 	
 	def parse_call(self, call):
 		s = self.match_regex(r'^memtime (.*?)((?:2|-).*?)(?:$| .*$)', call)
-		print s
 		#s is like: [call, toolname, algorithmname]
 		#we don't know how to get the tool version yet
 		try:
@@ -230,13 +229,15 @@ class FileReader:
 			at = AlgorithmTool.objects.get(tool=t, algorithm=a)
 			shortopts = ''
 			#long options
-			opts = ta.valid_options.split(' ')
+			opts = []
+			#these are long options related to Tool
+			for option in OptionTool.objects.filter(tool=t):
+				opts.append(option.name)
 			#read short options
 			for option in opts:
 				o = Option.objects.get(name=option)
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, option=o)
 				shortopts+=rs.shortcut
-			opts.append(shortopts)
 		except ObjectDoesNotExist:
 			self.print_message(V_QUIET, "Error: unknown log: %s %s (version %s)" %(s[1], 1, s[2]))
 			return None

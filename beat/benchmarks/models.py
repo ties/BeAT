@@ -22,7 +22,7 @@ class Comparison(models.Model):
 		return self.user.__str__() + '-' + self.benchmarks
 
 class OptionValue(models.Model):
-	benchmark = models.ForeignKey('Benchmark')
+	benchmark = models.ManyToManyField('Benchmark')
 	option = models.ForeignKey('Option')
 	value = models.CharField(max_length=100)
 	def __unicode__(self):
@@ -52,6 +52,8 @@ class Benchmark(models.Model):
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
+	
+	total_time = models.FloatField(verbose_name="User + System time (s)")
 	
 	def __unicode__(self):
 		return self.model.__str__() + '-' + self.tool.name.__str__()
@@ -91,9 +93,9 @@ class Tool(models.Model):
 	def __unicode__(self):
 		return self.name + ' ' + self.version
 
-class OptionTool(models.Model):
+class ValidOption(models.Model):
+	algorithm_tool = models.ForeignKey('AlgorithmTool')
 	option = models.ForeignKey('Option')
-	tool = models.ForeignKey('Tool')
 	regex = models.ForeignKey('Regex')
 	
 	def __unicode__(self):
@@ -103,7 +105,6 @@ class AlgorithmTool(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
 	tool = models.ForeignKey('Tool')
 	regex = models.ForeignKey('Regex')
-	valid_options = models.CharField(max_length=2000)
 	
 	def __unicode__(self):
 		return "%s with option %s" %(self.algorithm.name, self.option.name)

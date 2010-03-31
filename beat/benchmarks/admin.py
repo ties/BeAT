@@ -5,8 +5,8 @@ class HardwareInline(admin.TabularInline):
 	model = BenchmarkHardware
 	extra = 1
 
-class OptionToolInline(admin.TabularInline):
-	model = OptionTool
+class ValidOptionInline(admin.TabularInline):
+	model = ValidOption
 	extra = 1
 
 class AlgorithmToolInline(admin.TabularInline):
@@ -16,10 +16,10 @@ class AlgorithmToolInline(admin.TabularInline):
 class ToolAdmin(admin.ModelAdmin):
 	list_display = ('name', 'version')
 	
-	inlines = [OptionToolInline, AlgorithmToolInline]
+	inlines = [ValidOptionInline, AlgorithmToolInline]
 	
 class BenchmarkAdmin(admin.ModelAdmin):
-	list_display = ('model', 'tool', 'algorithm', 'date_time', 'finished','user_time', 'system_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
+	list_display = ('model', 'tool', 'algorithm', 'date_time', 'finished','user_time', 'system_time', 'total_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
 	list_filter = ['date_time']
 	search_fields = ['model__name', 'tool__name', 'algorithm__name']
 	fieldsets = [
