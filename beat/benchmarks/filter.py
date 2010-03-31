@@ -1,3 +1,5 @@
+from datetime import date
+
 class Filter:
 	def __init__(self, filterType, filterStyle, filterValue, row):
 		self.filterType = filterType
@@ -11,12 +13,27 @@ class Filter:
 			print "options: "+self.filterStyle+","+self.filterValue
 			
 			qs = qs.filter(optionvalue__option__name__iexact=str(self.filterStyle),optionvalue__value__iexact=str(self.filterValue))
+		elif self.filterType==u'date':
+			strarr = self.filterValue.split('-')
+			arr = []
+			arr.append(int(strarr[0]))
+			arr.append(int(strarr[1]))
+			arr.append(int(strarr[2]))
+			print arr
+			
+			if self.filterStyle==u'on':
+				qs = qs.filter(date_time__gte=date(arr[0],arr[1],arr[2]),date_time__lt=(date(arr[0],arr[1],arr[2])+timedelta(days=1)))
+			elif self.filterStyle==u'before':
+				qs = qs.filter(date_time__lte=date(arr[0],arr[1],arr[2]))
+			elif self.filterStyle==u'after':
+				qs = qs.filter(date_time__gte=date(arr[0],arr[1],arr[2]))
+			print qs
 		else:
 			f = ""
 			if self.filterType==u'name':
 				f+="model__name"
-			elif self.filterType==u'date':
-				f+="date_time"
+			#elif self.filterType==u'date':
+				#f+="date_time"
 			elif self.filterType==u'memory':
 				f+="memory_VSIZE"
 			elif self.filterType==u'runtime':
@@ -34,17 +51,18 @@ class Filter:
 				f+="__istartswith"
 			elif self.filterStyle==u'endswith':
 				f+="__iendswith"
-			elif self.filterStyle==u'on':
-				f+="__date_time__exact"
-			elif self.filterStyle==u'before':
-				f+="__date_time__lte"
-			elif self.filterStyle==u'after':
-				f+="__date_time__gte"
+			#elif self.filterStyle==u'on':
+				#f+="__exact"
+			#elif self.filterStyle==u'before':
+				#f+="__lte"
+			#elif self.filterStyle==u'after':
+				#f+="__gte"
 			elif self.filterStyle==u'greaterthen':
 				f+="__gte"
 			elif self.filterStyle==u'lessthan':
 				f+="__lte"
 			
+			print "filter: "+f
 			bla = {}
 			bla[f] = self.filterValue
 			qs = qs.filter(**bla)
