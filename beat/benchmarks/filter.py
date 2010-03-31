@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date,timedelta
 
 class Filter:
 	def __init__(self, filterType, filterStyle, filterValue, row):
