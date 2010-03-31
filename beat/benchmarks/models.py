@@ -7,7 +7,7 @@ class Model(models.Model):
 	location = models.FilePathField(path="site_media/models")
 	
 	def __unicode__(self):
-		return self.name + '.' + self.version
+		return "%s:%s" % (self.name, self.version)
 	
 	#function so that the serializers put the name and version in the json instead of the foreign key
 	def natural_key(self):
@@ -19,15 +19,15 @@ class Comparison(models.Model):
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	
 	def __unicode__(self):
-		return self.user.__str__() + '-' + self.benchmarks
+		return "%s-%s" % (self.user, self.benchmarks)
 
 class OptionValue(models.Model):
 	option = models.ForeignKey('Option')
 	value = models.CharField(max_length=100)
-	def __unicode__(self):
-		return "%s = %s"%(self.option.name, self.value)
 
-	
+	def __unicode__(self):
+		return "%s = %s" % (self.option.name, self.value)
+
 class Option(models.Model):
 	name = models.CharField(max_length=50)
 	
@@ -46,6 +46,7 @@ class Benchmark(models.Model):
 	#Data
 	user_time = models.FloatField(verbose_name="User time (s)")
 	system_time = models.FloatField(verbose_name="System time (s)")
+	total_time = models.FloatField(verbose_name="User + System time (s)")
 	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
 	transition_count = models.BigIntegerField(verbose_name="Transitions", blank=True, null=True) #this may be null
 	states_count = models.BigIntegerField(verbose_name="States")
@@ -53,10 +54,8 @@ class Benchmark(models.Model):
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
 	
-	total_time = models.FloatField(verbose_name="User + System time (s)")
-	
 	def __unicode__(self):
-		return self.model.__str__() + '-' + self.tool.name.__str__()
+		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)
 
 class Hardware(models.Model):
 	name = models.CharField(max_length=200) 
@@ -66,7 +65,7 @@ class Hardware(models.Model):
 	os = models.CharField(max_length=200, verbose_name="operating system")
 
 	def __unicode__(self):
-		return self.name + ' @' + str(self.memory) + 'KB RAM, ' + self.cpu + ', ' + self.os
+		return "%s @ %dKB RAM, %s, %s" % (self.name, self.memory, self.cpu, self.os)
 	
 	class Meta:
 		verbose_name_plural = "Hardware"
@@ -91,14 +90,14 @@ class ExtraValue(models.Model):
 	value = models.CharField(max_length=200)
 	
 	def __unicode__(self):
-		return self.name + ' ' + self.value
+		return "%s %s" % (self.name, self.version)
 
 class Tool(models.Model):	
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
 	
 	def __unicode__(self):
-		return self.name + ' ' + self.version
+		return "%s %s" % (self.name, self.version)
 
 class ValidOption(models.Model):
 	algorithm_tool = models.ForeignKey('AlgorithmTool')
@@ -106,7 +105,7 @@ class ValidOption(models.Model):
 	regex = models.ForeignKey('Regex')
 	
 	def __unicode__(self):
-		return "%s with option %s" %(self.algorithm_tool.tool.name, self.option.name)
+		return "%s with option %s" % (self.algorithm_tool.tool.name, self.option.name)
 
 class AlgorithmTool(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
@@ -114,7 +113,7 @@ class AlgorithmTool(models.Model):
 	regex = models.ForeignKey('Regex')
 	
 	def __unicode__(self):
-		return self.tool.name + "-" + self.algorithm.name
+		return "%s-%s" % (self.tool, self.algorithm)
 	
 class Algorithm(models.Model):
 	name = models.CharField(max_length=50)
@@ -126,7 +125,7 @@ class Regex(models.Model):
 	regex = models.CharField(max_length=500)
 
 	def __unicode__(self):
-		return self.regex
+		return self.regex[:10] #first ten characters; change to something more elegant later
 
 	class Meta:
 		verbose_name_plural = "Regexes"
@@ -135,3 +134,6 @@ class RegisteredShortcut(models.Model):
 	algorithm_tool = models.ForeignKey('AlgorithmTool')
 	option = models.ForeignKey('Option')
 	shortcut = models.CharField(max_length=1)
+	
+	def __unicode__(self):
+		return "%s -> %s in %s" %(self.shortcut,self.option.name, self.algorithm_tool)

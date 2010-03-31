@@ -27,7 +27,7 @@ class BenchmarkAdmin(admin.ModelAdmin):
 		('Date information', {'fields': ['date_time']}),
 		('Output data', {'fields': ['user_time', 'system_time','total_time', 'elapsed_time','transition_count','states_count','memory_VSIZE', 'memory_RSS']}),
 	]
-	inlines = [HardwareInline,OptionValueInline]
+	inlines = [HardwareInline, OptionValueInline]
 
 	
 	

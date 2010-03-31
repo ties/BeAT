@@ -230,14 +230,17 @@ class FileReader:
 			shortopts = ''
 			#long options
 			opts = []
-			#these are long options related to Tool
-			for option in OptionTool.objects.filter(tool=t):
+			#fetch all valid options
+			for option in ValidOption.objects.filter(tool=t):
 				opts.append(option.name)
-			#read short options
+			#find short options
 			for option in opts:
 				o = Option.objects.get(name=option)
-				rs = RegisteredShortcut.objects.get(algorithm_tool=at, option=o)
-				shortopts+=rs.shortcut
+				try:
+					rs = RegisteredShortcut.objects.get(algorithm_tool=at, option=o)
+					shortopts+=rs.shortcut
+				except:
+					pass
 		except ObjectDoesNotExist:
 			self.print_message(V_QUIET, "Error: unknown log: %s %s (version %s)" %(s[1], 1, s[2]))
 			return None
@@ -346,7 +349,7 @@ class FileReader:
 		#tool entry
 		name, version = data['tool']
 		#a tool has a name and version
-		t = Tool.objects.get(name=name, version = version)
+		t = Tool.objects.get(name=name, version=version)
 
 		#hardware entries
 		hwdata = data['hardware']
