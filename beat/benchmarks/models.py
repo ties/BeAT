@@ -22,7 +22,6 @@ class Comparison(models.Model):
 		return self.user.__str__() + '-' + self.benchmarks
 
 class OptionValue(models.Model):
-	benchmark = models.ManyToManyField('Benchmark')
 	option = models.ForeignKey('Option')
 	value = models.CharField(max_length=100)
 	def __unicode__(self):
@@ -41,6 +40,7 @@ class Benchmark(models.Model):
 	tool = models.ForeignKey('Tool')
 	algorithm = models.ForeignKey('Algorithm')
 	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
+	optionvalue = models.ManyToManyField('OptionValue')
 	date_time = models.DateTimeField(verbose_name="Time started")
 	
 	#Data

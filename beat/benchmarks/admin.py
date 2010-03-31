@@ -5,6 +5,10 @@ class HardwareInline(admin.TabularInline):
 	model = BenchmarkHardware
 	extra = 1
 
+class OptionValueInline(admin.TabularInline):
+	model = OptionValue
+	extra = 1
+
 class AlgorithmToolInline(admin.TabularInline):
 	model = AlgorithmTool
 	extra = 1
@@ -23,7 +27,7 @@ class BenchmarkAdmin(admin.ModelAdmin):
 		('Date information', {'fields': ['date_time']}),
 		('Output data', {'fields': ['user_time', 'system_time','total_time', 'elapsed_time','transition_count','states_count','memory_VSIZE', 'memory_RSS']}),
 	]
-	inlines = [HardwareInline]
+	inlines = [HardwareInline,OptionValueInline]
 
 	
 	

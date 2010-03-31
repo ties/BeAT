@@ -46,7 +46,7 @@
 						<th>Model</th>
 						<th>States</th>
 						<th>Runtime</th>
-						<th>VSize</th>
+						<th>Memory (RSS)</th>
 						<th>Finished</th>
 					</tr>
 					
@@ -56,8 +56,8 @@
 						
 						<td><label for="{{ benchmark.id }}">{{ benchmark.model }}</label></td>
 						<td>{{ benchmark.states_count }}</td>
-						<td>{{ benchmark.elapsed_time }}</td>
-						<td>{{ benchmark.memory_VSIZE }}</td>
+						<td>{{ benchmark.total_time }}</td>
+						<td>{{ benchmark.memory_RSS }}</td>
 						<td>{{ benchmark.finished }}</td>
 						
 					</tr>
