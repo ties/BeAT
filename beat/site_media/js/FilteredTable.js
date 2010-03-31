@@ -7,6 +7,7 @@ var states_filterStyle = '<option value="equal">Equal to</option><option value="
 var transitions_filterStyle = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
 var options_filterStyle = '<option value="0">Options (hover)</option>';
 var empty_filterStyle = '<option value="empty">&lt;empty&gt;</option>';
+var options = new Array();
 
 /*
  * Function to add a filterrow to the filtertable, will be placed after the caller
@@ -171,6 +172,12 @@ function changedFilter(elem){
 				//hide the filterOn-textinput
 				$(elem).siblings('input.filterValue').hide();
 				//insert the hover-div
+				optionsdiv = '<div>';
+				$(options).each(
+					function(i,name){
+						alert(i+","+name);
+					}
+				);
 				$(elem).siblings('ul.mega').children('li.mega').children('select').after('\
 					<div>\n\
 						<input type="checkbox" value="cache" class="optionName">cache<input type="text" class="optionValue"><br>\n\
@@ -256,6 +263,21 @@ function collectData(){
 	return res;
 }
 
+function getOptions(){
+	$.ajax({
+		url: 'ajax/options/',
+		success: function(a){
+					$(a).each(function(i,json){
+						options[json.pk]=json.fields.name;
+					});
+				},
+		error: function(XMLHttpRequest,textStatus,errorThrown){
+					alert("Error: "+textStatus);
+				},
+		dataType: 'json'
+	});
+}
+
 /*
  * Function called when the document is loaded
  */
@@ -279,4 +301,6 @@ $(document).ready(function() {
 		removeFilter(this);
 		return false;
 	});
+	
+	getOptions();
 });
