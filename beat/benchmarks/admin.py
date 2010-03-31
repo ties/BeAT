@@ -5,10 +5,6 @@ class HardwareInline(admin.TabularInline):
 	model = BenchmarkHardware
 	extra = 1
 
-class ValidOptionInline(admin.TabularInline):
-	model = ValidOption
-	extra = 1
-
 class AlgorithmToolInline(admin.TabularInline):
 	model = AlgorithmTool
 	extra = 1
@@ -16,7 +12,7 @@ class AlgorithmToolInline(admin.TabularInline):
 class ToolAdmin(admin.ModelAdmin):
 	list_display = ('name', 'version')
 	
-	inlines = [ValidOptionInline, AlgorithmToolInline]
+	inlines = [AlgorithmToolInline]
 	
 class BenchmarkAdmin(admin.ModelAdmin):
 	list_display = ('model', 'tool', 'algorithm', 'date_time', 'finished','user_time', 'system_time', 'total_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
@@ -25,7 +21,7 @@ class BenchmarkAdmin(admin.ModelAdmin):
 	fieldsets = [
 		('Configuration', {'fields': ['model','tool','algorithm','finished']}),
 		('Date information', {'fields': ['date_time']}),
-		('Output data', {'fields': ['user_time', 'system_time', 'elapsed_time','transition_count','states_count','memory_VSIZE', 'memory_RSS']}),
+		('Output data', {'fields': ['user_time', 'system_time','total_time', 'elapsed_time','transition_count','states_count','memory_VSIZE', 'memory_RSS']}),
 	]
 	inlines = [HardwareInline]
 
@@ -43,6 +39,6 @@ admin.site.register(Algorithm)
 admin.site.register(RegisteredShortcut)
 admin.site.register(ExtraValue)
 
-#admin.site.register(OptionTool)
+admin.site.register(ValidOption)
 #admin.site.register(AlgorithmTool)
 admin.site.register(OptionValue)

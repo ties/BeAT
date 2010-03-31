@@ -99,7 +99,7 @@ class ValidOption(models.Model):
 	regex = models.ForeignKey('Regex')
 	
 	def __unicode__(self):
-		return "%s with option %s" %(self.tool.name, self.option.name)
+		return "%s with option %s" %(self.algorithm_tool.tool.name, self.option.name)
 
 class AlgorithmTool(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
@@ -107,7 +107,7 @@ class AlgorithmTool(models.Model):
 	regex = models.ForeignKey('Regex')
 	
 	def __unicode__(self):
-		return "%s with option %s" %(self.algorithm.name, self.option.name)
+		return self.tool.name + "-" + self.algorithm.name
 	
 class Algorithm(models.Model):
 	name = models.CharField(max_length=50)
