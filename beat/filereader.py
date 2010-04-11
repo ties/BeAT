@@ -242,7 +242,7 @@ class FileReader:
 				except:
 					pass
 		except ObjectDoesNotExist:
-			self.print_message(V_QUIET, "Error: unknown log: %s %s (version %s)" %(s[1], 1, s[2]))
+			self.print_message(V_QUIET, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], 1))
 			return None
 		except MultipleObjectsReturned:
 			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))

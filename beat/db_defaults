@@ -22,6 +22,7 @@
 #algtool,algorithm:(name),tool:(name,version),regex:(regex)
 #note that fields are only mentioned for debug purposes and the order as above is used when creating the database elements
 #thus, in the current implementation, the following example:
-alg,name:lpo,
-#is a row in Algorithm with name=lpo and is equivalent to alg,:lpo,
+alg,name:-reach,
+#is a row in Algorithm with name=-reach and is equivalent to alg,:lpo,
 hw,name:x,memory:600,cpu:AMD,disk_space:21456,os:Linux,
+algtool,algorithm:(name:2lts-grey),tool:(name:nips,version:1),regex:(regex:text),
