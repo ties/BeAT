@@ -1,0 +1,27 @@
+#lines starting with # are comment lines
+#all this will be created using Django's get_or_create() method. Thus, in the case of duplicates, the first entry will be what appears in the DB
+#Formatting is:
+#Table_name,field:value,field:value,field:value ...
+#Use '\' to escape ':', ',' and '\' in values.
+#
+#list of tables that can be recognized, formatted as follows:
+#	string,		DjangoModel,		(field0, field1, field2)				notes
+#
+#	model,		Model,				(name, version, location)
+#	ov,			OptionValue,		(option, value)							option is a foreign key
+#	option,		Option,				(name)
+#	hw,			Hardware,			(name, memory, cpu, disk_space, os)
+#	tool,		Tool,				(name, version)
+#	validopt,	ValidOption,		(algorithm_tool, option, regex)			all three are foreign keys
+#	algtool,	AlgorithmTool,		(algorithm, tool, regex)				all three are foreign keys
+#	alg,		Algorithm,			(name)
+#	regex,		Regex,				(regex)
+#	shortarg,	RegisteredShortcut,	(algorithm_tool, option, shortcut)		first two are foreign keys
+#
+#foreign keys should be a tuple of values. For example, algtool should be like this:
+#algtool,algorithm:(name),tool:(name,version),regex:(regex)
+#note that fields are only mentioned for debug purposes and the order as above is used when creating the database elements
+#thus, in the current implementation, the following example:
+alg,name:lpo,
+#is a row in Algorithm with name=lpo and is equivalent to alg,:lpo,
+hw,name:x,memory:600,cpu:AMD,disk_space:21456,os:Linux,

@@ -540,7 +540,7 @@ class FileReaderError(Exception):
 if __name__ == '__main__':
 	f = FileReader()
 	exitcode = f.main()
-	print "%s\nLog: "%( exitcode)
+	#print "%s\nLog: "%( exitcode)
 	for l in f.log:
 		print l
 	sys.exit(exitcode)

@@ -65,7 +65,7 @@ class Hardware(models.Model):
 	os = models.CharField(max_length=200, verbose_name="operating system")
 
 	def __unicode__(self):
-		return "%s @ %dKB RAM, %s, %s" % (self.name, self.memory, self.cpu, self.os)
+		return "%s @ %sKB RAM, %s, %s" % (self.name, self.memory, self.cpu, self.os)
 	
 	class Meta:
 		verbose_name_plural = "Hardware"
