@@ -97,7 +97,7 @@ class Tool(models.Model):
 	version = models.CharField(max_length=50)
 	
 	def __unicode__(self):
-		return "%s %s" % (self.name, self.version)
+		return "%s.%s" % (self.name, self.version)
 
 class ValidOption(models.Model):
 	algorithm_tool = models.ForeignKey('AlgorithmTool')

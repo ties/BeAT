@@ -2,7 +2,7 @@
 #all this will be created using Django's get_or_create() method. Thus, in the case of duplicates, the first entry will be what appears in the DB
 #Formatting is:
 #Table_name,field:value,field:value,field:value ...
-#Use '\' to escape ':', ',' and '\' in values.
+#Use '\,' for ',' and '\\' for '\'
 #
 #list of tables that can be recognized, formatted as follows:
 #	string,		DjangoModel,		(field0, field1, field2)				notes
@@ -19,10 +19,17 @@
 #	shortarg,	RegisteredShortcut,	(algorithm_tool, option, shortcut)		first two are foreign keys
 #
 #foreign keys should be a tuple of values. For example, algtool should be like this:
-#algtool,algorithm:(name),tool:(name,version),regex:(regex)
+#algtool,algorithm:(name:algname,),tool:(name:toolname,version:versionnumber,),regex:(regex:haidar,)
+#
 #note that fields are only mentioned for debug purposes and the order as above is used when creating the database elements
-#thus, in the current implementation, the following example:
+#thus, in the current implementation, the following:
+#
 alg,name:-reach,
-#is a row in Algorithm with name=-reach and is equivalent to alg,:lpo,
+#is a row in Algorithm with name=-reach and is equivalent to alg,:-reach,
+#
+#####	algorithms			#####
+
+#####	hardware			#####
 hw,name:x,memory:600,cpu:AMD,disk_space:21456,os:Linux,
-algtool,algorithm:(name:2lts-grey),tool:(name:nips,version:1),regex:(regex:text),
+#####	algorithm-tools		#####
+algtool,algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),regex:(regex:text,),

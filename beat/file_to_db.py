@@ -1,6 +1,14 @@
 import re
 from benchmarks.models import *
 
+#regular expression for splitting a line into the model identifier and the contents
+table_slice = re.compile(r'(.*?),(.*)')
+#regular expression to break the contents up into bits, such that the data for each field is contained in one of the two groups
+#if the data represents a foreign key, the data will be in the left group ([0]), otherwise in the right group ([1])
+#use field_slice.findall() to get a list containing a series of tuples, each containing these left and right groups.
+field_slice = re.compile(r'(?:[^:]*?:\(([^)]*?)\),)|(?:[^:]*?:([^,]*?),)')
+
+
 queue = []
 
 #procedure to check/queue changes to the DB
@@ -13,8 +21,9 @@ def save_queue(queue):
 	for q in queue:
 		try:
 			q.save()
+			print "Processed: %s"%(q)
 		except Exception, e:
-			print e
+			print "Error: %s. Object: %s"%(e,q)
 			pass
 	queue = []
 
@@ -27,16 +36,17 @@ def clear_queue():
 #converts a nested csv to a nested list.
 #(a,b,c,(1,2,3)) becomes a list containing a, b, c and a list, which in turn contains 1, 2 and 3
 def csv_to_array(str, sfl=False):
-	print str
+	#print str
 	field_list = field_slice.findall(str)
-	print field_list 
+	#print field_list 
 	field_array = []
 	for x in field_list:
-		if x.startswith('('):
-			y = csv_to_array(x.lstrip('(').rstrip(')'))
+		if x[0]:
+			y = csv_to_array(x[0])
 			field_array.append(y)
 		else:
-			field_array.append(x)
+			field_array.append(x[1])
+	print "<<%s>> -> <<%s>>"%(str, field_array)
 	return field_array
 	
 
@@ -47,31 +57,31 @@ def handler(type, args):
 		result = Model(name = args[0])
 	elif type == 'ov':
 		o = handler('option', args[0])
-		result = OptionValue(option=o, value=args[1])
+		result, created = OptionValue.objects.get_or_create(option=o, value=args[1])
 	elif type == 'option':
-		result = Option(name=args[0])
+		result, created = Option.objects.get_or_create(name=args[0])
 	elif type == 'hw':
-		result = Hardware(name=args[0], memory=args[1], cpu=args[2], disk_space=args[3], os=args[4])
+		result, created = Hardware.objects.get_or_create(name=args[0], memory=args[1], cpu=args[2], disk_space=args[3], os=args[4])
 	elif type == 'tool':
-		result = Tool(name=args[0], version = args[1])
+		result, created = Tool.objects.get_or_create(name=args[0], version = args[1])
 	elif type == 'validopt':
 		at = handler('algtool', args[0])
 		op = handler('option',  args[1])
 		r  = handler('regex',   args[2])
-		result = ValidOption(algorithm_tool=at, option=op, regex=r)
+		result, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, regex=r)
 	elif type == 'algtool':
 		a = handler('alg', args[0])
 		t = handler('tool',args[1])
 		r = handler('regex',args[2])
-		result = AlgorithmTool(algorithm=a, tool=t, regex=r)
+		result, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=r)
 	elif type == 'alg':
-		result = Algorithm(name=args[0])
+		result, created = Algorithm.objects.get_or_create(name=args[0])
 	elif type == 'regex':
-		result = Regex(regex=args[0])
+		result, created = Regex.objects.get_or_create(regex=args[0])
 	elif type == 'shortarg':
 		at = handler('algtool', args[0])
 		op = handler('option', args[1])
-		result = RegisteredShortcut(algorithm_tool=at, option=op, shortcut=args[2])
+		result, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut=args[2])
 	else:
 		print "Warning: failed to handle: %s with %s"%(type, args)
 	queue_save(result)
@@ -96,19 +106,15 @@ def handler(type, args):
 rows = []
 with open('db_defaults', 'r') as file:
 	for line in file:
-		if not line.startswith('#'):
+		if not line.startswith('#') and len(line)>1:#filters out comments and empty lines
 			rows.append(line)
 
-table_slice = re.compile(r'(.*?),(.*)')
-field_slice = re.compile(r'(?:.*?):(.*?),')
-sub_field_slice = re.compile(r'(?:.*?):\((.*)\),')
 #do something with the data
 for item in rows:
 	m =table_slice.match(item)
 	model_name = m.group(1)
 	fields = m.group(2)
 	field_array = csv_to_array(fields)
-	#print field_array
 	handler(model_name, field_array)
 	print "created %s with data %s" %(model_name, field_array)
 	save_queue(queue)

@@ -231,7 +231,7 @@ class FileReader:
 			#long options
 			opts = []
 			#fetch all valid options
-			for option in ValidOption.objects.filter(tool=t):
+			for option in ValidOption.objects.filter(algorithm_tool=at):
 				opts.append(option.name)
 			#find short options
 			for option in opts:
