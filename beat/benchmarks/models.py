@@ -133,7 +133,7 @@ class Regex(models.Model):
 class RegisteredShortcut(models.Model):
 	algorithm_tool = models.ForeignKey('AlgorithmTool')
 	option = models.ForeignKey('Option')
-	shortcut = models.CharField(max_length=1)
-	
+	shortcut = models.CharField(max_length=2)
+	#note: shortcut should be a letter or a letter followed by a colon
 	def __unicode__(self):
 		return "%s -> %s in %s" %(self.shortcut,self.option.name, self.algorithm_tool)

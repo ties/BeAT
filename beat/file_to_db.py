@@ -1,6 +1,60 @@
 import re
 from benchmarks.models import *
 
+use_regex = False
+#this pair of functions will replace both regexes until I figure out how to do it right in regex
+def field_slicer(string):
+	model_name = ''
+	contents = []
+	#read model name
+	c = ''
+	while c != ',':
+		model_name+=c
+		c = string[0]
+		string = string[1:]
+	return (model_name, read_contents(string))
+
+def read_contents(string):
+	depth = 0
+	c=''
+	contents = []
+	#read contents
+	while len(string)>=2:
+		#read (optional) field_name
+		while c != ':':
+			c = string[0]
+			string = string[1:]
+		#fetch first char of the value
+		c = string[0]
+		string = string[1:]
+		if c == '(':
+			#there's a nesting
+			depth+=1
+			tmp=''
+			while depth>0:
+				c = string[0]
+				string = string[1:]
+				if c=='(':
+					depth+=1
+				elif c==')':
+					depth-=1
+				if depth>0:
+					tmp+=c
+			print tmp
+			contents.append(read_contents(tmp))
+			#eat a comma
+			string = string[1:]
+		else:
+			#no nesting
+			tmp =''
+			while c != ',':
+				tmp+=c
+				c = string[0]
+				string = string[1:]
+			contents.append(tmp)
+	return contents
+
+
 #regular expression for splitting a line into the model identifier and the contents
 table_slice = re.compile(r'(.*?),(.*)')
 #regular expression to break the contents up into bits, such that the data for each field is contained in one of the two groups
@@ -17,7 +71,7 @@ def queue_save(item):
 
 #procedure to save everything currently in the queue
 #ignores any errors that may occur
-def save_queue(queue):
+def save_queue():
 	for q in queue:
 		try:
 			q.save()
@@ -25,20 +79,16 @@ def save_queue(queue):
 		except Exception, e:
 			print "Error: %s. Object: %s"%(e,q)
 			pass
-	queue = []
-
-#empties the queue without saving
-def clear_queue():
-	queue = []
-
+	for q in queue:
+		queue.remove(q)
 	
 
 #converts a nested csv to a nested list.
 #(a,b,c,(1,2,3)) becomes a list containing a, b, c and a list, which in turn contains 1, 2 and 3
-def csv_to_array(str, sfl=False):
-	#print str
+def csv_to_array(str):
 	field_list = field_slice.findall(str)
-	#print field_list 
+	for x in field_list:
+		print "haidar ", x
 	field_array = []
 	for x in field_list:
 		if x[0]:
@@ -66,14 +116,20 @@ def handler(type, args):
 		result, created = Tool.objects.get_or_create(name=args[0], version = args[1])
 	elif type == 'validopt':
 		at = handler('algtool', args[0])
-		op = handler('option',  args[1])
-		r  = handler('regex',   args[2])
-		result, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, regex=r)
+		op = handler('option', args[1])
+		if len(args)==3:#possible creation
+			r  = handler('regex', args[2])
+			result, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':r})
+		else:#existing item
+			result = ValidOption.get(algorithm_tool=at, option=op)
 	elif type == 'algtool':
 		a = handler('alg', args[0])
 		t = handler('tool',args[1])
-		r = handler('regex',args[2])
-		result, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=r)
+		if len(args)==3:#creation?
+			r = handler('regex', args[2])
+			result, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, defaults={'regex':r})
+		else:#use existing
+			result = AlgorithmTool.objects.get(algorithm=a, tool=t)
 	elif type == 'alg':
 		result, created = Algorithm.objects.get_or_create(name=args[0])
 	elif type == 'regex':
@@ -102,6 +158,26 @@ def handler(type, args):
 #	'shortarg':		RegisteredShortcut,	#(algorithm_tool, option, shortcut)) #first two are FKs
 #
 
+#recursively fixes escapes in the provided argument.
+#array may be a string or any nesting of lists, as long as their contents are only lists and strings.
+def fix_escapes(array):
+	if array:
+		if isinstance(array,list):#process what's inside
+			tmp = []
+			for x in array:
+				tmp.append(fix_escapes(x))
+			array = tmp
+		else:
+			#replace escaped comma
+			array = array.replace('\\1',',')
+			#replace escaped )
+			array = array.replace('\\2',')')
+			#replace escaped backslash
+			array = array.replace('\\\\','\\')
+	return array
+	
+
+# ####	code starts here	##### #
 #read file
 rows = []
 with open('db_defaults', 'r') as file:
@@ -111,11 +187,14 @@ with open('db_defaults', 'r') as file:
 
 #do something with the data
 for item in rows:
-	m =table_slice.match(item)
-	model_name = m.group(1)
-	fields = m.group(2)
-	field_array = csv_to_array(fields)
+	if use_regex:
+		m =table_slice.match(item)
+		model_name = m.group(1)
+		fields = m.group(2)
+		field_array = fix_escapes(csv_to_array(fields))
+	else:
+		model_name, field_array = field_slicer(item)
+		field_array = fix_escapes(field_array)
 	handler(model_name, field_array)
 	print "created %s with data %s" %(model_name, field_array)
-	save_queue(queue)
-	
+	save_queue()

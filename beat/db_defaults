@@ -2,7 +2,8 @@
 #all this will be created using Django's get_or_create() method. Thus, in the case of duplicates, the first entry will be what appears in the DB
 #Formatting is:
 #Table_name,field:value,field:value,field:value ...
-#Use '\,' for ',' and '\\' for '\'
+#Use '\1' for ',' and '\2' for '(' and '\3' for ')' and '\\' for '\'
+#note this also applies to regular expressions!!!
 #
 #list of tables that can be recognized, formatted as follows:
 #	string,		DjangoModel,		(field0, field1, field2)				notes
@@ -12,14 +13,17 @@
 #	option,		Option,				(name)
 #	hw,			Hardware,			(name, memory, cpu, disk_space, os)
 #	tool,		Tool,				(name, version)
-#	validopt,	ValidOption,		(algorithm_tool, option, regex)			all three are foreign keys
-#	algtool,	AlgorithmTool,		(algorithm, tool, regex)				all three are foreign keys
+#	validopt,	ValidOption,		(algorithm_tool, option, [regex])			all three are foreign keys
+#	algtool,	AlgorithmTool,		(algorithm, tool, [regex])				all three are foreign keys
 #	alg,		Algorithm,			(name)
 #	regex,		Regex,				(regex)
 #	shortarg,	RegisteredShortcut,	(algorithm_tool, option, shortcut)		first two are foreign keys
 #
+# fields between [] are elements that may be excluded if the combination of other fields is already in the DB
+#
+#
 #foreign keys should be a tuple of values. For example, algtool should be like this:
-#algtool,algorithm:(name:algname,),tool:(name:toolname,version:versionnumber,),regex:(regex:haidar,)
+#algtool,algorithm:(name:algname,),tool:(name:toolname,version:versionnumber,),regex:(regex:haidar,),
 #
 #note that fields are only mentioned for debug purposes and the order as above is used when creating the database elements
 #thus, in the current implementation, the following:
@@ -27,9 +31,133 @@
 alg,name:-reach,
 #is a row in Algorithm with name=-reach and is equivalent to alg,:-reach,
 #
-#####	algorithms			#####
-
 #####	hardware			#####
 hw,name:x,memory:600,cpu:AMD,disk_space:21456,os:Linux,
-#####	algorithm-tools		#####
-algtool,algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),regex:(regex:text,),
+################## nips version 1, 2lts-grey ######################
+algtool,algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),regex:(regex:nips2lts-grey: .*\\nnips2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+#####	valid options		#####
+validopt,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),),option:(name:strategy=,),regex:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:state=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:deadlock,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:trace=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:cache,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:regroup=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:vset=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:cache-ratio=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:max-increase=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:min-free-nodes=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:fdd-bits=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:block-size=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:cluster-size=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:plain,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:grey,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:matrix,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:write-state,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:debug,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:version,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:help,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:usage,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:v,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:q,),:(: ,),
+#####	shortened arguments	#####
+shortarg,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),),option:(name:deadlock,),shourtcut:d,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:cache,),:c,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:regroup,),:r:,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:v,),:v,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:q,),:q,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:help,),:h,
+################## end of: nips version 1, 2lts-grey ######################
+
+
+#		(
+#			"lpo2lts-grey", "lpo", "grey", 
+#			r'lpo2lts-grey: .*\nlpo2lts-grey: state space has \d+ levels'
+#			+' (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]'
+#			+'\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, '
+#			+'(?P<etime>[0-9\.]+) elapsed --( Max | )VSize ='
+#			+' (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
+#			'dcr:vqh',
+#			[
+#				'strategy=', 'state=', 'deadlock', 'trace=', #options
+#				'state-names', 'mcrl=', #mcrl
+#				'cache', 'regroup=',#greybox
+#				'vset=',#vector set
+#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
+#				'block-size=', 'cluster-size=', 'plain', #container i/o
+#				'grey', 'matrix', 'write-state', #dev
+#				'debug', 'version', 'help', 'usage' #general
+#			]
+#		),
+#		(
+#			"lpo-reach", "lpo", "reach",
+#			r'lpo-reach: .*\nlpo-reach: reachability took.*\nstate space'
+#			+' has (?P<scount>\d+) states.*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+)'
+#			+' user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --'
+#			+'( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
+#			'dcr:vqh',
+#			[
+#				'order=', 'deadlock', 'trace=' #opts
+#				'state-names', 'mcrl=', #mcrl
+#				'cache', 'regroup=',#greybox
+#				'vset=',#vector set
+#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
+#				'debug', 'version', 'help', 'usage' #general
+#			]
+#		),
+#		(	#not sure about this one in terms of options
+#			"ltsmin", "ltsmin", "ltsmin",
+#			r'.*\nreduced LTS has (?P<scount>\d+) states and'
+#			+'  (?P<tcount>\d+).*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+)'
+#			+' user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed '
+#			+'--( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
+#			'',
+#			[
+#			]
+#		),
+#		(
+#			"nips-reach", "nips", "reach",
+#			r'nips-reach: .*\nnips-reach: reachability took.*\nstate space has'
+#			+' (?P<scount>\d+) states.*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) '
+#			+'user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --'
+#			+'( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
+#			'dcr:vqh',
+#			[
+#				'order=', 'deadlock', 'trace=' #opts
+#				'cache', 'regroup=',#greybox
+#				'vset=',#vector set
+#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
+#				'debug', 'version', 'help', 'usage' #general
+#			]
+#		),
+#		(
+#			"etf2lts-grey", "etf", "grey", 
+#			r'etf2lts-grey: .*\netf2lts-grey: state space has \d+ levels '
+#			+'(?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n'
+#			+'(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, '
+#			+'(?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,'
+#			+'( Max | )RSS = (?P<rss>\d+)KB',
+#			'dcr:vqh',
+#			[
+#				'strategy=', 'state=', 'deadlock', 'trace=', #options
+#				'cache', 'regroup=',#greybox
+#				'vset=',#vector set
+#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
+#				'debug', 'version', 'help', 'usage' #general
+#			]
+#		),
+#		(
+#			"etf-reach", "etf", "reach", 
+#			r'etf-reach: .*\netf-reach: reachability took.*\nstate space has'
+#			+' (?P<scount>\d+) states.*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+)'
+#			+' user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --'
+#			+'( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
+#			'dcr:vqh',
+#			[
+#				'order=', 'deadlock', 'trace=' #opts
+#				'cache', 'regroup=',#greybox
+#				'vset=',#vector set
+#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
+#				'debug', 'version', 'help', 'usage' #general
+#			]
+#		),
+#	)

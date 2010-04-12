@@ -110,9 +110,6 @@ class FileReader:
 			#something went wrong, skip ahead to the next run
 			return None
 		self.print_message(V_NOISY, "Notice: Complete!")
-		#grab te regex that we'll parse
-		
-		self.print_message(V_NOISY, "Notice: Option(s) are: %s\nNotice: Regex is: %s\nNotice: Reading data..." %(information['options'], regex))
 		
 		#parse the log content
 		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information)
