@@ -33,7 +33,7 @@ alg,name:-reach,
 #
 #####	hardware			#####
 hw,name:x,memory:600,cpu:AMD,disk_space:21456,os:Linux,
-################## nips version 1, 2lts-grey ######################
+###################### nips version 1, 2lts-grey ######################
 algtool,algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),regex:(regex:nips2lts-grey: .*\\nnips2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),),option:(name:strategy=,),regex:(: ,),
@@ -66,45 +66,73 @@ shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:regroup,),:r:,
 shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:v,),:v,
 shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:q,),:q,
 shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:help,),:h,
-################## end of: nips version 1, 2lts-grey ######################
-
-
-#		(
-#			"lpo2lts-grey", "lpo", "grey", 
-#			r'lpo2lts-grey: .*\nlpo2lts-grey: state space has \d+ levels'
-#			+' (?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]'
-#			+'\n(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, '
-#			+'(?P<etime>[0-9\.]+) elapsed --( Max | )VSize ='
-#			+' (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
-#			'dcr:vqh',
-#			[
-#				'strategy=', 'state=', 'deadlock', 'trace=', #options
-#				'state-names', 'mcrl=', #mcrl
-#				'cache', 'regroup=',#greybox
-#				'vset=',#vector set
-#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
-#				'block-size=', 'cluster-size=', 'plain', #container i/o
-#				'grey', 'matrix', 'write-state', #dev
-#				'debug', 'version', 'help', 'usage' #general
-#			]
-#		),
-#		(
-#			"lpo-reach", "lpo", "reach",
-#			r'lpo-reach: .*\nlpo-reach: reachability took.*\nstate space'
-#			+' has (?P<scount>\d+) states.*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+)'
-#			+' user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --'
-#			+'( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
-#			'dcr:vqh',
-#			[
-#				'order=', 'deadlock', 'trace=' #opts
-#				'state-names', 'mcrl=', #mcrl
-#				'cache', 'regroup=',#greybox
-#				'vset=',#vector set
-#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
-#				'debug', 'version', 'help', 'usage' #general
-#			]
-#		),
-#		(	#not sure about this one in terms of options
+###################### end of: nips version 1, 2lts-grey ######################
+###################### lpo version 1, 2lts-grey			 ######################
+algtool,algorithm:(name:2lts-grey,),tool:(name:lpo,version:1,),regex:(regex:lpo2lts-grey: .*\\nlpo2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3 .*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+#####	valid options		#####
+validopt,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:lpo,version:1,),),option:(name:strategy=,),regex:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:state=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:deadlock,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:trace=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:state-names,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:mcrl=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:cache,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:regroup=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:vset=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:cache-ratio=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:max-increase=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:min-free-nodes=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:fdd-bits=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:block-size=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:cluster-size=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:plain,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:grey,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:matrix,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:write-state,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:debug,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:version,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:help,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:usage,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:v,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:q,),:(: ,),
+#####	shortened arguments	#####
+shortarg,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:lpo,version:1,),),option:(name:deadlock,),shourtcut:d,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:lpo,:1,),),:(:cache,),:c,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:lpo,:1,),),:(:regroup,),:r:,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:lpo,:1,),),:(:v,),:v,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:lpo,:1,),),:(:q,),:q,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:lpo,:1,),),:(:help,),:h,
+###################### end of: lpo version 1, 2lts-grey ######################
+###################### lpo version 1, -reach			 ######################
+algtool,algorithm:(name:-reach,),tool:(name:lpo,version:1,),regex:(regex:lpo-reach: .*\\nlpo-reach: reachability took.*\\nstate space has \2?P<scount>\\d+\3 states.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+#####	valid options		#####
+validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:lpo,version:1,),),option:(name:order=,),regex:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:deadlock,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:trace=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:state-names,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:mcrl=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:cache,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:regroup=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:vset=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:cache-ratio=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:max-increase=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:min-free-nodes=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:fdd-bits=,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:debug,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:version,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:help,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:usage,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:v,),:(: ,),
+validopt,:(:(:-reach,),:(:lpo,:1,),),:(:q,),:(: ,),
+#####	shortened arguments	#####
+shortarg,algorithm_tool:(algorithm:(name:-reach,),tool:(name:lpo,version:1,),),option:(name:deadlock,),shourtcut:d,
+shortarg,algorithm_tool:(:(:-reach,),:(:lpo,:1,),),:(:cache,),:c,
+shortarg,algorithm_tool:(:(:-reach,),:(:lpo,:1,),),:(:regroup,),:r:,
+shortarg,algorithm_tool:(:(:-reach,),:(:lpo,:1,),),:(:v,),:v,
+shortarg,algorithm_tool:(:(:-reach,),:(:lpo,:1,),),:(:q,),:q,
+shortarg,algorithm_tool:(:(:-reach,),:(:lpo,:1,),),:(:help,),:h,
+###################### end of: lpo version 1, -reach ######################
+#		###this still needs converting or removing
 #			"ltsmin", "ltsmin", "ltsmin",
 #			r'.*\nreduced LTS has (?P<scount>\d+) states and'
 #			+'  (?P<tcount>\d+).*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+)'
@@ -113,51 +141,91 @@ shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:help,),:h,
 #			'',
 #			[
 #			]
-#		),
-#		(
-#			"nips-reach", "nips", "reach",
-#			r'nips-reach: .*\nnips-reach: reachability took.*\nstate space has'
-#			+' (?P<scount>\d+) states.*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+) '
-#			+'user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --'
-#			+'( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
-#			'dcr:vqh',
-#			[
-#				'order=', 'deadlock', 'trace=' #opts
-#				'cache', 'regroup=',#greybox
-#				'vset=',#vector set
-#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
-#				'debug', 'version', 'help', 'usage' #general
-#			]
-#		),
-#		(
-#			"etf2lts-grey", "etf", "grey", 
-#			r'etf2lts-grey: .*\netf2lts-grey: state space has \d+ levels '
-#			+'(?P<scount>\d+) states (?P<tcount>\d+) .*\nExit \[[0-9]+\]\n'
-#			+'(?P<utime>[0-9\.]+) user, (?P<stime>[0-9\.]+) system, '
-#			+'(?P<etime>[0-9\.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,'
-#			+'( Max | )RSS = (?P<rss>\d+)KB',
-#			'dcr:vqh',
-#			[
-#				'strategy=', 'state=', 'deadlock', 'trace=', #options
-#				'cache', 'regroup=',#greybox
-#				'vset=',#vector set
-#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
-#				'debug', 'version', 'help', 'usage' #general
-#			]
-#		),
-#		(
-#			"etf-reach", "etf", "reach", 
-#			r'etf-reach: .*\netf-reach: reachability took.*\nstate space has'
-#			+' (?P<scount>\d+) states.*\nExit \[[0-9]+\]\n(?P<utime>[0-9\.]+)'
-#			+' user, (?P<stime>[0-9\.]+) system, (?P<etime>[0-9\.]+) elapsed --'
-#			+'( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB',
-#			'dcr:vqh',
-#			[
-#				'order=', 'deadlock', 'trace=' #opts
-#				'cache', 'regroup=',#greybox
-#				'vset=',#vector set
-#				'cache-ratio=', 'max-increase=', 'min-free-nodes=', 'fdd-bits=', #BuDDy
-#				'debug', 'version', 'help', 'usage' #general
-#			]
-#		),
-#	)
+###################### nips version 1, -reach			 ######################
+algtool,algorithm:(name:-reach,),tool:(name:nips,version:1,),regex:(regex:nips-reach: .*\\nnips-reach: reachability took.*\\nstate space has \2?P<scount>\\d+\3 states.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+#####	valid options		#####
+validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:nips,version:1,),),option:(name:order=,),regex:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:deadlock,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:trace=,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:cache,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:regroup=,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:vset=,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:cache-ratio=,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:max-increase=,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:min-free-nodes=,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:fdd-bits=,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:debug,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:version,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:help,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:usage,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:v,),:(: ,),
+validopt,:(:(:-reach,),:(:nips,:1,),),:(:q,),:(: ,),
+#####	shortened arguments	#####
+shortarg,algorithm_tool:(algorithm:(name:-reach,),tool:(name:nips,version:1,),),option:(name:deadlock,),shourtcut:d,
+shortarg,algorithm_tool:(:(:-reach,),:(:nips,:1,),),:(:cache,),:c,
+shortarg,algorithm_tool:(:(:-reach,),:(:nips,:1,),),:(:regroup,),:r:,
+shortarg,algorithm_tool:(:(:-reach,),:(:nips,:1,),),:(:v,),:v,
+shortarg,algorithm_tool:(:(:-reach,),:(:nips,:1,),),:(:q,),:q,
+shortarg,algorithm_tool:(:(:-reach,),:(:nips,:1,),),:(:help,),:h,
+###################### end of: nips version 1, -reach ######################
+###################### etf version 1, 2lts-grey ######################
+algtool,algorithm:(name:2lts-grey,),tool:(name:etf,version:1,),regex:(regex:etf2lts-grey: .*\\netf2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3 .*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+#####	valid options		#####
+validopt,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:etf,version:1,),),option:(name:strategy=,),regex:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:state=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:deadlock,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:trace=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:cache,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:regroup=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:vset=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:cache-ratio=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:max-increase=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:min-free-nodes=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:fdd-bits=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:block-size=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:cluster-size=,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:plain,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:grey,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:matrix,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:write-state,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:debug,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:version,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:help,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:usage,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:v,),:(: ,),
+validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:q,),:(: ,),
+#####	shortened arguments	#####
+shortarg,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:etf,version:1,),),option:(name:deadlock,),shourtcut:d,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:etf,:1,),),:(:cache,),:c,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:etf,:1,),),:(:regroup,),:r:,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:etf,:1,),),:(:v,),:v,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:etf,:1,),),:(:q,),:q,
+shortarg,algorithm_tool:(:(:2lts-grey,),:(:etf,:1,),),:(:help,),:h,
+###################### end of: etf version 1, 2lts-grey ######################
+###################### etf version 1, -reach			 ######################
+algtool,algorithm:(name:-reach,),tool:(name:etf,version:1,),regex:(regex:etf-reach: .*\\netf-reach: reachability took.*\\nstate space has \2?P<scount>\\d+\3 states.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+#####	valid options		#####
+validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:etf,version:1,),),option:(name:order=,),regex:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:deadlock,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:trace=,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:cache,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:regroup=,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:vset=,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:cache-ratio=,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:max-increase=,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:min-free-nodes=,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:fdd-bits=,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:debug,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:version,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:help,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:usage,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:v,),:(: ,),
+validopt,:(:(:-reach,),:(:etf,:1,),),:(:q,),:(: ,),
+#####	shortened arguments	#####
+shortarg,algorithm_tool:(algorithm:(name:-reach,),tool:(name:etf,version:1,),),option:(name:deadlock,),shourtcut:d,
+shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:cache,),:c,
+shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:regroup,),:r:,
+shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:v,),:v,
+shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:q,),:q,
+shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:help,),:h,
+###################### end of: etf version 1, -reach ######################

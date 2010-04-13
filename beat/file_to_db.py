@@ -1,7 +1,6 @@
 import re
 from benchmarks.models import *
 
-use_regex = False
 #this pair of functions will replace both regexes until I figure out how to do it right in regex
 def field_slicer(string):
 	model_name = ''
@@ -40,7 +39,6 @@ def read_contents(string):
 					depth-=1
 				if depth>0:
 					tmp+=c
-			print tmp
 			contents.append(read_contents(tmp))
 			#eat a comma
 			string = string[1:]
@@ -54,17 +52,6 @@ def read_contents(string):
 			contents.append(tmp)
 	return contents
 
-
-#regular expression for splitting a line into the model identifier and the contents
-table_slice = re.compile(r'(.*?),(.*)')
-#regular expression to break the contents up into bits, such that the data for each field is contained in one of the two groups
-#if the data represents a foreign key, the data will be in the left group ([0]), otherwise in the right group ([1])
-#use field_slice.findall() to get a list containing a series of tuples, each containing these left and right groups.
-field_slice = re.compile(r'(?:[^:]*?:\(([^)]*?)\),)|(?:[^:]*?:([^,]*?),)')
-
-
-queue = []
-
 #procedure to check/queue changes to the DB
 def queue_save(item):
 	queue.append(item)
@@ -75,9 +62,9 @@ def save_queue():
 	for q in queue:
 		try:
 			q.save()
-			print "Processed: %s"%(q)
+#			print "Processed: %s"%(q)
 		except Exception, e:
-			print "Error: %s. Object: %s"%(e,q)
+#			print "Error: %s. Object: %s"%(e,q)
 			pass
 	for q in queue:
 		queue.remove(q)
@@ -87,8 +74,6 @@ def save_queue():
 #(a,b,c,(1,2,3)) becomes a list containing a, b, c and a list, which in turn contains 1, 2 and 3
 def csv_to_array(str):
 	field_list = field_slice.findall(str)
-	for x in field_list:
-		print "haidar ", x
 	field_array = []
 	for x in field_list:
 		if x[0]:
@@ -96,10 +81,9 @@ def csv_to_array(str):
 			field_array.append(y)
 		else:
 			field_array.append(x[1])
-	print "<<%s>> -> <<%s>>"%(str, field_array)
+#	print "<<%s>> -> <<%s>>"%(str, field_array)
 	return field_array
 	
-
 #this is really really really really really ugly
 def handler(type, args):
 	result = None
@@ -143,8 +127,6 @@ def handler(type, args):
 	queue_save(result)
 	return result
 	
-#this is a simple script that imports default data from the included db_defaults file
-
 #models:
 #	'model':		Model,			#(name, version, location)),
 #	'ov':			OptionValue,		#(option, value)), #option is an FK
@@ -170,12 +152,26 @@ def fix_escapes(array):
 		else:
 			#replace escaped comma
 			array = array.replace('\\1',',')
+			#replace escaped (
+			array = array.replace('\\2','(')
 			#replace escaped )
-			array = array.replace('\\2',')')
+			array = array.replace('\\3',')')
 			#replace escaped backslash
 			array = array.replace('\\\\','\\')
 	return array
 	
+
+	
+use_regex = False
+
+#regular expression for splitting a line into the model identifier and the contents
+table_slice = re.compile(r'(.*?),(.*)')
+#regular expression to break the contents up into bits, such that the data for each field is contained in one of the two groups
+#if the data represents a foreign key, the data will be in the left group ([0]), otherwise in the right group ([1])
+#use field_slice.findall() to get a list containing a series of tuples, each containing these left and right groups.
+field_slice = re.compile(r'(?:[^:]*?:\(([^)]*?)\),)|(?:[^:]*?:([^,]*?),)')
+
+queue = []
 
 # ####	code starts here	##### #
 #read file
@@ -196,5 +192,5 @@ for item in rows:
 		model_name, field_array = field_slicer(item)
 		field_array = fix_escapes(field_array)
 	handler(model_name, field_array)
-	print "created %s with data %s" %(model_name, field_array)
 	save_queue()
+#	print "created %s with data %s" %(model_name, field_array)

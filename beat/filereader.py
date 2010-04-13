@@ -155,7 +155,7 @@ class FileReader:
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
 
 		result = {
-			'parse_regex' : parser,
+			'parse_regex' : parser.regex,
 			'model_name' : modelname,
 			'model_version' : 1,
 			'model_location' : 'test.txt',
@@ -191,7 +191,7 @@ class FileReader:
 					'benchmark'	a tuple:
 									(datetime, etime, utime, stime, tcount, scount, vsize, rss)
 		"""
-		m = self.match_regex(information['parse_regex'], content, re.MULTILINE + re.DOTALL)
+		m = self.match_regex(run_details['parse_regex'], content, re.MULTILINE + re.DOTALL)
 		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
 		if m:
 			match = {
@@ -210,10 +210,11 @@ class FileReader:
 			else:
 				#here, ExtraValues can be parsed
 				pass
+			self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
+			return match
 		else:
 			self.print_message(V_QUIET, "Warning: Parse error. The input failed to match on the regex.")
-		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
-		return match
+		return None
 	#end of parse_single_output
 	
 	def parse_call(self, call):
@@ -229,7 +230,7 @@ class FileReader:
 			opts = []
 			#fetch all valid options
 			for option in ValidOption.objects.filter(algorithm_tool=at):
-				opts.append(option.name)
+				opts.append(option.option.name)
 			#find short options
 			for option in opts:
 				o = Option.objects.get(name=option)
@@ -369,9 +370,13 @@ class FileReader:
 		
 		#benchmark entry
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
+		utime = float(utime)
+		stime = float(stime)
+		etime = float(etime)
 		#now create and save the db object
 		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a, date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
+				'total_time':(utime+stime+etime),
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
 				'memory_RSS':mRSS, 'finished':True}
 		)
