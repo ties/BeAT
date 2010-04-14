@@ -1,4 +1,4 @@
-from datetime import date,timedelta
+from datetime import date,timedelta,datetime
 
 class Filter:
 	def __init__(self, filterType, filterStyle, filterValue, row):
@@ -22,11 +22,11 @@ class Filter:
 			print arr
 			
 			if self.filterStyle==u'on':
-				qs = qs.filter(date_time__gte=date(arr[0],arr[1],arr[2]),date_time__lt=(date(arr[0],arr[1],arr[2])+timedelta(days=1)))
+				qs = qs.filter(date_time__gte=datetime(arr[0],arr[1],arr[2],0,0,0),date_time__lte=datetime(arr[0],arr[1],arr[2],23,59,59))
 			elif self.filterStyle==u'before':
-				qs = qs.filter(date_time__lte=date(arr[0],arr[1],arr[2]))
+				qs = qs.filter(date_time__lte=datetime(arr[0],ar[1],arr[2],23,59,59))
 			elif self.filterStyle==u'after':
-				qs = qs.filter(date_time__gte=date(arr[0],arr[1],arr[2]))
+				qs = qs.filter(date_time__gte=datetime(arr[0],arr[1],arr[2],0,0,0))
 			print qs
 		else:
 			f = ""

@@ -7,7 +7,7 @@ var states_filterStyle = '<option value="equal">Equal to</option><option value="
 var transitions_filterStyle = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
 var options_filterStyle = '<option value="0">Options (hover)</option>';
 var empty_filterStyle = '<option value="empty">&lt;empty&gt;</option>';
-var options = new Array();
+var options;
 
 /*
  * Function to add a filterrow to the filtertable, will be placed after the caller
@@ -173,9 +173,10 @@ function changedFilter(elem){
 				$(elem).siblings('input.filterValue').hide();
 				//insert the hover-div
 				optionsdiv = '<div>';
+				alert(options);
 				$(options).each(
-					function(i,name){
-						alert(i+","+name);
+					function(i,json){
+						alert(json.fields.name);
 					}
 				);
 				$(elem).siblings('ul.mega').children('li.mega').children('select').after('\
@@ -218,9 +219,9 @@ function filter(){
 						$(a).each(function(i,json){
 							$("table.benchmarks").append('<tr>\n\
 								<td><input type="checkbox" name="benchmarks" value="'+json.pk+'" /></td>\n\
-								<td><label for="{{ benchmark.id }}">'+json.fields.model[0]+'.'+json.fields.model[1]+'</label></td>\n\
+								<td><label for="{{ benchmark.id }}">'+json.fields.model[0]+':'+json.fields.model[1]+'</label></td>\n\
 								<td>'+json.fields.states_count+'</td>\n\
-								<td>'+json.fields.total_time+'</td>\n\
+								<td>'+Math.round(json.fields.total_time*100)/100+'</td>\n\
 								<td>'+json.fields.memory_RSS+'</td>\n\
 								<td>'+json.fields.finished+'</td></tr>');
 						});
@@ -268,9 +269,10 @@ function getOptions(){
 	$.ajax({
 		url: 'ajax/options/',
 		success: function(a){
-					$(a).each(function(i,json){
+					/*$(a).each(function(i,json){
 						options[json.pk]=json.fields.name;
-					});
+					});*/
+					options = a;
 				},
 		error: function(XMLHttpRequest,textStatus,errorThrown){
 					alert("Error: "+textStatus);
