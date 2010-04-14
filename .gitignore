@@ -6,3 +6,5 @@
 *.prj
 *.pui
 *.bak
+#temp files for gedit
+*~

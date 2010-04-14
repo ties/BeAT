@@ -6,49 +6,53 @@ def field_slicer(string):
 	model_name = ''
 	contents = []
 	#read model name
+	i = 0
 	c = ''
 	while c != ',':
 		model_name+=c
-		c = string[0]
-		string = string[1:]
-	return (model_name, read_contents(string))
+		c = string[i]
+		i+=1
+	data = read_contents(string, i)
+	return (model_name, data)
 
-def read_contents(string):
+def read_contents(string, i):
 	depth = 0
 	c=''
 	contents = []
 	#read contents
-	while len(string)>=2:
+	while i<len(string)-1:
 		#read (optional) field_name
 		while c != ':':
-			c = string[0]
-			string = string[1:]
+			c = string[i]
+			i+=1
 		#fetch first char of the value
-		c = string[0]
-		string = string[1:]
+		c = string[i]
+		i+=1
 		if c == '(':
 			#there's a nesting
 			depth+=1
 			tmp=''
 			while depth>0:
-				c = string[0]
-				string = string[1:]
+				c = string[i]
+				i+=1
 				if c=='(':
 					depth+=1
 				elif c==')':
 					depth-=1
 				if depth>0:
 					tmp+=c
-			contents.append(read_contents(tmp))
+			data = read_contents(tmp, 0)
+			 #i gets updated, data is what we want to store
+			contents.append(data)
 			#eat a comma
-			string = string[1:]
+			i+=1
 		else:
 			#no nesting
 			tmp =''
 			while c != ',':
 				tmp+=c
-				c = string[0]
-				string = string[1:]
+				c = string[i]
+				i+=1
 			contents.append(tmp)
 	return contents
 
@@ -180,7 +184,8 @@ with open('db_defaults', 'r') as file:
 	for line in file:
 		if not line.startswith('#') and len(line)>1:#filters out comments and empty lines
 			rows.append(line)
-
+import time
+currtime = time.time()
 #do something with the data
 for item in rows:
 	if use_regex:
@@ -191,6 +196,8 @@ for item in rows:
 	else:
 		model_name, field_array = field_slicer(item)
 		field_array = fix_escapes(field_array)
+
 	handler(model_name, field_array)
 	save_queue()
 #	print "created %s with data %s" %(model_name, field_array)
+print "done! Took %s seconds" %(time.time()-currtime)
