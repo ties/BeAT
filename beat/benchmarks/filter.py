@@ -32,8 +32,6 @@ class Filter:
 			f = ""
 			if self.filterType==u'name':
 				f+="model__name"
-			#elif self.filterType==u'date':
-				#f+="date_time"
 			elif self.filterType==u'memory':
 				f+="memory_VSIZE"
 			elif self.filterType==u'runtime':
@@ -51,12 +49,6 @@ class Filter:
 				f+="__istartswith"
 			elif self.filterStyle==u'endswith':
 				f+="__iendswith"
-			#elif self.filterStyle==u'on':
-				#f+="__exact"
-			#elif self.filterStyle==u'before':
-				#f+="__lte"
-			#elif self.filterStyle==u'after':
-				#f+="__gte"
 			elif self.filterStyle==u'greaterthen':
 				f+="__gte"
 			elif self.filterStyle==u'lessthan':
