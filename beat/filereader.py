@@ -169,7 +169,7 @@ class FileReader:
 		}
 		return result
 		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
-	#end of parse_options
+	#end of parse_run_details
 	
 	#content should be the entire log as a string
 	#run_details should be a dictionary containing the keys: model_name, model_version, model_location, tool_name, tool_version, hardware, options, date
@@ -265,7 +265,7 @@ class FileReader:
 		#tail contains the filename of the model
 		
 		return (at.regex, s, optlist, tail)
-	#end of get_parser
+	#end of parse_call
 	
 	def check_data_validity(self, data):
 		valid = True
@@ -377,7 +377,7 @@ class FileReader:
 		#now create and save the db object
 		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a, date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
-				'total_time':(utime+stime+etime),
+				'total_time':(utime+stime),
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
 				'memory_RSS':mRSS, 'finished':True}
 		)
@@ -390,16 +390,19 @@ class FileReader:
 			b.save()
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
+			###STOP HERE IF BENCHMARK EXISTS!
+			return None
 		#optionvalue entries
 		optiondata = data['options']
 		for tuple in optiondata:
 			name, value = tuple
 			o = Option.objects.get(name=name)
-			ov, created = OptionValue.objects.get_or_create(option=o, value=value, benchmark=b)
+			ov, created = OptionValue.objects.get_or_create(option=o, value=value)
 			if created:
 				self.print_message(V_VERBOSE, "Notice: created a new OptionValue entry.")
 			else:
 				self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
+			b.optionvalue.add(ov)
 	#end of write_to_db
 
 	def main(self, file_arg=None, verbosity=0):
