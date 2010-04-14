@@ -152,7 +152,8 @@ class FileReader:
 		
 		#fetch datetime info and create an object out of it
 		dt = m['datetime'].split(' ')
-		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]), int(dt[6]))
+		#don't put microseconds in the DB
+		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]))
 
 		result = {
 			'parse_regex' : parser.regex,
@@ -229,8 +230,8 @@ class FileReader:
 			#long options
 			opts = []
 			#fetch all valid options
-			for option in ValidOption.objects.filter(algorithm_tool=at):
-				opts.append(option.option.name)
+			for o in ValidOption.objects.filter(algorithm_tool=at):
+				opts.append(o.option.name)
 			#find short options
 			for option in opts:
 				o = Option.objects.get(name=option)
