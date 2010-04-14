@@ -30,6 +30,7 @@ class OptionValue(models.Model):
 
 class Option(models.Model):
 	name = models.CharField(max_length=50)
+	takes_argument = models.BooleanField()
 	
 	def __unicode__(self):
 		return self.name
