@@ -138,3 +138,20 @@ class RegisteredShortcut(models.Model):
 	#note: shortcut should be a letter or a letter followed by a colon
 	def __unicode__(self):
 		return "%s -> %s in %s" %(self.shortcut,self.option.name, self.algorithm_tool)
+
+class ModelComparison(models.Model):
+	DATA_TYPES = (
+		('transitions', 'Transition count'),
+		('states', 'States count'),
+		('vsize', 'Memory VSIZE'),
+		('rss', 'Memory RSS'),
+	)
+	user = models.ForeignKey(User)
+	type = models.CharField(max_length=20, choices=DATA_TYPES)
+	tool = models.ForeignKey('Tool')
+	algorithm = models.ForeignKey('Algorithm')
+	optionvalue = models.ForeignKey('OptionValue', blank=True, null=True)
+	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
+	
+	def __unicode__(self):
+		return "%s, %s, %s: %s" % (self.tool, self.algorithm, self.optionvalue, self.type)
