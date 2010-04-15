@@ -3,53 +3,30 @@ from benchmarks.models import *
 
 #this pair of functions will replace both regexes until I figure out how to do it right in regex
 def field_slicer(string):
-	model_name = ''
-	contents = []
-	#read model name
-	c = ''
-	while c != ',':
-		model_name+=c
-		c = string[0]
-		string = string[1:]
-	return (model_name, read_contents(string))
+	result = string.partition(',')
+	model_name = result[0]
+	data = read_contents(result[2])
+	return (model_name, data)
 
 def read_contents(string):
-	depth = 0
-	c=''
 	contents = []
 	#read contents
-	while len(string)>=2:
-		#read (optional) field_name
-		while c != ':':
-			c = string[0]
-			string = string[1:]
-		#fetch first char of the value
-		c = string[0]
-		string = string[1:]
-		if c == '(':
-			#there's a nesting
-			depth+=1
-			tmp=''
-			while depth>0:
-				c = string[0]
-				string = string[1:]
-				if c=='(':
-					depth+=1
-				elif c==')':
-					depth-=1
-				if depth>0:
-					tmp+=c
-			contents.append(read_contents(tmp))
-			#eat a comma
-			string = string[1:]
+	while string:
+		string = string[string.find(":"):]
+		if string[0] == '(':
+			depth = 1
+			i = 1
+			while depth > 0:
+				if string[i] == '(':
+					depth += 1
+				elif string[i] == ')':
+					depth -= 1
+				i += 1
+			contents.append( read_contents(string[1:i-2]) )
+			string = string[i:]
 		else:
-			#no nesting
-			tmp =''
-			while c != ',':
-				tmp+=c
-				c = string[0]
-				string = string[1:]
-			contents.append(tmp)
+			content, _, string = string.partition(',')
+			contents.append(content)
 	return contents
 
 #procedure to check/queue changes to the DB
@@ -68,21 +45,6 @@ def save_queue():
 			pass
 	for q in queue:
 		queue.remove(q)
-	
-
-#converts a nested csv to a nested list.
-#(a,b,c,(1,2,3)) becomes a list containing a, b, c and a list, which in turn contains 1, 2 and 3
-def csv_to_array(str):
-	field_list = field_slice.findall(str)
-	field_array = []
-	for x in field_list:
-		if x[0]:
-			y = csv_to_array(x[0])
-			field_array.append(y)
-		else:
-			field_array.append(x[1])
-#	print "<<%s>> -> <<%s>>"%(str, field_array)
-	return field_array
 	
 #this is really really really really really ugly
 def handler(type, args):
@@ -144,33 +106,30 @@ def handler(type, args):
 #array may be a string or any nesting of lists, as long as their contents are only lists and strings.
 def fix_escapes(array):
 	if array:
-		if isinstance(array,list):#process what's inside
-			tmp = []
-			for x in array:
-				tmp.append(fix_escapes(x))
-			array = tmp
+		if isinstance(array,list):			#process what's inside
+			return fix_escapes(array[0]) + fix_escapes(array[1:])
 		else:
-			#replace escaped comma
-			array = array.replace('\\1',',')
-			#replace escaped (
-			array = array.replace('\\2','(')
-			#replace escaped )
-			array = array.replace('\\3',')')
-			#replace escaped backslash
-			array = array.replace('\\\\','\\')
-	return array
+			tmp = ""
+			i = array.find('\\')
+			while i is not -1:
+				tmp += array[:i]
+				if array[i+1] is '1':
+					tmp += ','
+				elif array[i+1] is '2':
+					tmp += '('
+				elif array[i+1] is '3':
+					tmp += ')'
+				elif array[i+1] is '\\':
+					tmp += '\\'
+				else:
+					# ERROR!
+					pass
+				array = array[i+2:]
+				i = array.find('\\')
+			tmp += array
+			return tmp
+	return ""
 	
-
-	
-use_regex = False
-
-#regular expression for splitting a line into the model identifier and the contents
-table_slice = re.compile(r'(.*?),(.*)')
-#regular expression to break the contents up into bits, such that the data for each field is contained in one of the two groups
-#if the data represents a foreign key, the data will be in the left group ([0]), otherwise in the right group ([1])
-#use field_slice.findall() to get a list containing a series of tuples, each containing these left and right groups.
-field_slice = re.compile(r'(?:[^:]*?:\(([^)]*?)\),)|(?:[^:]*?:([^,]*?),)')
-
 queue = []
 
 # ####	code starts here	##### #
@@ -180,17 +139,14 @@ with open('db_defaults', 'r') as file:
 	for line in file:
 		if not line.startswith('#') and len(line)>1:#filters out comments and empty lines
 			rows.append(line)
-
+import time
+currtime = time.time()
 #do something with the data
 for item in rows:
-	if use_regex:
-		m =table_slice.match(item)
-		model_name = m.group(1)
-		fields = m.group(2)
-		field_array = fix_escapes(csv_to_array(fields))
-	else:
-		model_name, field_array = field_slicer(item)
-		field_array = fix_escapes(field_array)
+	model_name, field_array = field_slicer(item)
+	field_array = fix_escapes(field_array)
+
 	handler(model_name, field_array)
 	save_queue()
 #	print "created %s with data %s" %(model_name, field_array)
+print "done! Took %s seconds" %(time.time()-currtime)
