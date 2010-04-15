@@ -4,7 +4,7 @@ from django.template import RequestContext, loader
 from django.shortcuts import render_to_response, redirect, get_list_or_404
 import datetime
 from filereader import FileReader
-from beat.benchmarks.models import Benchmark, Comparison
+from beat.benchmarks.models import Benchmark, Comparison, ModelComparison
 from forms import *
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
@@ -35,10 +35,13 @@ def scatterplot(request):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
+	from matplotlib.colors import ColorConverter
+	cc=ColorConverter()
+
 	import math
 	fig=Figure(facecolor='w')
 	ax=fig.add_subplot(211)
-	
+
 	# ELAPSED TIME
 	b1 = Benchmark.objects.filter(tool__name__exact='lpo')
 	b2 = Benchmark.objects.filter(tool__name__exact='nips').filter(model__in=[b.model.pk for b in b1])
@@ -47,20 +50,29 @@ def scatterplot(request):
 	t1 = [b.elapsed_time for b in b1]
 	t2 = [b.elapsed_time for b in b2]
 	
+	# color mask: if t[i] < t[2] --> blue; else red
+	mask = []
+	for index in range(len(t1)):
+		if t1[index] < t2[index]:
+			mask.append(cc.to_rgb('blue'))
+		else:
+			mask.append(cc.to_rgb('red'))
+	
 	# Draw a linear function from .001 until the first power of 10 greater than max_value
 	max_value_t = max(max(b1.values('elapsed_time')),max(b2.values('elapsed_time')))['elapsed_time']
 	max_value_t = math.pow(10,math.ceil(math.log10(max_value_t)))
-	ax.plot(np.arange(0,max_value_t,step=.001),np.arange(0,max_value_t,step=.001),'b-')
+	ax.plot(np.arange(0,max_value_t,step=.001),np.arange(0,max_value_t,step=.001),'k-')
 	
 	# Plot data
-	ax.plot(t1, t2, 'ro')
+	ax.scatter(t1, t2, s=10, color=mask, marker='o')
 	
 	# Axes mark up
 	ax.set_xscale('log')
 	ax.set_yscale('log')
-	ax.set_xlabel('lpo')
-	ax.set_ylabel('nips')
+	ax.set_xlabel('lpo', color='red')
+	ax.set_ylabel('nips', color='blue')
 	ax.set_title('Runtime (s)', size='small')
+	ax.set_axis_bgcolor('#eeeeee')
 	ax.grid(True)
 		
 	# MEMORY
@@ -68,17 +80,26 @@ def scatterplot(request):
 	m1 = [b.memory_VSIZE for b in b1]
 	m2 = [b.memory_VSIZE for b in b2]
 	
+	#color mask
+	mask = []
+	for index in range(len(t1)):
+		if m1[index] < m2[index]:
+			mask.append(cc.to_rgb('blue'))
+		else:
+			mask.append(cc.to_rgb('red'))
+			
 	max_value_m = max(max(b1.values('memory_VSIZE')),max(b2.values('memory_VSIZE')))['memory_VSIZE']
 	max_value_m = math.pow(10,math.ceil(math.log10(max_value_m)))
-	ax.plot(np.arange(0,max_value_m),np.arange(0,max_value_m),'b-')
+	ax.plot(np.arange(0,max_value_m),np.arange(0,max_value_m),'k-')
 	
 	ax.set_xscale('log')
 	ax.set_yscale('log')
-	ax.set_xlabel('lpo')
-	ax.set_ylabel('nips')
+	ax.set_xlabel('lpo', color='red')
+	ax.set_ylabel('nips', color='blue')
+	ax.set_axis_bgcolor('#eeeeee')
 	ax.grid(True)
 	
-	ax.plot(m1,m2,'ro')
+	ax.scatter(m1,m2,s=10,color=mask,marker='o')
 	ax.set_title('Memory VSIZE (kb)', size='small')
 	
 	fig.set_size_inches(5,10)
@@ -124,7 +145,7 @@ def simple(request, id):
 	canvas.print_png(response)
 	return response
 
-def graph_model(request, models=None, type='states', options=None):
+def graph_model(request, id):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
@@ -132,8 +153,14 @@ def graph_model(request, models=None, type='states', options=None):
 	
 	#DB stuff
 	from django.db.models import Count
-	from beat.benchmarks.models import Model
-
+	from beat.benchmarks.models import Model, ModelComparison
+	
+	comparison = ModelComparison.objects.get(pk=id)
+	c_tool = comparison.tool
+	c_algo = comparison.algorithm
+	c_type = comparison.type
+	c_option = comparison.optionvalue
+	
 	fig=Figure(facecolor='w')
 	ax=fig.add_subplot(111)
 	
@@ -151,14 +178,18 @@ def graph_model(request, models=None, type='states', options=None):
 		marker = markers[axisNum % len(markers) ]
 		
 		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
-		if models is not None:
-			benchmarks = benchmarks.filter(model__name in models)
+		#form filter
+		benchmarks = benchmarks.filter(algorithm = c_algo).filter(tool = c_tool)
+		
+		if c_option is not None:
+			benchmarks = benchmarks.filter(optionvalue=c_option)
+		
 		types = {
 			'transitions': [b.transition_count for b in benchmarks],
 			'states': [b.states_count for b in benchmarks],
 			'vsize': [b.memory_VSIZE for b in benchmarks],
 			'rss': [b.memory_RSS for b in benchmarks],
-		}[type]
+		}[c_type]
 		lines = ax.plot(
 			[b.model.version for b in benchmarks], 
 			types, 
@@ -166,12 +197,17 @@ def graph_model(request, models=None, type='states', options=None):
 			label = m['name'])
 
 	#Mark-up
-	ax.set_title(type + ' vs Version')
+	title = '' + c_type + ' (' + c_tool.name + ', ' + c_algo.name
+	if c_option is not None:
+		title = title + ' [' + c_option + ']'
+	title = title + ')'
+	
+	ax.set_title(title)
 	leg = ax.legend()
 	for t in leg.get_texts():
 		t.set_fontsize('small')
-	ax.set_ylabel(type)
-	ax.set_xlabel('Version')
+	ax.set_ylabel(c_type)
+	ax.set_xlabel('version')
 	
 	# Output
 	canvas = FigureCanvas(fig)
@@ -215,16 +251,23 @@ def compare(request):
 	else:
 		return redirect(benchmarks.views.benchmarks)
 
-def compare_detail(request, id):
-	return render_to_response('compare.html', { 'id' : id }, context_instance=RequestContext(request))
+def compare_detail(request, id, model=False):
+	if model:
+		return render_to_response('compare_models.html', { 'id' : id }, context_instance=RequestContext(request))
+	else:
+		return render_to_response('compare.html', { 'id' : id }, context_instance=RequestContext(request))
 	
 @login_required()
 def user_comparisons(request):
-	c = get_list_or_404(Comparison, user=request.user.id)
-	return render_to_response('user_compare.html', { 'comparisons' : c }, context_instance=RequestContext(request))
+	b_comparisons = list(Comparison.objects.filter(user=request.user.id))
+	m_comparisons = list(ModelComparison.objects.filter(user=request.user.id))
+	return render_to_response('user_compare.html', { 'b_comparisons' : b_comparisons, 'm_comparisons' : m_comparisons }, context_instance=RequestContext(request))
 	
-def user_comparison_delete(request, id):
-	c = Comparison.objects.get(pk=id)
+def user_comparison_delete(request, id, model=False):
+	if model:
+		c = ModelComparison.objects.get(pk=id)
+	else:
+		c = Comparison.objects.get(pk=id)
 	c.delete()
 	return redirect('/user/compare/')
 	
@@ -232,8 +275,15 @@ def compare_model(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
-			type = form.cleaned_data['type']
-			return render_to_response('compare_models.html', { 'type' : type }, context_instance=RequestContext(request))
+			comparison, created = ModelComparison.objects.get_or_create(
+				user = request.user, 
+				algorithm = form.cleaned_data['algorithm'],
+				tool = form.cleaned_data['tool'],
+				optionvalue = form.cleaned_data['option'],
+				type = form.cleaned_data['type']
+			)
+			#return render_to_response('compare_models.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
+			return redirect('detail_model', id=comparison.id)
 	else:
 		form = CompareModelsForm() # An unbound form
 		

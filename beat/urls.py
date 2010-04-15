@@ -14,16 +14,19 @@ urlpatterns = patterns('',
 	(r'^test.png$', 'benchmarks.views.scatterplot'),
 	(r'^benchmarks/$', 'benchmarks.views.benchmarks'),
 	(r'^compare$', 'benchmarks.views.compare'),
-	(r'^compare/(?P<id>\d+)/$', 'benchmarks.views.compare_detail'),
+	
+	url(r'^compare/(?P<id>\d+)/$', 'benchmarks.views.compare_detail', name="detail_benchmark"),
+	url(r'^compare/model/(?P<id>\d+)/$', 'benchmarks.views.compare_detail', {'model' : True},name="detail_model"),
+	(r'^compare/model/(?P<id>\d+)/benchmark.png$', 'benchmarks.views.graph_model'),
 	
 	# User content
 	(r'^user/compare/$', 'benchmarks.views.user_comparisons'),
-	(r'^user/compare/delete/(?P<id>\d+)/$', 'benchmarks.views.user_comparison_delete'),
+	url(r'^user/compare/delete/(?P<id>\d+)/$', 'benchmarks.views.user_comparison_delete', name="delete_benchmark"),
+	url(r'^user/compare/model/delete/(?P<id>\d+)/$', 'benchmarks.views.user_comparison_delete', {'model' : True}, name="delete_model"),
 	
 	# Comparisons
 	(r'^compare/benchmark-(?P<id>\d+).png$', 'benchmarks.views.simple'),
 	(r'^compare/model/$', 'benchmarks.views.compare_model'),
-	(r'^compare/model/benchmark-(?P<type>[a-z]+).png$', 'benchmarks.views.graph_model'),
 
 	# File upload
 	(r'^upload/', 'benchmarks.views.upload_log'),

@@ -19,7 +19,24 @@ class Comparison(models.Model):
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	
 	def __unicode__(self):
-		return "%s-%s" % (self.user, self.benchmarks)
+		return "%s" % (self.benchmarks)
+
+class ModelComparison(models.Model):
+	DATA_TYPES = (
+		('transitions', 'Transition count'),
+		('states', 'States count'),
+		('vsize', 'Memory VSIZE'),
+		('rss', 'Memory RSS'),
+	)
+	user = models.ForeignKey(User)
+	type = models.CharField(max_length=20, choices=DATA_TYPES)
+	tool = models.ForeignKey('Tool')
+	algorithm = models.ForeignKey('Algorithm')
+	optionvalue = models.ForeignKey('OptionValue', blank=True, null=True)
+	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
+	
+	def __unicode__(self):
+		return "%s, %s, %s: %s" % (self.tool, self.algorithm, self.optionvalue, self.type)
 
 class OptionValue(models.Model):
 	option = models.ForeignKey('Option')
