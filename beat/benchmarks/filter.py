@@ -1,84 +1,131 @@
-from datetime import date,timedelta,datetime
+from datetime import datetime
 
-class Filter:
-	def __init__(self, filterType, filterStyle, filterValue, row):
-		self.filterType = filterType
-		self.filterStyle = filterStyle
-		self.filterValue = filterValue
+LISTFILTERS = [
+	u'modelname',
+	u'toolname',
+	u'algorithmname']
+
+OPTIONFILTERS = [u'options']
+VALUEFILTERS = [
+	u'memory',
+	u'runtime',
+	u'states',
+	u'transitions']
+DATEFILTERS = [u'date']
+
+class Filter(object):
+	def __init__(self, type, row):
+		self.type = type
 		self.row = row
+
+class ListFilter(Filter):
+	def __init__(self,type,row,list):
+		super(ListFilter,self).__init__(type,row)
+		self.list = list
 	
 	def apply(self,qs):
+		f=""
+		if self.type==u'modelname':
+			f="model__id__in"
+		elif self.type==u'toolname':
+			f="tool__id__in"
+		elif self.type==u'algorithmname':
+			f="algorithm__id__in"
 		
-		if self.filterType==u'options':
-			print "options: "+self.filterStyle+","+self.filterValue
-			
-			qs = qs.filter(optionvalue__option__name__iexact=str(self.filterStyle),optionvalue__value__iexact=str(self.filterValue))
-		elif self.filterType==u'date':
-			strarr = self.filterValue.split('-')
-			arr = []
-			arr.append(int(strarr[0]))
-			arr.append(int(strarr[1]))
-			arr.append(int(strarr[2]))
-			print arr
-			
-			if self.filterStyle==u'on':
-				qs = qs.filter(date_time__gte=datetime(arr[0],arr[1],arr[2],0,0,0),date_time__lte=datetime(arr[0],arr[1],arr[2],23,59,59))
-			elif self.filterStyle==u'before':
-				qs = qs.filter(date_time__lte=datetime(arr[0],ar[1],arr[2],23,59,59))
-			elif self.filterStyle==u'after':
-				qs = qs.filter(date_time__gte=datetime(arr[0],arr[1],arr[2],0,0,0))
-			print qs
-		else:
-			f = ""
-			if self.filterType==u'name':
-				f+="model__name"
-			elif self.filterType==u'memory':
-				f+="memory_VSIZE"
-			elif self.filterType==u'runtime':
-				f+="elapsed_time"
-			elif self.filterType==u'states':
-				f+="states_count"
-			elif self.filterType==u'transitions':
-				f+="transition_count"
-			
-			if self.filterStyle==u'equal':
-				f+="__iexact"
-			elif self.filterStyle==u'contains':
-				f+="__icontains"
-			elif self.filterStyle==u'beginswith':
-				f+="__istartswith"
-			elif self.filterStyle==u'endswith':
-				f+="__iendswith"
-			elif self.filterStyle==u'greaterthen':
-				f+="__gte"
-			elif self.filterStyle==u'lessthan':
-				f+="__lte"
-			
-			print "filter: "+f
-			bla = {}
-			bla[f] = self.filterValue
-			qs = qs.filter(**bla)
+		col = {}
+		col[f] = self.list
+		qs = qs.filter(**col)
 		
 		return qs
-	
-	def __unicode__(self):
-		return u'type:'+self.filterType+',style:'+self.filterStyle+',value:'+self.filterValue
 
-"""
-	Function to convert all given filters to a dictionary so it can be immediatelly used in QuerySet.filter(**dictionary)
-	@todo add options to filter
-"""
+class ValueFilter(Filter):
+	def __init__(self,type,row,style,value):
+		super(ValueFilter,self).__init__(type,row)
+		self.style = style
+		self.value = value
+	
+	def apply(self,qs):
+		f = ""
+		if self.type==u'states':
+			f="states_count"
+		elif self.type==u'transitions':
+			f="transition_count"
+		elif self.type==u'memory':
+			f="memory_RSS"
+		elif self.type==u'runtime':
+			f="total_time"
+		
+		if self.style==u'equal':
+			f+="__exact"
+		elif self.style==u'greaterthan':
+			f+="__gte"
+		elif self.style==u'lessthan':
+			f+="__lte"
+		
+		col = {}
+		col[f] = self.value
+		qs = qs.filter(**col)
+		
+		return qs
+
+class OptionFilter(Filter):
+	def __init__(self,row,options):
+		super(OptionFilter,self).__init__(u'options',row)
+		self.options = options
+	
+	def apply(self,qs):
+		for k,v in self.options.iteritems():
+			print k
+			print v
+			qs = qs.filter(optionvalue__option__id__exact=k,optionvalue__value__iexact=str(v))
+		return qs
+
+class DateFilter(Filter):
+	def __init__(self,row,style,date):
+		super(DateFilter,self).__init__(u'date',row)
+		self.style = style
+		strarr = date.split('-')
+		arr = []
+		arr.append(int(strarr[0]))
+		arr.append(int(strarr[1]))
+		arr.append(int(strarr[2]))
+		self.date = arr
+	
+	def apply(self,qs):
+		if self.style==u'on':
+			qs = qs.filter(date_time__gte=datetime(self.date[0],self.date[1],self.date[2],0,0,0),date_time__lte=datetime(self.date[0],self.date[1],self.date[2],23,59,59))
+		elif self.style==u'before':
+			qs = qs.filter(date_time__lte=datetime(self.date[0],self.date[1],self.date[2],23,59,59))
+		elif self.style==u'after':
+			qs = qs.filter(date_time__gte=datetime(self.date[0],self.date[1],self.date[2],0,0,0))
+		
+		return qs
+
 def convertfilters(filters):
 	result = []
-	for k,v in filters.iteritems():
-		arr = v.split(',')
-		result.append(Filter(arr[0],arr[1],arr[2],arr[3]))
+	for filter in filters:
+		row = int(filter[0][6])
+		type = filter[1][0]
+		
+		if type in LISTFILTERS:
+			list = []
+			for v in filter[1][1:]:
+				list.append(int(v))
+			result.append(ListFilter(type,row,list))
+		elif type in VALUEFILTERS:
+			result.append(ValueFilter(type,row,filter[1][1],float(filter[1][2])))
+		elif type in DATEFILTERS:
+			result.append(DateFilter(row,filter[1][1],filter[1][2]))
+		elif type in OPTIONFILTERS:
+			options = {}
+			for v in filter[1][1:]:
+				arr = v.split(',')
+				options[int(arr[0])] = arr[1]
+			result.append(OptionFilter(row,options))
+	
 	return result
 
-"""
-	Function that converts the filters given through ajax and returns the filtered benchmarks
-"""
-def filter(qs, filters):
+def filter(qs,filters):
 	for f in filters:
 		qs = f.apply(qs)
 	return qs

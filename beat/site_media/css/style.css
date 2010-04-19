@@ -1,4 +1,3 @@
-
 .scroll {
 	height:40em;
 	overflow: auto;
@@ -10,11 +9,11 @@ table.benchmarks {
 }
 
 .filterStyle{
-    width: 120px;
+	width: 120px;
 }
 
 .filterType, .filterValue, .optionValue{
-    width: 80px;
+	width: 80px;
 }
 
 #filters td, #filters tr, #filters th, #filters select, #filters input{
@@ -23,8 +22,8 @@ table.benchmarks {
 }
 
 .remove img, .add img{
-    border: none;
-    cursor: pointer;
+	border: none;
+	cursor: pointer;
 }
 
 .benchmarks tr:nth-child(odd) {
@@ -52,30 +51,33 @@ table.benchmarks {
 }
 
 ul.mega{
-    text-align: left;
-    display: inline;
-    padding: 0px;
-    margin: 0px;
+	text-align: left;
+	display: inline;
+	padding: 0px;
+	margin: 0px;
 }
 
 li.mega{
-    display: inline;
-    position: relative;
+	display: inline;
+	position: relative;
 }
 
 ul.mega li.mega div{
-    display:none;
-    border:1px solid black;
-    background: white;
-    width: 18em;
-    height: 120px;
-    overflow: auto;
-    position: absolute;
-    top: 1.2em;
-    left: 0em;
-    z-index: 100;
+	display:none;
+	border:1px solid black;
+	background: white;
+	width: 18em;
+	height: 120px;
+	overflow: auto;
+	position: absolute;
+	top: 1.2em;
+	left: 0em;
+	z-index: 100;
+}
+ul.mega li.mega div select{
+	width:100%;
 }
 
 ul.mega li.hovering div {
-    display: block;
+	display: block;
 }
