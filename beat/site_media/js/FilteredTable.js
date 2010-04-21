@@ -1,17 +1,13 @@
 //local variables that define what the contents of the select-elements are in the filter
-var date_filterStyle = '<option value="on">On</option><option value="before">Before</option><option value="after">After</option>';
-var text_filterStyle = '<option value="equal">Equal to</option><option value="contains">Contains</option><option value="beginswith">Begins with</option><option value="endswith">Ends with</option>';;
-var number_filterStyle = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
-var options_filterStyle = '<option value="0">Options (hover)</option>';
-var modelname_filterStyle = '<option value="0">Model (hover)</option>';
-var algorithmname_filterStyle = '<option value="0">Algorithm (hover)</option>';
-var toolname_filterStyle = '<option value="0">Tool (hover)</option>';
-var empty_filterStyle = '<option value="empty">&lt;empty&gt;</option>';
+var DATEFILTERSTYLE = '<option value="on">On</option><option value="before">Before</option><option value="after">After</option>';
+var VALUEFILTERSTYLE = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
+var OPTIONSFILTERSTYLE = '<option value="0">Options (hover)</option>';
+var EMPTYFILTERSTYLE = '<option value="empty">&lt;empty&gt;</option>';
 
 var LISTFILTERS = new Array(
-	'modelname',
-	'toolname',
-	'algorithmname');
+	'model',
+	'tool',
+	'algorithm');
 var LISTFILTERSTYLES = new Array(
 	'<option value="0">Model (hover)</option>', 
 	'<option value="0">Tool (hover)</option>', 
@@ -21,20 +17,17 @@ var VALUEFILTERS = new Array('memory','runtime','states','transitions');
 var DATEFILTERS = new Array('date');
 
 var options;
-/*var tools;
-var algorithms;
-var models;*/
 var lists;
 var order = "id";
 
 var TABLEHEADERS = '<tr>\n\
-	<th>&nbsp;</th>\n\
-	<th>Model</th>\n\
-	<th>States</th>\n\
-	<th>Runtime</th>\n\
-	<th>Memory (RSS)</th>\n\
-	<th>Finished</th>\n\
-</tr>';
+						<th>&nbsp;</th>\n\
+						<th id="modelsort" class="sort">Model</th>\n\
+						<th id="statessort" class="sort">States</th>\n\
+						<th id="runtimesort" class="sort">Runtime</th>\n\
+						<th id="memorysort" class="sort">Memory (RSS)</th>\n\
+						<th id="finishedsort" class="sort">Finished</th>\n\
+					</tr>';
 
 /*
  * Function to add a filterrow to the filtertable, will be placed after the caller
@@ -58,9 +51,9 @@ function addFilter(caller){
 			<td width="320" align="left">\n\
 				<select size="1" class="filterType" onchange="changedFilter(this);">\n\
 					<option value="empty">&lt;empty&gt;</option>\n\
-					<option value="modelname">Model</option>\n\
-					<option value="algorithmname">Algorithm</option>\n\
-					<option value="toolname">Tool</option>\n\
+					<option value="model">Model</option>\n\
+					<option value="algorithm">Algorithm</option>\n\
+					<option value="tool">Tool</option>\n\
 					<option value="date">Date</option>\n\
 					<option value="memory">Memory</option>\n\
 					<option value="runtime">Runtime</option>\n\
@@ -164,7 +157,7 @@ function changedFilter(elem){
 			hover+='</select></div>';
 			$(elem).siblings('ul.mega').children('li.mega').children('select').after(hover);
 		}else if(OPTIONFILTERS.indexOf(type)!=-1){
-			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(options_filterStyle);
+			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(OPTIONSFILTERSTYLE);
 			$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 			$(elem).siblings('input.filterValue').hide();
 			var hover = '<div>';
@@ -179,15 +172,15 @@ function changedFilter(elem){
 			hover+='</div>';
 			$(elem).siblings('ul.mega').children('li.mega').children('select').after(hover);
 		}else if(VALUEFILTERS.indexOf(type)!=-1){
-			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(number_filterStyle);
+			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(VALUEFILTERSTYLE);
 			$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 			$(elem).siblings('input.filterValue').show();
 		}else if(DATEFILTERS.indexOf(type)!=-1){
-			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(date_filterStyle);
+			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(DATEFILTERSYLE);
 			$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 			$(elem).siblings('input.filterValue').show();
 		}else if(type=='empty'){
-			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html('<option value="empty">&lt;empty&gt;</option>');
+			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(EMPTYFILTERSTYLE);
 			$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 			$(elem).siblings('input.filterValue').show();
 		}
@@ -317,6 +310,13 @@ $(document).ready(function() {
 		}
 		return -1;
 	}
+	
+	$('#modelsort').click(function(){
+		alert('modelsort!');
+	});
+	$('.benchmarks tr th.sort').click(function(){
+		alert('check');
+	});
 	
 	getBenchmarks('');
 });

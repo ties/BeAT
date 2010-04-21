@@ -26,7 +26,7 @@ table.benchmarks {
 	cursor: pointer;
 }
 
-.benchmarks tr:nth-child(odd) {
+.benchmarks tr:nth-child(odd){
 	background-color: #eee;
 }
 
@@ -74,6 +74,7 @@ ul.mega li.mega div{
 	left: 0em;
 	z-index: 100;
 }
+
 ul.mega li.mega div select{
 	width:100%;
 }

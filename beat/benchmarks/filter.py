@@ -1,9 +1,9 @@
 from datetime import datetime
 
 LISTFILTERS = [
-	u'modelname',
-	u'toolname',
-	u'algorithmname']
+	u'model',
+	u'tool',
+	u'algorithm']
 
 OPTIONFILTERS = [u'options']
 VALUEFILTERS = [
@@ -21,21 +21,17 @@ class Filter(object):
 class ListFilter(Filter):
 	def __init__(self,type,row,list):
 		super(ListFilter,self).__init__(type,row)
+		print "made listfilter"
 		self.list = list
 	
 	def apply(self,qs):
-		f=""
-		if self.type==u'modelname':
-			f="model__id__in"
-		elif self.type==u'toolname':
-			f="tool__id__in"
-		elif self.type==u'algorithmname':
-			f="algorithm__id__in"
-		
+		f=self.type+u'__id__in'
+		print "check apply listfilter"
 		col = {}
-		col[f] = self.list
+		col[f] = list(set(self.list))
+		print col
 		qs = qs.filter(**col)
-		
+		print "check applied"
 		return qs
 
 class ValueFilter(Filter):
@@ -122,10 +118,11 @@ def convertfilters(filters):
 				arr = v.split(',')
 				options[int(arr[0])] = arr[1]
 			result.append(OptionFilter(row,options))
-	
+	print "check"
 	return result
 
 def filter(qs,filters):
 	for f in filters:
+		print f
 		qs = f.apply(qs)
 	return qs

@@ -4,7 +4,7 @@ from django.template import RequestContext, loader
 from django.shortcuts import render_to_response, redirect, get_list_or_404
 import datetime
 from filereader import FileReader
-from beat.benchmarks.models import Benchmark, Comparison, ModelComparison
+from beat.benchmarks.models import *
 from forms import *
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
@@ -272,6 +272,9 @@ def user_comparison_delete(request, id, model=False):
 	return redirect('/user/compare/')
 	
 def compare_model(request):
+	print Tool.objects.all()
+	return render_to_response('compare_models_form.html', { 'tools' : Tool.objects.all() }, context_instance=RequestContext(request))
+	"""
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
@@ -286,7 +289,8 @@ def compare_model(request):
 			return redirect('detail_model', id=comparison.id)
 	else:
 		form = CompareModelsForm() # An unbound form
-		
+	
 	return render_to_response('compare_models_form.html', {
 		'form': form, 
 	}, context_instance=RequestContext(request))
+	"""

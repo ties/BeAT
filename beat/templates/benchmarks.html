@@ -11,9 +11,9 @@
 					<td width="320" align="left">
 						<select size="1" class="filterType" onchange="changedFilter(this);">
 							<option value="empty">&lt;empty&gt;</option>
-							<option value="modelname">Model</option>
-							<option value="algorithmname">Algorithm</option>
-							<option value="toolname">Tool</option>
+							<option value="model">Model</option>
+							<option value="algorithm">Algorithm</option>
+							<option value="tool">Tool</option>
 							<option value="date">Date</option>
 							<option value="memory">Memory</option>
 							<option value="runtime">Runtime</option>
@@ -45,11 +45,11 @@
 				<table class="benchmarks">
 					<tr>
 						<th>&nbsp;</th>
-						<th>Model</th>
-						<th>States</th>
-						<th>Runtime</th>
-						<th>Memory (RSS)</th>
-						<th>Finished</th>
+						<th id="modelsort" class="sort">Model</th>
+						<th id="statessort" class="sort">States</th>
+						<th id="runtimesort" class="sort">Runtime</th>
+						<th id="memorysort" class="sort">Memory (RSS)</th>
+						<th id="finishedsort" class="sort">Finished</th>
 					</tr>
 					
 					{% for benchmark in benchmarks.object_list %}
