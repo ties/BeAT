@@ -140,7 +140,7 @@ class FileReader:
 				'date'				the date this benchmark was run. see datetime.datetime in the python doc
 		"""
 		#define regex and run it
-		regex = r'Nodename: (?P<name>.*)\n.*\nOS: (?P<OS>.*)\nKernel-name: (?P<Kernel_n>.*)\nKernel-release: (?P<Kernel_r>.*)\nKernel-version: (?P<Kernel_v>.*)\n.*\nProcessor: (?P<processor>.*)\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
+		regex = r'Nodename: (?P<name>.*)\r\n.*\r\nOS: (?P<OS>.*)\r\nKernel-name: (?P<Kernel_n>.*)\r\nKernel-release: (?P<Kernel_r>.*)\r\nKernel-version: (?P<Kernel_v>.*)\r\n.*\r\nProcessor: (?P<processor>.*)\r\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
 		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
 		#deduce options, algorithm, tool
 		tmp = self.parse_call(m['call'])
