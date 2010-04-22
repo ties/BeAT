@@ -90,6 +90,7 @@ def csv_to_array(str):
 	
 #this is really really really really really ugly
 def handler(type, args):
+	created = False
 	result = None
 	if type == 'model':
 		result = Model(name = args[0])
@@ -128,7 +129,8 @@ def handler(type, args):
 		result, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut=args[2])
 	else:
 		print "Warning: failed to handle: %s with %s"%(type, args)
-	queue_save(result)
+	if created:
+		queue_save(result)
 	return result
 	
 #models:
@@ -165,7 +167,6 @@ def fix_escapes(array):
 	return array
 	
 
-	
 use_regex = False
 
 #regular expression for splitting a line into the model identifier and the contents

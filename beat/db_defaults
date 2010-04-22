@@ -229,3 +229,32 @@ shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:v,),:v,
 shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:q,),:q,
 shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:help,),:h,
 ###################### end of: etf version 1, -reach ######################
+
+
+###################### dve version 1, -reach			 ######################
+algtool,algorithm:(name:-reach,),tool:(name:dve,version:1,),regex:(regex:dve-reach: .*(\\r\\n|\\n)dve-reach: reachability took.*(\\r\\n|\\n)state space has \2?P<scount>\\d+\3 states.*(\\r\\n|\\n)Exit \\[[0-9]+\\](\\r\\n|\\n)\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+#####	valid options		#####
+validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:dve,version:1,),),option:(name:order=,),regex:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:deadlock,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:trace=,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:cache,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:regroup=,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:vset=,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:cache-ratio=,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:max-increase=,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:min-free-nodes=,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:fdd-bits=,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:debug,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:version,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:help,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:usage,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:v,),:(: ,),
+validopt,:(:(:-reach,),:(:dve,:1,),),:(:q,),:(: ,),
+#####	shortened arguments	#####
+shortarg,algorithm_tool:(algorithm:(name:-reach,),tool:(name:dve,version:1,),),option:(name:deadlock,),shourtcut:d,
+shortarg,algorithm_tool:(:(:-reach,),:(:dve,:1,),),:(:cache,),:c,
+shortarg,algorithm_tool:(:(:-reach,),:(:dve,:1,),),:(:regroup,),:r:,
+shortarg,algorithm_tool:(:(:-reach,),:(:dve,:1,),),:(:v,),:v,
+shortarg,algorithm_tool:(:(:-reach,),:(:dve,:1,),),:(:q,),:q,
+shortarg,algorithm_tool:(:(:-reach,),:(:dve,:1,),),:(:help,),:h,
+###################### end of: dve version 1, -reach ######################

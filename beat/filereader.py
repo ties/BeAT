@@ -140,8 +140,11 @@ class FileReader:
 				'date'				the date this benchmark was run. see datetime.datetime in the python doc
 		"""
 		#define regex and run it
-		regex = r'Nodename: (?P<name>.*)\r\n.*\r\nOS: (?P<OS>.*)\r\nKernel-name: (?P<Kernel_n>.*)\r\nKernel-release: (?P<Kernel_r>.*)\r\nKernel-version: (?P<Kernel_v>.*)\r\n.*\r\nProcessor: (?P<processor>.*)\r\nMemory-total: (?P<memory_kb>[0-9]+)\nDateTime: (?P<datetime>.*)\nCall: (?P<call>.*)\n'
+		regex = r'Nodename: (?P<name>.*)(\r\n|\n).*(\r\n|\n)OS: (?P<OS>.*)(\r\n|\n)Kernel-name: (?P<Kernel_n>.*)(\r\n|\n)Kernel-release: (?P<Kernel_r>.*)(\r\n|\n)Kernel-version: (?P<Kernel_v>.*)(\r\n|\n).*(\r\n|\n)Processor: (?P<processor>.*)(\r\n|\n)Memory-total: (?P<memory_kb>[0-9]+)(\r\n|\n)DateTime: (?P<datetime>.*)(\r\n|\n)Call: (?P<call>.*)(\r\n|\n)'
 		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
+		if not m:
+			self.print_message(V_QUIET, "Error: header regex failed.")
+			return None
 		#deduce options, algorithm, tool
 		tmp = self.parse_call(m['call'])
 		if tmp:
@@ -215,6 +218,7 @@ class FileReader:
 			return match
 		else:
 			self.print_message(V_QUIET, "Warning: Parse error. The input failed to match on the regex.")
+			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (run_details['parse_regex'], content) )
 		return None
 	#end of parse_single_output
 	
@@ -246,19 +250,25 @@ class FileReader:
 		except MultipleObjectsReturned:
 			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))
 			return None
-		
+		tmp = opts
+		opts = []
+		for i in tmp:
+			i.encode('ascii', 'ignore')
+		opts = tmp
+
 		#read the options/args for the tool and convert them into a nice list
 		import getopt
-		#run this on everything, but ignore 'memtime' (first line)
-		optlist, args = getopt.gnu_getopt(call[1:], shortopts, opts)
+		optlist, args = getopt.gnu_getopt(call.split(" ")[2:], shortopts, opts)
 		counter = 0
 		for t in optlist:
 			o, v = t
 			if not v:	#no parameter
 				optlist[counter]=(o,True)
-			if len(o) == 1: #option length 1 -> shortcut
+			if not o.startswith('--'): #shortcut!
+				p = o[1:] #chop the '-'
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
-				optlist[counter]=(rs.option.name, v)
+				if not v:	#no parameter
+					optlist[counter]=(rs.option.name, True)
 			counter+=1
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])
@@ -302,12 +312,12 @@ class FileReader:
 		for tuple in optiondata:
 			name, value = tuple
 			if not name or not value:
-				self.print_message(V_VERBOSE, "Warning: invalid option: name=%s value=%s"%(name,value))
+				self.print_message(V_VERBOSE, "Warning: invalid option: name=<%>s value=<%s>"%(name,value))
 				valid=False
 			try:
 				o = Option.objects.get(name=name)
 			except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
-				self.print_message(V_VERBOSE, "Warning: %s"%(e))
+				self.print_message(V_VERBOSE, "Warning: Django error: %s"%(e))
 				valid = False
 		#Benchmark
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
