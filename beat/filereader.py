@@ -379,6 +379,10 @@ class FileReader:
 				self.print_message(V_NOISY, "Notice: Hardware already exists:%s"%(name))
 			hardwarelist.append(h)
 		
+		(u, dummy) = User.objects.get_or_create("admin")
+		(perm, dummy) = Permission.objects.get_or_create(public=true, owner=u)
+		if dummy:
+			perm.user.add(u)
 		#benchmark entry
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
 		utime = float(utime)
@@ -389,7 +393,7 @@ class FileReader:
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
 				'total_time':(utime+stime),
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
-				'memory_RSS':mRSS, 'finished':True}
+				'memory_RSS':mRSS, 'finished':True, 'permission':perm}
 		)
 		#connect the manytomany relations. this has to happen AFTER calling save on the benchmark. and only if newly created
 		if created:
@@ -400,7 +404,7 @@ class FileReader:
 			b.save()
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
-			###STOP HERE IF BENCHMARK EXISTS!
+			# ##STOP HERE IF BENCHMARK EXISTS!
 			return None
 		#optionvalue entries
 		optiondata = data['options']

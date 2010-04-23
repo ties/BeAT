@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Permission(models.Model):
+	user = models.ManyToManyField(User, related_name='users')
+	owner = models.ForeignKey(User, related_name='owner')
+	public = models.BooleanField()
+	
 class Model(models.Model):
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
@@ -54,6 +59,9 @@ class Benchmark(models.Model):
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
+	
+	#permissions
+	permission = models.ForeignKey(Permission)
 	
 	def __unicode__(self):
 		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)
@@ -155,3 +163,5 @@ class ModelComparison(models.Model):
 	
 	def __unicode__(self):
 		return "%s, %s, %s: %s" % (self.tool, self.algorithm, self.optionvalue, self.type)
+
+
