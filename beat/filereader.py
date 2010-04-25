@@ -379,8 +379,8 @@ class FileReader:
 				self.print_message(V_NOISY, "Notice: Hardware already exists:%s"%(name))
 			hardwarelist.append(h)
 		
-		(u, dummy) = User.objects.get_or_create("admin")
-		(perm, dummy) = Permission.objects.get_or_create(public=true, owner=u)
+		(u, dummy) = User.objects.get(username="admin")
+		(perm, dummy) = Permission.objects.get_or_create(public=True, owner=u)
 		if dummy:
 			perm.user.add(u)
 		#benchmark entry

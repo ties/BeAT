@@ -156,14 +156,14 @@ def fix_escapes(array):
 				tmp.append(fix_escapes(x))
 			array = tmp
 		else:
+			#replace escaped backslash
+			array = array.replace('\\\\','\\')
 			#replace escaped comma
 			array = array.replace('\\1',',')
 			#replace escaped (
 			array = array.replace('\\2','(')
 			#replace escaped )
 			array = array.replace('\\3',')')
-			#replace escaped backslash
-			array = array.replace('\\\\','\\')
 	return array
 	
 
