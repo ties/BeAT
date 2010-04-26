@@ -1,14 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Permission(models.Model):
-	user = models.ManyToManyField(User, related_name='users')
-	owner = models.ForeignKey(User, related_name='owner')
-	public = models.BooleanField()
-	
-	def __unicode__(self):
-		return "%s,%s" % (self.owner.username,self.public)
-	
 class Model(models.Model):
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
@@ -25,6 +17,8 @@ class Comparison(models.Model):
 	user = models.ForeignKey(User)
 	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
+	permitted_users = models.ManyToManyField('User')
+	public = models.BooleanField()
 	
 	def __unicode__(self):
 		return "%s" % (self.benchmarks)
@@ -62,9 +56,6 @@ class Benchmark(models.Model):
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
-	
-	#permission
-	permission = models.ForeignKey('Permission')
 	
 	def __unicode__(self):
 		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)
@@ -163,6 +154,8 @@ class ModelComparison(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
 	optionvalue = models.ForeignKey('OptionValue', blank=True, null=True)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
+	permitted_users = models.ManyToManyField('User')
+	public = models.BooleanField()
 	
 	def __unicode__(self):
 		return "%s, %s, %s: %s" % (self.tool, self.algorithm, self.optionvalue, self.type)
