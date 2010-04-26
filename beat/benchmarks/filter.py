@@ -25,13 +25,10 @@ class ListFilter(Filter):
 		self.list = list
 	
 	def apply(self,qs):
-		f=self.type+u'__id__in'
-		print "check apply listfilter"
+		f=str(self.type)+'__id__in'
 		col = {}
 		col[f] = list(set(self.list))
-		print col
 		qs = qs.filter(**col)
-		print "check applied"
 		return qs
 
 class ValueFilter(Filter):
@@ -98,7 +95,7 @@ class DateFilter(Filter):
 		return qs
 
 def convertfilters(filters):
-	result = []
+	result = {}
 	for filter in filters:
 		row = int(filter[0][6])
 		type = filter[1][0]
@@ -107,22 +104,26 @@ def convertfilters(filters):
 			list = []
 			for v in filter[1][1:]:
 				list.append(int(v))
-			result.append(ListFilter(type,row,list))
+			result[row] = ListFilter(type,row,list)
 		elif type in VALUEFILTERS:
-			result.append(ValueFilter(type,row,filter[1][1],float(filter[1][2])))
+			result[row] = ValueFilter(type,row,filter[1][1],float(filter[1][2]))
 		elif type in DATEFILTERS:
-			result.append(DateFilter(row,filter[1][1],filter[1][2]))
+			result[row] = DateFilter(row,filter[1][1],filter[1][2])
 		elif type in OPTIONFILTERS:
 			options = {}
 			for v in filter[1][1:]:
 				arr = v.split(',')
 				options[int(arr[0])] = arr[1]
-			result.append(OptionFilter(row,options))
+			result[row] = OptionFilter(row,options)
 	print "check"
 	return result
 
 def filter(qs,filters):
-	for f in filters:
+	print 'checkit'
+	print filters
+	
+	for k,f in filters.iteritems():
+		print k
 		print f
 		qs = f.apply(qs)
 	return qs

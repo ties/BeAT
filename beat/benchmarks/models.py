@@ -6,6 +6,9 @@ class Permission(models.Model):
 	owner = models.ForeignKey(User, related_name='owner')
 	public = models.BooleanField()
 	
+	def __unicode__(self):
+		return "%s,%s" % (self.owner.username,self.public)
+	
 class Model(models.Model):
 	name = models.CharField(max_length=200)
 	version = models.CharField(max_length=50)
@@ -60,8 +63,8 @@ class Benchmark(models.Model):
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
 	
-	#permissions
-	permission = models.ForeignKey(Permission)
+	#permission
+	permission = models.ForeignKey('Permission')
 	
 	def __unicode__(self):
 		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)

@@ -176,7 +176,7 @@ function changedFilter(elem){
 			$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 			$(elem).siblings('input.filterValue').show();
 		}else if(DATEFILTERS.indexOf(type)!=-1){
-			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(DATEFILTERSYLE);
+			$(elem).siblings('ul.mega').children('li.mega').children('select.filterStyle').html(DATEFILTERSTYLE);
 			$(elem).siblings('ul.mega').children('li.mega').children('div').remove();
 			$(elem).siblings('input.filterValue').show();
 		}else if(type=='empty'){
@@ -278,15 +278,28 @@ function getFilter(){
  * Function called when the document is loaded
  */
 $(document).ready(function() {
+	$("li.mega").each(function(i,elem){
+		config = {    
+	     sensitivity: 1, // number = sensitivity threshold (must be 1 or higher)    
+	     interval: 100, // number = milliseconds for onMouseOver polling interval    
+	     over: function(){addMega(elem)}, // function = onMouseOver callback (REQUIRED)    
+	     timeout: 500, // number = milliseconds delay before onMouseOut    
+	     out: function(){removeMega(elem)} // function = onMouseOut callback (REQUIRED)    
+		};
+		console.log(config);
+		$(elem).hoverIntent(config);
+		
+	});
+
 	//set hover action
-	$("li.mega").hover(
-		function(){
-			addMega($(this));
-		},
-		function(){
-			removeMega($(this));
-		}
-	);
+	//$("li.mega").hover(
+	//	function(){
+	//		addMega($(this));
+	//	},
+	//	function(){
+	//		removeMega($(this));
+	//	}
+	//);
 	//set click actions
 	$("a.add").click(function(){
 		addFilter(this);
