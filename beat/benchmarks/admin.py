@@ -26,7 +26,6 @@ class BenchmarkAdmin(admin.ModelAdmin):
 		('Configuration', {'fields': ['model','tool','algorithm','finished']}),
 		('Date information', {'fields': ['date_time']}),
 		('Output data', {'fields': ['user_time', 'system_time','total_time', 'elapsed_time','transition_count','states_count','memory_VSIZE', 'memory_RSS']}),
-		('Permissions', {'fields': ['permission']}),
 	]
 	inlines = [HardwareInline, OptionValueInline]
 
@@ -39,7 +38,6 @@ admin.site.register(Hardware)
 admin.site.register(Option)
 admin.site.register(Benchmark, BenchmarkAdmin)
 admin.site.register(Comparison)
-admin.site.register(Permission)
 admin.site.register(Algorithm)
 admin.site.register(RegisteredShortcut)
 admin.site.register(ExtraValue)

@@ -14,10 +14,10 @@ class Model(models.Model):
 		return (self.name,self.version)
 
 class Comparison(models.Model):
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, related_name="owner_c")
 	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
-	permitted_users = models.ManyToManyField('User')
+	permitted_users = models.ManyToManyField(User, related_name="users_c")
 	public = models.BooleanField()
 	
 	def __unicode__(self):
@@ -148,13 +148,13 @@ class ModelComparison(models.Model):
 		('vsize', 'Memory VSIZE'),
 		('rss', 'Memory RSS'),
 	)
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, related_name="owner_mc")
 	type = models.CharField(max_length=20, choices=DATA_TYPES)
 	tool = models.ForeignKey('Tool')
 	algorithm = models.ForeignKey('Algorithm')
 	optionvalue = models.ForeignKey('OptionValue', blank=True, null=True)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
-	permitted_users = models.ManyToManyField('User')
+	permitted_users = models.ManyToManyField(User, related_name="users_mc")
 	public = models.BooleanField()
 	
 	def __unicode__(self):

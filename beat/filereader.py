@@ -412,7 +412,8 @@ class FileReader:
 				self.print_message(V_VERBOSE, "Notice: created a new OptionValue entry.")
 			else:
 				self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
-			b.optionvalue.add(ov)
+			#todo: figure out why this doesn't work anymore
+			#b.optionvalue.add(ov)
 	#end of write_to_db
 
 	def main(self, file_arg=None, verbosity=0):
