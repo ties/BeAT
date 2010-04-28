@@ -1,4 +1,4 @@
-/** Some constants: **/
+/** Some constants for the filtersystem: **/
 var EMPTY = 'empty';
 var MODEL = 'model';
 var ALGORITHM = 'algorithm';
@@ -49,7 +49,18 @@ var FINISHEDFILTER = '({"type" : "","row" : -1,"value" : []})';
 /** global array ORDERS which keeps all the possible orders in it **/
 var ORDERS = new Array('id','model','states','runtime','memory','finished');
 
+var COLUMNS = new Array('Model','States','Runtime','Memory (RSS)','Finished');
 
+/** Constant containing the headers of the benchmarktable **
+var TABLEHEADERS = '<tr>\n\
+						<th>&nbsp;</th>\n\
+						<th id="modelsort" class="sort">Model</th>\n\
+						<th id="statessort" class="sort">States</th>\n\
+						<th id="runtimesort" class="sort">Runtime</th>\n\
+						<th id="memorysort" class="sort">Memory (RSS)</th>\n\
+						<th id="finishedsort" class="sort">Finished</th>\n\
+					</tr>';
+*/
 /** global array filters which keeps all the stored filters in it **/
 var filters = new Array();
 /** global array possible_options which keeps all possible options in it **/
@@ -58,7 +69,11 @@ var possible_options = new Array();
 var possible_lists = new Array(new Array(), new Array(), new Array());
 
 /** global variable current_order which keeps the current order in it **/
-var current_order = 'id';
+var current_sort = ORDERS[0];
+/** global variable current_order which keeps the current order in it **/
+var current_sort_order = "ASC";
+/** global variable possible_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
+var possible_columns = new Array();
 
 /**
  * Function that adds a filterrow after the filter with filter.row=row
@@ -637,19 +652,19 @@ function configureHover(){
 			timeout: 500,
 			out: function(){removeMega(elem)}
 		};
-		console.log(config);
+		
 		$(elem).hoverIntent(config);
 	});
 }
 
 function filter(){
 	storeValues();
-	d = getFilter();
+	d = 'filters='+getFilter();
 	alert(d);
 	if (d.substr(0,5).toLowerCase()=='error'){
 		alert(d);
 	}else{
-		//getBenchmarks(d);
+		getBenchmarks(d);
 	}
 }
 
@@ -662,21 +677,22 @@ function getBenchmarks(d){
 						$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
 					},
 		success: function(json){
-					handleBenchmarks(json);
+					handleJSONResponse(json);
 				},
 		error: function(XMLHttpRequest,textStatus,errorThrown){
 					alert("Error with getting results: "+textStatus);
 				},
 		complete: function(){
-					$("#ajaxload").empty();
+					$("#ajaxload").html('');
 				},
 		dataType: 'json'
 	});
 }
 
-function handleBenchmarks(json){
+function handleJSONResponse(json){
+	
 	possible_options = json.options;
-	possible_lists = new Array(json.models,json.tools,json.algorithms);
+	possible_lists = new Array(json.models,json.algorithms,json.tools);
 	
 	var table = '';
 	
@@ -689,10 +705,12 @@ function handleBenchmarks(json){
 			<td>' + benchmark.memory + '</td>\n\
 			<td>' + benchmark.finished + '</td></tr>';
 	});
-	$("table.benchmarks").empty();
-	$("table.benchmarks").append(TABLEHEADERS+table);
+	$("table.benchmarks").html(getTableHeaders()+table);
+	
+	renewFilters();
+	storeValues();
 }
-
+/*
 function getFilter(){
 	var res = "";
 	
@@ -722,12 +740,67 @@ function getFilter(){
 			return "Error: empty row detected";
 		}
 	}
-	/*
-	for (var i=0;i<filters.length;i++){
-		var filter = filters[i];
-		alert(filter.toJSONString());
-	}*/
+	
 	return res;
+}
+*/
+function getTableHeaders(){
+	var res = '<tr><th id="id_sort"></th>';
+	for (var i=0;i<COLUMNS.length;i++){
+		res+= '<th id="'+COLUMNS[i]+'_sort">'+COLUMNS[i]+'</th>';
+	}
+	res+='</tr>';
+	return res;
+}
+
+function getFilter(){
+	var json = '[';
+	alert(filters);
+	for (var i=0; i<filters.length;i++){
+		json+=JSON.stringify(filters[i]);
+		if (i<(filters.length-1))	json += ',';
+	}
+	json += ']';
+}
+/*
+function sendJSON(){
+	storeValues();
+	
+	$.ajax({
+		url: 'ajax/json/',
+		type: 'POST',
+		data: 'json='+json,
+		beforeSend: function(){
+						$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
+					},
+		success: function(json){
+					handleJSONResponse(json);
+				},
+		error: function(XMLHttpRequest,textStatus,errorThrown){
+					alert("Error with getting results: "+textStatus);
+				},
+		complete: function(){
+					$("#ajaxload").html('');
+				},
+		dataType: 'json'
+	});
+}
+*/
+function showSortOptions(){
+	var txt = "";
+	for (var i=0;i<ORDERS.length;i++){
+		txt+= '<option value="'+ORDERS[i]+'">'+ORDERS[i]+'</option>';
+	}
+}
+
+function changeSort(val){
+	current_sort = val;
+	alert(current_sort);
+}
+
+function changeSortOrder(val){
+	current_sort_order = val;
+	alert(current_sort_order);
 }
 
 /**
@@ -737,6 +810,7 @@ function getFilter(){
  *			configureHover is called
  */
 $(document).ready(function(){
+	
 	Array.prototype.indexOf = function (element,offset) {
 		if (typeof offset=='undefined'){
 			offset=0;
@@ -754,11 +828,10 @@ $(document).ready(function(){
 	f.type = EMPTY;
 	filters = new Array();
 	filters.push(f);
+	
 	configureHover();
-	getBenchmarks();
-	//THIS IS MOCKUP DATA:
-	//possible_options.push({'id':0,'name':'option0','takes_argument':true},{'id':1,'name':'option1','takes_argument':false},{'id':2,'name':'option2','takes_argument':true},{'id':3,'name':'option3','takes_argument':false});
-	//possible_lists[0].push({'id':0,'name':'model0'},{'id':1,'name':'model1'},{'id':2,'name':'model2'},{'id':3,'name':'model3'});
-	//possible_lists[1].push({'id':0,'name':'alg0'},{'id':1,'name':'alg1'},{'id':2,'name':'alg2'},{'id':3,'name':'alg3'});
-	//possible_lists[2].push({'id':0,'name':'tool0'},{'id':1,'name':'tool1'},{'id':2,'name':'tool2'},{'id':3,'name':'tool3'});
+	
+	getBenchmarks('');
+	
+	showSortOptions();
 });

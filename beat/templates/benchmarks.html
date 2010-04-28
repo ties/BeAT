@@ -39,6 +39,13 @@
 				</tr>
 			</table>
 			<input type="submit" value="Filter" onclick="filter();" /><span id="ajaxload"></span>
+			<select size="1" class="sort" id="sort" onchange="changeSort(this.value);">
+				
+			</select>
+			<select size="1" class="sortorder" id="sortorder" onchange="changeSortOrder(this.value);">
+				<option value="ASC">Ascending</option>
+				<option value="DESC">Descending</option>
+			</select>
 		</form>
 		<!-- END FILTER TABLE -->
 		
