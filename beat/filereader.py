@@ -1,27 +1,33 @@
 """
+This script processes logs, using regular expressions that are in the database.
 """
-#imports of python-libs
-import re
-import datetime
-import sys
-import os
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+#python libraries
+import re		#regular expressions
+import datetime	#for datetime objects
+import sys		#for system calls
+import os		#for os.path.split()
 from optparse import OptionParser
-#imports of code we wrote
+#django exceptions
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+#models
 from benchmarks.models import *
 
+#the length of the header placed in the logs
 RUN_DETAILS_HEADER = 11
-V_NOISY = 2		#PRINT EVERYTHING
-V_VERBOSE = 1	#print lots
-V_QUIET = 0		#print errors only
-V_SILENT = -1	#print fatal errors only
+#verbosity levels
+V_NOISY = 2		#noisy:	as much as possible
+V_VERBOSE = 1	#verbose:	everything except informative messages (which are preceded by "notice:")
+V_QUIET = 0		#quiet:	errors only
+V_SILENT = -1	#silent: 	only errors that are dangerous for the database integrity
 
 class FileReader:
+	#this variable will contain the log of the run of this filereader
 	log = []
-	verbose = V_QUIET #default mode: no messages except errors
+	#the verbosity level of this filereader. default is quiet.
+	verbose = V_QUIET
 	
 	def print_message(self, level, text):
-		"""Function to print, based on verbosity level
+		"""Function to log, based on verbosity level
 		Arguments:
 			level		the level from which this message should be printed
 			text		the message
@@ -46,57 +52,50 @@ class FileReader:
 		
 		regex and input are required arguments.
 		Returns:
-			On a match, a dictionary, or true if this dictionary is empty.
+			On a match, a dictionary containing the named groups
+				or a list if the regex does not use named groups
+				or true if this dictionary is empty
 			Otherwise, returns None.
 		"""
-		#compile
+		#compile the expression
 		if flags:
 			compiled = re.compile(regex, flags)
 		else:
 			compiled = re.compile(regex)
+		#do a match
 		match = compiled.match(input)
 		if match:
+			#there was a match, fetch the group dictionary
 			list = match.groupdict()
 			if not list:
-				#no named groups
-				#find possible non-named groups.
+				#the groups in the expression were not named, or there were no groups
 				list = []
 				i=0
-				#this is kind of ugly:
+				#read all the named groups
 				try:
+					#this is quite ugly.
 					while True:
-						list.append(match.group(i))#will eventually throw an exception
+						#will eventually throw an exception, causing us to jump to the except clause, from which we return
+						list.append(match.group(i))
 						i+=1
 				except IndexError: #thrown when i = number of groups
-					if i!=0: #some groups were specified, return their contents
+					#check if there were any numbered groups at all, return them
+					if i!=0:
 						return list
-				list = True #no groups were specified at all
+				#no groups: return True
+				list = True
 			return list
 		else:
+			#there was no match, something probably went wrong
 			self.print_message(V_VERBOSE, "Warning: Regex  %s on input %s has an empty dictionary."%(regex, input))
 			if flags:
-				self.print_message(V_NOISY,"\tFlags argument to compiler: %s"%(flags))
-		return None
+				self.print_message(V_NOISY,"Notice: Flags argument to compiler: %s"%(flags))
+			return None
 	#end of match_regex
 	
-	def get_lines(self, file):
-		"""This function simply reads all lines from the specified file."""
-		lines = []
-		line = None
-		loop_end = False
-		while not loop_end:
-			if line:
-				lines.append(line)
-			try:
-				line = file.next()
-			except StopIteration:
-				self.print_message(V_NOISY, "Notice: end of file encountered")
-				loop_end = True
-		return lines
-	#end of get_lines
-
 	def parse(self, lines):
 		"""Parse a run from the specified lines.
+		This method analyzes the log file of one run, including a header. The length of the header is specified by the RUN_DETAILS_HEADER constant.
 			Arguments:
 				lines		a list of strings, including newlines
 			Returns:
@@ -217,7 +216,7 @@ class FileReader:
 			self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
 			return match
 		else:
-			self.print_message(V_QUIET, "Warning: Parse error. The input failed to match on the regex.")
+			self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
 			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (run_details['parse_regex'], content) )
 		return None
 	#end of parse_single_output
@@ -469,16 +468,16 @@ class FileReader:
 						#some known error occured, check how bad it is
 						if f.db_altered:
 							#major panic!
-							self.print_message(V_SILENT, "Warning: an error occured while writing to the database! %s"%(f.error))
+							self.print_message(V_SILENT, "ERROR: an error occured while writing to the database! %s"%(f.error))
 							return -1
 						else:
 							#it's just a failed write, probably invalid data
-							self.print_message(V_QUIET, "Warning: FileReaderError: %s" %( f.error))
+							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( f.error))
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
 					except Exception, e:
 						#an unknown error occured, skip this part
-						self.print_message(V_QUIET, "Warning: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
+						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
 						errorcounter+=1
 				else:
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
