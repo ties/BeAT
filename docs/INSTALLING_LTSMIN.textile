@@ -5,19 +5,23 @@ This tutorial should enable you to install LTSmin on a debian (lenny/squeeze) bo
 If you need memtime:http://fmt.cs.utwente.nl/tools/scm/memtime.git, you can build the updated version from "fmt git":http://fmt.cs.utwente.nl/tools/scm/memtime.git
 
 If you end up with errors like the following:
-<pre>Making all in nips-vm
-make[1]: Entering directory `/home/ties/downloads/ltsmin/nips-vm'
-make[1]: *** No rule to make target `all'.  Stop.
-make[1]: Leaving directory `/home/ties/downloads/ltsmin/nips-vm'
-make: *** [all-recursive] Error 1</pre>
+<pre>
+	Making all in nips-vm
+	make[1]: Entering directory `/home/ties/downloads/ltsmin/nips-vm'
+	make[1]: *** No rule to make target `all'.  Stop.
+	make[1]: Leaving directory `/home/ties/downloads/ltsmin/nips-vm'
+	make: *** [all-recursive] Error 1
+</pre>
 
 You need to build from the git repository. **The snapshot tarballs are useless unless you want to manually compile nips-vm and buddy!**
 
 h2. The git clone
 
 Clone the git repository and get the submodules
-<pre>git clone http://fmt.cs.utwente.nl/tools/scm/ltsmin.git
-cd ltsmin && git submodule update --init</pre>
+<pre>
+	git clone http://fmt.cs.utwente.nl/tools/scm/ltsmin.git
+	cd ltsmin && git submodule update --init
+</pre>
 
 h2. Required packages:
 
@@ -49,19 +53,23 @@ Get MCRL 2.18.5 from "their website":http://homepages.cwi.nl/~mcrl/mutool.html a
 h5. Building mcrl2
 
 Mcrl2 is trivial to install.
-<pre>tar -jxf mcrl2-200901-src.tar.bz2cd mcrl2/
-./configure --prefix=[mcrl2 prefix directory]
-make
-make install
-./build/bin/bjam --install --install-boost-headers</pre>
+<pre>
+	tar -jxf mcrl2-200901-src.tar.bz2cd mcrl2/
+	./configure --prefix=[mcrl2 prefix directory]
+	make
+	make install
+	./build/bin/bjam --install --install-boost-headers
+</pre>
 
 h5. Building mcrl
 
 Mcrl is similarly trivial to install. Remember to install the boost headers.
-<pre>tar -zxf mcrl-2.18.5.tar.gz
-cd mcrl-2.18.5/
-./configure --prefix=[mcrl prefix]
-make install</pre>
+<pre>
+	tar -zxf mcrl-2.18.5.tar.gz
+	cd mcrl-2.18.5/
+	./configure --prefix=[mcrl prefix]
+	make install
+</pre>
 
 h5. Building a patched instance of Divine-cluster[1]
 
@@ -81,10 +89,12 @@ h2. Configuring LTSmin
 
 Now you can configure ltsmin. The following command will first autogenerate the configure script for LTSmin. The second line will configure LTSmin with the dependencies you just compiled. **Remember to plug in the path prefixes for mcrl and mcrl2.**
 
-<pre> ./ltsminreconf
-./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]/mCRL --with-divine=[divine prefix]
-make
-make install</pre>
+<pre>
+	./ltsminreconf
+	./configure --disable-dependency-tracking --prefix=/home/ties/bin/ltsmin --with-mcrl2=[mcrl2 prefix] --with-mcrl=[mcrl prefix]/mCRL --with-divine=[divine prefix]
+	make
+	make install
+</pre>
 	
 Append /mCRL to the path of mCRL. If you compile LTSmin with divine-cluster *and* mCRL, /mCRL needs to be added to the end of mCRL's path for it to compile.
 
