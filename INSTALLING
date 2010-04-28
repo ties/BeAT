@@ -1,0 +1,16 @@
+Installation requirements:
+
+Install Python 2.6
+
+Download the Django 1.2 (beta), and install it (python setup.py install)
+
+
+Now you need the following python modules:
+(It is probably easiest to install these with setuptools/easy_install <download at http://pypi.python.org/pypi/setuptools, info at http://peak.telecommunity.com/DevCenter/EasyInstall>)
+
+they can all be installed with easy_install <modulename>. Remember to setup a compiler/build envirenoment on windows (...), instructions at <http://code.google.com/p/rdflib/issues/detail?id=104>
+
+- numpy (dependency matplotlib, <http://numpy.scipy.org/>)
+- matplotlib <http://matplotlib.sourceforge.net/>
+- gitpython <http://packages.python.org/GitPython/>
+
