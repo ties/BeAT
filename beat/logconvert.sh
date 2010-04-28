@@ -10,7 +10,7 @@ fi
 
 f=$1
 
-if [ ! -e ./tmp ]
+if [ -z $2 ]
 then
 	g="./tmp"
 else
@@ -23,25 +23,31 @@ case $f in
 esac
 
 for i in $f*; do
-	(
-		echo Nodename: $(uname -n)
-		echo Hardware-name: $(uname -m)
-		echo OS: $(uname -o)
-		echo Kernel-name: $(uname -s)
-		echo Kernel-release: $(uname -r)
-		echo Kernel-version: $(uname -v)
-		echo Hardware-platform: $(uname -i)
-		echo Processor: $(uname -p)
-		echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s " " | cut -d" " -f 2 -)
-		echo DateTime: 2010 03 16 13 24 43
-		echo Call: memtime dve-reach -c $i
-		cat $i
-		echo "REPORT ENDS HERE"
-	) > "$i.eatme"
+	if [ -z $( echo "$i" | egrep '.*\.o.*' ) ]
+	then
+		(
+			echo Nodename: $(uname -n)
+			echo Hardware-name: $(uname -m)
+			echo OS: $(uname -o)
+			echo Kernel-name: $(uname -s)
+			echo Kernel-release: $(uname -r)
+			echo Kernel-version: $(uname -v)
+			echo Hardware-platform: $(uname -i)
+			echo Processor: $(uname -p)
+			echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s " " | cut -d" " -f 2 -)
+			echo DateTime: 2010 03 16 13 24 43
+			echo Call: memtime dve-reach -c $i
+			cat $i
+			echo "REPORT ENDS HERE"
+		) > "$i.eatme"
 	((counter++))
+	fi
 done
 
-mkdir $g
+if [ ! -e $g ]
+then
+	mkdir $g
+fi 
 
 mv -t$g $f*.eatme
 

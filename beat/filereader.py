@@ -205,7 +205,7 @@ class FileReader:
 					'hardware'	a list containing tuples as specified in run_details['hardware']
 					'options'	a list containing tuples as specified in run_details['options']
 					'benchmark'	a tuple:
-									(datetime, etime, utime, stime, tcount, scount, vsize, rss)
+									(datetime, etime, utime, stime, tcount, scount, vsize, rss, finished)
 				or None if the regular expression (run_details['parse_regex']) does not match on the content.
 		"""
 		m = self.match_regex(run_details['parse_regex'], content, re.MULTILINE + re.DOTALL)
@@ -219,7 +219,9 @@ class FileReader:
 				'hardware':run_details.get('hardware'),
 				'options':run_details.get('options'),
 				#this one should be re-written if we change the regexes to be identified by group numbers rather than group names
-				'benchmark':(run_details.get('date'),m['etime'],m['utime'],m['stime'],m.get('tcount'),m['scount'],m['vsize'],m['rss']),
+				'benchmark':(
+						run_details.get('date'),m.get('etime'),m.get('utime'),m.get('stime'),
+						m.get('tcount'),m.get('scount'),m.get('vsize'),m.get('rss'), not m.get('kill'))
 			}
 			#the following ensures 'hardware' and 'options' always contain something iteratable
 			if not match['hardware']:
@@ -320,6 +322,7 @@ class FileReader:
 		"""Checks the data validity.
 		The data argument is one that is intended to be inserted in the database.
 		This method should prevent incorrect or incomplete data from entering the database.
+		The data argument may be updated to correct data, such as 'None' being provided to an integer field (this will become 0)
 		If the verbosity is Verbose or higher, all applicable warnings will be produced before returning.
 			Arguments:
 				data		a dictionary, containing all the data about one run, as returned by parse_single_output()
@@ -375,12 +378,17 @@ class FileReader:
 				valid = False
 
 		#Benchmark
-		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
+		self.print_message(V_NOISY,"Statecount for this run is: %s, did it finish? %s"% (scount,finished))
 		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
-			if not tcount or tcount == -1:
-				#tcount can be undefined, but may be zero.
-				tcount = 0
-				data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)
+			if not tcount or (not scount and not finished):
+				#tcount is allowed to be empty, scount is not given if excecution is ended prematurely
+				if not tcount:
+					tcount = 0
+					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
+				if not scount and not finished:
+					scount = 0
+					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
 			else:
 				self.print_message(V_VERBOSE, "Warning: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
 				valid=False
@@ -444,7 +452,7 @@ class FileReader:
 			hardwarelist.append(h)
 		
 		#Benchmark
-		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS = data['benchmark']
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
 		#convert these to float explicitly
 		utime = float(utime)
 		stime = float(stime)
@@ -454,7 +462,7 @@ class FileReader:
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
 				'total_time':(utime+stime),
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
-				'memory_RSS':mRSS, 'finished':True}
+				'memory_RSS':mRSS, 'finished':finished}
 		)
 		#connect the manytomany relations. this has to happen ONLY if newly created
 		if created:
