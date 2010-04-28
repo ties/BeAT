@@ -52,8 +52,8 @@ def scatterplot(request):
 	
 	# @TODO
 	# Take the two data sets from the db and intersect on model id
-	b1 = Benchmark.objects.filter(tool__name__exact='lpo')
-	b2 = Benchmark.objects.filter(tool__name__exact='nips').filter(model__in=[b.model.pk for b in b1])
+	b1 = Benchmark.objects.filter(tool__name__exact='etf').filter(tool__version__exact='2')
+	b2 = Benchmark.objects.filter(tool__name__exact='etf').filter(model__in=[b.model.pk for b in b1]).filter(tool__version__exact='3')
 	b1 = b1.filter(model__in=[b.model.pk for b in b2])
 	
 	# Make new arrays with only the elapsed time

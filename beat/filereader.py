@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from benchmarks.models import *
 
 #the length of the header placed in the logs
-RUN_DETAILS_HEADER = 11
+RUN_HEADER = 11
 #verbosity levels
 V_NOISY = 2		#noisy:	as much as possible
 V_VERBOSE = 1	#verbose:	everything except informative messages (which are preceded by "notice:")
@@ -95,7 +95,7 @@ class FileReader:
 	
 	def parse(self, lines):
 		"""Parse a run from the specified lines.
-		This method analyzes the log file of one run, including a header. The length of the header is specified by the RUN_DETAILS_HEADER constant.
+		This method analyzes the log file of one run, including a header. The length of the header is specified by the RUN_HEADER constant.
 			Arguments:
 				lines		a list of strings, including newlines
 			Returns:
@@ -103,24 +103,24 @@ class FileReader:
 				A dictionary, as specified by parse_single_output.
 		"""
 		self.print_message(V_NOISY, "Notice: Reading run details and finding parser...")
-		#read the run information
-		information = self.parse_run_details(lines)
+		#read the header
+		information = self.parse_header(lines)
 		if not information:
 			#something went wrong, skip ahead to the next run
 			return None
 		self.print_message(V_NOISY, "Notice: Complete!")
 		
 		#parse the log content
-		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information)
+		data = self.parse_single_output(''.join(lines[RUN_HEADER:]), information)
 		self.print_message(V_NOISY, "Notice: Read successful!")
 		
 		return data
 	#end of parse
 	
-	def parse_run_details(self, lines):
+	def parse_header(self, lines):
 		"""Parses the header of a run from the lines specified
 			Arguments:
-				lines		a list containing at least RUN_DETAILS_HEADER elements, which specify a header.
+				lines		a list containing at least RUN_HEADER elements, which specify a header.
 				
 			Returns:
 			None when some (non-fatal) error occurs, or:
@@ -140,7 +140,7 @@ class FileReader:
 		"""
 		#define regex and run it
 		regex = r'Nodename: (?P<name>.*)(\r\n|\n).*(\r\n|\n)OS: (?P<OS>.*)(\r\n|\n)Kernel-name: (?P<Kernel_n>.*)(\r\n|\n)Kernel-release: (?P<Kernel_r>.*)(\r\n|\n)Kernel-version: (?P<Kernel_v>.*)(\r\n|\n).*(\r\n|\n)Processor: (?P<processor>.*)(\r\n|\n)Memory-total: (?P<memory_kb>[0-9]+)(\r\n|\n)DateTime: (?P<datetime>.*)(\r\n|\n)Call: (?P<call>.*)(\r\n|\n)'
-		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
+		m = self.match_regex(regex, ''.join(lines[:RUN_HEADER]), re.MULTILINE + re.DOTALL)
 		if not m:
 			self.print_message(V_QUIET, "Error: header regex failed.")
 			return None
@@ -171,7 +171,7 @@ class FileReader:
 		}
 		return result
 		#this will return a tuple containing the run details as a dictionary and the line on which the tool log begins as an int(in that order).
-	#end of parse_run_details
+	#end of parse_header
 	
 	#content should be the entire log as a string
 	#run_details should be a dictionary containing the keys: model_name, model_version, model_location, tool_name, tool_version, hardware, options, date
@@ -182,7 +182,7 @@ class FileReader:
 		"""Parses informations from the tool log.
 			Arguments:
 				content			the log contents as a string.
-				run_details		the details for the run that generated this log, as returned by parse_run_details()
+				run_details		the details for the run that generated this log, as returned by parse_header()
 			Returns:
 				A dictionary containing everything that needs to go into the database:
 					'model'		a tuple:
@@ -417,51 +417,56 @@ class FileReader:
 
 	def main(self, file_arg=None, verbosity=0):
 		"""Main function for this app
-			This just controls everything.
-			If called by other apps rather than from the commandline, file_arg should contain a list of strings that contain a path to specify a file.
-					See the python documentation for open() for more information.
-				verbosity should only be set if debugging functionality is required (then, use verbosity=2)
+		This just controls everything.
+		If called by other apps rather than from the commandline, file_arg should contain a list of strings that contain a path to specify a file.
+			See the python documentation for open() for more information.
+		verbosity should only be set if debugging functionality is required (then, use verbosity=2)
+			Arguments:
+				verbosity		the level of verbosity
+				file_arg		a list of files, indicated by their path as a string (usually absolute)
+			Returns:
+				the amount of logs that somehow failed
 		"""
-		#if file_arg is specified, this is an external call and we should look for paths there
 		if file_arg:
+			#file_arg is specified, this is an external call and we should look for paths in file_arg
 			self.verbose = verbosity
 			file_list = file_arg
-		#else, just use the parse_app_options function
 		else:
+			#call from commandline, use parse_app_options()
 			(options, args) = self.parse_app_options()
 			self.verbose = options.verbose
 			file_list = args
 		#check if file(s) were provided
 		if not file_list:
 			if self.verbose:
-				raise FileReaderError("Error: No file provided.", debug_data=args)
+				raise FileReaderError("Error: No file(s) provided.", debug_data=args)
 			else:
-				raise FileReaderError("Error: No file provided.")
+				raise FileReaderError("Error: No file(s) provided.")
 		self.print_message(V_VERBOSE, "Verbosity level: %s"%(self.verbose))
 		
-		#start of file-reading
 		all_data=[]
+		#read all files into all_data, each file in a seperate list of strings
 		for path in file_list:
 			lines=[]
-			#path = file_list[0]
 			self.print_message(V_NOISY, "Notice: Reading from file: %s"%(path))
 			with open(path, 'r') as file:
 				for line in file:
 					lines.append(line)
 			all_data.append(lines)
-
+		
 		self.print_message(V_NOISY, "Notice: Read complete\nNotice: Start parsing")
-		#find all the runs
+		
 		runcounter=0
 		errorcounter=0
 		#for each group of lines, ie. each parsed file:
 		for lines in all_data:
 			runs = self.find_runs(lines)
-			#parse each run inside:
+			#split logs in a file
 			for run in runs:
 				data = self.parse(run)
 				#check if something was returned
 				if data:
+					#write to the database
 					try:
 						self.write_to_db(data)
 					except FileReaderError as f:
@@ -471,7 +476,7 @@ class FileReader:
 							self.print_message(V_SILENT, "ERROR: an error occured while writing to the database! %s"%(f.error))
 							return -1
 						else:
-							#it's just a failed write, probably invalid data
+							#it's just an error in the write-process, or a faileld check
 							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( f.error))
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
