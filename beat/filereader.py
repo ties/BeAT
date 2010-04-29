@@ -468,26 +468,24 @@ class FileReader:
 		if created:
 			self.print_message(V_NOISY,"Notice: created Benchmark entry: %s on %s, which ran on: %s"%(t.name, m.name, date))
 			for hardware in hardwarelist:
-				bh = BenchmarkHardware(benchmark=b, hardware=hardware)
-				bh.save()
-			b.save()
+				bh, c = BenchmarkHardware.objects.get_or_create(benchmark=b, hardware=hardware)
+
+			#OptionValue
+			optiondata = data['options']
+			for tuple in optiondata:
+				name, value = tuple
+				o = Option.objects.get(name=name)
+				ov, created = OptionValue.objects.get_or_create(option=o, value=value)
+				if created:
+					self.print_message(V_VERBOSE, "Notice: created a new OptionValue entry.")
+				else:
+					self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
+				bov, c = BenchmarkOptionValue.objects.get_or_create(optionvalue=ov,benchmark=b)
+
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
 			#existing benchmark; don't modify
 			return None
-
-		#OptionValue
-		optiondata = data['options']
-		for tuple in optiondata:
-			name, value = tuple
-			o = Option.objects.get(name=name)
-			ov, created = OptionValue.objects.get_or_create(option=o, value=value)
-			if created:
-				self.print_message(V_VERBOSE, "Notice: created a new OptionValue entry.")
-			else:
-				self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
-			#todo: figure out why this doesn't work anymore
-			#b.optionvalue.add(ov)
 	#end of write_to_db
 
 	def main(self, file_arg=None, verbosity=0):

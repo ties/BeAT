@@ -20,8 +20,11 @@ for i in b:
 				'total_time':i.total_time,
 				'transition_count':i.transition_count, 'states_count':i.states_count,
 				'memory_VSIZE':i.memory_VSIZE, 'memory_RSS':i.memory_RSS, 'finished':i.finished})
-	bench.save()
 	
+	for x in h:
+		bh, c = BenchmarkHardware.objects.get_or_create(hardware=x, benchmark=bench)
+	for x in o:
+		bov, c = BenchmarkOptionValue.objects.get_or_create(optionvalue=x, benchmark=bench)
 
 	
 	

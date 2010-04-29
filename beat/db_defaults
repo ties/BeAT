@@ -34,7 +34,7 @@ alg,name:-reach,
 #####	hardware			#####
 hw,name:x,memory:600,cpu:AMD,disk_space:21456,os:Linux,
 ###################### nips version 1, 2lts-grey ######################
-algtool,algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),regex:(regex:nips2lts-grey: .*\\nnips2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+algtool,algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),regex:(regex:nips2lts-grey: .*\2\\r\\n|\\n\3\2nips2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3.*\2\\r\\n|\\n\3Exit|\2?P<kill>Killed|.*segmentation fault.*\3\3 \\[[0-9]+\\]\2\\r\\n|\\n\3\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:nips,version:1,),),option:(name:strategy=,),regex:(: ,),
 validopt,:(:(:2lts-grey,),:(:nips,:1,),),:(:state=,),:(: ,),
@@ -68,7 +68,7 @@ shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:q,),:q,
 shortarg,algorithm_tool:(:(:2lts-grey,),:(:nips,:1,),),:(:help,),:h,
 ###################### end of: nips version 1, 2lts-grey ######################
 ###################### lpo version 1, 2lts-grey			 ######################
-algtool,algorithm:(name:2lts-grey,),tool:(name:lpo,version:1,),regex:(regex:lpo2lts-grey: .*\\nlpo2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3 .*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+algtool,algorithm:(name:2lts-grey,),tool:(name:lpo,version:1,),regex:(regex:lpo2lts-grey: .*\2\\r\\n|\\n\3\2lpo2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3 .*\2\\r\\n|\\n\3Exit|\2?P<kill>Killed|.*segmentation fault.*\3\3 \\[[0-9]+\\]\2\\r\\n|\\n\3\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:lpo,version:1,),),option:(name:strategy=,),regex:(: ,),
 validopt,:(:(:2lts-grey,),:(:lpo,:1,),),:(:state=,),:(: ,),
@@ -104,7 +104,7 @@ shortarg,algorithm_tool:(:(:2lts-grey,),:(:lpo,:1,),),:(:q,),:q,
 shortarg,algorithm_tool:(:(:2lts-grey,),:(:lpo,:1,),),:(:help,),:h,
 ###################### end of: lpo version 1, 2lts-grey ######################
 ###################### lpo version 1, -reach			 ######################
-algtool,algorithm:(name:-reach,),tool:(name:lpo,version:1,),regex:(regex:lpo-reach: .*\\nlpo-reach: reachability took.*\\nstate space has \2?P<scount>\\d+\3 states.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+algtool,algorithm:(name:-reach,),tool:(name:lpo,version:1,),regex:(regex:lpo-reach: .*\2\\r\\n|\\n\3\2lpo-reach: reachability took.*\2\\r\\n|\\n\3state space has \2?P<scount>\\d+\3 states.*\2\\r\\n|\\n\3Exit|\2?P<kill>Killed|.*segmentation fault.*\3\3 \\[[0-9]+\\]\2\\r\\n|\\n\3\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:lpo,version:1,),),option:(name:order=,),regex:(: ,),
 validopt,:(:(:-reach,),:(:lpo,:1,),),:(:deadlock,),:(: ,),
@@ -142,7 +142,7 @@ shortarg,algorithm_tool:(:(:-reach,),:(:lpo,:1,),),:(:help,),:h,
 #			[
 #			]
 ###################### nips version 1, -reach			 ######################
-algtool,algorithm:(name:-reach,),tool:(name:nips,version:1,),regex:(regex:nips-reach: .*\\nnips-reach: reachability took.*\\nstate space has \2?P<scount>\\d+\3 states.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+algtool,algorithm:(name:-reach,),tool:(name:nips,version:1,),regex:(regex:nips-reach: .*\2\\r\\n|\\n\3\2nips-reach: reachability took.*\2\\r\\n|\\n\3state space has \2?P<scount>\\d+\3 states.*\2\\r\\n|\\n\3Exit|\2?P<kill>Killed|.*segmentation fault.*\3\3 \\[[0-9]+\\]\2\\r\\n|\\n\3\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:nips,version:1,),),option:(name:order=,),regex:(: ,),
 validopt,:(:(:-reach,),:(:nips,:1,),),:(:deadlock,),:(: ,),
@@ -169,7 +169,7 @@ shortarg,algorithm_tool:(:(:-reach,),:(:nips,:1,),),:(:q,),:q,
 shortarg,algorithm_tool:(:(:-reach,),:(:nips,:1,),),:(:help,),:h,
 ###################### end of: nips version 1, -reach ######################
 ###################### etf version 1, 2lts-grey ######################
-algtool,algorithm:(name:2lts-grey,),tool:(name:etf,version:1,),regex:(regex:etf2lts-grey: .*\\netf2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3 .*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+algtool,algorithm:(name:2lts-grey,),tool:(name:etf,version:1,),regex:(regex:etf2lts-grey: .*\2\\r\\n|\\n\3\2etf2lts-grey: state space has \\d+ levels \2?P<scount>\\d+\3 states \2?P<tcount>\\d+\3 .*\2\\r\\n|\\n\3Exit|\2?P<kill>Killed|.*segmentation fault.*\3\3 \\[[0-9]+\\]\2\\r\\n|\\n\3\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:2lts-grey,),tool:(name:etf,version:1,),),option:(name:strategy=,),regex:(: ,),
 validopt,:(:(:2lts-grey,),:(:etf,:1,),),:(:state=,),:(: ,),
@@ -203,7 +203,7 @@ shortarg,algorithm_tool:(:(:2lts-grey,),:(:etf,:1,),),:(:q,),:q,
 shortarg,algorithm_tool:(:(:2lts-grey,),:(:etf,:1,),),:(:help,),:h,
 ###################### end of: etf version 1, 2lts-grey ######################
 ###################### etf version 1, -reach			 ######################
-algtool,algorithm:(name:-reach,),tool:(name:etf,version:1,),regex:(regex:etf-reach: .*\\netf-reach: reachability took.*\\nstate space has \2?P<scount>\\d+\3 states.*\\nExit \\[[0-9]+\\]\\n\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
+algtool,algorithm:(name:-reach,),tool:(name:etf,version:1,),regex:(regex:etf-reach: .*\2\\r\\n|\\n\3etf-reach: reachability took.*\2\\r\\n|\\n\3\2state space has \2?P<scount>\\d+\3 states.*\2\\r\\n|\\n\3Exit|\2?P<kill>Killed|.*segmentation fault.*\3\3 \\[[0-9]+\\]\2\\r\\n|\\n\3\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:etf,version:1,),),option:(name:order=,),regex:(: ,),
 validopt,:(:(:-reach,),:(:etf,:1,),),:(:deadlock,),:(: ,),
@@ -230,9 +230,6 @@ shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:q,),:q,
 shortarg,algorithm_tool:(:(:-reach,),:(:etf,:1,),),:(:help,),:h,
 ###################### end of: etf version 1, -reach ######################
 ###################### dve version 1, -reach			 ######################
-#regex is:
-#dve-reach: .*(\r\n|\n)(dve-reach: reachability took.*(\r\n|\n)state space has (?P<scount>\d+) states.*(\r\n|\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \[[0-9]+\](\r\n|\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\d+)KB,( Max | )RSS = (?P<rss>\d+)KB
-#
 algtool,algorithm:(name:-reach,),tool:(name:dve,version:1,),regex:(regex:dve-reach: .*\2\\r\\n|\\n\3\2dve-reach: reachability took.*\2\\r\\n|\\n\3state space has \2?P<scount>\\d+\3 states.*\2\\r\\n|\\n\3Exit|\2?P<kill>Killed|.*segmentation fault.*\3\3 \\[[0-9]+\\]\2\\r\\n|\\n\3\2?P<utime>[0-9.]+\3 user\1 \2?P<stime>[0-9.]+\3 system\1 \2?P<etime>[0-9.]+\3 elapsed --\2 Max | \3VSize = \2?P<vsize>\\d+\3KB\1\2 Max | \3RSS = \2?P<rss>\\d+\3KB,),
 #####	valid options		#####
 validopt,algorithm_tool:(algorithm:(name:-reach,),tool:(name:dve,version:1,),),option:(name:order=,),regex:(: ,),
