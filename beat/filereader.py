@@ -38,7 +38,8 @@ class FileReader:
 			This function returns nothing.
 		"""
 		if self.verbose >= level:
-			self.log.append(text)
+			#self.log.append(text)
+			print text
 	#end of print_message
 
 	def match_regex(self, regex, input, flags=None):
@@ -484,6 +485,7 @@ class FileReader:
 
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
+			print "return None"
 			#existing benchmark; don't modify
 			return None
 	#end of write_to_db
@@ -526,7 +528,10 @@ class FileReader:
 				for line in file:
 					lines.append(line)
 			all_data.append(lines)
+			self.process(all_data)
+			all_data=[]
 		
+		"""
 		self.print_message(V_NOISY, "Notice: Read complete\nNotice: Start parsing")
 		
 		runcounter=0
@@ -562,9 +567,47 @@ class FileReader:
 					errorcounter+=1
 				runcounter+=1
 		#end of file-reading
+		"""
+		errorcounter=0
 		return errorcounter
 	#end of main
 	
+	def process(self, all_data):
+		self.print_message(V_NOISY, "Notice: Read complete\nNotice: Start parsing")
+		
+		runcounter=0
+		errorcounter=0
+		#for each group of lines, ie. each parsed file:
+		for lines in all_data:
+			runs = self.find_runs(lines)
+			#split logs in a file
+			for run in runs:
+				data = self.parse(run)
+				#check if something was returned
+				if data:
+					#write to the database
+					try:
+						self.write_to_db(data)
+					except FileReaderError as f:
+						#some known error occured, check how bad it is
+						if f.db_altered:
+							#major panic!
+							self.print_message(V_SILENT, "ERROR: an error occured while writing to the database! %s"%(f.error))
+							return -1
+						else:
+							#it's just an error in the write-process, or a faileld check
+							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( f.error))
+							errorcounter+=1
+						self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
+					except Exception, e:
+						#an unknown error occured, skip this part
+						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
+						errorcounter+=1
+				else:
+					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
+					errorcounter+=1
+				runcounter+=1
+
 	def find_runs(self, lines):
 		"""Splits the argument into a list of runs
 		This function will return a list of lists, each containing a complete run.

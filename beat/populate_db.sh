@@ -1,4 +1,3 @@
-date
 rm db.db
 python manage.py syncdb
 export DJANGO_SETTINGS_MODULE=settings
@@ -11,4 +10,3 @@ if [ ! -z $1 ]
 then
 	python filereader.py --quiet $* > log1.txt~
 fi
-date

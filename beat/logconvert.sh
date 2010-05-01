@@ -1,30 +1,51 @@
 let counter=0
-if [ -d $1 ] && [ ! -z $1 ] &&	 ( [ ! -e ./tmp ] || ( [ ! -z $2 ] && [ ! -e $2 ]   ) && [ ! -z $3 ])
+
+
+if [ ! -z "$1" ] && [ -d "$1" ] && [ ! -z "$2" ] && [ ! -z "$3" ]
 then
-	echo "working directory: $1"
+	#fiddle with the arguments
+	f=$1
+	g=$2
+
+	case $f in
+		 */) f=$f;;
+		 *) f=$f/;;
+	esac
+	case $g in
+		 */) g=$g;;
+		 *) g=$g/;;
+	esac
+
+	#print out
+	echo "logs source: $f"
+	echo "writing to dir: $g"
+	echo "Call: $3 <model_filename>"
+
 else
-	echo "invalid directory $1 or the ./tmp folder exists and $2 points to something that exists or is not provided, or tool/algortihm ($3) is not provided"
-	echo "please provide a valid directory and target, or delete ./tmp, and provide a valid tool/algorithm name (examples: dve2lts-grey, dve-reach)"
+	#print error message
+	echo "Error, invalid arguments. Usage:"
+	echo "./logconvert.sh <source_dir> <target_dir> <call>"
+	if [ -z "$1" ]
+	then
+		echo "empty argument <source_dir>"
+	elif [ ! -d "$1" ]
+	then
+		echo "$1 is not a directory"
+	elif [ -z "$2" ]
+	then
+		echo "empty argument <target_dir>"
+	elif [ -z "$3" ]
+	then
+		echo "empty argument <call>"
+	fi
 	exit
 fi
 
-f=$1
-
-if [ -z $2 ]
-then
-	g="./tmp"
-else
-	g=$2
-fi
-
-case $f in
-     */) f=$f;;
-     *) f=$f/;;
-esac
-
 for i in $f*; do
-	if [ -z $( echo "$i" | egrep '.*\.o.*' ) ]
+	# if the log matches the regular expression '.*\.e[0-9]+$' (ie. ends with '.e' followed by digits)
+	if [ ! -z $( echo "$i" | egrep '.*\.e[0-9]+$' ) ]
 	then
+		#produce a header and the log
 		(
 			echo Nodename: $(uname -n)
 			echo Hardware-name: $(uname -m)
@@ -36,7 +57,7 @@ for i in $f*; do
 			echo Processor: $(uname -p)
 			echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s " " | cut -d" " -f 2 -)
 			echo DateTime: 2010 03 16 13 24 43
-			echo Call: memtime $3 -c $i
+			echo Call: memtime $3 $i
 			cat $i
 			echo "REPORT ENDS HERE"
 		) > "$i.eatme"
