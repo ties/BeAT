@@ -20,7 +20,8 @@ class CompareModelsForm(forms.Form):
 	option = forms.ModelChoiceField(OptionValue.objects.all(), required=False)
 	#models = forms.ModelMultipleChoiceField(Model.objects.all())
 
-	
-class UploadLogForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    file  = forms.FileField()
+
+class JobGenForm(forms.Form):
+	models = forms.ModelMultipleChoiceField(Model.objects.all(), required=True)
+	tool = forms.ModelChoiceField(Tool.objects.all(), empty_label=None)
+	algorithm = forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None)

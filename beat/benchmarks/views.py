@@ -11,25 +11,46 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 # MatPlotLib
 import numpy as np
 
-# Log upload
-from beat.benchmarks.log_upload import handle_uploaded_file
+"""Page for batch job generation
+"""
+@login_required
+def jobgen(request):
+	#fetch tool/algorithms
+	#t = Tool.objects.all()
+	#a = Algorithm.objects.all()
+	#fetch models
+	#m = Model.objects.all()
+	#display page
+	form = JobGenForm()
+	return render_to_response('jobgen.html', {'form':form}, context_instance=RequestContext(request))
 
-# Log upload
-def upload_log(request):
-	if request.method == 'POST':
-		form = UploadLogForm(request.POST, request.FILES)
-		if form.is_valid():
-			title = form.cleaned_data['title']
-			handle_uploaded_file(request.FILES['file'], title)
-			try:
-				FileReader.main(FileReader(), [os.path.join(beat.settings.STATIC_MEDIA_ROOT, 'upload', 'logs') + "%s"%(request.FILES['file'])], 2)
-			except:
-				return HttpResponse('error')
-			else:
-				return HttpResponse('ok')
+"""Generate batch job
+"""
+@login_required
+def jobgen_create(request):
+	if request.method == 'POST': # If the form has been submitted...	
+		print request.POST
+		form = JobGenForm(request.POST) # A form bound to the POST data
+		print "hai"
+		if (form.is_valid()):
+			print "valid"
+			# Process the data in form.cleaned_data
+			t = form.cleaned_data['tool']
+			a = form.cleaned_data['algorithm']
+			m = form.cleaned_data['models']
+			from beat.jobs.jobs import *
+			j = JobGenerator()
+			jobs = []
+			for x in m:
+				jobs.append(j.pbsgen("name","1","memtime %s%s %s"%(t.name,a.name,x.name)))
+			return render_to_response('jobgen_create.html', { 'job':jobs }, context_instance=RequestContext(request))
+		else:
+			print "invalid"
+			return redirect('benchmarks.views.jobgen')
 	else:
-		form = UploadLogForm()
-	return render_to_response('upload_log.html', {'form': form}, context_instance=RequestContext(request))
+		return redirect('benchmarks.views.jobgen')
+
+
 
 """
 Produces a scatterplot from a set of benchmarks.

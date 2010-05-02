@@ -34,8 +34,10 @@ urlpatterns = patterns('',
 	# Form with filters for ModelComparisons
 	(r'^compare/model/$', 'benchmarks.views.compare_model'),
 
-	# Log upload
-	(r'^upload/', 'benchmarks.views.upload_log'),
+	#Job Generation
+	#authorization should be here too
+	(r'^jobgen/$', 'benchmarks.views.jobgen'),
+	(r'^jobgen/go/$', 'benchmarks.views.jobgen_create'),
 	
 	# Uncomment the next line to enable the admin:
 	(r'^admin/', include(admin.site.urls)),
