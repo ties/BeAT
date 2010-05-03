@@ -8,6 +8,9 @@ from beat.benchmarks.models import *
 from forms import *
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
+import csv
+from django.db.models.loading import get_model
+
 # MatPlotLib
 import numpy as np
 
@@ -29,11 +32,8 @@ def jobgen(request):
 @login_required
 def jobgen_create(request):
 	if request.method == 'POST': # If the form has been submitted...	
-		print request.POST
 		form = JobGenForm(request.POST) # A form bound to the POST data
-		print "hai"
 		if (form.is_valid()):
-			print "valid"
 			# Process the data in form.cleaned_data
 			t = form.cleaned_data['tool']
 			a = form.cleaned_data['algorithm']
@@ -45,7 +45,6 @@ def jobgen_create(request):
 				jobs.append(j.pbsgen("1", "%s%s"%(t.name,a.name),"--cache","%s"%(x.name)))
 			return render_to_response('jobgen_create.html', { 'job':jobs }, context_instance=RequestContext(request))
 		else:
-			print "invalid"
 			return redirect('benchmarks.views.jobgen')
 	else:
 		return redirect('benchmarks.views.jobgen')
@@ -279,6 +278,8 @@ Show the list of benchmarks with pagination
 @login_required
 def benchmarks(request, numResults=25):
 	benches = Benchmark.objects.all()
+	
+	"""
 	paginator = Paginator(benches, numResults, orphans=10)
 	
 	# Make sure page request is an int. If not, deliver first page.
@@ -292,7 +293,7 @@ def benchmarks(request, numResults=25):
 		benches = paginator.page(page)
 	except (EmptyPage, InvalidPage):
 		benches = paginator.page(paginator.num_pages)
-
+	"""
 	return render_to_response('benchmarks.html', { 'benchmarks' : benches }, context_instance=RequestContext(request))
 
 """
@@ -304,10 +305,40 @@ def compare(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareForm(request.POST) # A form bound to the POST data
 		if (form.is_valid()):
-			# Process the data in form.cleaned_data
+		
 			b = form.cleaned_data['benchmarks']
-			comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])))
-			return render_to_response('compare.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
+			# Export CSV button has been clicked:
+			if 'export_csv' in request.POST:
+				ids = [bench.id for bench in b]
+				bs = Benchmark.objects.filter(id__in=ids)
+				model = bs.model
+				
+				response = HttpResponse(mimetype='text/csv')
+				response['Content-Disposition'] = 'attachment; filename=benchmarks.csv'
+				writer = csv.writer(response)
+				# Write headers to CSV file
+				headers = []
+				for field in model._meta.fields:
+					headers.append(field.name)
+				writer.writerow(headers)
+				# Write data to CSV file
+				for obj in bs:
+					row = []
+					for field in headers:
+						if field in headers:
+							val = getattr(obj, field)
+							if callable(val):
+								val = val()
+							row.append(val)
+					writer.writerow(row)
+				# Return CSV file to browser as download
+				return response
+			
+			# Otherwise, compare data:
+			else:
+				# Process the data in form.cleaned_data
+				comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])))
+				return render_to_response('compare.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
 	else:
 		return redirect(benchmarks.views.benchmarks)
 
