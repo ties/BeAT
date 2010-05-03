@@ -20,13 +20,16 @@ def get_any_parent(folder, number):
 # @requires folder to be a Sring with the location of a .git folder
 # @returns the committime in the form of a time.struct_time object of the object associated wiht the given hash will return he startdate of the tree if item does not exist.
 def get_date(folder, hash):
+	#iterator for all commits.
 	i = Repo(folder).iter_commits()
 	h = i.next()
 	try:
+		# try to mach the srint with all commits.
 		while not(str(h.sha).startswith(hash)):
 			h = i.next()
 	except StopIteration:
-		h
+		# only gets here when nothing matches and does nothing
+		pass
 	return time.gmtime(h.authored_date)
 
 print get_date("C:\Vakken\OWP", "c2bee8864")
