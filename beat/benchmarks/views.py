@@ -32,11 +32,8 @@ def jobgen(request):
 @login_required
 def jobgen_create(request):
 	if request.method == 'POST': # If the form has been submitted...	
-		print request.POST
 		form = JobGenForm(request.POST) # A form bound to the POST data
-		print "hai"
 		if (form.is_valid()):
-			print "valid"
 			# Process the data in form.cleaned_data
 			t = form.cleaned_data['tool']
 			a = form.cleaned_data['algorithm']
@@ -48,7 +45,6 @@ def jobgen_create(request):
 				jobs.append(j.pbsgen("name","1","memtime %s%s %s"%(t.name,a.name,x.name)))
 			return render_to_response('jobgen_create.html', { 'job':jobs }, context_instance=RequestContext(request))
 		else:
-			print "invalid"
 			return redirect('benchmarks.views.jobgen')
 	else:
 		return redirect('benchmarks.views.jobgen')
