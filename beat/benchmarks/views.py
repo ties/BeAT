@@ -42,7 +42,7 @@ def jobgen_create(request):
 			j = JobGenerator()
 			jobs = []
 			for x in m:
-				jobs.append(j.pbsgen("name","1","memtime %s%s %s"%(t.name,a.name,x.name)))
+				jobs.append(j.pbsgen("1", "%s%s"%(t.name,a.name),"--cache","%s"%(x.name)))
 			return render_to_response('jobgen_create.html', { 'job':jobs }, context_instance=RequestContext(request))
 		else:
 			print "invalid"

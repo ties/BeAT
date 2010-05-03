@@ -2,5 +2,8 @@
 {% block title %}Benchmarks{% endblock %}
 {% block content %}
 		<h2>This is a debug page</h2>
-		{{job}}
+		{% for pbs in job %}
+			<hr>
+{{ pbs|linebreaks }}
+		{% endfor %}
 {% endblock %}

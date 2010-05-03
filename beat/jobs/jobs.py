@@ -6,8 +6,11 @@ class JobGenerator:
 	
 	__directory = "."
 	
-	def __getSysInfo(self, toolname):
+	def __getSysInfo(self, toolname, modelname, tooloptions):
 		result = ""
+		
+		result += "echo BEGIN OF HEADER\n"
+		
 		result += "echo Nodename: $(uname -n)\n"
 		result += "echo Hardware-name: $(uname -m)\n"
 		result += "echo OS: $(uname -o)\n"
@@ -16,10 +19,13 @@ class JobGenerator:
 		result += "echo Kernel-version: $(uname -v)\n"
 		result += "echo Hardware-platform: $(uname -i)\n"
 		result += "echo Processor: $(uname -p)\n"
-		result += "echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s " " | cut -d\" \" -f 2 -\n"
+		result += "echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s \" \" | cut -d\" \" -f 2 -)\n"
 		result += "echo DateTime: $(date '+%Y %m %d %H %M %S') $[ $(date '+%N') / 1000]\n"
 		
-		result += "echo Tool version: $(" + toolname + " --version | cut -d' ' -f 2)\n"
+		result += "echo ToolVersion: $(" + toolname + " --version | cut -d' ' -f 2)\n"
+		result += "echo Call: " + toolname + " " + tooloptions + " " + modelname + "\n"
+		
+		result += "echo END OF HEADER\n"
 		return result
 	
 	def __makePBSHeader(self, filename, nodes):
@@ -37,21 +43,24 @@ class JobGenerator:
 		result += "ulimit -s 65536\n"
 		return result
 	
-	def pbsgen(self, toolname, modelname, nodes, tooloptions):
+	def pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix=""):
 		"""Generates the jobs"""
 		result = ""
-		result += self.__makePBSHeader(modelname, toolname, nodes)
+		result += self.__makePBSHeader(toolname, nodes)
 		result += "\n"
 		
 		result += "cd " + self.__directory + "\n"
 		result += self.__setStack()
-		result += "echo command: " + command + "\n"
-		result += self.__getSysInfo()
+		result += "echo command: " + prefix + " memtime " + toolname + " " + tooloptions + " " + modelname + "\n"
+		result += self.__getSysInfo(toolname, modelname, tooloptions)
 		result += "\n"
-		result += "memtime " + toolname + " " + tooloptions + " " + modelname + "\n"
+		if prefix:
+			result += prefix + " memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
+		else:
+			result += "memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
 		return result
 
 if __name__ == '__main__':
 	j = JobGenerator()
-	print j.pbsgen("naam","20","memtime hoi")
+	print j.pbsgen("1", "lpo2lts-grey", "-cache", "dphil-10.tbf")
 	sys.exit(0)
