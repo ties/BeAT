@@ -50,11 +50,12 @@
 		<!-- END FILTER TABLE -->
 		
 		<!-- BENCHMARK TABLE -->
+		<form action="{% url benchmarks.views.compare %}" method="post" name="benchmark_form">{% csrf_token %}
 		<div class="scroll">
-			<form action="{% url benchmarks.views.compare %}" method="post">{% csrf_token %}
+			
 				<table class="benchmarks">
 					<tr>
-						<th>&nbsp;</th>
+						<th><input type="button" name="CheckAll" value="All" onClick="checkAll(document.benchmark_form.benchmarks)"></th>
 						<th id="modelsort" class="sort">Model</th>
 						<th id="statessort" class="sort">States</th>
 						<th id="runtimesort" class="sort">Runtime</th>
@@ -62,7 +63,7 @@
 						<th id="finishedsort" class="sort">Finished</th>
 					</tr>
 					
-					{% for benchmark in benchmarks.object_list %}
+					{% for benchmark in benchmarks %}
 					<tr>
 						<td><input type="checkbox" name="benchmarks" id="{{ benchmark.id }}" value="{{ benchmark.id }}" /></td>
 						
@@ -75,7 +76,7 @@
 					</tr>
 					{% endfor %}
 				
-					<!-- PAGINATION START -->
+					<!-- PAGINATION START 
 					<tr>
 						<th colspan="6">
 							
@@ -99,10 +100,13 @@
 							Showing {{ benchmarks.start_index }} - {{ benchmarks.end_index }} of {{ benchmarks.paginator.count }}
 						</th>
 					</tr>
-					<!-- PAGINATION END -->
+					 PAGINATION END -->
 				</table>
-				<input type="submit" value="Compare" />
-			</form>
+				
+			
 		</div>
+		<input type="submit" name="compare"  value="Compare" />
+		<input type="submit" name="export_csv"  value="Export CSV" />
+		</form>
 		<!-- END BENCHMARK TABLE -->
 {% endblock %}
