@@ -6,6 +6,7 @@ from beat.benchmarks.models import Benchmark, Model, Algorithm, Tool, OptionValu
 
 class CompareForm(forms.Form):
 	benchmarks = forms.ModelMultipleChoiceField(Benchmark.objects.all(), required=False, widget=widgets.CheckboxSelectMultiple)
+	name = forms.CharField(max_length=255, required=False)
 	
 class CompareModelsForm(forms.Form):
 	DATA_TYPES = (

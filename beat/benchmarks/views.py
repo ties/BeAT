@@ -289,14 +289,17 @@ def compare(request):
 		if (form.is_valid()):
 		
 			b = form.cleaned_data['benchmarks']
+			title = form.cleaned_data['name']
 			# Export CSV button has been clicked:
 			if 'export_csv' in request.POST:
 				ids = [bench.id for bench in b]
 				bs = Benchmark.objects.filter(id__in=ids)
 				model = bs.model
+				if (title == ''):
+					title = 'benchmarks'
 				
 				response = HttpResponse(mimetype='text/csv')
-				response['Content-Disposition'] = 'attachment; filename=benchmarks.csv'
+				response['Content-Disposition'] = 'attachment; filename=%s.csv' % title
 				writer = csv.writer(response)
 				# Write headers to CSV file
 				headers = []
@@ -317,15 +320,17 @@ def compare(request):
 				return response
 			
 			# Otherwise, compare data:
-			else:
+			elif 'compare' in request.POST:
 				# Process the data in form.cleaned_data
-				comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])),hash='')
+				comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])),name=title,hash='')
 				c = Comparison.objects.get(pk=comparison.id)
+				if (c.name == ''):
+					c.name = "Comparison #" + c.id
 				c.hash = c.getHash()
 				c.save()
 				return render_to_response('compare.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
-	else:
-		return redirect(benchmarks.views.benchmarks)
+			
+	return render_to_response('benchmarks.html', {'form': form}, context_instance=RequestContext(request))
 
 """
 Shows the comparison graph that is saved by a user.

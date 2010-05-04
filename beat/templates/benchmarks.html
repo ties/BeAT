@@ -3,6 +3,7 @@
 {% block content %}
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filter.js"></script>
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
+		
 		<h2>Benchmark Table</h2>
 		
 		<!-- FILTER TABLE -->
@@ -77,10 +78,14 @@
 				
 			
 		</div>
-		<input type="button" id="CheckAll" value="All" />
-		<input type="button" id="InvertAll" name="InvertAll" value="Invert" />
-		<input type="submit" name="compare"  value="Compare" />
-		<input type="submit" name="export_csv"  value="Export CSV" />
+		{{ form.name.errors }}
+		<p><label for="id_name">Title</label><input type="text" name="name" id="id_name" /></p>
+		<p>
+			<input type="button" id="CheckAll" value="All" />
+			<input type="button" id="InvertAll" name="InvertAll" value="Invert" />
+			<input type="submit" name="compare" value="Compare" />
+			<input type="submit" name="export_csv"  value="Export CSV" />
+		</p>
 		</form>
 		<!-- END BENCHMARK TABLE -->
 {% endblock %}

@@ -130,13 +130,14 @@ class Comparison(models.Model):
 	user = models.ForeignKey(User, related_name="owner_c")
 	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
+	name = models.CharField(max_length=255)
 	hash = models.CharField(max_length=40)
 	
 	def getHash(self):
 		return  hash(str(self.id) + str(self.date_time))
 
 	def __unicode__(self):
-		return "%s" % (self.benchmarks)
+		return "%s" % (self.name)
 
 class ModelComparison(models.Model):
 	DATA_TYPES = (
@@ -151,9 +152,9 @@ class ModelComparison(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
 	optionvalue = models.ForeignKey('OptionValue', blank=True, null=True)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
+	name = models.CharField(max_length=255)
 	hash = models.CharField(max_length=27)
 	
 	def __unicode__(self):
-		return "%s, %s, %s: %s" % (self.tool, self.algorithm, self.optionvalue, self.type)
-
+		return "%s" % (self.name)
 
