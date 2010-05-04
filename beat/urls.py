@@ -17,7 +17,7 @@ urlpatterns = patterns('',
 	(r'^compare$', 'benchmarks.views.compare'),
 	
 	# Show detail for a benchmark Comparison or ModelComparison, it takes the ID from the db
-	url(r'^compare/(?P<id>\d+)/(?P<hash>[0-9a-fA-F]*)/$', 'benchmarks.views.compare_detail', name="detail_benchmark"),
+	url(r'^compare/(?P<id>\d+)$', 'benchmarks.views.compare_detail', name="detail_benchmark"),
 	url(r'^compare/model/(?P<id>\d+)/$', 'benchmarks.views.compare_detail', {'model' : True},name="detail_model"),
 	# Graph for the model-comparison
 	(r'^compare/model/(?P<id>\d+)/benchmark.png$', 'benchmarks.views.graph_model'),

@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
 from django.shortcuts import render_to_response, redirect, get_object_or_404, get_list_or_404
@@ -322,13 +322,12 @@ def compare(request):
 			# Otherwise, compare data:
 			elif 'compare' in request.POST:
 				# Process the data in form.cleaned_data
-				comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])),name=title,hash='')
-				c = Comparison.objects.get(pk=comparison.id)
+				c, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])),name=title,hash='')
 				if (c.name == ''):
 					c.name = "Comparison #" + c.id
 				c.hash = c.getHash()
 				c.save()
-				return render_to_response('compare.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
+				return render_to_response('compare.html', { 'comparison' : c }, context_instance=RequestContext(request))
 			
 	return render_to_response('benchmarks.html', {'form': form}, context_instance=RequestContext(request))
 
@@ -336,14 +335,17 @@ def compare(request):
 Shows the comparison graph that is saved by a user.
 @param id Comparison id if model=False; else ModelComparison id
 """		
-def compare_detail(request, id, hash, model=False):
-	if model:
-		c = get_object_or_404(ModelComparison,hash=hash,pk=id)
-		return render_to_response('compare_models.html', { 'id' : id }, context_instance=RequestContext(request))
+def compare_detail(request, id, model=False):
+	if (request.GET.__contains__('auth')):
+		hash = request.GET['auth']
+		if model:
+			c = get_object_or_404(ModelComparison,hash=hash,pk=id)
+			return render_to_response('compare_models.html', { 'comparison' : c }, context_instance=RequestContext(request))
+		else:
+			c = get_object_or_404(Comparison,hash=hash,pk=id)
+			return render_to_response('compare.html', { 'comparison' : c }, context_instance=RequestContext(request))
 	else:
-		c = get_object_or_404(Comparison,hash=hash,pk=id)
-		return render_to_response('compare.html', { 'id' : id }, context_instance=RequestContext(request))
-
+		return HttpResponseForbidden('<h1>You are not authorised to view this page.</h1>')
 """
 Shows a list of all Comparisons and ModelComparisons
 """		
