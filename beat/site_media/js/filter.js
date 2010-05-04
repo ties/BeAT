@@ -91,7 +91,7 @@ function addFilterRow(row){
 	
 	sortFilters();
 	
-	console.log('Added a new filterrow, current filters: '+filterstring());
+	//console.log('Added a new filterrow, current filters: '+filterstring());
 	
 	renewFilters();
 }
@@ -124,7 +124,7 @@ function removeFilterRow(row){
 	filters = f;
 	sortFilters();
 	
-	console.log('Removed a filterrow, current filters: '+filterstring());
+	//console.log('Removed a filterrow, current filters: '+filterstring());
 	
 	renewFilters();
 }
@@ -192,7 +192,7 @@ function changeFilterType(elem,row){
 	f.row = row;
 	filters[row] = f;
 	renewFilters();
-	console.log('Changed a filterrow, current filters: '+filterstring());
+	//console.log('Changed a filterrow, current filters: '+filterstring());
 }
 
 function changeToEmpty(elem,row){
@@ -309,7 +309,7 @@ function sortFilters(){
 		f[filter.row] = filter;
 	});
 	filters = f;
-	console.log('Sorted filters');
+	//console.log('Sorted filters');
 }
 
 function storeSelectedIDs(){
@@ -335,7 +335,7 @@ function storeValues(){
 		else if (filter.type==OPTIONS)					storeOptionsFilter(filter);
 		else if (filter.type==FINISHED)					storeFinishedFilter(filter);
 	});
-	console.log('Stored filter values');
+	//console.log('Stored filter values');
 }
 
 /**
@@ -436,7 +436,7 @@ function renewFilters(){
 	}
 	$('#filters').html(rows);
 	configureHover();
-	console.log('Renewed filters');
+	//console.log('Renewed filters');
 }
 
 function EmptyFilterRow(filter){
@@ -664,7 +664,7 @@ function OptionsFilterRow(filter){
  */
 function addMega(elem){
 	$(elem).addClass("hovering");
-	console.log('Add megadropdownmenu: '+elem.id);
+	//console.log('Add megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -673,7 +673,7 @@ function addMega(elem){
  */
 function removeMega(elem){
 	$(elem).removeClass("hovering");
-	console.log('Remove megadropdownmenu: '+elem.id);
+	//console.log('Remove megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -697,12 +697,12 @@ function configureHover(){
 function filter(){
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
-	console.log('Sending request to server: '+d);
+	//console.log('Sending request to server: '+d);
 	getBenchmarks(d);
 }
 
 function getBenchmarks(d){
-	console.log('Getting benchmarks: '+d);
+	//console.log('Getting benchmarks: '+d);
 	$.ajax({
 		url: 'ajax/benchmarks/',
 		type: 'POST',
@@ -774,7 +774,7 @@ function showSortOptions(){
 
 function changeSort(val){
 	current_sort = val;
-	console.log('Change Sorting: '+val);
+	//console.log('Change Sorting: '+val);
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
 	getBenchmarks(d);
@@ -782,7 +782,7 @@ function changeSort(val){
 
 function changeSortOrder(val){
 	current_sort_order = val;
-	console.log('Change Sorting Order: '+val);
+	//console.log('Change Sorting Order: '+val);
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
 	getBenchmarks(d);
