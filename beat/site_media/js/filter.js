@@ -49,7 +49,7 @@ var FINISHEDFILTER = '({"type" : "","row" : -1,"value" : []})';
 /** global array ORDERS which keeps all the possible orders in it **/
 var ORDERS = new Array('id','model','states','runtime','memory_rss','finished');
 
-var COLUMNS = new Array('Model','States','Runtime','Memory (RSS)','Finished');
+var DEFAULTCOLUMNS = new Array('model__name','states_count','total_time','memory_RSS','finished');
 
 /** global array filters which keeps all the stored filters in it **/
 var filters = new Array();
@@ -64,7 +64,7 @@ var current_sort = ORDERS[0];
 var current_sort_order = "ASC";
 /** global variable possible_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
 var possible_columns = new Array();
-
+var checked_columns = DEFAULTCOLUMNS;
 var checked_benchmarks = new Array();
 
 
@@ -697,7 +697,9 @@ function configureHover(){
 
 function filter(){
 	storeValues();
-	d = 'filters='+getFilter()+'&sort='+getSort();
+	storeSelectedIDs();
+	storeSelectedColumns();
+	d = 'filters='+getFilter()+'&sort='+getSort()+'&columns='+getColumns();
 	//console.log('Sending request to server: '+d);
 	getBenchmarks(d);
 }
@@ -747,12 +749,13 @@ function handleJSONResponse(json){
 	
 	renewFilters();
 	storeValues();
+	showColumnOptions();
 }
 
 function getTableHeaders(){
 	var res = '<tr><th>&nbsp;</th>';
-	for (var i=0;i<COLUMNS.length;i++){
-		res+= '<th id="'+COLUMNS[i]+'_sort">'+COLUMNS[i]+'</th>';
+	for (var i=0;i<DEFAULTCOLUMNS.length;i++){
+		res+= '<th id="'+DEFAULTCOLUMNS[i]+'_sort">'+DEFAULTCOLUMNS[i]+'</th>';
 	}
 	res+='</tr>';
 	return res;
@@ -797,6 +800,34 @@ function getSort(){
 	return json;
 }
 
+function showColumnOptions(){
+	var txt = "";
+	for (var i=0; i<possible_columns.length; i++){
+		var b = (checked_columns.indexOf(possible_columns[i].value)!=-1)
+		txt+= '<input type="checkbox" name="column" id="'+possible_columns[i].value+'"'+(b ? ' checked' : '')+'>'+possible_columns[i].header+'<br />';
+	}
+	alert(txt);
+	$("#columns").html(txt);
+}
+
+function storeSelectedColumns(){
+	checked_columns = new Array();
+	$("#columns :checked").each(function (i,obj){
+		alert(i+','+obj.id);
+		checked_columns.push(obj.id);
+	});
+}
+
+function getColumns(){
+	var json = '{"columns":[';
+	for (var i=0;i<checked_columns.length;i++){
+		json+='"'+checked_columns[i]+'"'+(i<(checked_columns.length-1) ? ',' : '');
+	}
+	json+=']}';
+	alert(json);
+	return json;
+}
+
 /**
  * Function that is called when the document has finished loading.
  * @ensure	The Array.indexOf function is made /\
@@ -828,4 +859,5 @@ $(document).ready(function(){
 	getBenchmarks('');
 	
 	showSortOptions();
+	//showColumnOptions();
 });
