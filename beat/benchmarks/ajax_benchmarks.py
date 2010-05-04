@@ -26,8 +26,6 @@ def getBenchmarks(request):
 	
 	sort = DEFAULTSORT
 	sortorder = DEFAULTSORTORDER
-	page = 1
-	resperpage = DEFAULTRESPERPAGE
 	
 	print 'check'
 	
@@ -35,18 +33,15 @@ def getBenchmarks(request):
 		jsonsort = json.loads(request.POST['sort'])
 		sort = str(jsonsort['sort'])
 		sortorder = str(jsonsort['sortorder'])
-	if 'paging' in request.POST.keys():
-		page = int(request.POST['paging']['page'])
-		resperpage = str(request.POST['paging']['resperpage'])
 	
 	print 'check'
 	
-	res = getResponse(Benchmark.objects.all(),filters,sort,sortorder,page,resperpage)
+	res = getResponse(Benchmark.objects.all(),filters,sort,sortorder)
 	print res['tools']
 	return res
 
-def getResponse(qs,filters,sort,sortorder,page,resperpage):
-	print "variables; sort=%s, sortorder=%s, page=%i, resperpage=%i" % (sort,sortorder,page,resperpage)
+def getResponse(qs,filters,sort,sortorder):
+	print "variables; sort=%s, sortorder=%s" % (sort,sortorder)
 	
 	result = {}
 	
@@ -94,9 +89,6 @@ def getResponse(qs,filters,sort,sortorder,page,resperpage):
 	
 	print "sorting!"
 	qs = sortQuerySet(qs,sort,sortorder)
-	
-	print "paging!"
-	qs = qs[((page-1)*resperpage):resperpage]
 	
 	for benchmark in qs:
 		benchmarks.append({
@@ -165,5 +157,5 @@ def sortQuerySet(qs,sort,sortorder):
 	if sortorder==SORT_DESCENDING:
 		s = '-'+s
 	print 'sort with: '+s
-	qs.order_by(s)
+	qs = qs.order_by(s)
 	return qs

@@ -65,9 +65,6 @@ var current_sort_order = "ASC";
 /** global variable possible_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
 var possible_columns = new Array();
 
-var current_page = 1;
-var resperpage = 50;
-
 /**
  * Function that adds a filterrow after the filter with filter.row=row
  * @require		row>=0
@@ -146,8 +143,8 @@ function getFilter(row){
  * @ensure		getFilter(row).type = $(elem).attr('value')
  */
 function changeFilterType(elem,row){
-	
-	var f = eval(EMPTYFILTER);
+	/*
+	var f;
 	
 	type = $(elem).attr('value');
 	
@@ -169,7 +166,29 @@ function changeFilterType(elem,row){
 	
 	filters[row] = f;
 	storeValues();
+	*/
+	storeValues();
+	var f;
+	type = $(elem).attr('value');
+	$('#filterValue'+row).attr('value','');
 	
+	if (type==EMPTY){
+		f = eval(EMPTYFILTER);
+	}else if (LISTFILTERS.indexOf(type)!=-1){
+		f = eval(LISTFILTER);
+	}else if (VALUEFILTERS.indexOf(type)!=-1){
+		f = eval(VALUEFILTER);
+	}else if (type==DATE){
+		f = eval(DATEFILTER);
+	}else if (type==OPTIONS){
+		f = eval(OPTIONSFILTER);
+	}else if (type==FINISHED){
+		f = eval(FINISHEDFILTER);
+	}
+	f.type = type;
+	f.row = row;
+	filters[row] = f;
+	renewFilters();
 	console.log('Changed a filterrow, current filters: '+filterstring());
 }
 
@@ -759,26 +778,6 @@ function changeSortOrder(val){
 function getSort(){
 	var json = '{"sort": "'+current_sort+'", "sortorder": "'+current_sort_order+'"}';
 	return json;
-}
-
-function getPage(){
-	var json = '{"page":'+current_page+', "resperpage":'+resperpage+'}';
-	return json;
-}
-
-function nextPage(){
-	current_page++;
-	console.log('Next page: '+current_page);
-}
-
-function previousPage(){
-	current_page--;
-	console.log('Previous page: '+current_page);
-}
-
-function changeResPerPage(val){
-	resperpage = parseInt(val);
-	console.log('Change results per page: '+val);
 }
 
 /**
