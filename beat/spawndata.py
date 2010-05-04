@@ -7,7 +7,7 @@ def varieer(time):
 b = Benchmark.objects.all()
 for i in b:
 	t = i.tool
-	t, c = Tool.objects.get_or_create(name=t.name,version=int(t.version)+1)
+	t, c = Tool.objects.get_or_create(name=t.name,version=t.version[-49:]+'1')
 	h = i.hardware.all()
 	o = i.optionvalue.all()
 	i.user_time = varieer(i.user_time)
