@@ -3,6 +3,7 @@
 #db journal file, created by calls to the db that fail
 *.db-journal
 db.db
+*.db.orig
 #Project and temp files from UltraEdit
 *.prj
 *.pui
