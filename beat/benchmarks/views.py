@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
-from django.shortcuts import render_to_response, redirect, get_list_or_404
+from django.shortcuts import render_to_response, redirect, get_object_or_404, get_list_or_404
 import datetime
 from beat.benchmarks.models import *
 from forms import *
@@ -319,7 +319,10 @@ def compare(request):
 			# Otherwise, compare data:
 			else:
 				# Process the data in form.cleaned_data
-				comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])))
+				comparison, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])),hash='')
+				c = Comparison.objects.get(pk=comparison.id)
+				c.hash = c.getHash()
+				c.save()
 				return render_to_response('compare.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
 	else:
 		return redirect(benchmarks.views.benchmarks)
@@ -328,10 +331,12 @@ def compare(request):
 Shows the comparison graph that is saved by a user.
 @param id Comparison id if model=False; else ModelComparison id
 """		
-def compare_detail(request, id, model=False):
+def compare_detail(request, id, hash, model=False):
 	if model:
+		c = get_object_or_404(ModelComparison,hash=hash,pk=id)
 		return render_to_response('compare_models.html', { 'id' : id }, context_instance=RequestContext(request))
 	else:
+		c = get_object_or_404(Comparison,hash=hash,pk=id)
 		return render_to_response('compare.html', { 'id' : id }, context_instance=RequestContext(request))
 
 """
