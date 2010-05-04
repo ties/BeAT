@@ -336,16 +336,25 @@ Shows the comparison graph that is saved by a user.
 @param id Comparison id if model=False; else ModelComparison id
 """		
 def compare_detail(request, id, model=False):
-	if (request.GET.__contains__('auth')):
-		hash = request.GET['auth']
-		if model:
-			c = get_object_or_404(ModelComparison,hash=hash,pk=id)
-			return render_to_response('compare_models.html', { 'comparison' : c }, context_instance=RequestContext(request))
-		else:
-			c = get_object_or_404(Comparison,hash=hash,pk=id)
-			return render_to_response('compare.html', { 'comparison' : c }, context_instance=RequestContext(request))
+	# Check if the comparison is a ModelComparison or Comparison
+	# Then retrieve the correct object and make a response object with it
+	if model:
+		c = get_object_or_404(ModelComparison,pk=id)
+		response = render_to_response('compare_models.html', { 'comparison' : c }, context_instance=RequestContext(request))
+	else:
+		c = get_object_or_404(Comparison,pk=id)
+		response = render_to_response('compare.html', { 'comparison' : c }, context_instance=RequestContext(request))
+	
+	# Check if the user has rights to see the results:
+	#	- Either the user provided a correct query string like ?auth=<hash>
+	#	- Or the user is the owner of this comparison
+	if ((request.GET.__contains__('auth') and request.GET['auth'] == c.hash) or c.user == request.user):
+		return response	
+	
+	# Otherwise, forbidden to see this page
 	else:
 		return HttpResponseForbidden('<h1>You are not authorised to view this page.</h1>')
+
 """
 Shows a list of all Comparisons and ModelComparisons
 """		

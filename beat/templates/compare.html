@@ -1,7 +1,7 @@
 {% extends "base_site.html" %}
 {% block title %}Benchmarks{% endblock %}
 {% block content %}
-		<h2>Compare Benchmarks</h2>
+		<h2>Comparison: {{ comparison.name }}</h2>
 		<img src="/compare/benchmark-{{ comparison.id }}.png" alt="benchmark chart" />
 		<p><a href="/compare/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 {% endblock %}
