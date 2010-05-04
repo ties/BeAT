@@ -55,7 +55,7 @@
 			
 				<table class="benchmarks">
 					<tr>
-						<th><input type="button" name="CheckAll" value="All" onClick="checkAll(document.benchmark_form.benchmarks)"></th>
+						<th>&nbps;</th>
 						<th id="modelsort" class="sort">Model</th>
 						<th id="statessort" class="sort">States</th>
 						<th id="runtimesort" class="sort">Runtime</th>
@@ -77,6 +77,8 @@
 				
 			
 		</div>
+		<input type="button" id="CheckAll" value="All" />
+		<input type="button" id="InvertAll" name="InvertAll" value="Invert" />
 		<input type="submit" name="compare"  value="Compare" />
 		<input type="submit" name="export_csv"  value="Export CSV" />
 		</form>
