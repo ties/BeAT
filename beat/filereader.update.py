@@ -108,45 +108,48 @@ class FileReader:
 				A dictionary, as specified by parse_log.
 		"""
 		self.print_message(V_NOISY, "Notice: Reading run details and finding parser...")
-		#put the header in a seperate var
+		# # # # # # # # # # # # seperate the header
 		header = []
-		call = ''
-		dt = ''
+		#we save the ids of the 'Call: ' and 'DateTime: ' lines, so we can find them quickly
+		call = 0
+		dt = 0
 		header_started = False
 		i = 0
 		done = False
+		#iterate 'till we've seen the whole log or when the header ends
 		while i < len(lines) and not done:
 			if header_started:
 				#we're reading the header, check for its end
 				if not lines[i].startswith("END OF HEADER"):
 					header.append(lines[i])
 					if lines[i].startswith("Call:"):
-						call = lines[i][6:]
+						call = i-1
 					if lines[i].startswith("DateTime:"):
-						dt = lines[i][10:]
+						dt = i-1
 				else:
 					done = True #stop
 			#we're not at the header yet, keep reading 'till we find the start
 			elif lines[i].startswith("BEGIN OF HEADER"):
-				print 'ohaidar'
 				header_started = True
 			#point to the next line
 			i += 1
+		
 		#split the header off
 		lines = lines[i:]
-		
-		#analyze the header
+
+		# # # # # # # # # # # # analyze the header
 		match = regex.match(''.join(header))
 		self.print_message(V_NOISY, "Notice: header is: %s"%(''.join(header)))
-		if not match:
-			#matching the regex failed, the log must be broken
+		m = match.groupdict()
+		if not m:
+			#matching the regex went quite wrong, the log must be broken
 			self.print_message(V_QUIET, "Error: header regex failed. Are you sure this log is correct?")
 			return None
-		m = match.groupdict()
+		#m should contain the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
 		toolversion = m.get('toolversion')
 		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
-		#parse the Call
-		tmp = self.parse_call(call, toolversion)
+		#parse the Call to find the supplied options
+		tmp = self.parse_call(header[call][6:], toolversion)
 		if tmp:
 			#unpack the tuple
 			(parser, s, optlist, modelname) = tmp
@@ -156,37 +159,32 @@ class FileReader:
 		#s[0] contains the whole call, s[1] contains the tool name and s[2] contains the algorithm name
 		
 		#fetch datetime info and create an object out of it
-		dt = dt.split(' ')
-		
+		dt = header[dt][10:].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]))
-
 		self.print_message(V_NOISY, "Notice: Complete!")
 		
-		#parse the log content
-		
+		# # # # # # # # # # # # #parse the log content
 		m = self.match_regex(parser.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
 		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
-		if m:
-			#collect all relevant information into one dictionary
-			data = {
-				'model': modelname,
-				'tool':(s[1], toolversion),
-				'algorithm':s[2],
-				'hardware':hardware,
-				'options':optlist,
-				#this one should be re-written if we change the regexes to be identified by group numbers rather than group names
-				'benchmark':(
-					dt, m.get('etime'), m.get('utime'), m.get('stime'), m.get('tcount'),
-					m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill')
-				)
-			}
-			#the following ensures 'hardware' and 'options' always contain something iteratable
-			self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (m))
-		else:
+		if not m:
 			#the regex did not match, print an error and return None
 			self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
 			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (run_details['parse_regex'], content) )
 			return None
+		#collect all relevant information into one dictionary
+		data = {
+			'model': modelname,
+			'tool':(s[1], toolversion),
+			'algorithm':s[2],
+			'hardware':hardware,
+			'options':optlist,
+			'benchmark':(
+				dt, m.get('etime'), m.get('utime'), m.get('stime'), m.get('tcount'),
+				m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill')
+			)
+		}
+		#the following ensures 'hardware' and 'options' always contain something iteratable
+		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (m))
 
 		if data:
 			self.print_message(V_NOISY, "Notice: Read successful!")
