@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
 from django.shortcuts import render_to_response, redirect, get_list_or_404
 import datetime
-from filereader import FileReader
 from beat.benchmarks.models import *
 from forms import *
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
