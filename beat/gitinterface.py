@@ -1,5 +1,6 @@
 from git import *
 import time
+from os import system
 
 # this function will return a list of objects.
 # it wil return the given code and number amount of parents of this node as a list newest item first.
@@ -58,9 +59,12 @@ def get_author(gitcommit):
 #returns the parent of the given commit.
 def get_parents(gitcommit):
 	return gitcommit.parents[0]
-	
+
+# allows pulling form git needs the git server as a string
+def pull_from_git(git):
+	system("git pull "+ git)
+
+pull_from_git("git@github.com:ties/BeAT")
 #print get_date(get_matching_item(".", "c2bee8864"))
 #print get_any_parent("C:\Vakken\OWP",5)
-
 #<git.Commit "c2bee88640cc6bebfb9b79a0601d74a67e0cd5c0">
-
