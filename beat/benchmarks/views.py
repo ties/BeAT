@@ -277,24 +277,7 @@ Show the list of benchmarks with pagination
 """
 @login_required
 def benchmarks(request, numResults=25):
-	benches = Benchmark.objects.all()
-	
-	"""
-	paginator = Paginator(benches, numResults, orphans=10)
-	
-	# Make sure page request is an int. If not, deliver first page.
-	try:
-		page = int(request.GET.get('page', '1'))
-	except ValueError:
-		page = 1
-
-	# If page request (9999) is out of range, deliver last page of results.
-	try:
-		benches = paginator.page(page)
-	except (EmptyPage, InvalidPage):
-		benches = paginator.page(paginator.num_pages)
-	"""
-	return render_to_response('benchmarks.html', { 'benchmarks' : benches }, context_instance=RequestContext(request))
+	return render_to_response('benchmarks.html', {}, context_instance=RequestContext(request))
 
 """
 CompareForm handler.

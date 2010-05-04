@@ -47,20 +47,10 @@ var OPTIONSFILTER = '({"type" : "","row" : -1,"options" : [],"values": []})';
 var FINISHEDFILTER = '({"type" : "","row" : -1,"value" : []})';
 
 /** global array ORDERS which keeps all the possible orders in it **/
-var ORDERS = new Array('id','model','states','runtime','memory','finished');
+var ORDERS = new Array('id','model','states','runtime','memory_rss','finished');
 
 var COLUMNS = new Array('Model','States','Runtime','Memory (RSS)','Finished');
 
-/** Constant containing the headers of the benchmarktable **
-var TABLEHEADERS = '<tr>\n\
-						<th>&nbsp;</th>\n\
-						<th id="modelsort" class="sort">Model</th>\n\
-						<th id="statessort" class="sort">States</th>\n\
-						<th id="runtimesort" class="sort">Runtime</th>\n\
-						<th id="memorysort" class="sort">Memory (RSS)</th>\n\
-						<th id="finishedsort" class="sort">Finished</th>\n\
-					</tr>';
-*/
 /** global array filters which keeps all the stored filters in it **/
 var filters = new Array();
 /** global array possible_options which keeps all possible options in it **/
@@ -74,6 +64,9 @@ var current_sort = ORDERS[0];
 var current_sort_order = "ASC";
 /** global variable possible_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
 var possible_columns = new Array();
+
+var current_page = 1;
+var resperpage = 50;
 
 /**
  * Function that adds a filterrow after the filter with filter.row=row
@@ -97,6 +90,9 @@ function addFilterRow(row){
 	filters.push(newf);
 	
 	sortFilters();
+	
+	console.log('Added a new filterrow, current filters: '+filterstring());
+	
 	renewFilters();
 }
 
@@ -127,6 +123,9 @@ function removeFilterRow(row){
 	
 	filters = f;
 	sortFilters();
+	
+	console.log('Removed a filterrow, current filters: '+filterstring());
+	
 	renewFilters();
 }
 
@@ -171,6 +170,7 @@ function changeFilterType(elem,row){
 	filters[row] = f;
 	storeValues();
 	
+	console.log('Changed a filterrow, current filters: '+filterstring());
 }
 
 function changeToEmpty(elem,row){
@@ -196,7 +196,7 @@ function changeToList(elem,row){
 	var index = LISTFILTERS.indexOf(f.type);
 	var hover = '<div><select multiple size="7" class="list">';
 	$(possible_lists[index]).each(function(i,opt){
-		hover+='<option value="'+opt.id+'">'+opt.name+'</option>';
+		hover+='<option value="'+opt.id+'">'+opt.name+(opt.version!='undefined' ? ':'+opt.version : '')+'</option>';
 	});
 	hover+='</select></div>';
 	
@@ -287,6 +287,7 @@ function sortFilters(){
 		f[filter.row] = filter;
 	});
 	filters = f;
+	console.log('Sorted filters');
 }
 
 /**
@@ -302,6 +303,7 @@ function storeValues(){
 		else if (filter.type==OPTIONS)					storeOptionsFilter(filter);
 		else if (filter.type==FINISHED)					storeFinishedFilter(filter);
 	});
+	console.log('stored values');
 }
 
 /**
@@ -368,9 +370,9 @@ function storeFinishedFilter(filter){
 }
 
 /**
- * Function used to give the contents of the filter in an alert-popup
+ * Function used to get the contents of the filter in a string
  */
-function printFilters(){
+function filterstring(){
 	var print = "";
 	for (var i=0;i<filters.length;i++){
 		var filter = filters[i];
@@ -382,7 +384,7 @@ function printFilters(){
 		if (filter.type==OPTIONS)					print+=filter.type+":("+filter.row+",("+filter.options.toString()+'),('+filter.values.toString()+'))\n';
 		if (filter.type==FINISHED)					print+=filter.type+":("+filter.row+","+filter.value+")\n";
 	}
-	alert(print);
+	return print;
 }
 
 /**
@@ -402,6 +404,7 @@ function renewFilters(){
 	}
 	$('#filters').html(rows);
 	configureHover();
+	console.log('Renewed filters');
 }
 
 function EmptyFilterRow(filter){
@@ -540,7 +543,7 @@ function ListFilterRow(filter){
 	var index = LISTFILTERS.indexOf(filter.type);
 	var hover = '<div><select multiple size="7" class="list">';
 	$(possible_lists[index]).each(function(i,opt){
-		hover+='<option value="'+opt.id+'"'+(filter.list.indexOf(opt.id)!=-1 ? ' selected' : '')+'>'+opt.name+'</option>';
+		hover+='<option value="'+opt.id+'"'+(filter.list.indexOf(opt.id)!=-1 ? ' selected' : '')+'>'+opt.name+(opt.version!='undefined' ? ':'+opt.version : '')+'</option>';
 	});
 	hover+='</select></div>';
 	
@@ -629,6 +632,7 @@ function OptionsFilterRow(filter){
  */
 function addMega(elem){
 	$(elem).addClass("hovering");
+	console.log('Add megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -637,6 +641,7 @@ function addMega(elem){
  */
 function removeMega(elem){
 	$(elem).removeClass("hovering");
+	console.log('Remove megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -659,16 +664,13 @@ function configureHover(){
 
 function filter(){
 	storeValues();
-	d = 'filters='+getFilter();
-	alert(d);
-	if (d.substr(0,5).toLowerCase()=='error'){
-		alert(d);
-	}else{
-		getBenchmarks(d);
-	}
+	d = 'filters='+getFilter()+'&sort='+getSort();
+	console.log('Sending request to server: '+d);
+	getBenchmarks(d);
 }
 
 function getBenchmarks(d){
+	console.log('Getting benchmarks: '+d);
 	$.ajax({
 		url: 'ajax/benchmarks/',
 		type: 'POST',
@@ -710,42 +712,9 @@ function handleJSONResponse(json){
 	renewFilters();
 	storeValues();
 }
-/*
-function getFilter(){
-	var res = "";
-	
-	for (var i=0;i<filters.length;i++){
-		var filter = filters[i];
-		if (filter.type!=EMPTY){
-			res+="filter"+filter.row+"="+filter.type+"&";
-			
-			if (LISTFILTERS.indexOf(filter.type)!=-1){
-				$(filter.list).each(function(j,value){
-					res+="filter"+filter.row+"="+value+"&";
-				});
-			}else if(filter.type==OPTIONS){
-				for (var j=0;j<filter.options.length;j++){
-					res+="filter"+filter.row+"="+filter.options[j]+","+filter.values[j]+"&";
-				}
-			}else if(VALUEFILTERS.indexOf(type)!=-1){
-				res+="filter"+filter.row+"="+filter.style+"&";
-				res+="filter"+filter.row+"="+filter.value+"&";
-			}else if(filter.type==DATE){
-				res+="filter"+filter.row+"="+filter.style+"&";
-				res+="filter"+filter.row+"="+filter.value+"&";
-			}else if(filter.type==FINISHED){
-				res+="filter"+filter.row+"="+filter.value+"&";
-			}
-		}else{
-			return "Error: empty row detected";
-		}
-	}
-	
-	return res;
-}
-*/
+
 function getTableHeaders(){
-	var res = '<tr><th id="id_sort"></th>';
+	var res = '<tr><th><input type="button" name="CheckAll" value="All" onClick="checkAll(document.benchmark_form.benchmarks)"></th>';
 	for (var i=0;i<COLUMNS.length;i++){
 		res+= '<th id="'+COLUMNS[i]+'_sort">'+COLUMNS[i]+'</th>';
 	}
@@ -755,52 +724,61 @@ function getTableHeaders(){
 
 function getFilter(){
 	var json = '[';
-	alert(filters);
 	for (var i=0; i<filters.length;i++){
 		json+=JSON.stringify(filters[i]);
 		if (i<(filters.length-1))	json += ',';
 	}
 	json += ']';
+	return json;
 }
-/*
-function sendJSON(){
-	storeValues();
-	
-	$.ajax({
-		url: 'ajax/json/',
-		type: 'POST',
-		data: 'json='+json,
-		beforeSend: function(){
-						$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
-					},
-		success: function(json){
-					handleJSONResponse(json);
-				},
-		error: function(XMLHttpRequest,textStatus,errorThrown){
-					alert("Error with getting results: "+textStatus);
-				},
-		complete: function(){
-					$("#ajaxload").html('');
-				},
-		dataType: 'json'
-	});
-}
-*/
+
 function showSortOptions(){
 	var txt = "";
 	for (var i=0;i<ORDERS.length;i++){
 		txt+= '<option value="'+ORDERS[i]+'">'+ORDERS[i]+'</option>';
 	}
+	$("#sort").html(txt);
 }
 
 function changeSort(val){
 	current_sort = val;
-	alert(current_sort);
+	console.log('Change Sorting: '+val);
+	storeValues();
+	d = 'filters='+getFilter()+'&sort='+getSort();
+	getBenchmarks(d);
 }
 
 function changeSortOrder(val){
 	current_sort_order = val;
-	alert(current_sort_order);
+	console.log('Change Sorting Order: '+val);
+	storeValues();
+	d = 'filters='+getFilter()+'&sort='+getSort();
+	getBenchmarks(d);
+}
+
+function getSort(){
+	var json = '{"sort": "'+current_sort+'", "sortorder": "'+current_sort_order+'"}';
+	return json;
+}
+
+function getPage(){
+	var json = '{"page":'+current_page+', "resperpage":'+resperpage+'}';
+	return json;
+}
+
+function nextPage(){
+	current_page++;
+	console.log('Next page: '+current_page);
+}
+
+function previousPage(){
+	current_page--;
+	console.log('Previous page: '+current_page);
+}
+
+function changeResPerPage(val){
+	resperpage = parseInt(val);
+	console.log('Change results per page: '+val);
 }
 
 /**
@@ -831,7 +809,7 @@ $(document).ready(function(){
 	
 	configureHover();
 	
-	getBenchmarks('');
+	//getBenchmarks('');
 	
 	showSortOptions();
 });

@@ -119,7 +119,7 @@ class FinishedFilter(Filter):
 		
 		return qs
 
-def convertfiltersJSON(arr):
+def convertfilters(arr):
 	result = {}
 	for filter in arr:
 		row = filter['row']
@@ -140,32 +140,4 @@ def convertfiltersJSON(arr):
 			result[row] = OptionsFilter(row,options)
 		elif type==FINISHED:
 			result[row] = FinishedFilter(row,filter['value'])
-	return result
-	
-def convertfilters(filters):
-	result = {}
-	
-	for filter in filters:
-		row = int(filter[0][6])
-		type = filter[1][0]
-		if type in LISTFILTERS:
-			list = []
-			for v in filter[1][1:]:
-				list.append(int(v))
-			print "LIST:"
-			print list
-			result[row] = ListFilter(type,row,list)
-		elif type in VALUEFILTERS:
-			result[row] = ValueFilter(type,row,filter[1][1],float(filter[1][2]))
-		elif type==DATE:
-			result[row] = DateFilter(row,filter[1][1],filter[1][2])
-		elif type==OPTIONS:
-			options = {}
-			for v in filter[1][1:]:
-				arr = v.split(',')
-				options[int(arr[0])] = arr[1]
-			result[row] = OptionsFilter(row,options)
-		elif type==FINISHED:
-			result[row] = FinishedFilter(row,filter[1][1])
-	print result
 	return result
