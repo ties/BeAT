@@ -65,6 +65,9 @@ var current_sort_order = "ASC";
 /** global variable possible_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
 var possible_columns = new Array();
 
+var checked_benchmarks = new Array();
+
+
 /**
  * Function that adds a filterrow after the filter with filter.row=row
  * @require		row>=0
@@ -309,6 +312,16 @@ function sortFilters(){
 	console.log('Sorted filters');
 }
 
+function storeSelectedIDs(){
+	checked_benchmarks = new Array();
+	var checkboxes = $("table.benchmarks tr td input");
+	$(checkboxes).each(function(i,obj){
+		if (obj.checked){
+			checked_benchmarks.push(parseInt($(obj).attr('value')));
+		}
+	});
+}
+
 /**
  * Function that stores the values of each filterrow
  * @ensure All necessary data needed to recreate the filtertable is stored
@@ -322,7 +335,7 @@ function storeValues(){
 		else if (filter.type==OPTIONS)					storeOptionsFilter(filter);
 		else if (filter.type==FINISHED)					storeFinishedFilter(filter);
 	});
-	console.log('stored values');
+	console.log('Stored filter values');
 }
 
 /**
@@ -808,7 +821,7 @@ $(document).ready(function(){
 	
 	configureHover();
 	
-	//getBenchmarks('');
+	getBenchmarks('');
 	
 	showSortOptions();
 });
