@@ -137,7 +137,8 @@ class FileReader:
 			self.print_message(V_QUIET, "Error: header regex failed. Are you sure this log is correct?")
 			return None
 		m = match.groupdict()
-		
+		toolversion = m.get('toolversion')
+		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
 		#parse the Call
 		tmp = self.parse_call(header.get('call'))
 		if tmp:
@@ -156,8 +157,6 @@ class FileReader:
 		information = {
 			'parse_regex' : parser.regex,			#regular expression to be used to parse the log in question
 			'model_name' : modelname,				#model name
-			'model_version' : 1,					#version
-			'model_location' : 'test.txt',			#and location
 			'tool_name': s[1],						#tool name
 			'tool_version': m.get('toolversion'),	#version
 			'algorithm': s[2],						#algorithm name
@@ -165,75 +164,40 @@ class FileReader:
 			'options': optlist,						#list of options as returned by parse_call()
 			'date': dt,								#the datetime object specifying when the run took place
 		}
-		#continue code update here
 		self.print_message(V_NOISY, "Notice: Complete!")
 		
 		#parse the log content
-		data = self.parse_log(lines, information)
-		self.print_message(V_NOISY, "Notice: Read successful!")
 		
-		#return this log's information as a dictionary.
-		return data
-	#end of parse
-	
-	
-	#content should be the entire log as a string
-	#run_details should be a dictionary containing the keys: model_name, model_version, model_location, tool_name, tool_version, hardware, options, date
-	#regex should be the regular expression to extract data from content. The regex should contain the groups etime, utime, stime, tcount, scount, vsize, rss. 
-	#	these are: elapsed, user, system times, state and transition count, memory vsize and memory rss
-	#	only transition count may be left out.
-	def parse_log(self, content, run_details):
-		"""Parses information from the tool log.
-		This method takes a log excluding header and a dictionary containing the information from the header.
-		The log information and header information are merged into one result dictionary, which contain variables which correspond to entries in the database.
-		This method will return None if something goes wrong.
-			Arguments:
-				content			the log contents as a string.
-				run_details		the details for the run that generated this log
-			Returns:
-				A dictionary containing everything that needs to go into the database:
-					'model'		a tuple:
-									(name, version, location)
-					'tool'		a tuple:
-									(name, version)
-					'algorithm' a string containing the algorithm name
-					'hardware'	a list containing tuples as specified in run_details['hardware']
-					'options'	a list containing tuples as specified in run_details['options']
-					'benchmark'	a tuple:
-									(datetime, etime, utime, stime, tcount, scount, vsize, rss, finished)
-				or None if the regular expression (run_details['parse_regex']) does not match on the content.
-		"""
-		m = self.match_regex(run_details['parse_regex'], content, re.MULTILINE + re.DOTALL)
+		m = self.match_regex(parser.regex, lines, re.MULTILINE + re.DOTALL)
 		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
 		if m:
 			#collect all relevant information into one dictionary
-			match = {
-				'model':(run_details.get('model_name'), run_details.get('model_version'), run_details.get('model_location')),
-				'tool':(run_details.get('tool_name'), run_details.get('tool_version')),
-				'algorithm':run_details.get('algorithm'),
-				'hardware':run_details.get('hardware'),
-				'options':run_details.get('options'),
+			data = {
+				'model':(modelname),
+				'tool':(s[1], toolversion),
+				'algorithm':s[2],
+				'hardware':hardware,
+				'options':optlist,
 				#this one should be re-written if we change the regexes to be identified by group numbers rather than group names
 				'benchmark':(
-						run_details.get('date'),m.get('etime'),m.get('utime'),m.get('stime'),
-						m.get('tcount'),m.get('scount'),m.get('vsize'),m.get('rss'), not m.get('kill'))
+					dt, m.get('etime'), m.get('utime'), m.get('stime'), m.get('tcount'),
+					m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill')
+				)
 			}
 			#the following ensures 'hardware' and 'options' always contain something iteratable
-			if not match['hardware']:
-				match['hardware'] = []
-			if not match['options']:
-				match['options'] = []
-			else:
-				#here, ExtraValues can be parsed in a later version of this script
-				pass
 			self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
-			return match
 		else:
 			#the regex did not match, print an error and return None
 			self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
 			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (run_details['parse_regex'], content) )
 			return None
-	#end of parse_log
+
+		if data:
+			self.print_message(V_NOISY, "Notice: Read successful!")
+		
+		#return this log's information as a dictionary.
+		return data
+	#end of parse
 	
 	def parse_call(self, call):
 		"""Parses a call to an algorithm-tool
