@@ -320,6 +320,7 @@ function storeSelectedIDs(){
 			checked_benchmarks.push(parseInt($(obj).attr('value')));
 		}
 	});
+	//console.log('Stored selected benchmarks: '+checked_benchmarks.toString());
 }
 
 /**
@@ -575,7 +576,7 @@ function ListFilterRow(filter){
 	var index = LISTFILTERS.indexOf(filter.type);
 	var hover = '<div><select multiple size="7" class="list">';
 	$(possible_lists[index]).each(function(i,opt){
-		hover+='<option value="'+opt.id+'"'+(filter.list.indexOf(opt.id)!=-1 ? ' selected' : '')+'>'+opt.name+(opt.version!='undefined' ? ':'+opt.version : '')+'</option>';
+		hover+='<option value="'+opt.id+'"'+(filter.list.indexOf(opt.id)!=-1 ? ' selected' : '')+'>'+opt.name+(opt.version!=undefined ? ':'+opt.version : '')+'</option>';
 	});
 	hover+='</select></div>';
 	
@@ -727,7 +728,10 @@ function handleJSONResponse(json){
 	
 	possible_options = json.options;
 	possible_lists = new Array(json.models,json.algorithms,json.tools);
-	
+	possible_columns = json.columns
+	$(possible_columns).each(function(i,obj){
+		alert(obj.header);
+	});
 	var table = '';
 	
 	$(json.benchmarks).each(function(i,benchmark){
@@ -746,7 +750,7 @@ function handleJSONResponse(json){
 }
 
 function getTableHeaders(){
-	var res = '<tr><th><input type="button" name="CheckAll" value="All" onClick="checkAll(document.benchmark_form.benchmarks)"></th>';
+	var res = '<tr><th>&nbsp;</th>';
 	for (var i=0;i<COLUMNS.length;i++){
 		res+= '<th id="'+COLUMNS[i]+'_sort">'+COLUMNS[i]+'</th>';
 	}
