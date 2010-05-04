@@ -24,6 +24,8 @@ V_SILENT = -1	#silent: 	only errors that are dangerous for the database integrit
 #regular expression for the header
 regex = re.compile(r'Nodename: (?P<name>.*)(\r\n|\n).*(\r\n|\n)OS: (?P<OS>.*)(\r\n|\n)Kernel-name: (?P<Kernel_n>.*)(\r\n|\n)Kernel-release: (?P<Kernel_r>.*)(\r\n|\n)Kernel-version: (?P<Kernel_v>.*)(\r\n|\n).*(\r\n|\n)Processor: (?P<processor>.*)(\r\n|\n)Memory-total: (?P<memory_kb>[0-9]+)(\r\n|\n)DateTime: (?P<datetime>.*)(\r\n|\n)ToolVersion: (?P<toolversion>.*)(\r\n|\n)Call: (?P<call>.*)(\r\n|\n)', re.MULTILINE + re.DOTALL)
 
+logextension = re.compile(r'(.*)\.e[0-9]+')
+
 class FileReader:
 	#this variable will contain the log of the run of this filereader
 	log = []
@@ -276,8 +278,11 @@ class FileReader:
 			counter+=1
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])
-		#tail contains the filename of the model
-		
+		#tail contains the filename of the log
+		#that's formatted as <modelname>.e<number>
+		#we can use the logextension regex to chop that .e<number> part off.
+		tail = logextension.match(tail).group(1)
+
 		#return as the docstring describes
 		return (at.regex, s, optlist, tail)
 	#end of parse_call
