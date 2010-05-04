@@ -8,12 +8,7 @@ import json
 DEFAULTSORT = 'id'
 DEFAULTSORTORDER = 'ASC'
 DEFAULTRESPERPAGE = 50
-SORT_ID = 'id'
-SORT_MODEL = 'model'
-SORT_STATES = 'states'
-SORT_RUNTIME = 'runtime'
-SORT_MEMORY_RSS = 'memory_rss'
-SORT_FINISHED = 'finished'
+SORTS = {'model':'model__name','id':'id','states':'states_count','runtime':'total_time','memory_rss':'memory_RSS','finished':'finished'}
 SORT_ASCENDING = 'ASC'
 SORT_DESCENDING = 'DESC'
 
@@ -38,12 +33,10 @@ def getBenchmarks(request):
 	print 'check'
 	
 	res = getResponse(Benchmark.objects.all(),filters,sort,sortorder)
-	print res['tools']
+	
 	return res
 
 def getResponse(qs,filters,sort,sortorder):
-	print "variables; sort=%s, sortorder=%s" % (sort,sortorder)
-	
 	result = {}
 	
 	benchmarks = []
@@ -60,9 +53,9 @@ def getResponse(qs,filters,sort,sortorder):
 	for k,f in filters.iteritems():
 		print "Now starting filter row %i" % f.row
 		
-		#if f.type==MODEL:
-			#models = getModels(qs)
-			#modeldone = True
+		if f.type==MODEL:
+			models = getModels(qs)
+			modeldone = True
 		if f.type==ALGORITHM:
 			algorithms = getAlgorithms(qs)
 			algorithmdone = True
@@ -76,8 +69,8 @@ def getResponse(qs,filters,sort,sortorder):
 		qs = f.apply(qs)
 	
 	#getting remaining results
-	#if modeldone==False:
-		#models = getModels(qs)
+	if modeldone==False:
+		models = getModels(qs)
 	
 	if algorithmdone==False:
 		algorithms = getAlgorithms(qs)
@@ -87,6 +80,8 @@ def getResponse(qs,filters,sort,sortorder):
 	
 	if optionsdone==False:
 		options = getOptions(qs)
+	
+	possiblecolumns = getColumns(qs)
 	
 	print "sorting!"
 	qs = sortQuerySet(qs,sort,sortorder)
@@ -102,11 +97,11 @@ def getResponse(qs,filters,sort,sortorder):
 		})
 	
 	result['benchmarks'] = benchmarks
-	
+	result['columns'] = possiblecolumns
 	result['algorithms'] = algorithms
 	result['options'] = options
 	result['tools'] = tools
-	#result['models'] = models
+	result['models'] = models
 	
 	print "result made!"
 	return result
@@ -141,21 +136,23 @@ def getOptions(qs):
 
 def sortQuerySet(qs,sort,sortorder):
 	s = ""
-	if sort==SORT_ID:
-		s='id'
-	elif sort==SORT_MODEL:
-		s='model__name'
-	elif sort==SORT_STATES:
-		s='states_count'
-	elif sort==SORT_RUNTIME:
-		s='total_time'
-	elif sort==SORT_MEMORY_RSS:
-		s='memory_RSS'
-	elif sort==SORT_FINISHED:
-		s='finished'
-	
+	if sort in SORTS.keys():
+		s = SORTS[sort]
+	else:
+		s = sort
+		
 	if sortorder==SORT_DESCENDING:
 		s = '-'+s
 	print 'sort with: '+s
 	qs = qs.order_by(s)
 	return qs
+
+def getColumns(qs):
+	result = []
+	result.append({'header':'Model','value':'model__name'})
+	result.append({'header':'States','value':'states_count'})
+	result.append({'header':'Runtime','value':'total_time'})
+	result.append({'header':'Memory (RSS)','value':'memory_RSS'})
+	result.append({'header':'Memory (VSIZE)','value':'memory_VSIZE'})
+	result.append({'header':'Finished','value':'finished'})
+	return result

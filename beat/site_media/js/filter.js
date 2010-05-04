@@ -91,7 +91,7 @@ function addFilterRow(row){
 	
 	sortFilters();
 	
-	console.log('Added a new filterrow, current filters: '+filterstring());
+	//console.log('Added a new filterrow, current filters: '+filterstring());
 	
 	renewFilters();
 }
@@ -124,7 +124,7 @@ function removeFilterRow(row){
 	filters = f;
 	sortFilters();
 	
-	console.log('Removed a filterrow, current filters: '+filterstring());
+	//console.log('Removed a filterrow, current filters: '+filterstring());
 	
 	renewFilters();
 }
@@ -192,7 +192,7 @@ function changeFilterType(elem,row){
 	f.row = row;
 	filters[row] = f;
 	renewFilters();
-	console.log('Changed a filterrow, current filters: '+filterstring());
+	//console.log('Changed a filterrow, current filters: '+filterstring());
 }
 
 function changeToEmpty(elem,row){
@@ -309,7 +309,7 @@ function sortFilters(){
 		f[filter.row] = filter;
 	});
 	filters = f;
-	console.log('Sorted filters');
+	//console.log('Sorted filters');
 }
 
 function storeSelectedIDs(){
@@ -320,7 +320,7 @@ function storeSelectedIDs(){
 			checked_benchmarks.push(parseInt($(obj).attr('value')));
 		}
 	});
-	console.log('Stored selected benchmarks: '+checked_benchmarks.toString());
+	//console.log('Stored selected benchmarks: '+checked_benchmarks.toString());
 }
 
 /**
@@ -336,7 +336,7 @@ function storeValues(){
 		else if (filter.type==OPTIONS)					storeOptionsFilter(filter);
 		else if (filter.type==FINISHED)					storeFinishedFilter(filter);
 	});
-	console.log('Stored filter values');
+	//console.log('Stored filter values');
 }
 
 /**
@@ -437,7 +437,7 @@ function renewFilters(){
 	}
 	$('#filters').html(rows);
 	configureHover();
-	console.log('Renewed filters');
+	//console.log('Renewed filters');
 }
 
 function EmptyFilterRow(filter){
@@ -576,7 +576,7 @@ function ListFilterRow(filter){
 	var index = LISTFILTERS.indexOf(filter.type);
 	var hover = '<div><select multiple size="7" class="list">';
 	$(possible_lists[index]).each(function(i,opt){
-		hover+='<option value="'+opt.id+'"'+(filter.list.indexOf(opt.id)!=-1 ? ' selected' : '')+'>'+opt.name+(opt.version!='undefined' ? ':'+opt.version : '')+'</option>';
+		hover+='<option value="'+opt.id+'"'+(filter.list.indexOf(opt.id)!=-1 ? ' selected' : '')+'>'+opt.name+(opt.version!=undefined ? ':'+opt.version : '')+'</option>';
 	});
 	hover+='</select></div>';
 	
@@ -665,7 +665,7 @@ function OptionsFilterRow(filter){
  */
 function addMega(elem){
 	$(elem).addClass("hovering");
-	console.log('Add megadropdownmenu: '+elem.id);
+	//console.log('Add megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -674,7 +674,7 @@ function addMega(elem){
  */
 function removeMega(elem){
 	$(elem).removeClass("hovering");
-	console.log('Remove megadropdownmenu: '+elem.id);
+	//console.log('Remove megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -698,12 +698,12 @@ function configureHover(){
 function filter(){
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
-	console.log('Sending request to server: '+d);
+	//console.log('Sending request to server: '+d);
 	getBenchmarks(d);
 }
 
 function getBenchmarks(d){
-	console.log('Getting benchmarks: '+d);
+	//console.log('Getting benchmarks: '+d);
 	$.ajax({
 		url: 'ajax/benchmarks/',
 		type: 'POST',
@@ -728,7 +728,10 @@ function handleJSONResponse(json){
 	
 	possible_options = json.options;
 	possible_lists = new Array(json.models,json.algorithms,json.tools);
-	
+	possible_columns = json.columns
+	$(possible_columns).each(function(i,obj){
+		alert(obj.header);
+	});
 	var table = '';
 	
 	$(json.benchmarks).each(function(i,benchmark){
@@ -775,7 +778,7 @@ function showSortOptions(){
 
 function changeSort(val){
 	current_sort = val;
-	console.log('Change Sorting: '+val);
+	//console.log('Change Sorting: '+val);
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
 	getBenchmarks(d);
@@ -783,7 +786,7 @@ function changeSort(val){
 
 function changeSortOrder(val){
 	current_sort_order = val;
-	console.log('Change Sorting Order: '+val);
+	//console.log('Change Sorting Order: '+val);
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
 	getBenchmarks(d);
