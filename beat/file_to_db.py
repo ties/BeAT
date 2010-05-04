@@ -98,7 +98,11 @@ def handler(type, args):
 		o = handler('option', args[0])
 		result, created = OptionValue.objects.get_or_create(option=o, value=args[1])
 	elif type == 'option':
-		result, created = Option.objects.get_or_create(name=args[0])
+		if args[0].endswith('='):
+			result, created = Option.objects.get_or_create(name=args[0][:-1], takes_argument=True)
+		else:
+			result, created = Option.objects.get_or_create(name=args[0], takes_argument=False)
+
 	elif type == 'hw':
 		result, created = Hardware.objects.get_or_create(name=args[0], memory=args[1], cpu=args[2], disk_space=args[3], os=args[4])
 	elif type == 'tool':
@@ -126,7 +130,7 @@ def handler(type, args):
 	elif type == 'shortarg':
 		at = handler('algtool', args[0])
 		op = handler('option', args[1])
-		result, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut=args[2])
+		result, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut=args[2][:1])
 	else:
 		print "Warning: failed to handle: %s with %s"%(type, args)
 	if created:

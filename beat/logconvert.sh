@@ -1,6 +1,3 @@
-let counter=0
-
-
 if [ ! -z "$1" ] && [ -d "$1" ] && [ ! -z "$2" ] && [ ! -z "$3" ]
 then
 	#fiddle with the arguments
@@ -41,12 +38,16 @@ else
 	exit
 fi
 
+
+let counter=0
+
 for i in $f*; do
 	# if the log matches the regular expression '.*\.e[0-9]+$' (ie. ends with '.e' followed by digits)
 	if [ ! -z $( echo "$i" | egrep '.*\.e[0-9]+$' ) ]
 	then
 		#produce a header and the log
 		(
+			echo "BEGIN OF HEADER"
 			echo Nodename: $(uname -n)
 			echo Hardware-name: $(uname -m)
 			echo OS: $(uname -o)
@@ -57,7 +58,9 @@ for i in $f*; do
 			echo Processor: $(uname -p)
 			echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s " " | cut -d" " -f 2 -)
 			echo DateTime: 2010 03 16 13 24 43
+			echo ToolVersion: ltsmin-1.5-a2f445c
 			echo Call: memtime $3 $i
+			echo "END OF HEADER"
 			cat $i
 			echo "REPORT ENDS HERE"
 		) > "$i.eatme"

@@ -21,6 +21,9 @@ V_VERBOSE = 1	#verbose:	everything except informative messages (which are preced
 V_QUIET = 0		#quiet:	errors only
 V_SILENT = -1	#silent: 	only errors that are dangerous for the database integrity
 
+#regular expression for the header
+regex = re.compile(r'Nodename: (?P<name>.*)(\r\n|\n).*(\r\n|\n)OS: (?P<OS>.*)(\r\n|\n)Kernel-name: (?P<Kernel_n>.*)(\r\n|\n)Kernel-release: (?P<Kernel_r>.*)(\r\n|\n)Kernel-version: (?P<Kernel_v>.*)(\r\n|\n).*(\r\n|\n)Processor: (?P<processor>.*)(\r\n|\n)Memory-total: (?P<memory_kb>[0-9]+)(\r\n|\n)DateTime: (?P<datetime>.*)(\r\n|\n)ToolVersion: (?P<toolversion>.*)(\r\n|\n)Call: (?P<call>.*)(\r\n|\n)', re.MULTILINE + re.DOTALL)
+
 class FileReader:
 	#this variable will contain the log of the run of this filereader
 	log = []
@@ -38,8 +41,8 @@ class FileReader:
 			This function returns nothing.
 		"""
 		if self.verbose >= level:
-			self.log.append(text)
-			#print text
+			#self.log.append(text)
+			print text
 	#end of print_message
 
 	def match_regex(self, regex, input, flags=None):
@@ -102,58 +105,51 @@ class FileReader:
 				lines		a list of strings, including newlines
 			Returns:
 				None when some (non-fatal) error occurs, or:
-				A dictionary, as specified by parse_single_output.
+				A dictionary, as specified by parse_log.
 		"""
 		self.print_message(V_NOISY, "Notice: Reading run details and finding parser...")
-		#read the header
-		information = self.parse_run_details(lines)
-		if not information:
-			#something went wrong, skip ahead to the next run
-			return None
-		self.print_message(V_NOISY, "Notice: Complete!")
+		# # # # # # # # # # # # seperate the header
+		header = []
+		#we save the ids of the 'Call: ' and 'DateTime: ' lines, so we can find them quickly
+		call = 0
+		dt = 0
+		header_started = False
+		i = 0
+		done = False
+		#iterate 'till we've seen the whole log or when the header ends
+		while i < len(lines) and not done:
+			if header_started:
+				#we're reading the header, check for its end
+				if not lines[i].startswith("END OF HEADER"):
+					header.append(lines[i])
+					if lines[i].startswith("Call:"):
+						call = i-1
+					if lines[i].startswith("DateTime:"):
+						dt = i-1
+				else:
+					done = True #stop
+			#we're not at the header yet, keep reading 'till we find the start
+			elif lines[i].startswith("BEGIN OF HEADER"):
+				header_started = True
+			#point to the next line
+			i += 1
 		
-		#parse the log content, chopping off the header, and take along the header information
-		data = self.parse_single_output(''.join(lines[RUN_DETAILS_HEADER:]), information)
-		self.print_message(V_NOISY, "Notice: Read successful!")
-		
-		#return this log's information as a dictionary.
-		return data
-	#end of parse
-	
-	def parse_run_details(self, lines):
-		"""Parses the header of a run from the lines specified
-		The lines argument should contain strings, which must be at least RUN_DETAILS_HEADER long to ensure correctness.
-		The newlines should remain in each of these strings.
-			Arguments:
-				lines		a list containing at least RUN_DETAILS_HEADER elements, which specify a header.
-				
-			Returns:
-				None when some (non-fatal) error occurs, or:
-				A dictionary, as follows:
-					'parse_regex'		the regex to parse the log
-					'model_name'		the name of the model
-					'model_version' 	the version of the model
-					'model_location'	the location of the model
-					'tool_name'			the name of the tool
-					'tool_version' 		the version of the tool
-					'algorithm'			the name of the algorithm
-					'hardware'			a list containing hardware platforms, specified as a tuple:
-											(name, memory kb, processor, disk space, OS)
-					'options'			a list of options, specified by a tuple:
-											(name, value)
-					'date'				the date this benchmark was run. see datetime.datetime in the python doc
-		"""
-		#match on this regular expression to fetch all the information
-		regex = r'Nodename: (?P<name>.*)(\r\n|\n).*(\r\n|\n)OS: (?P<OS>.*)(\r\n|\n)Kernel-name: (?P<Kernel_n>.*)(\r\n|\n)Kernel-release: (?P<Kernel_r>.*)(\r\n|\n)Kernel-version: (?P<Kernel_v>.*)(\r\n|\n).*(\r\n|\n)Processor: (?P<processor>.*)(\r\n|\n)Memory-total: (?P<memory_kb>[0-9]+)(\r\n|\n)DateTime: (?P<datetime>.*)(\r\n|\n)Call: (?P<call>.*)(\r\n|\n)'
-		m = self.match_regex(regex, ''.join(lines[:RUN_DETAILS_HEADER]), re.MULTILINE + re.DOTALL)
-		#check for correctness
+		#split the header off
+		lines = lines[i:]
+
+		# # # # # # # # # # # # analyze the header
+		match = regex.match(''.join(header))
+		self.print_message(V_NOISY, "Notice: header is: %s"%(''.join(header)))
+		m = match.groupdict()
 		if not m:
-			#match_regex() returned None, so this header is incorrect.
-			self.print_message(V_QUIET, "Error: header regex failed.")
+			#matching the regex went quite wrong, the log must be broken
+			self.print_message(V_QUIET, "Error: header regex failed. Are you sure this log is correct?")
 			return None
-		
-		#deduce options, algorithm, tool from the call line
-		tmp = self.parse_call(m['call'])
+		#m should contain the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
+		toolversion = m.get('toolversion')
+		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
+		#parse the Call to find the supplied options
+		tmp = self.parse_call(header[call][6:], toolversion)
 		if tmp:
 			#unpack the tuple
 			(parser, s, optlist, modelname) = tmp
@@ -163,85 +159,41 @@ class FileReader:
 		#s[0] contains the whole call, s[1] contains the tool name and s[2] contains the algorithm name
 		
 		#fetch datetime info and create an object out of it
-		dt = m['datetime'].split(' ')
-		#don't put microseconds in the DB, the admin doesn't allow the user to enter them anyway
+		dt = header[dt][10:].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]))
-
-		#the result of this function is a dictionary:
-		result = {
-			'parse_regex' : parser.regex,	#regular expression to be used to parse the log in question
-			'model_name' : modelname,		#model name
-			'model_version' : 1,				#version
-			'model_location' : 'test.txt',		#and location
-			'tool_name': s[1],				#tool name
-			'tool_version': 1,					#version
-			'algorithm': s[2],				#algorithm name
-			'hardware': [(m['name'], m['memory_kb'], m['processor'], 0, m['OS']+" "+m['Kernel_n']+" "+m['Kernel_r']+" "+m['Kernel_v'])],
-			'options': optlist,				#list of options as returned by parse_call()
-			'date': dt,						#the datetime object specifying when the run took place
-		}
-		return result
-	#end of parse_run_details
-	
-	#content should be the entire log as a string
-	#run_details should be a dictionary containing the keys: model_name, model_version, model_location, tool_name, tool_version, hardware, options, date
-	#regex should be the regular expression to extract data from content. The regex should contain the groups etime, utime, stime, tcount, scount, vsize, rss. 
-	#	these are: elapsed, user, system times, state and transition count, memory vsize and memory rss
-	#	only transition count may be left out.
-	def parse_single_output(self, content, run_details):
-		"""Parses information from the tool log.
-		This method takes a log excluding header and a dictionary containing the information from the header.
-		The log information and header information are merged into one result dictionary, which contain variables which correspond to entries in the database.
-		This method will return None if something goes wrong.
-			Arguments:
-				content			the log contents as a string.
-				run_details		the details for the run that generated this log, as returned by parse_run_details()
-			Returns:
-				A dictionary containing everything that needs to go into the database:
-					'model'		a tuple:
-									(name, version, location)
-					'tool'		a tuple:
-									(name, version)
-					'algorithm' a string containing the algorithm name
-					'hardware'	a list containing tuples as specified in run_details['hardware']
-					'options'	a list containing tuples as specified in run_details['options']
-					'benchmark'	a tuple:
-									(datetime, etime, utime, stime, tcount, scount, vsize, rss, finished)
-				or None if the regular expression (run_details['parse_regex']) does not match on the content.
-		"""
-		m = self.match_regex(run_details['parse_regex'], content, re.MULTILINE + re.DOTALL)
+		self.print_message(V_NOISY, "Notice: Complete!")
+		
+		# # # # # # # # # # # # #parse the log content
+		m = self.match_regex(parser.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
 		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
-		if m:
-			#collect all relevant information into one dictionary
-			match = {
-				'model':(run_details.get('model_name'), run_details.get('model_version'), run_details.get('model_location')),
-				'tool':(run_details.get('tool_name'), run_details.get('tool_version')),
-				'algorithm':run_details.get('algorithm'),
-				'hardware':run_details.get('hardware'),
-				'options':run_details.get('options'),
-				#this one should be re-written if we change the regexes to be identified by group numbers rather than group names
-				'benchmark':(
-						run_details.get('date'),m.get('etime'),m.get('utime'),m.get('stime'),
-						m.get('tcount'),m.get('scount'),m.get('vsize'),m.get('rss'), not m.get('kill'))
-			}
-			#the following ensures 'hardware' and 'options' always contain something iteratable
-			if not match['hardware']:
-				match['hardware'] = []
-			if not match['options']:
-				match['options'] = []
-			else:
-				#here, ExtraValues can be parsed in a later version of this script
-				pass
-			self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (match))
-			return match
-		else:
+		if not m:
 			#the regex did not match, print an error and return None
 			self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
-			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (run_details['parse_regex'], content) )
+			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (parser.regex, ''.join(lines)) )
 			return None
-	#end of parse_single_output
+		#collect all relevant information into one dictionary
+		data = {
+			'model': modelname,
+			'tool':(s[1], toolversion),
+			'algorithm':s[2],
+			'hardware':hardware,
+			'options':optlist,
+			'benchmark':(
+				dt, m.get('etime'), m.get('utime'), m.get('stime'), m.get('tcount'),
+				m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill')
+			)
+		}
+		#the following ensures 'hardware' and 'options' always contain something iteratable
+		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (m))
+
+		if data:
+			self.print_message(V_NOISY, "Notice: Read successful!")
+		
+		#return this log's information as a dictionary.
+		return data
+	#end of parse
 	
-	def parse_call(self, call):
+	def parse_call(self, call, toolversion):
 		"""Parses a call to an algorithm-tool
 		A call, like "dve-reach -v --cache test.txt", is parsed by this method to provide all the useful information we can get from it.
 			Arguments: 
@@ -261,9 +213,8 @@ class FileReader:
 			self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
 			return None
 
-		#we don't know how to get the tool version yet, so we assume version = 1 for now
 		try:
-			t = Tool.objects.get(name=s[1], version=1)
+			t = Tool.objects.get(name=s[1], version=toolversion)
 			a = Algorithm.objects.get(name=s[2])
 			at = AlgorithmTool.objects.get(tool=t, algorithm=a)
 			shortopts = ''
@@ -271,45 +222,57 @@ class FileReader:
 			opts = []
 			#fetch all valid options for this tool+algorithm combo
 			for o in ValidOption.objects.filter(algorithm_tool=at):
-				opts.append(o.option.name)
+				opts.append(o.option)
 			#find the appropriate short options
 			for option in opts:
-				o = Option.objects.get(name=option)
 				try:
-					rs = RegisteredShortcut.objects.get(algorithm_tool=at, option=o)
-					shortopts+=rs.shortcut
-				except:
+					#throws an exception if there isn't any shortoption for this option
+					rs = RegisteredShortcut.objects.get(algorithm_tool=at, option=option)
+					if option.takes_argument:
+						shortopts+=rs.shortcut+':'
+					else:
+						shortopts+=rs.shortcut
+				except ObjectDoesNotExist:
+					#just continue
 					pass
 		#handle database related errors
 		except ObjectDoesNotExist:
-			self.print_message(V_QUIET, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], 1))
+			self.print_message(V_QUIET, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], toolversion))
 			return None
 		except MultipleObjectsReturned:
 			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))
 			return None
-		#translate all options unicode->ascii, ignoring unicode-only characters
+		#translate all options Option->ascii, ignoring unicode-only characters
 		tmp = opts
 		opts = []
 		for i in tmp:
-			i.encode('ascii', 'ignore')
-		opts = tmp
+			if i.takes_argument:
+				opts.append(i.name.encode('ascii', 'ignore') + '=')
+			else:
+				opts.append(i.name.encode('ascii', 'ignore'))
 
 		#read the options for the tool and convert them into a nice list
 		#arguments are discarded for now (also, some of those might be bash-parsed and not passed to the algorithm_tool)
 		import getopt
+		self.print_message(V_NOISY, "input for gnu_getopt: \n%s\n%s"%(shortopts,opts))
 		optlist, args = getopt.gnu_getopt(call.split(" ")[2:], shortopts, opts)
+		self.print_message(V_NOISY, "raw optlist & arglist: \n%s\n%s"%(optlist,args))
 		counter = 0
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
 		#we need a value, however; we'll use True
 		for t in optlist:
 			o, v = t
 			if not v:	#no parameter
-				optlist[counter]=(o,True)
+				optlist[counter]=(o[2:],True)
 			if not o.startswith('--'): #shortcut!
 				p = o[1:] #chop the '-'
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
 				if not v:	#no parameter
 					optlist[counter]=(rs.option.name, True)
+				else:
+					optlist[counter]=(rs.option.name, v)
+			else:
+				optlist[counter]=(o[2:], v)
 			counter+=1
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])
@@ -326,7 +289,7 @@ class FileReader:
 		The data argument may be updated to correct data, such as 'None' being provided to an integer field (this will become 0)
 		If the verbosity is Verbose or higher, all applicable warnings will be produced before returning.
 			Arguments:
-				data		a dictionary, containing all the data about one run, as returned by parse_single_output()
+				data		a dictionary, containing all the data about one run, as returned by parse_log()
 			Returns:
 				True when the data is sufficient
 				False when something is incorrect (ie. missing data, negative numbers where they are not allowed, etc)
@@ -335,9 +298,9 @@ class FileReader:
 		valid = True
 
 		#Model
-		name, version, location = data['model']
-		if not name or not version or not location:
-			self.print_message(V_VERBOSE, "Warning: Data invalid. Model.name=%s Model.version=%s Model.location=%s"%(name, version,location))
+		name = data['model']
+		if not name:
+			self.print_message(V_VERBOSE, "Warning while checking: Data invalid. Model.name=%s"%(name))
 			valid=False
 
 		#Algorithm
@@ -345,7 +308,7 @@ class FileReader:
 		try:
 			a = Algorithm.objects.get(name=name)
 		except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
-			self.print_message(V_VERBOSE, "Warning: %s"%(e))
+			self.print_message(V_VERBOSE, "Warning while checking: %s"%(e))
 			valid=False
 
 		#Tool
@@ -353,7 +316,7 @@ class FileReader:
 		try:
 			t = Tool.objects.get(name=name, version=version)
 		except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
-			self.print_message(V_VERBOSE, "Warning: %s"%(e))
+			self.print_message(V_VERBOSE, "Warning while checking: %s"%(e))
 			valid = False
 
 		#Hardware
@@ -362,7 +325,7 @@ class FileReader:
 			name, memory, cpu, disk_space, os = tuple
 			#memory may not be zero, disk_space may be.
 			if not name or memory <=0 or not cpu or disk_space <0 or not os:
-				self.print_message(V_VERBOSE, "Warning: Data invalid. HW.name=%s HW.memory=%s HW.cpu=%s HW.disk_space=%s HW.os=%s" %(name, memory, cpu, disk_space, os))
+				self.print_message(V_VERBOSE, "Warning while checking: Data invalid. HW.name=%s HW.memory=%s HW.cpu=%s HW.disk_space=%s HW.os=%s" %(name, memory, cpu, disk_space, os))
 				valid=False
 		
 		#Option
@@ -370,12 +333,13 @@ class FileReader:
 		for tuple in optiondata:
 			name, value = tuple
 			if not name or not value:
-				self.print_message(V_VERBOSE, "Warning: invalid option: name=<%>s value=<%s>"%(name,value))
+				self.print_message(V_VERBOSE, "Warning while checking: invalid option: name=<%>s value=<%s>"%(name,value))
 				valid=False
 			try:
 				o = Option.objects.get(name=name)
 			except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
-				self.print_message(V_VERBOSE, "Warning: Django error: %s"%(e))
+				self.print_message(V_VERBOSE, "Warning while checking: Django error: %s"%(e))
+				self.print_message(V_NOISY, "Notice: name: %s, value:%s"%(name,value))
 				valid = False
 
 		#Benchmark
@@ -391,7 +355,7 @@ class FileReader:
 					scount = 0
 					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
 			else:
-				self.print_message(V_VERBOSE, "Warning: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
+				self.print_message(V_VERBOSE, "Warning while checking: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
 				valid=False
 		return (valid, data)
 	#end of check_data_validity
@@ -415,13 +379,13 @@ class FileReader:
 			self.print_message(V_NOISY, "Notice: Validity checked and passed, writing to DB...")
 		
 		#Model
-		name, version, location = data['model']
+		name = data['model']
 		#a model is identified by name and version.
-		m, created = Model.objects.get_or_create(name=name, version=version, defaults={'location': location})
+		m, created = Model.objects.get_or_create(name=name)
 		if created:
-			self.print_message(V_NOISY, "Notice: created a new Model entry:%s, %s"%(name,version))
+			self.print_message(V_NOISY, "Notice: created a new Model entry:%s"%(name))
 		else:
-			self.print_message(V_NOISY, "Notice: Model already exists:%s, %s"%(name,version))
+			self.print_message(V_NOISY, "Notice: Model already exists:%s"%(name))
 
 		#Algorithm
 		name = data['algorithm']
@@ -518,119 +482,70 @@ class FileReader:
 				raise FileReaderError("Error: No file(s) provided.")
 		self.print_message(V_VERBOSE, "Verbosity level: %s"%(self.verbose))
 		
-		all_data=[]
-		#read all files into all_data, each file in a seperate list of strings
-		for path in file_list:
-			lines=[]
-			self.print_message(V_NOISY, "Notice: Reading from file: %s"%(path))
-			with open(path, 'r') as file:
+		runcounter = 0
+		errorcounter = 0
+		
+		for f in file_list:
+			runs_in_file=[] #matrix containing a list of lines for each run
+			self.print_message(V_NOISY, "Notice: Reading from file: %s"%(f))
+			
+			#read the whole file, filling the runs_in_file matrix
+			with open(f, 'r') as file:
+				new_run=True
+				j=0
+				lines=[]
 				for line in file:
 					lines.append(line)
-			all_data.append(lines)
-			self.process(all_data)
-			all_data=[]
-		
-		"""
-		self.print_message(V_NOISY, "Notice: Read complete\nNotice: Start parsing")
-		
-		runcounter=0
-		errorcounter=0
-		#for each group of lines, ie. each parsed file:
-		for lines in all_data:
-			runs = self.find_runs(lines)
-			#split logs in a file
-			for run in runs:
+					if line.startswith("REPORT ENDS HERE"):
+						#chop here
+						j+=1
+						new_run=True
+					elif new_run:
+						#new run, so we need to do some extra stuff
+						runs_in_file.append([])
+						runs_in_file[j].append(line)
+						new_run=False
+					else:
+						#just another line of run j.
+						runs_in_file[j].append(line)
+			
+			#iterate over these runs we've read
+			for run in runs_in_file:
+				#parse the whole thing
 				data = self.parse(run)
-				#check if something was returned
+				
 				if data:
 					#write to the database
 					try:
 						self.write_to_db(data)
-					except FileReaderError as f:
+					#handle known error FileReaderError
+					except FileReaderError as fre:
 						#some known error occured, check how bad it is
-						if f.db_altered:
+						if fre.db_altered:
 							#major panic!
-							self.print_message(V_SILENT, "ERROR: an error occured while writing to the database! %s"%(f.error))
+							self.print_message(V_SILENT, "ERROR: an error occured while writing to the database! %s"%(fre.error))
 							return -1
 						else:
-							#it's just an error in the write-process, or a faileld check
-							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( f.error))
+							#it's just an error in the write-process, or a failed check
+							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( fre.error))
 							errorcounter+=1
-						self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
+						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
+					#handle other errors
 					except Exception, e:
 						#an unknown error occured, skip this part
 						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
 						errorcounter+=1
 				else:
+					#there was no data returned while parsing
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
 					errorcounter+=1
+				#next run
 				runcounter+=1
-		#end of file-reading
-		"""
-		errorcounter=0
+			#next file
+		#we're done! return how many errors we got
 		return errorcounter
 	#end of main
-	
-	def process(self, all_data):
-		self.print_message(V_NOISY, "Notice: Read complete\nNotice: Start parsing")
-		
-		runcounter=0
-		errorcounter=0
-		#for each group of lines, ie. each parsed file:
-		for lines in all_data:
-			runs = self.find_runs(lines)
-			#split logs in a file
-			for run in runs:
-				data = self.parse(run)
-				#check if something was returned
-				if data:
-					#write to the database
-					try:
-						self.write_to_db(data)
-					except FileReaderError as f:
-						#some known error occured, check how bad it is
-						if f.db_altered:
-							#major panic!
-							self.print_message(V_SILENT, "ERROR: an error occured while writing to the database! %s"%(f.error))
-							return -1
-						else:
-							#it's just an error in the write-process, or a faileld check
-							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( f.error))
-							errorcounter+=1
-						self.print_message(V_NOISY, "Details:%s"%( f.debug_data))
-					except Exception, e:
-						#an unknown error occured, skip this part
-						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
-						errorcounter+=1
-				else:
-					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
-					errorcounter+=1
-				runcounter+=1
 
-	def find_runs(self, lines):
-		"""Splits the argument into a list of runs
-		This function will return a list of lists, each containing a complete run.
-		The last item is an empty string if the file is correctly formatted
-		"""
-		runs = []
-		j=0
-		new_run = True
-		for line in lines:
-			if line.startswith("REPORT ENDS HERE"):
-				#chop here
-				j+=1
-				new_run=True
-			elif new_run:
-				#new run, so we need to do some extra stuff
-				runs.append([])
-				runs[j].append(line)
-				new_run=False
-			else:
-				#just another line of run j.
-				runs[j].append(line)
-		return runs
-	#end of find_runs
-	
 	def parse_app_options(self):
 		"""Parse options for this script using python's optparse
 		This will set verbose, print the --help message and read the arguments as per optparse.
@@ -669,7 +584,6 @@ class FileReaderError(Exception):
 			else:
 				return error
 #end of FileReaderError
-
 
 
 #run the main method
