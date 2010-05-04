@@ -101,7 +101,7 @@ def getResponse(qs,filters,sort,sortorder,page,resperpage):
 	for benchmark in qs:
 		benchmarks.append({
 			'id': benchmark.id,
-			'model': benchmark.model.name+":"+benchmark.model.version,
+			'model': benchmark.model.name,
 			'states': benchmark.states_count,
 			'runtime': benchmark.total_time,
 			'memory': benchmark.memory_RSS,
@@ -120,8 +120,8 @@ def getResponse(qs,filters,sort,sortorder,page,resperpage):
 
 def getModels(qs):
 	models = []
-	for model in qs.values('model','model__name','model__version').order_by('model__name','model__version').distinct():
-		models.append({'id':model['model'],'name':model['model__name'],'version':model['model__version']})
+	for model in qs.values('model','model__name').order_by('model__name').distinct():
+		models.append({'id':model['model'],'name':model['model__name']})
 	return models
 
 def getAlgorithms(qs):
