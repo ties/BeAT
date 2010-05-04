@@ -3,15 +3,9 @@ from django.contrib.auth.models import User
 
 class Model(models.Model):
 	name = models.CharField(max_length=200)
-	version = models.CharField(max_length=50)
-	location = models.FilePathField(path="site_media/models")
 	
 	def __unicode__(self):
-		return "%s:%s" % (self.name, self.version)
-	
-	#function so that the serializers put the name and version in the json instead of the foreign key
-	def natural_key(self):
-		return (self.name,self.version)
+		return self.name
 
 class Comparison(models.Model):
 	user = models.ForeignKey(User, related_name="owner_c")
