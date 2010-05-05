@@ -281,7 +281,10 @@ class FileReader:
 		#tail contains the filename of the log
 		#that's formatted as <modelname>.e<number>
 		#we can use the logextension regex to chop that .e<number> part off.
-		tail = logextension.match(tail).group(1)
+		#should this not work, we'll just use the full argument that is in the log
+		match = logextension.match(tail)
+		if match:
+			tail = match.group(1)
 
 		#return as the docstring describes
 		return (at.regex, s, optlist, tail)

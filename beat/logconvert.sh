@@ -57,7 +57,7 @@ for i in $f*; do
 			echo Hardware-platform: $(uname -i)
 			echo Processor: $(uname -p)
 			echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s " " | cut -d" " -f 2 -)
-			echo DateTime: 2010 03 16 13 24 43
+			echo DateTime: $(date '+%Y %m %d %H %M %S')
 			echo ToolVersion: ltsmin-1.5-a2f445c
 			echo Call: memtime $3 $i
 			echo "END OF HEADER"
