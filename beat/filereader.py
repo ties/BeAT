@@ -1,6 +1,16 @@
-"""
-This script processes logs, using regular expressions that are in the database.
-By convention, methods in this script will return None when (non-fatal or solvable) errors occur.
+"""This script processes logs, using regular expressions that are in the database.
+This script works as follows:
+1. main() is called, either with or without arguments
+2. if there are no arguments to main(), parse_app_options() is called to grab them from the commandline
+3. the arguments, which should be a list of files, is iterated over, processing each file seperately.
+
+Since each file may contain a sequence of logs, they are first split in seperate logs.
+Then, we parse each log as follows (method: parse() unless noted otherwise):
+1. Seperate the log in header and application log.
+2. Read the header, deducing the required information (this includes talking to the database to find valid options) (methods: parse() and parse_call()).
+3. Fetch from the database how to parse this application log (a regular expression).
+4. Apply the regular expression to the application log and deduce information.
+5. Write to the database (write_to_db()). This includes checking to protect against invalid data (check_data_validity()).
 """
 #python libraries
 import re		#regular expressions
