@@ -4,6 +4,16 @@ from django.db.models import Count
 
 from beat.benchmarks.models import Benchmark, Model, Algorithm, Tool, OptionValue
 
+class ExportGraphForm(forms.Form):
+	FORMATS = (
+		# ('value', 'description')
+		('pdf', 'pdf'),
+		('ps', 'ps'),
+		('eps', 'eps'),
+		('svg', 'svg'),
+	)
+	format  = forms.ChoiceField(choices=FORMATS, label='Export format')
+
 class CompareForm(forms.Form):
 	benchmarks = forms.ModelMultipleChoiceField(Benchmark.objects.all(), required=False, widget=widgets.CheckboxSelectMultiple)
 	name = forms.CharField(max_length=255, required=False)

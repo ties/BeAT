@@ -2,6 +2,12 @@
 {% block title %}Benchmarks{% endblock %}
 {% block content %}
 		<h2>Comparison: {{ comparison.name }}</h2>
-		<img src="/compare/benchmark-{{ comparison.id }}.png" alt="benchmark chart" />
+		<img src="/compare/benchmark-{{ comparison.id }}.png" style="width:100%;" alt="benchmark chart" />
 		<p><a href="/compare/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
+		
+		<form action="{% url benchmarks.views.export_graph comparison.id %}" method="post">{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Export" />
+		</form>
+
 {% endblock %}

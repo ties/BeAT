@@ -5,10 +5,7 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404, ge
 import datetime
 from beat.benchmarks.models import *
 from forms import *
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
-
-import csv
-from django.db.models.loading import get_model
+from beat.tools import graph, export_csv
 
 # MatPlotLib
 import numpy as np
@@ -144,7 +141,7 @@ def scatterplot(request):
 """
 Old graph function to plot a histogram with benchmark data from db
 """
-def simple(request, id):
+def simple(request, id, format='png'):
 	
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -174,11 +171,11 @@ def simple(request, id):
 	ax.plot(elapsed_time, memory_vsize, 'ro')
 	ax.set_xlabel('Elapsed Time')
 	ax.set_ylabel('Memory VSIZE')
+	canvas = FigureCanvas(fig)
 	
 	#fig.set_size_inches(4,8)
-	canvas = FigureCanvas(fig)
-	response = HttpResponse(content_type='image/png')
-	canvas.print_png(response)
+	title = benchmark_IDs.name
+	response = graph.export(canvas, title, format)
 	return response
 
 """
@@ -294,30 +291,11 @@ def compare(request):
 			if 'export_csv' in request.POST:
 				ids = [bench.id for bench in b]
 				bs = Benchmark.objects.filter(id__in=ids)
-				model = bs.model
 				if (title == ''):
 					title = 'benchmarks'
 				
-				response = HttpResponse(mimetype='text/csv')
-				response['Content-Disposition'] = 'attachment; filename=%s.csv' % title
-				writer = csv.writer(response)
-				# Write headers to CSV file
-				headers = []
-				for field in model._meta.fields:
-					headers.append(field.name)
-				writer.writerow(headers)
-				# Write data to CSV file
-				for obj in bs:
-					row = []
-					for field in headers:
-						if field in headers:
-							val = getattr(obj, field)
-							if callable(val):
-								val = val()
-							row.append(val)
-					writer.writerow(row)
 				# Return CSV file to browser as download
-				return response
+				return export_csv.export(bs, title)
 			
 			# Otherwise, compare data:
 			elif 'compare' in request.POST:
@@ -327,9 +305,23 @@ def compare(request):
 					c.name = "Comparison #" + c.id
 				c.hash = c.getHash()
 				c.save()
-				return render_to_response('compare.html', { 'comparison' : c }, context_instance=RequestContext(request))
+				form = ExportGraphForm()
+				return render_to_response('compare.html', { 'comparison' : c, 'form' : form}, context_instance=RequestContext(request))
 			
 	return render_to_response('benchmarks.html', {'form': form}, context_instance=RequestContext(request))
+
+def export_graph(request, id):
+	if request.method == 'POST': # If the form has been submitted...
+		form = ExportGraphForm(request.POST) # A form bound to the POST data
+		if form.is_valid(): # All validation rules pass
+			format = form.cleaned_data['format']
+			return simple(request, id, format)
+	else:
+		form = ExportGraphForm() # An unbound form
+
+	return render_to_response('compare.html', {
+		'comparison' : Comparison.objects.get(pk=id), 'form': form,
+	}, context_instance=RequestContext(request))
 
 """
 Shows the comparison graph that is saved by a user.
@@ -340,10 +332,14 @@ def compare_detail(request, id, model=False):
 	# Then retrieve the correct object and make a response object with it
 	if model:
 		c = get_object_or_404(ModelComparison,pk=id)
-		response = render_to_response('compare_models.html', { 'comparison' : c }, context_instance=RequestContext(request))
+		
+		form = ExportGraphForm()
+		response = render_to_response('compare_models.html', { 'comparison' : c, 'form' : form }, context_instance=RequestContext(request))
 	else:
 		c = get_object_or_404(Comparison,pk=id)
-		response = render_to_response('compare.html', { 'comparison' : c }, context_instance=RequestContext(request))
+		
+		form = ExportGraphForm()
+		response = render_to_response('compare.html', { 'comparison' : c, 'form' : form }, context_instance=RequestContext(request))
 	
 	# Check if the user has rights to see the results:
 	#	- Either the user provided a correct query string like ?auth=<hash>
