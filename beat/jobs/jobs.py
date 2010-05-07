@@ -61,15 +61,20 @@ class JobGenerator:
 			result += "memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
 		return result
 	
+	__stdNodes = "1:E5335,walltime=4:00:00"
+	
 	def suitegen(self, modelname):
 		base = modelname[:modelname.rfind(".")]
 		lang = modelname[modelname.rfind("."):]
 		
 		pbsgen( "1:E5335,walltime=4:00:00", lang+"2lts-grey", "", modelname, filename=base+"-"+lang+"-idx" )
 		pbsgen( "1:E5335,walltime=4:00:00", lang+"2lts-grey", "-cache", modelname, filename=base+"-"+lang+"-idx-cache" )
-		
+		for vset in ["list", "tree", "fdd"]:
+			pbsgen( "1:E5225,walltime=4:00:00", lang+"2lts-grey", "--state vset --vset "+vset, modelname, filename=base+"-"+lang+"-"+vset )
+		pass
 		
 	def generate_all(self):
+		pass
 		
 
 if __name__ == '__main__':
