@@ -1,7 +1,5 @@
 import sys
 
-
-
 class JobGenerator:
 	
 	__directory = "."
@@ -43,10 +41,13 @@ class JobGenerator:
 		result += "ulimit -s 65536\n"
 		return result
 	
-	def pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix=""):
+	def pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=None):
 		"""Generates the jobs"""
 		result = ""
-		result += self.__makePBSHeader(toolname, nodes)
+		if filename is None:
+			result += self.__makePBSHeader(toolname, nodes)
+		else:
+			result += self.__makePBSHeader(filename, nodes)
 		result += "\n"
 		
 		result += "cd " + self.__directory + "\n"
@@ -59,6 +60,17 @@ class JobGenerator:
 		else:
 			result += "memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
 		return result
+	
+	def suitegen(self, modelname):
+		base = modelname[:modelname.rfind(".")]
+		lang = modelname[modelname.rfind("."):]
+		
+		pbsgen( "1:E5335,walltime=4:00:00", lang+"2lts-grey", "", modelname, filename=base+"-"+lang+"-idx" )
+		pbsgen( "1:E5335,walltime=4:00:00", lang+"2lts-grey", "-cache", modelname, filename=base+"-"+lang+"-idx-cache" )
+		
+		
+	def generate_all(self):
+		
 
 if __name__ == '__main__':
 	j = JobGenerator()
