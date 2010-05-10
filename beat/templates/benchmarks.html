@@ -4,7 +4,7 @@
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filter.js"></script>
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
 		
-		<h2>Benchmark Table</h2>
+		<h2>Benchmark Table<span id="ajaxload"></span></h2>
 		
 		<!-- FILTER TABLE -->
 		<form onsubmit="return false;">
@@ -39,7 +39,7 @@
 					</td>
 				</tr>
 			</table>
-			<input type="submit" value="Filter" onclick="filter();" /><span id="ajaxload"></span>
+			<input type="submit" value="Update" onclick="updateTable();" />
 			<select size="1" class="sort" id="sort" onchange="changeSort(this.value);">
 				
 			</select>
@@ -66,7 +66,7 @@
 			
 				<table class="benchmarks">
 					<tr>
-						<th>&nbps;</th>
+						<th>&nbsp;</th>
 						<th id="modelsort" class="sort">Model</th>
 						<th id="statessort" class="sort">States</th>
 						<th id="runtimesort" class="sort">Runtime</th>
