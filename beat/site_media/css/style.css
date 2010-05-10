@@ -1,7 +1,9 @@
+/* niet meer scrolling (en hoogte pas nu dus auto aan)
 .scroll {
 	height:40em;
 	overflow: auto;
 }
+*/
 table.benchmarks {
 	border-collapse:collapse;
 	margin:0px;

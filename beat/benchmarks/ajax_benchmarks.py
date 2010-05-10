@@ -127,7 +127,15 @@ def getTools(qs):
 def getOptions(qs):
 	q = str(qs.values_list('id',flat=True).query)
 	cursor = connection.cursor()
-	cursor.execute("SELECT * FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))")
+	cursor.execute("SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` \
+		WHERE EXISTS (\
+			SELECT `id` FROM `benchmarks_optionvalue` \
+				WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND \
+				EXISTS \
+				(SELECT `id` FROM `benchmarks_benchmarkoptionvalue` \
+					WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND \
+					`benchmarks_benchmarkoptionvalue`.`benchmark_id` IN \
+					("+q+")))")
 	options = []
 	for option in cursor:
 		options.append({'id':option[0],'name':option[1],'takes_argument':option[2]})

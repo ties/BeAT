@@ -9,6 +9,13 @@ $(document).ready(function(){
 		}
 	});
 	
+	$(".benchmarks input[type=checkbox]").live('click', function(){
+		if($(".benchmarks input[type=checkbox]").not(":checked").size() == 0){
+			$("#CheckAll").attr("value", "None");	
+		} else {
+			$("#CheckAll").attr("value", "All");
+		}
+	});
 	
 	$("#InvertAll").click(function(){
 		$(".benchmarks input[type=checkbox]").click();

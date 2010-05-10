@@ -67,7 +67,6 @@ var possible_columns = new Array();
 var checked_columns = DEFAULTCOLUMNS;
 var checked_benchmarks = new Array();
 
-
 /**
  * Function that adds a filterrow after the filter with filter.row=row
  * @require		row>=0
