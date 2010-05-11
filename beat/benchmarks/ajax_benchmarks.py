@@ -11,6 +11,7 @@ DEFAULTRESPERPAGE = 50
 SORTS = {'model':'model__name','id':'id','states':'states_count','runtime':'total_time','memory_rss':'memory_RSS','finished':'finished'}
 SORT_ASCENDING = 'ASC'
 SORT_DESCENDING = 'DESC'
+DEFAULTCOLUMNS = {}
 
 def getBenchmarks(request):
 	print 'check'
@@ -22,21 +23,24 @@ def getBenchmarks(request):
 	
 	sort = DEFAULTSORT
 	sortorder = DEFAULTSORTORDER
-	
-	print 'check'
+	columns = DEFAULTCOLUMNS
 	
 	if 'sort' in request.POST.keys():
 		jsonsort = json.loads(request.POST['sort'])
 		sort = str(jsonsort['sort'])
 		sortorder = str(jsonsort['sortorder'])
 	
+	if 'columns' in request.POST.keys():
+		columns = json.loads(request.POST['columns'])
+		print '-------------cols'
+		print columns
 	print 'check'
 	
-	res = getResponse(Benchmark.objects.all(),filters,sort,sortorder)
+	res = getResponse(Benchmark.objects.all(),filters,sort,sortorder,columns)
 	
 	return res
 
-def getResponse(qs,filters,sort,sortorder):
+def getResponse(qs,filters,sort,sortorder,columns):
 	result = {}
 	
 	benchmarks = []
@@ -87,6 +91,8 @@ def getResponse(qs,filters,sort,sortorder):
 	qs = sortQuerySet(qs,sort,sortorder)
 	
 	for benchmark in qs:
+		dict = {'id':benchmark.id}
+		
 		benchmarks.append({
 			'id': benchmark.id,
 			'model': benchmark.model.name,
