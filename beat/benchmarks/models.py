@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from tools.hash import hash
+from beat.settings import *
 
 class Model(models.Model):
 	name = models.CharField(max_length=200)
@@ -41,6 +42,7 @@ class Benchmark(models.Model):
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
+	logfile = models.FilePathField(path=LOGS_PATH)
 	
 	def __unicode__(self):
 		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)
@@ -99,6 +101,8 @@ class AlgorithmTool(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
 	tool = models.ForeignKey('Tool')
 	regex = models.ForeignKey('Regex')
+	version = models.CharField(max_length=60)
+	date = models.DateTimeField()
 	
 	def __unicode__(self):
 		return "%s-%s" % (self.tool, self.algorithm)

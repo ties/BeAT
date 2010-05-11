@@ -106,3 +106,8 @@ INSTALLED_APPS = (
 
 STATIC_DOC_ROOT = os.path.join(SITE_ROOT, 'templates')
 STATIC_MEDIA_ROOT = os.path.join(SITE_ROOT, 'site_media')
+
+#path for the logs
+LOGS_PATH = os.path.join(SITE_ROOT, 'logs')
+#git  spul
+GIT_PATH = os.path.join(SITE_ROOT, 'git')
