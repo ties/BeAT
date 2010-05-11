@@ -156,6 +156,9 @@ class FileReader:
 		#write logfile
 		#write to a file in LOGS_PATH
 		logfile = "test.txt"
+		with open(logfile, 'w') as file:
+			for line in lines:
+				file.write(line)
 
 		# # # # # # # # # # # # analyze the header
 		match = regex.match(''.join(header))
@@ -167,8 +170,10 @@ class FileReader:
 			return None
 		#m should contain the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
 		toolversion = m.get('toolversion')
+		tv = toolversion.split('-')
+		g = GitInterface(os.path.join(GIT_PATH,'1'))
+		gitdate = datetime(*g.get_date(g.get_matching_item(tv[len(tv)-1]))[:6])
 		
-		GitInterface(os.path.join(GIT_PATH,'1'))
 		
 		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
 		#parse the Call to find the supplied options
@@ -237,7 +242,7 @@ class FileReader:
 			return None
 
 		try:
-			t = Tool.objects.get(name=s[1], version=toolversion)
+			t = Tool.objects.get(name=s[1])
 			a = Algorithm.objects.get(name=s[2])
 			at = AlgorithmTool.objects.get(tool=t, algorithm=a)
 			shortopts = ''
