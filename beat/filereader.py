@@ -155,24 +155,28 @@ class FileReader:
 		
 		#write logfile
 		#write to a file in LOGS_PATH
-		logfile = "test.txt"
+		logfile = os.path.join(LOGS_PATH,"test.txt")
 		with open(logfile, 'w') as file:
 			for line in lines:
 				file.write(line)
 
 		# # # # # # # # # # # # analyze the header
 		match = regex.match(''.join(header))
+		if not match:
+			self.print_message(V_QUIET, "Error: matching of regex on header failed. Are you sure the header is correctly formatted?")
+			return None
 		self.print_message(V_NOISY, "Notice: header is: %s"%(''.join(header)))
 		m = match.groupdict()
 		if not m:
 			#matching the regex went quite wrong, the log must be broken
-			self.print_message(V_QUIET, "Error: header regex failed. Are you sure this log is correct?")
+			self.print_message(V_QUIET, "Error: no results form the header regex. Are you sure this log is complete?")
 			return None
 		#m should contain the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
+		
 		toolversion = m.get('toolversion')
 		tv = toolversion.split('-')
-		g = GitInterface(os.path.join(GIT_PATH,'1'))
-		gitdate = datetime(*g.get_date(g.get_matching_item(tv[len(tv)-1]))[:6])
+		#g = GitInterface(os.path.join(GIT_PATH,'1'))
+		#gitdate = datetime(*g.get_date(g.get_matching_item(tv[len(tv)-1]))[:6])
 		
 		
 		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
@@ -221,7 +225,7 @@ class FileReader:
 		return data
 	#end of parse
 	
-	def parse_call(self, call, toolversion):
+	def parse_call(self, call, version):
 		"""Parses a call to an algorithm-tool
 		A call, like "dve-reach -v --cache test.txt", is parsed by this method to provide all the useful information we can get from it.
 			Arguments: 
@@ -244,7 +248,7 @@ class FileReader:
 		try:
 			t = Tool.objects.get(name=s[1])
 			a = Algorithm.objects.get(name=s[2])
-			at = AlgorithmTool.objects.get(tool=t, algorithm=a)
+			at = AlgorithmTool.objects.get(tool=t, algorithm=a, version=version)
 			shortopts = ''
 			#long options
 			opts = []
@@ -265,7 +269,7 @@ class FileReader:
 					pass
 		#handle database related errors
 		except ObjectDoesNotExist:
-			self.print_message(V_QUIET, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], toolversion))
+			self.print_message(V_QUIET, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], version))
 			return None
 		except MultipleObjectsReturned:
 			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))
@@ -282,9 +286,8 @@ class FileReader:
 		#read the options for the tool and convert them into a nice list
 		#arguments are discarded for now (also, some of those might be bash-parsed and not passed to the algorithm_tool)
 		import getopt
-		self.print_message(V_NOISY, "input for gnu_getopt: \n%s\n%s"%(shortopts,opts))
+		self.print_message(V_NOISY, "Notice: input for gnu_getopt: \n%s\n%s"%(shortopts,opts))
 		optlist, args = getopt.gnu_getopt(call.split(" ")[2:], shortopts, opts)
-		self.print_message(V_NOISY, "raw optlist & arglist: \n%s\n%s"%(optlist,args))
 		counter = 0
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
 		#we need a value, however; we'll use True
@@ -348,7 +351,14 @@ class FileReader:
 		#Tool
 		name, version = data['tool']
 		try:
-			t = Tool.objects.get(name=name, version=version)
+			t = Tool.objects.get(name=name)
+		except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
+			self.print_message(V_VERBOSE, "Warning while checking: %s"%(e))
+			valid = False
+
+		#AlgorithmTool
+		try:
+			at = AlgorithmTool.objects.get(tool=t, algorithm=a, version=version)
 		except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
 			self.print_message(V_VERBOSE, "Warning while checking: %s"%(e))
 			valid = False
@@ -384,10 +394,10 @@ class FileReader:
 				#tcount is allowed to be empty, scount is not given if excecution is ended prematurely
 				if not tcount:
 					tcount = 0
-					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
+					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile)
 				if not scount and not finished:
 					scount = 0
-					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
+					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile)
 			else:
 				self.print_message(V_VERBOSE, "Warning while checking: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
 				valid=False
@@ -428,8 +438,10 @@ class FileReader:
 
 		#Tool
 		name, version = data['tool']
-		#a tool has a name and version
-		t = Tool.objects.get(name=name, version=version)
+		t = Tool.objects.get(name=name)
+
+		#AlgorithmTool
+		at = AlgorithmTool.objects.get(tool=t, algorithm=a, version=version)
 
 		#Hardware
 		hwdata = data['hardware']
@@ -457,7 +469,8 @@ class FileReader:
 		stime = float(stime)
 		etime = float(etime)
 		#now create and save the db object
-		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a, date_time=date, 
+		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a, algorithm_tool = at,
+			date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
 				'total_time':(utime+stime),
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
@@ -568,6 +581,7 @@ class FileReader:
 						#an unknown error occured, skip this part
 						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
 						errorcounter+=1
+						raise e
 				else:
 					#there was no data returned while parsing
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))

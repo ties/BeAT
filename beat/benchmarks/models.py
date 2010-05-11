@@ -28,6 +28,8 @@ class Benchmark(models.Model):
 	model = models.ForeignKey('Model')
 	tool = models.ForeignKey('Tool')
 	algorithm = models.ForeignKey('Algorithm')
+	#will replace tool and algorithm(?)
+	algorithm_tool = models.ForeignKey('AlgorithmTool')
 	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
 	optionvalue = models.ManyToManyField('OptionValue', through="BenchmarkOptionValue")
 	date_time = models.DateTimeField(verbose_name="Time started")
@@ -80,14 +82,13 @@ class ExtraValue(models.Model):
 	value = models.CharField(max_length=200)
 	
 	def __unicode__(self):
-		return "%s %s" % (self.name, self.version)
+		return "%s %s" % (self.name)
 
 class Tool(models.Model):	
 	name = models.CharField(max_length=200)
-	version = models.CharField(max_length=50)
 	
 	def __unicode__(self):
-		return "%s.%s" % (self.name, self.version)
+		return "%s" % (self.name)
 
 class ValidOption(models.Model):
 	algorithm_tool = models.ForeignKey('AlgorithmTool')
@@ -105,7 +106,7 @@ class AlgorithmTool(models.Model):
 	date = models.DateTimeField()
 	
 	def __unicode__(self):
-		return "%s-%s" % (self.tool, self.algorithm)
+		return "%s%s" % (self.tool, self.algorithm)
 	
 class Algorithm(models.Model):
 	name = models.CharField(max_length=50)
