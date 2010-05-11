@@ -155,6 +155,9 @@ class ModelComparison(models.Model):
 	name = models.CharField(max_length=255)
 	hash = models.CharField(max_length=27)
 	
+	def getHash(self):
+		return  hash(str(self.id) + str(self.date_time))
+	
 	def __unicode__(self):
 		return "%s" % (self.name)
 

@@ -3,4 +3,9 @@
 {% block content %}
 		<h2>Compare</h2>
 		<img src="benchmark.png" alt="Model compare graph" />
+		
+		<form action="{% url benchmarks.views.export_graph comparison.id %}" method="post">{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Export" />
+		</form>
 {% endblock %}

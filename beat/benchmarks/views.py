@@ -210,7 +210,6 @@ def graph_model(request, id):
 
 	# Plot data
 	axisNum = 0 # Counts the number of lines (to produce a unique style for each line)
-	
 	modelNames = Model.objects.values('name').annotate(num_models=Count('name'))
 	
 	# Plot a line for each model
@@ -222,26 +221,27 @@ def graph_model(request, id):
 		
 		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
 		# Filter benchmarks based on the ModelComparison data
-		benchmarks = benchmarks.filter(algorithm = c_algo).filter(tool = c_tool)
+		benchmarks = benchmarks.filter(algorithm = c_algo, tool = c_tool)
 		
-		# Filter options if specified
-		if c_option is not None:
-			benchmarks = benchmarks.filter(optionvalue=c_option)
-		
-		# Static data types to plot in the graph
-		types = {
-			'transitions': [b.transition_count for b in benchmarks],
-			'states': [b.states_count for b in benchmarks],
-			'vsize': [b.memory_VSIZE for b in benchmarks],
-			'rss': [b.memory_RSS for b in benchmarks],
-		}[c_type] # c_type: datatype from ModelComparison object
-		
-		# Plot data
-		lines = ax.plot(
-			[b.model.version for b in benchmarks], 
-			types, 
-			marker + style + color,
-			label = m['name'])
+		if (len(benchmarks) != 0):
+			# Filter options if specified
+			if c_option is not None:
+				benchmarks = benchmarks.filter(optionvalue=c_option)
+			
+			# Static data types to plot in the graph
+			types = {
+				'transitions': [b.transition_count for b in benchmarks],
+				'states': [b.states_count for b in benchmarks],
+				'vsize': [b.memory_VSIZE for b in benchmarks],
+				'rss': [b.memory_RSS for b in benchmarks],
+			}[c_type] # c_type: datatype from ModelComparison object
+			
+			# Plot data
+			lines = ax.plot(
+				[b.tool.version for b in benchmarks], 
+				types, 
+				marker + style + color,
+				label = m['name'])
 
 	#Mark-up
 	title = '' + c_type + ' (' + c_tool.name + ', ' + c_algo.name
@@ -269,10 +269,10 @@ def index(request):
 
 
 """
-Show the list of benchmarks with pagination
+Show the list of benchmarks
 """
 @login_required
-def benchmarks(request, numResults=25):
+def benchmarks(request):
 	return render_to_response('benchmarks.html', {}, context_instance=RequestContext(request))
 
 """
@@ -300,10 +300,15 @@ def compare(request):
 			# Otherwise, compare data:
 			elif 'compare' in request.POST:
 				# Process the data in form.cleaned_data
-				c, created = Comparison.objects.get_or_create(user=request.user, benchmarks=(",".join([str(bench.id) for bench in b])),name=title,hash='')
-				if (c.name == ''):
-					c.name = "Comparison #" + c.id
+				c, created = Comparison.objects.get_or_create(
+					user=request.user, 
+					benchmarks=(",".join([str(bench.id) for bench in b])),
+					name=title,
+					hash=''
+				)
 				c.hash = c.getHash()
+				if (c.name == ''):
+					c.name = "Comparison #" + str(c.id)
 				c.save()
 				form = ExportGraphForm()
 				return render_to_response('compare.html', { 'comparison' : c, 'form' : form}, context_instance=RequestContext(request))
@@ -333,11 +338,14 @@ def compare_detail(request, id, model=False):
 	if model:
 		c = get_object_or_404(ModelComparison,pk=id)
 		
+		models = Model.objects.values('id').annotate(num_models=Count('name'))
+		benches = Benchmark.objects.filter(tool=c.tool, algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
+		models = Model.objects.filter(id__in=[b.model.id for b in benches])
+		
 		form = ExportGraphForm()
-		response = render_to_response('compare_models.html', { 'comparison' : c, 'form' : form }, context_instance=RequestContext(request))
+		response = render_to_response('compare_models.html', { 'comparison' : c, 'form' : form,  }, context_instance=RequestContext(request))
 	else:
 		c = get_object_or_404(Comparison,pk=id)
-		
 		form = ExportGraphForm()
 		response = render_to_response('compare.html', { 'comparison' : c, 'form' : form }, context_instance=RequestContext(request))
 	
@@ -377,25 +385,32 @@ def user_comparison_delete(request, id, model=False):
 ModelCompareForm handler
 """	
 def compare_model(request):
-	print Tool.objects.all()
+	"""
 	return render_to_response('compare_models_form.html', { 'tools' : Tool.objects.all() }, context_instance=RequestContext(request))
 	"""
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
-			comparison, created = ModelComparison.objects.get_or_create(
+			c, created = ModelComparison.objects.get_or_create(
 				user = request.user, 
 				algorithm = form.cleaned_data['algorithm'],
 				tool = form.cleaned_data['tool'],
 				optionvalue = form.cleaned_data['option'],
-				type = form.cleaned_data['type']
+				type = form.cleaned_data['type'],
+				name = form.cleaned_data['name']
 			)
+			
+			c.hash = c.getHash()
+			if (c.name is ''): 
+				c.name = str(id)
+				c.save()
+			
 			#return render_to_response('compare_models.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
-			return redirect('detail_model', id=comparison.id)
+			return redirect('detail_model', id=c.id)
 	else:
 		form = CompareModelsForm() # An unbound form
 	
 	return render_to_response('compare_models_form.html', {
 		'form': form, 
 	}, context_instance=RequestContext(request))
-	"""
+	
