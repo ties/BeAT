@@ -18,6 +18,9 @@ import datetime	#for datetime objects
 import sys		#for system calls
 import os		#for os.path.split()
 from optparse import OptionParser
+
+from settings import *
+
 #django exceptions
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 #models
@@ -148,6 +151,10 @@ class FileReader:
 		
 		#split the header off
 		lines = lines[i:]
+		
+		#write logfile
+		#write to a file in LOGS_PATH
+		logfile = "test.txt"
 
 		# # # # # # # # # # # # analyze the header
 		match = regex.match(''.join(header))
@@ -192,7 +199,7 @@ class FileReader:
 			'options':optlist,
 			'benchmark':(
 				dt, m.get('etime'), m.get('utime'), m.get('stime'), m.get('tcount'),
-				m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill')
+				m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill'), logfile
 			)
 		}
 		#the following ensures 'hardware' and 'options' always contain something iteratable
@@ -361,7 +368,7 @@ class FileReader:
 				valid = False
 
 		#Benchmark
-		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile = data['benchmark']
 		self.print_message(V_NOISY,"Statecount for this run is: %s, did it finish? %s"% (scount,finished))
 		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
 			if not tcount or (not scount and not finished):
@@ -435,7 +442,7 @@ class FileReader:
 			hardwarelist.append(h)
 		
 		#Benchmark
-		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile = data['benchmark']
 		#convert these to float explicitly
 		utime = float(utime)
 		stime = float(stime)
@@ -445,7 +452,7 @@ class FileReader:
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
 				'total_time':(utime+stime),
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
-				'memory_RSS':mRSS, 'finished':finished}
+				'memory_RSS':mRSS, 'finished':finished, 'logfile':logfile}
 		)
 		#connect the manytomany relations. this has to happen ONLY if newly created
 		if created:
@@ -531,7 +538,6 @@ class FileReader:
 			for run in runs_in_file:
 				#parse the whole thing
 				data = self.parse(run)
-				
 				if data:
 					#write to the database
 					try:
