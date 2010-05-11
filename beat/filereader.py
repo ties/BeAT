@@ -20,6 +20,7 @@ import os		#for os.path.split()
 from optparse import OptionParser
 
 from settings import *
+from gitinterface import *
 
 #django exceptions
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -166,6 +167,9 @@ class FileReader:
 			return None
 		#m should contain the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
 		toolversion = m.get('toolversion')
+		
+		GitInterface(os.path.join(GIT_PATH,'1'))
+		
 		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
 		#parse the Call to find the supplied options
 		tmp = self.parse_call(header[call][6:], toolversion)
