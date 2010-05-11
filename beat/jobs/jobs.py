@@ -70,6 +70,8 @@ class JobGenerator:
 			result += prefix + " memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
 		else:
 			result += "memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
+		result += "\n"
+		result += "REPORT ENDS HERE\n"
 		return result
 	
 	def jobgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=None):
