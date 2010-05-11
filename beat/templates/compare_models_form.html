@@ -7,7 +7,7 @@
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/FilteredModels.js"></script>
 		-->
 		
-		<h2>Compare</h2>
+		<h2>Models</h2>
 		<form action="{% url benchmarks.views.compare_model %}" method="post">{% csrf_token %}
 			<table>{{ form.as_table }}</table>
 		<input type="submit" value="Submit" />

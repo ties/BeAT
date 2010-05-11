@@ -183,7 +183,7 @@ Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
 @param id ModelComparison ID from the database, used filter the benchmark data from the db.
 """
-def graph_model(request, id):
+def graph_model(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
@@ -259,8 +259,7 @@ def graph_model(request, id):
 	# Output
 	canvas = FigureCanvas(fig)
 	#fig.savefig('benchmark.pdf')
-	response = HttpResponse(content_type='image/png')
-	canvas.print_png(response)
+	response = graph.export(canvas, comparison.name, format)
 	return response
 
 	#@login_required(redirect_field_name='next')
@@ -315,20 +314,23 @@ def compare(request):
 			
 	return render_to_response('benchmarks.html', {'form': form}, context_instance=RequestContext(request))
 
-def export_graph(request, id):
+def export_graph(request, id, model=False):
 	if request.method == 'POST': # If the form has been submitted...
 		form = ExportGraphForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
 			format = form.cleaned_data['format']
-			return simple(request, id, format)
+			if model:
+				return graph_model(request, id, format)
+			else:
+				return simple(request, id, format)
 	else:
 		form = ExportGraphForm() # An unbound form
 
 	return render_to_response('compare.html', {
 		'comparison' : Comparison.objects.get(pk=id), 'form': form,
 	}, context_instance=RequestContext(request))
-
 """
+
 Shows the comparison graph that is saved by a user.
 @param id Comparison id if model=False; else ModelComparison id
 """		
