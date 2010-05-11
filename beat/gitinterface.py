@@ -3,13 +3,14 @@ import time
 from os import system
 
 class GitInterface:
+	folder = ""
 	def __init__(self, folder):
 		self.folder = folder
 	
 	# this function will return a list of objects.
 	# it wil return the given code and number amount of parents of this node as a list newest item first.
 	# @requres code be a git.Commit item.
-	def parents_list(code, number):
+	def parents_list(self, code, number):
 		a = [code]
 		if number > 0:
 			a.extend(parents_list(code.parents[0],number-1))
@@ -38,7 +39,7 @@ class GitInterface:
 		return h
 	
 	#returns a list of all the commits in the given folder.
-	def get_all_commits():
+	def get_all_commits(self):
 		#iterator for all commits.
 		i = Repo(self.folder).iter_commits()
 		h = []
@@ -53,15 +54,15 @@ class GitInterface:
 	
 	#gives the committime of the given git.Commit
 	#in the form of a time.struct_time object
-	def get_date(gitcommit):
+	def get_date(self, gitcommit):
 		return time.gmtime(gitcommit.authored_date)
 	
 	# gives the name of the persone who commited the given commit.
-	def get_author(gitcommit):
+	def get_author(self, gitcommit):
 		return gitcommit.committer
 	
 	#returns the parent of the given commit.
-	def get_parents(gitcommit):
+	def get_parents(self, gitcommit):
 		return gitcommit.parents[0]
 	
 	# allows pulling form git needs the git server as a string
@@ -72,5 +73,4 @@ class GitInterface:
 
 #pull_from_git("git@github.com:ties/BeAT")
 #print get_date(get_matching_item(".", "c2bee8864"))
-#print get_any_parent("C:\Vakken\OWP",5)
 #<git.Commit "c2bee88640cc6bebfb9b79a0601d74a67e0cd5c0">
