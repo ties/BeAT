@@ -155,6 +155,7 @@ function removeFilterRow(row){
 	console.log('Removed a filterrow, current filters: '+filterstring());
 	
 	renewFilters();
+	updateTable(true);
 }
 
 /**
@@ -241,7 +242,7 @@ function storeValues(){
 		else if (filter.type==OPTIONS)					storeOptionsFilter(filter);
 		else if (filter.type==FINISHED)					storeFinishedFilter(filter);
 	});
-	//console.log('Stored filter values');
+	console.log('Stored filter values');
 }
 
 /**
@@ -386,6 +387,7 @@ function renewFilters(){
 	}
 	$('#filters').html(rows);
 	configureHover();
+	configureLiveUpdate();
 	console.log('Renewed filters');
 }
 
@@ -638,7 +640,7 @@ function OptionsFilterRow(filter){
  */
 function addMega(elem){
 	$(elem).addClass("hovering");
-	//console.log('Add megadropdownmenu: '+elem.id);
+	console.log('Add megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -647,7 +649,8 @@ function addMega(elem){
  */
 function removeMega(elem){
 	$(elem).removeClass("hovering");
-	//console.log('Remove megadropdownmenu: '+elem.id);
+	console.log('Remove megadropdownmenu: '+elem.id+', updating table!');
+	updateTable(true);
 }
 
 /**
@@ -671,10 +674,15 @@ function configureHover(){
 /**
  * Function that updates the table with the current filter, order and columns
  */
-function updateTable(){
+function updateTable(check){
 	storeValues();
 	storeSelectedIDs();
 	storeSelectedColumns();
+	var sendFilter = getFilter(check);
+	if (sendFilter=='error'){
+		console.log('Error in filters');
+		return;
+	}
 	d = 'filters='+getFilter()+'&sort='+getSort()+'&columns='+getColumns();
 	console.log('Sending request to server: '+d);
 	getBenchmarks(d);
@@ -751,7 +759,6 @@ function getTableHeaders(){
 	var res = '<tr><th>&nbsp;</th>';
 	for (var i=0;i<columns.column_names.length;i++){
 		if (columns.column_checked[i]){
-			console.log('Adding header '+columns.column_names[i]);
 			res+='<th id="'+columns.column_db_names[i]+'_sort">'+columns.column_names[i]+'</th>';
 		}
 	}
@@ -764,14 +771,37 @@ function getTableHeaders(){
  * @ensure 	result!='undefined'
  *			result is in JSON-format, containing an array of objects
  */
-function getFilter(){
+function getFilter(check){
 	var json = '[';
 	for (var i=0; i<filters.length;i++){
-		json+=JSON.stringify(filters[i]);
+		var f = filters[i];
+		//check filter
+		var c = checkFilter(f);
+		if (c){
+			json+=JSON.stringify(f);
+		}else{
+			console.log('Found error in filter');
+			//only return an error when check is true
+			if (check){
+				return "error";
+			}
+		}
 		if (i<(filters.length-1))	json += ',';
 	}
 	json += ']';
 	return json;
+}
+
+function checkFilter(f){
+	if (f.type==EMPTY ||
+		(f.type==DATE && (f.style==''||f.value==''||!f.value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/))) ||
+		(f.type==OPTIONS && f.options.length==0) ||
+		(LISTFILTERS.indexOf(f.type)!=-1 && f.list.length==0) ||
+		(VALUEFILTERS.indexOf(f.type)!=-1 && (f.style=='' || f.value=='' || (parseInt(f.value)+"")!=f.value )) ||
+		(f.type==FINISHED && f.value=='')){
+			return false;
+		}
+	return true;
 }
 
 function showSortOptions(){
@@ -831,10 +861,10 @@ function showColumnOptions(){
  * @ensure Every checked column is saved in checked_columns
  */
 function storeSelectedColumns(){
-	checked_columns = new Array();
 	$("#columns :checked").each(function (i,obj){
-		//alert(i+','+obj.id);
-		checked_columns.push(obj.id);
+		var index = columns.column_db_names.indexOf(obj.id);
+		columns.column_checked[index] = true;
+		console.log('checked: '+obj.id+' ('+columns.column_checked[index]+')');
 	});
 }
 
@@ -844,13 +874,16 @@ function storeSelectedColumns(){
  *			result is in JSON-format, containing an object with an array "columns", containing all selected column-names
  */
 function getColumns(){
-	var json = '{"columns":[';
-	for (var i=0;i<checked_columns.length;i++){
-		json+='"'+checked_columns[i]+'"'+(i<(checked_columns.length-1) ? ',' : '');
-	}
-	json+=']}';
-	//alert(json);
-	return json;
+	return JSON.stringify(columns);
+}
+
+function configureLiveUpdate(){
+	$(".filterStyle").focusout(function(){
+		updateTable(true);
+	});
+	$(".filterValue").focusout(function(){
+		updateTable(true);
+	});
 }
 
 /**
@@ -880,9 +913,9 @@ $(document).ready(function(){
 	filters.push(f);
 	
 	configureHover();
+	configureLiveUpdate();
 	
-	getBenchmarks('');
+	updateTable(false);
 	
 	showSortOptions();
-	//showColumnOptions();
 });
