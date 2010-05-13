@@ -11,6 +11,7 @@ DEFAULTRESPERPAGE = 50
 SORTS = {'model':'model__name','id':'id','states':'states_count','runtime':'total_time','memory_rss':'memory_RSS','finished':'finished'}
 SORT_ASCENDING = 'ASC'
 SORT_DESCENDING = 'DESC'
+DEFAULTCOLUMNS = {}
 
 def getBenchmarks(request):
 	print 'check'
@@ -22,21 +23,24 @@ def getBenchmarks(request):
 	
 	sort = DEFAULTSORT
 	sortorder = DEFAULTSORTORDER
-	
-	print 'check'
+	columns = DEFAULTCOLUMNS
 	
 	if 'sort' in request.POST.keys():
 		jsonsort = json.loads(request.POST['sort'])
 		sort = str(jsonsort['sort'])
 		sortorder = str(jsonsort['sortorder'])
 	
+	if 'columns' in request.POST.keys():
+		columns = json.loads(request.POST['columns'])
+		print '-------------cols'
+		print columns
 	print 'check'
 	
-	res = getResponse(Benchmark.objects.all(),filters,sort,sortorder)
+	res = getResponse(Benchmark.objects.all(),filters,sort,sortorder,columns)
 	
 	return res
 
-def getResponse(qs,filters,sort,sortorder):
+def getResponse(qs,filters,sort,sortorder,columns):
 	result = {}
 	
 	benchmarks = []
@@ -87,6 +91,8 @@ def getResponse(qs,filters,sort,sortorder):
 	qs = sortQuerySet(qs,sort,sortorder)
 	
 	for benchmark in qs:
+		dict = {'id':benchmark.id}
+		
 		benchmarks.append({
 			'id': benchmark.id,
 			'model': benchmark.model.name,
@@ -127,7 +133,15 @@ def getTools(qs):
 def getOptions(qs):
 	q = str(qs.values_list('id',flat=True).query)
 	cursor = connection.cursor()
-	cursor.execute("SELECT * FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))")
+	cursor.execute("SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` \
+		WHERE EXISTS (\
+			SELECT `id` FROM `benchmarks_optionvalue` \
+				WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND \
+				EXISTS \
+				(SELECT `id` FROM `benchmarks_benchmarkoptionvalue` \
+					WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND \
+					`benchmarks_benchmarkoptionvalue`.`benchmark_id` IN \
+					("+q+")))")
 	options = []
 	for option in cursor:
 		options.append({'id':option[0],'name':option[1],'takes_argument':option[2]})

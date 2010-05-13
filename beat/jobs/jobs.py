@@ -29,7 +29,7 @@ class JobGenerator:
 		result += "echo Hardware-platform: $(uname -i)\n"
 		result += "echo Processor: $(uname -p)\n"
 		result += "echo Memory-total: $(cat /proc/meminfo | grep MemTotal | tr -s \" \" | cut -d\" \" -f 2 -)\n"
-		result += "echo DateTime: $(date '+%Y %m %d %H %M %S') $[ $(date '+%N') / 1000]\n"
+		result += "echo DateTime: $(date '+%Y %m %d %H %M %S') $[ $(date '+%-N') / 1000 ]\n"
 		
 		result += "echo ToolVersion: $(" + toolname + " --version | cut -d' ' -f 2)\n"
 		result += "echo Call: " + toolname + " " + tooloptions + " " + modelname + "\n"
@@ -70,6 +70,8 @@ class JobGenerator:
 			result += prefix + " memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
 		else:
 			result += "memtime " + toolname + " " + tooloptions + " " + modelname + " " + postfix + "\n"
+		result += "\n"
+		result += "REPORT ENDS HERE\n"
 		return result
 	
 	def jobgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=None):

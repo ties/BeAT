@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from tools.hash import hash
+from settings import *
 
 class Model(models.Model):
 	name = models.CharField(max_length=200)
@@ -27,6 +28,8 @@ class Benchmark(models.Model):
 	model = models.ForeignKey('Model')
 	tool = models.ForeignKey('Tool')
 	algorithm = models.ForeignKey('Algorithm')
+	#will replace tool and algorithm(?)
+	algorithm_tool = models.ForeignKey('AlgorithmTool')
 	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
 	optionvalue = models.ManyToManyField('OptionValue', through="BenchmarkOptionValue")
 	date_time = models.DateTimeField(verbose_name="Time started")
@@ -41,6 +44,7 @@ class Benchmark(models.Model):
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
+	logfile = models.FilePathField(path=LOGS_PATH)
 	
 	def __unicode__(self):
 		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)
@@ -78,14 +82,13 @@ class ExtraValue(models.Model):
 	value = models.CharField(max_length=200)
 	
 	def __unicode__(self):
-		return "%s %s" % (self.name, self.version)
+		return "%s %s" % (self.name)
 
 class Tool(models.Model):	
 	name = models.CharField(max_length=200)
-	version = models.CharField(max_length=50)
 	
 	def __unicode__(self):
-		return "%s.%s" % (self.name, self.version)
+		return "%s" % (self.name)
 
 class ValidOption(models.Model):
 	algorithm_tool = models.ForeignKey('AlgorithmTool')
@@ -99,9 +102,11 @@ class AlgorithmTool(models.Model):
 	algorithm = models.ForeignKey('Algorithm')
 	tool = models.ForeignKey('Tool')
 	regex = models.ForeignKey('Regex')
+	version = models.CharField(max_length=60)
+	date = models.DateTimeField()
 	
 	def __unicode__(self):
-		return "%s-%s" % (self.tool, self.algorithm)
+		return "%s%s" % (self.tool, self.algorithm)
 	
 class Algorithm(models.Model):
 	name = models.CharField(max_length=50)
@@ -154,6 +159,9 @@ class ModelComparison(models.Model):
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	name = models.CharField(max_length=255)
 	hash = models.CharField(max_length=27)
+	
+	def getHash(self):
+		return  hash(str(self.id) + str(self.date_time))
 	
 	def __unicode__(self):
 		return "%s" % (self.name)

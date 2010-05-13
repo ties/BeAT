@@ -15,10 +15,11 @@ urlpatterns = patterns('',
 	(r'^test.png$', 'benchmarks.views.scatterplot'),
 	(r'^benchmarks/$', 'benchmarks.views.benchmarks'),
 	(r'^compare$', 'benchmarks.views.compare'),
-	(r'^export/(?P<id>\d+)$', 'benchmarks.views.export_graph'),
+	url (r'^export/(?P<id>\d+)$', 'benchmarks.views.export_graph',name="export_benchmark_graph"),
+	url (r'^export/model/(?P<id>\d+)$', 'benchmarks.views.export_graph', {'model': True}, name="export_model_graph"),
 	
 	# Show detail for a benchmark Comparison or ModelComparison, it takes the ID from the db
-	url(r'^compare/(?P<id>\d+)$', 'benchmarks.views.compare_detail', name="detail_benchmark"),
+	url(r'^compare/(?P<id>\d+)/$', 'benchmarks.views.compare_detail', name="detail_benchmark"),
 	url(r'^compare/model/(?P<id>\d+)/$', 'benchmarks.views.compare_detail', {'model' : True},name="detail_model"),
 	# Graph for the model-comparison
 	(r'^compare/model/(?P<id>\d+)/benchmark.png$', 'benchmarks.views.graph_model'),

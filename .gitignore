@@ -10,3 +10,8 @@ db.db
 *.bak
 #temp files for gedit
 *~
+#ignore these folders:
+#location for all git interaction:
+git/
+#location for logs:
+logs/

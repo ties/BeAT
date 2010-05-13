@@ -1,21 +1,22 @@
 from benchmarks.models import *
 import random
+from datetime import datetime
 
 def varieer(time):
 	return time * (random.random() * 0.2 + 0.9)
 
 b = Benchmark.objects.all()
 for i in b:
-	t = i.tool
-	t, c = Tool.objects.get_or_create(name=t.name,version=t.version[-49:]+'1')
+	at = i.algorithm_tool
+	at, c = AlgorithmTool.objects.get_or_create(tool=at.tool, algorithm=at.algorithm, version=at.version[-59:]+'1', regex=at.regex, date=datetime.now())
 	h = i.hardware.all()
 	o = i.optionvalue.all()
 	i.user_time = varieer(i.user_time)
 	i.system_time = varieer(i.system_time)
 	i.elapsed_time = varieer(i.elapsed_time)
 	i.total_time = i.user_time + i.system_time + i.elapsed_time
-	bench, c = Benchmark.objects.get_or_create(model=i.model, tool=t, algorithm=i.algorithm,
-				date_time=i.date_time, defaults={'user_time':i.user_time,
+	bench, c = Benchmark.objects.get_or_create(model=i.model, tool=i.tool, algorithm=i.algorithm,
+				algorithm_tool=at, date_time=i.date_time, defaults={'user_time':i.user_time,
 				'system_time':i.system_time,'elapsed_time':i.elapsed_time,
 				'total_time':i.total_time,
 				'transition_count':i.transition_count, 'states_count':i.states_count,

@@ -1,78 +1,94 @@
-/** Some constants for the filtersystem: **/
-var EMPTY = 'empty';
-var MODEL = 'model';
-var ALGORITHM = 'algorithm';
-var TOOL = 'tool';
-var MEMORY = 'memory';
-var RUNTIME ='runtime';
-var STATES ='states';
-var TRANSITIONS ='transitions';
-var DATE ='date';
-var OPTIONS = 'options';
-var FINISHED = 'finished';
+/** Global variables and constants for filtering: **/
+	/** Constants containing possible filters: **/
+	var EMPTY = 'empty';
+	var MODEL = 'model';
+	var ALGORITHM = 'algorithm';
+	var TOOL = 'tool';
+	var MEMORY = 'memory';
+	var RUNTIME ='runtime';
+	var STATES ='states';
+	var TRANSITIONS ='transitions';
+	var DATE ='date';
+	var OPTIONS = 'options';
+	var FINISHED = 'finished';
 
-/** global constant array LISTFILTERS which keeps the names of all the listfilters in it **/
-var LISTFILTERS = new Array(MODEL,ALGORITHM,TOOL);
-/** global constant array VALUEFILTERS which keeps the names of all the valuefilters in it **/
-var VALUEFILTERS = new Array(MEMORY,RUNTIME,STATES,TRANSITIONS);
+	/** global constant array LISTFILTERS which keeps the names of all the listfilters in it **/
+	var LISTFILTERS = new Array(MODEL,ALGORITHM,TOOL);
+	/** global constant array VALUEFILTERS which keeps the names of all the valuefilters in it **/
+	var VALUEFILTERS = new Array(MEMORY,RUNTIME,STATES,TRANSITIONS);
 
-/** global constant which contains the filterStyle of the DATE filter **/
-var DATEFILTERSTYLE = '<option value="on">On</option><option value="before">Before</option><option value="after">After</option>';
-/** global constant which contains the filterStyle of the VALUE filters **/
-var VALUEFILTERSTYLE = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
-/** global constant which contains the filterStyle of the OPTIONS filters **/
-var OPTIONSFILTERSTYLE = '<option value="0">Options (hover)</option>';
-/** global constant which contains the filterStyle of the EMPTY filter **/
-var EMPTYFILTERSTYLE = '<option value="empty">&lt;empty&gt;</option>';
-/** global constant which contains the filterStyle of the FINISHED filter **/
-var FINISHEDFILTERSTYLE = '<option value="true">True</option><option value="false">False</option>';
+	/** global constant which contains the filterStyle of the DATE filter **/
+	var DATEFILTERSTYLE = '<option value="on">On</option><option value="before">Before</option><option value="after">After</option>';
+	/** global constant which contains the filterStyle of the VALUE filters **/
+	var VALUEFILTERSTYLE = '<option value="equal">Equal to</option><option value="greaterthan">Greater than</option><option value="lessthan">Less than</option>';
+	/** global constant which contains the filterStyle of the OPTIONS filters **/
+	var OPTIONSFILTERSTYLE = '<option value="0">Options (hover)</option>';
+	/** global constant which contains the filterStyle of the EMPTY filter **/
+	var EMPTYFILTERSTYLE = '<option value="empty">&lt;empty&gt;</option>';
+	/** global constant which contains the filterStyle of the FINISHED filter **/
+	var FINISHEDFILTERSTYLE = '<option value="true">True</option><option value="false">False</option>';
 
-/** global constant array which contains the filterStyles of the LIST filters **/
-var LISTFILTERSTYLES = new Array(
-	'<option value="0">Model (hover)</option>',
-	'<option value="0">Algorithm (hover)</option>',
-	'<option value="0">Tool (hover)</option>');
+	/** global constant array which contains the filterStyles of the LIST filters **/
+	var LISTFILTERSTYLES = new Array(
+		'<option value="0">Model (hover)</option>',
+		'<option value="0">Algorithm (hover)</option>',
+		'<option value="0">Tool (hover)</option>');
 
-/** global constant which contains the class of the EMPTY filter **/
-var EMPTYFILTER = '({"type" : "","row" : -1,"value" : ""})';
-/** global constant which contains the class of the LIST filters **/
-var LISTFILTER = '({"type" : "","row" : -1,"list" : []})';
-/** global constant which contains the class of the VALUE filters **/
-var VALUEFILTER = '({"type" : "","row" : -1,"style" : "","value": -1})';
-/** global constant which contains the class of the DATE filter **/
-var DATEFILTER = '({"type" : "","row" : -1,"style" : "","value": -1})';
-/** global constant which contains the class of the OPTIONS filters **/
-var OPTIONSFILTER = '({"type" : "","row" : -1,"options" : [],"values": []})';
-/** global constant which contains the class of the FINISHED filter **/
-var FINISHEDFILTER = '({"type" : "","row" : -1,"value" : []})';
+	/** global constant which contains the class of the EMPTY filter **/
+	var EMPTYFILTER = '({"type" : "","row" : -1,"value" : ""})';
+	/** global constant which contains the class of the LIST filters **/
+	var LISTFILTER = '({"type" : "","row" : -1,"list" : []})';
+	/** global constant which contains the class of the VALUE filters **/
+	var VALUEFILTER = '({"type" : "","row" : -1,"style" : "","value": -1})';
+	/** global constant which contains the class of the DATE filter **/
+	var DATEFILTER = '({"type" : "","row" : -1,"style" : "","value": ""})';
+	/** global constant which contains the class of the OPTIONS filters **/
+	var OPTIONSFILTER = '({"type" : "","row" : -1,"options" : [],"values": []})';
+	/** global constant which contains the class of the FINISHED filter **/
+	var FINISHEDFILTER = '({"type" : "","row" : -1,"value" : []})';
+	
+	/** global array filters which keeps all the stored filters in it **/
+	var filters = new Array();
+	/** global array possible_options which keeps all possible options in it **/
+	var possible_options = new Array();
+	/** global array possible_lists which keeps all the possible models, algorithms and tools in it (in that order) **/
+	var possible_lists = new Array(new Array(), new Array(), new Array());
+	
+	var has_optionsfilter = false;
+	var has_modelfilter = false;
+	var has_algorithmfilter = false;
+	var has_toolfilter = false;
+	
+/** End of global variables and constants for filtering **/
 
-/** global array ORDERS which keeps all the possible orders in it **/
-var ORDERS = new Array('id','model','states','runtime','memory_rss','finished');
+/** Global variables and constants for sorting: **/
+	
+	/** global array ORDERS which keeps all the possible orders in it **/
+	var ORDERS = new Array('id','model','states','runtime','memory_rss','finished');
+	/** global variable current_order which keeps the current order in it **/
+	var current_sort = ORDERS[0];
+	/** global variable current_order which keeps the current order in it **/
+	var current_sort_order = "ASC";
+	
+/** End of global variables and constants for sorting **/
 
-var DEFAULTCOLUMNS = new Array('model__name','states_count','total_time','memory_RSS','finished');
+/** Global variables and constants for columns: **/
+	var columns = eval('({"column_names":["Model","States","Transitions","Runtime","Memory (RSS)","Memory (VSIZE)","Finished"],\
+							"column_db_names":["model__name","states_count","transition_count","total_time","memory_RSS","memory_VSIZE","finished"],\
+							"column_checked":[true,true,false,true,true,false,true]})');
+	/** global variable possible_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
+	var possible_columns;
 
-/** global array filters which keeps all the stored filters in it **/
-var filters = new Array();
-/** global array possible_options which keeps all possible options in it **/
-var possible_options = new Array();
-/** global array possible_lists which keeps all the possible models, algorithms and tools in it (in that order) **/
-var possible_lists = new Array(new Array(), new Array(), new Array());
+/** End of global variables and constants for columns **/
 
-/** global variable current_order which keeps the current order in it **/
-var current_sort = ORDERS[0];
-/** global variable current_order which keeps the current order in it **/
-var current_sort_order = "ASC";
-/** global variable possible_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
-var possible_columns = new Array();
-var checked_columns = DEFAULTCOLUMNS;
+/** Global variable where checked benchmarks are stored **/
 var checked_benchmarks = new Array();
-
 
 /**
  * Function that adds a filterrow after the filter with filter.row=row
  * @require		row>=0
  * @ensure		A new EMPTY filter is added to filters after the filter with row = row
- * @ensure		The filter-objects in filters are ordered by rownumber
+ * 				The filter-objects in filters are ordered by rownumber
  */
 function addFilterRow(row){
 	storeValues();
@@ -91,7 +107,7 @@ function addFilterRow(row){
 	
 	sortFilters();
 	
-	//console.log('Added a new filterrow, current filters: '+filterstring());
+	console.log('Added a new filterrow, current filters: '+filterstring());
 	
 	renewFilters();
 }
@@ -100,17 +116,29 @@ function addFilterRow(row){
  * Function that removes the filterrow with rownumber row
  * @require		row>=0 /\ filters.length>1
  * @ensure		The filterrow with rownumber row is removed from filters
- * @ensure		The filter-objects in filters are ordered by rownumber
+ * 				The filter-objects in filters are ordered by rownumber
  */
 function removeFilterRow(row){
+	row = parseInt(row);
 	if (filters.length==1){
 		alert('cannot remove last filter');
 		return;
 	}
 	
+	var remfilter = getFilter(row);
+	
+	if (remfilter.type==OPTIONS){
+		has_optionsfilter = false;
+	}else if (remfilter.type==MODEL){
+		has_modelfilter = false;
+	}else if (remfilter.type==TOOL){
+		has_toolfilter = false;
+	}else if (remfilter.type==ALGORITHM){
+		has_algorithmfilter = false;
+	}
+	
 	storeValues();
 	var f = new Array();
-	row = parseInt(row);
 	
 	$(filters).each(function(i,filter){
 		if (filter.row!=row){
@@ -124,9 +152,10 @@ function removeFilterRow(row){
 	filters = f;
 	sortFilters();
 	
-	//console.log('Removed a filterrow, current filters: '+filterstring());
+	console.log('Removed a filterrow, current filters: '+filterstring());
 	
 	renewFilters();
+	updateTable(true);
 }
 
 /**
@@ -142,7 +171,7 @@ function getFilter(row){
 
 /**
  * Function that changes the type of a filter-object
- * @require		elem!='undefined' /\row>=0
+ * @require		elem!='undefined' /\ row>=0
  * @ensure		getFilter(row).type = $(elem).attr('value')
  */
 function changeFilterType(elem,row){
@@ -167,8 +196,9 @@ function changeFilterType(elem,row){
 	f.type = type;
 	f.row = row;
 	filters[row] = f;
+	
 	renewFilters();
-	//console.log('Changed a filterrow, current filters: '+filterstring());
+	console.log('Changed a filterrow, current filters: '+filterstring());
 }
 
 /**
@@ -181,9 +211,13 @@ function sortFilters(){
 		f[filter.row] = filter;
 	});
 	filters = f;
-	//console.log('Sorted filters');
+	console.log('Sorted filters');
 }
 
+/**
+ * Function that stores the id's of the selected benchmarks
+ * @ensure Every selected benchmark's id is stored in checked_benchmarks
+ */
 function storeSelectedIDs(){
 	checked_benchmarks = new Array();
 	var checkboxes = $("table.benchmarks tr td input");
@@ -192,7 +226,7 @@ function storeSelectedIDs(){
 			checked_benchmarks.push(parseInt($(obj).attr('value')));
 		}
 	});
-	//console.log('Stored selected benchmarks: '+checked_benchmarks.toString());
+	console.log('Stored selected benchmarks: '+checked_benchmarks.toString());
 }
 
 /**
@@ -208,34 +242,39 @@ function storeValues(){
 		else if (filter.type==OPTIONS)					storeOptionsFilter(filter);
 		else if (filter.type==FINISHED)					storeFinishedFilter(filter);
 	});
-	//console.log('Stored filter values');
+	console.log('Stored filter values');
 }
 
 /**
  * Function that stores the values of a filterrow of type EMPTY
- * This filter only needs to store its value
+ * @require filter!='undefined'
+ * @ensure filter.value==$("#filterValue"+filter.row).attr('value');
  */
 function storeEmptyFilter(filter){
 	filter.value = $("#filterValue"+filter.row).attr('value');
 }
 
 /**
- * Function that stores the values of a filterrow which has a type specified in LISTFILTERS
- * This filter needs to store which id's are selected
+ * Function that stores the values of a filterrow of one of the types in LISTFILTERS
+ * @require filter!='undefined'
+ * @ensure Every checked option's id is stored inside filter.list
  */
 function storeListFilter(filter){
 	var selected = $("#filterrow"+filter.row+" select.list option");
 	var ids = new Array();
 	$(selected).each(function(j,opt){
 		if (opt.selected){
-			ids.push(opt.value);
+			ids.push(parseInt(opt.value));
 		}
 	});
 	filter.list = ids;
 }
 
 /**
- * Function that stores the values of a filterrow which has a type specified in VALUEFILTERS
+ * Function that stores the values of a filterrow of one of the types in VALUEFILTERS
+ * @require filter!='undefined'
+ * @ensure 	filter.style == $("#filterStyle"+filter.row).attr('value')
+ * 			filter.value == $("#filterValue"+filter.row).attr('value')
  */
 function storeValueFilter(filter){
 	filter.style = $("#filterStyle"+filter.row).attr('value');
@@ -244,6 +283,9 @@ function storeValueFilter(filter){
 
 /**
  * Function that stores the values of a filterrow of type DATE
+ * @require filter!='undefined'
+ * @ensure 	filter.style == $("#filterStyle"+filter.row).attr('value')
+ * 			filter.value == $("#filterValue"+filter.row).attr('value')
  */
 function storeDateFilter(filter){
 	filter.style = $("#filterStyle"+filter.row).attr('value');
@@ -252,6 +294,9 @@ function storeDateFilter(filter){
 
 /**
  * Function that stores the values of a filterrow of type OPTIONS
+ * @require filter!='undefined'
+ * @ensure 	Of every checked option, the id and value are stored in filter.options and filter.values. 
+ * 			If the option does not require an argument, the value is set to "True"
  */
 function storeOptionsFilter(filter){
 	var checkboxes = $("#filterrow"+filter.row+" .optionID");
@@ -270,12 +315,17 @@ function storeOptionsFilter(filter){
 	filter.values = optionvalues;
 }
 
+/**
+ * Function that stores the values of a filterrow of type OPTIONS
+ * @require filter!='undefined'
+ * @ensure 	filter.value == $("#filterStyle"+filter.row).attr('value')
+ */
 function storeFinishedFilter(filter){
 	filter.value = $("#filterStyle"+filter.row).attr('value');
 }
 
 /**
- * Function used to get the contents of the filter in a string
+ * Function used to get the contents of the filter in a string, for testing purposes
  */
 function filterstring(){
 	var print = "";
@@ -290,6 +340,34 @@ function filterstring(){
 		if (filter.type==FINISHED)					print+=filter.type+":("+filter.row+","+filter.value+")\n";
 	}
 	return print;
+}
+
+function hasModelFilter(){
+	for (var i=0;i<filters.length;i++){
+		if (filters[i].type==MODEL) return true;
+	}
+	return false;
+}
+
+function hasOptionsFilter(){
+	for (var i=0;i<filters.length;i++){
+		if (filters[i].type==OPTIONS) return true;
+	}
+	return false;
+}
+
+function hasAlgorithmFilter(){
+	for (var i=0;i<filters.length;i++){
+		if (filters[i].type==ALGORITHM) return true;
+	}
+	return false;
+}
+
+function hasToolFilter(){
+	for (var i=0;i<filters.length;i++){
+		if (filters[i].type==TOOL) return true;
+	}
+	return false;
 }
 
 /**
@@ -309,23 +387,28 @@ function renewFilters(){
 	}
 	$('#filters').html(rows);
 	configureHover();
-	//console.log('Renewed filters');
+	configureLiveUpdate();
+	console.log('Renewed filters');
 }
 
+/**
+ * Function that returns the HTML-code of a filterrow of type EMPTY
+ * @require filter!='undefined'
+ */
 function EmptyFilterRow(filter){
 	return '<tr id="filterrow'+filter.row+'">\n\
 				<td width="320" align="left">\n\
 					<select size="1" class="filterType" id="filterType'+filter.row+'" onchange="changeFilterType(this,'+filter.row+');">\n\
 						<option value="empty" selected>&lt;empty&gt;</option>\n\
-						<option value="model">Model</option>\n\
-						<option value="algorithm">Algorithm</option>\n\
-						<option value="tool">Tool</option>\n\
+						'+(hasModelFilter() ? '' : '<option value="model">Model</option>')+'\n\
+						'+(hasAlgorithmFilter() ? '' : '<option value="algorithm">Algorithm</option>')+'\n\
+						'+(hasToolFilter() ? '' : '<option value="tool">Tool</option>')+'\n\
 						<option value="date">Date</option>\n\
 						<option value="memory">Memory</option>\n\
 						<option value="runtime">Runtime</option>\n\
 						<option value="states">states</option>\n\
 						<option value="transitions">transitions</option>\n\
-						<option value="options">Options</option>\n\
+						'+(hasOptionsFilter() ? '' : '<option value="options">Options</option>')+'\n\
 						<option value="finished">Finished</option>\n\
 					</select>\n\
 					<ul class="mega">\n\
@@ -344,20 +427,24 @@ function EmptyFilterRow(filter){
 			</tr>';
 }
 
+/**
+ * Function that returns the HTML-code of a filterrow of type DATE
+ * @require filter!='undefined'
+ */
 function DateFilterRow(filter){
 	return '<tr id="filterrow'+filter.row+'">\n\
 				<td width="320" align="left">\n\
 					<select size="1" class="filterType" id="filterType'+filter.row+'" onchange="changeFilterType(this,'+filter.row+');">\n\
 						<option value="empty">&lt;empty&gt;</option>\n\
-						<option value="model">Model</option>\n\
-						<option value="algorithm">Algorithm</option>\n\
-						<option value="tool">Tool</option>\n\
-						<option value="date" selected>Date</option>\n\
+						'+(hasModelFilter() ? '' : '<option value="model">Model</option>')+'\n\
+						'+(hasAlgorithmFilter() ? '' : '<option value="algorithm">Algorithm</option>')+'\n\
+						'+(hasToolFilter() ? '' : '<option value="tool">Tool</option>')+'\n\
+						<option value="date">Date</option>\n\
 						<option value="memory">Memory</option>\n\
 						<option value="runtime">Runtime</option>\n\
 						<option value="states">states</option>\n\
 						<option value="transitions">transitions</option>\n\
-						<option value="options">Options</option>\n\
+						'+(hasOptionsFilter() ? '' : '<option value="options">Options</option>')+'\n\
 						<option value="finished">Finished</option>\n\
 					</select>\n\
 					<ul class="mega">\n\
@@ -378,20 +465,24 @@ function DateFilterRow(filter){
 			</tr>';
 }
 
+/**
+ * Function that returns the HTML-code of a filterrow of one of the types in VALUEFILTERS
+ * @require filter!='undefined'
+ */
 function ValueFilterRow(filter){
 	return '<tr id="filterrow'+filter.row+'">\n\
 				<td width="320" align="left">\n\
 					<select size="1" class="filterType" id="filterType'+filter.row+'" onchange="changeFilterType(this,'+filter.row+');">\n\
 						<option value="empty">&lt;empty&gt;</option>\n\
-						<option value="model">Model</option>\n\
-						<option value="algorithm">Algorithm</option>\n\
-						<option value="tool">Tool</option>\n\
+						'+(hasModelFilter() ? '' : '<option value="model">Model</option>')+'\n\
+						'+(hasAlgorithmFilter() ? '' : '<option value="algorithm">Algorithm</option>')+'\n\
+						'+(hasToolFilter() ? '' : '<option value="tool">Tool</option>')+'\n\
 						<option value="date">Date</option>\n\
 						<option value="memory"'+(filter.type==MEMORY ? ' selected' : '')+'>Memory</option>\n\
 						<option value="runtime"'+(filter.type==RUNTIME ? ' selected' : '')+'>Runtime</option>\n\
 						<option value="states"'+(filter.type==STATES ? ' selected' : '')+'>states</option>\n\
 						<option value="transitions"'+(filter.type==TRANSITIONS ? ' selected' : '')+'>transitions</option>\n\
-						<option value="options">Options</option>\n\
+						'+(hasOptionsFilter() ? '' : '<option value="options">Options</option>')+'\n\
 						<option value="finished">Finished</option>\n\
 					</select>\n\
 					<ul class="mega">\n\
@@ -403,7 +494,7 @@ function ValueFilterRow(filter){
 							</select>\n\
 						</li>\n\
 					</ul>\n\
-					<input type="text" class="filterValue" id="filterValue'+filter.row+'" value="'+filter.value+'">\n\
+					<input type="text" class="filterValue" id="filterValue'+filter.row+'" value="'+(filter.value<0 ? '' : filter.value)+'">\n\
 				</td>\n\
 				<td align="right" style="width:160px">\n\
 					<a class="remove" onclick="removeFilterRow('+filter.row+');"><img src="/site_media/img/remove_filter.png" alt="remove"></a>\n\
@@ -412,20 +503,24 @@ function ValueFilterRow(filter){
 			</tr>';
 }
 
+/**
+ * Function that returns the HTML-code of a filterrow of type FINISHED
+ * @require filter!='undefined'
+ */
 function FinishedFilterRow(filter){
 	return '<tr id="filterrow'+filter.row+'">\n\
 				<td width="320" align="left">\n\
 					<select size="1" class="filterType" id="filterType'+filter.row+'" onchange="changeFilterType(this,'+filter.row+');">\n\
 						<option value="empty">&lt;empty&gt;</option>\n\
-						<option value="model">Model</option>\n\
-						<option value="algorithm">Algorithm</option>\n\
-						<option value="tool">Tool</option>\n\
+						'+(hasModelFilter() ? '' : '<option value="model">Model</option>')+'\n\
+						'+(hasAlgorithmFilter() ? '' : '<option value="algorithm">Algorithm</option>')+'\n\
+						'+(hasToolFilter() ? '' : '<option value="tool">Tool</option>')+'\n\
 						<option value="date">Date</option>\n\
 						<option value="memory">Memory</option>\n\
 						<option value="runtime">Runtime</option>\n\
 						<option value="states">states</option>\n\
 						<option value="transitions">transitions</option>\n\
-						<option value="options">Options</option>\n\
+						'+(hasOptionsFilter() ? '' : '<option value="options">Options</option>')+'\n\
 						<option value="finished" selected>Finished</option>\n\
 					</select>\n\
 					<ul class="mega">\n\
@@ -444,6 +539,10 @@ function FinishedFilterRow(filter){
 			</tr>';
 }
 
+/**
+ * Function that returns the HTML-code of a filterrow of one of the types in LISTFILTERS
+ * @require filter!='undefined'
+ */
 function ListFilterRow(filter){
 	var index = LISTFILTERS.indexOf(filter.type);
 	var hover = '<div><select multiple size="7" class="list">';
@@ -456,15 +555,15 @@ function ListFilterRow(filter){
 				<td width="320" align="left">\n\
 					<select size="1" class="filterType" id="filterType'+filter.row+'" onchange="changeFilterType(this,'+filter.row+');">\n\
 						<option value="empty">&lt;empty&gt;</option>\n\
-						<option value="model"'+(filter.type==MODEL ? ' selected' : '')+'>Model</option>\n\
-						<option value="algorithm"'+(filter.type==ALGORITHM ? ' selected' : '')+'>Algorithm</option>\n\
-						<option value="tool"'+(filter.type==TOOL ? ' selected' : '')+'>Tool</option>\n\
+						'+(filter.type!=MODEL && hasModelFilter() ? '' : '<option value="model"'+(filter.type==MODEL ? ' selected' : '')+'>Model</option>')+'\n\
+						'+(filter.type!=ALGORITHM && hasAlgorithmFilter() ? '' : '<option value="algorithm"'+(filter.type==ALGORITHM ? ' selected' : '')+'>Algorithm</option>')+'\n\
+						'+(filter.type!=TOOL && hasToolFilter() ? '' : '<option value="tool"'+(filter.type==TOOL ? ' selected' : '')+'>Tool</option>')+'\n\
 						<option value="date">Date</option>\n\
 						<option value="memory">Memory</option>\n\
 						<option value="runtime">Runtime</option>\n\
 						<option value="states">states</option>\n\
 						<option value="transitions">transitions</option>\n\
-						<option value="options">Options</option>\n\
+						'+(hasOptionsFilter() ? '' : '<option value="options">Options</option>')+'\n\
 						<option value="finished">Finished</option>\n\
 					</select>\n\
 					<ul class="mega">\n\
@@ -485,6 +584,10 @@ function ListFilterRow(filter){
 			return res;
 }
 
+/**
+ * Function that returns the HTML-code of a filterrow of one type OPTIONS
+ * @require filter!='undefined'
+ */
 function OptionsFilterRow(filter){
 	var hover = '<div>';
 	$(possible_options).each(
@@ -502,9 +605,9 @@ function OptionsFilterRow(filter){
 				<td width="320" align="left">\n\
 					<select size="1" class="filterType" id="filterType'+filter.row+'" onchange="changeFilterType(this,'+filter.row+');">\n\
 						<option value="empty">&lt;empty&gt;</option>\n\
-						<option value="model">Model</option>\n\
-						<option value="algorithm">Algorithm</option>\n\
-						<option value="tool">Tool</option>\n\
+						'+(hasModelFilter() ? '' : '<option value="model">Model</option>')+'\n\
+						'+(hasAlgorithmFilter() ? '' : '<option value="algorithm">Algorithm</option>')+'\n\
+						'+(hasToolFilter() ? '' : '<option value="tool">Tool</option>')+'\n\
 						<option value="date">Date</option>\n\
 						<option value="memory">Memory</option>\n\
 						<option value="runtime">Runtime</option>\n\
@@ -537,7 +640,7 @@ function OptionsFilterRow(filter){
  */
 function addMega(elem){
 	$(elem).addClass("hovering");
-	//console.log('Add megadropdownmenu: '+elem.id);
+	console.log('Add megadropdownmenu: '+elem.id);
 }
 
 /**
@@ -546,7 +649,8 @@ function addMega(elem){
  */
 function removeMega(elem){
 	$(elem).removeClass("hovering");
-	//console.log('Remove megadropdownmenu: '+elem.id);
+	console.log('Remove megadropdownmenu: '+elem.id+', updating table!');
+	updateTable(true);
 }
 
 /**
@@ -567,17 +671,30 @@ function configureHover(){
 	});
 }
 
-function filter(){
+/**
+ * Function that updates the table with the current filter, order and columns
+ */
+function updateTable(check){
 	storeValues();
 	storeSelectedIDs();
 	storeSelectedColumns();
+	var sendFilter = getFilter(check);
+	if (sendFilter=='error'){
+		console.log('Error in filters');
+		return;
+	}
 	d = 'filters='+getFilter()+'&sort='+getSort()+'&columns='+getColumns();
-	//console.log('Sending request to server: '+d);
+	console.log('Sending request to server: '+d);
 	getBenchmarks(d);
 }
 
+/**
+ * Function that gets benchmarks from the server
+ * @require d!='undefined'
+ * @ensure The new benchmarks are shown in the table
+ */
 function getBenchmarks(d){
-	//console.log('Getting benchmarks: '+d);
+	console.log('Getting benchmarks: '+d);
 	$.ajax({
 		url: 'ajax/benchmarks/',
 		type: 'POST',
@@ -586,7 +703,7 @@ function getBenchmarks(d){
 						$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
 					},
 		success: function(json){
-					handleJSONResponse(json);
+					handleResponse(json);
 				},
 		error: function(XMLHttpRequest,textStatus,errorThrown){
 					alert("Error with getting results: "+textStatus);
@@ -598,25 +715,36 @@ function getBenchmarks(d){
 	});
 }
 
-function handleJSONResponse(json){
-	
+/**
+ * Function that handles the response from the server
+ * @require 	json!='undefined'
+ *				json is in JSON-format
+ *				json contains the variables options, models, algorithms, tools, columns and benchmarks
+ * @ensure The page is updated with the newly received values
+ */
+function handleResponse(json){
 	possible_options = json.options;
 	possible_lists = new Array(json.models,json.algorithms,json.tools);
 	possible_columns = json.columns
-	$(possible_columns).each(function(i,obj){
-		alert(obj.header);
-	});
+	console.log('possible columns: '+possible_columns.toString());
 	var table = '';
 	
+	var new_checked_benchmarks = new Array();
+	
 	$(json.benchmarks).each(function(i,benchmark){
+		var check = (checked_benchmarks.indexOf(benchmark.id)!=-1);
+		if (check) new_checked_benchmarks.push(benchmark.id);
+		
 		table+='<tr>\n\
-			<td><input type="checkbox" name="benchmarks" value="' + benchmark.id + '" /></td>\n\
+			<td><input type="checkbox"'+(check ? ' checked' : '')+' name="benchmarks" value="' + benchmark.id + '" /></td>\n\
 			<td><label for="{{ ' + benchmark.id + ' }}">' + benchmark.model + '</label></td>\n\
 			<td>' + benchmark.states + '</td>\n\
 			<td>' + (Math.round(benchmark.runtime*100)/100) + '</td>\n\
 			<td>' + benchmark.memory + '</td>\n\
 			<td>' + benchmark.finished + '</td></tr>';
 	});
+	checked_benchmarks = new_checked_benchmarks;
+	console.log('Currently checked: '+checked_benchmarks.toString());
 	$("table.benchmarks").html(getTableHeaders()+table);
 	
 	renewFilters();
@@ -624,23 +752,56 @@ function handleJSONResponse(json){
 	showColumnOptions();
 }
 
+/**
+ * Function that returns the headers to be added to the top of the table
+ */
 function getTableHeaders(){
 	var res = '<tr><th>&nbsp;</th>';
-	for (var i=0;i<DEFAULTCOLUMNS.length;i++){
-		res+= '<th id="'+DEFAULTCOLUMNS[i]+'_sort">'+DEFAULTCOLUMNS[i]+'</th>';
+	for (var i=0;i<columns.column_names.length;i++){
+		if (columns.column_checked[i]){
+			res+='<th id="'+columns.column_db_names[i]+'_sort">'+columns.column_names[i]+'</th>';
+		}
 	}
 	res+='</tr>';
 	return res;
 }
 
-function getFilter(){
+/**
+ * Function that returns the current filter
+ * @ensure 	result!='undefined'
+ *			result is in JSON-format, containing an array of objects
+ */
+function getFilter(check){
 	var json = '[';
 	for (var i=0; i<filters.length;i++){
-		json+=JSON.stringify(filters[i]);
+		var f = filters[i];
+		//check filter
+		var c = checkFilter(f);
+		if (c){
+			json+=JSON.stringify(f);
+		}else{
+			console.log('Found error in filter');
+			//only return an error when check is true
+			if (check){
+				return "error";
+			}
+		}
 		if (i<(filters.length-1))	json += ',';
 	}
 	json += ']';
 	return json;
+}
+
+function checkFilter(f){
+	if (f.type==EMPTY ||
+		(f.type==DATE && (f.style==''||f.value==''||!f.value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/))) ||
+		(f.type==OPTIONS && f.options.length==0) ||
+		(LISTFILTERS.indexOf(f.type)!=-1 && f.list.length==0) ||
+		(VALUEFILTERS.indexOf(f.type)!=-1 && (f.style=='' || f.value=='' || (parseInt(f.value)+"")!=f.value )) ||
+		(f.type==FINISHED && f.value=='')){
+			return false;
+		}
+	return true;
 }
 
 function showSortOptions(){
@@ -651,22 +812,37 @@ function showSortOptions(){
 	$("#sort").html(txt);
 }
 
+/**
+ * Function that changes the value of the global variable current_sort
+ * @ensure		val!='undefined'
+ * 				current_sort == val
+ */
 function changeSort(val){
 	current_sort = val;
-	//console.log('Change Sorting: '+val);
+	console.log('Change Sorting: '+val);
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
 	getBenchmarks(d);
 }
 
+/**
+ * Function that changes the value of the global variable current_sort_order
+ * @ensure		val!='undefined'
+ *				current_sort_order == val
+ */
 function changeSortOrder(val){
 	current_sort_order = val;
-	//console.log('Change Sorting Order: '+val);
+	console.log('Change Sorting Order: '+val);
 	storeValues();
 	d = 'filters='+getFilter()+'&sort='+getSort();
 	getBenchmarks(d);
 }
 
+/**
+ * Function that returns the current sorting
+ * @ensure 	result!='undefined'
+ *			result is in JSON-format, containing an object with a variable sort and a variable sortorder
+ */
 function getSort(){
 	var json = '{"sort": "'+current_sort+'", "sortorder": "'+current_sort_order+'"}';
 	return json;
@@ -674,30 +850,40 @@ function getSort(){
 
 function showColumnOptions(){
 	var txt = "";
-	for (var i=0; i<possible_columns.length; i++){
-		var b = (checked_columns.indexOf(possible_columns[i].value)!=-1)
-		txt+= '<input type="checkbox" name="column" id="'+possible_columns[i].value+'"'+(b ? ' checked' : '')+'>'+possible_columns[i].header+'<br />';
+	for (var i=0;i<columns.column_names.length;i++){
+		txt+='<input type="checkbox" name="column" id="'+columns.column_db_names[i]+'"'+(columns.column_checked[i] ? ' checked' : '')+'>'+columns.column_names[i]+'<br />';
 	}
-	alert(txt);
 	$("#columns").html(txt);
 }
 
+/**
+ * Function that stores the selected columns in the global array checked_columns
+ * @ensure Every checked column is saved in checked_columns
+ */
 function storeSelectedColumns(){
-	checked_columns = new Array();
 	$("#columns :checked").each(function (i,obj){
-		alert(i+','+obj.id);
-		checked_columns.push(obj.id);
+		var index = columns.column_db_names.indexOf(obj.id);
+		columns.column_checked[index] = true;
+		console.log('checked: '+obj.id+' ('+columns.column_checked[index]+')');
 	});
 }
 
+/**
+ * Function that returns the selected columns
+ * @ensure 	result!='undefined'
+ *			result is in JSON-format, containing an object with an array "columns", containing all selected column-names
+ */
 function getColumns(){
-	var json = '{"columns":[';
-	for (var i=0;i<checked_columns.length;i++){
-		json+='"'+checked_columns[i]+'"'+(i<(checked_columns.length-1) ? ',' : '');
-	}
-	json+=']}';
-	alert(json);
-	return json;
+	return JSON.stringify(columns);
+}
+
+function configureLiveUpdate(){
+	$(".filterStyle").focusout(function(){
+		updateTable(true);
+	});
+	$(".filterValue").focusout(function(){
+		updateTable(true);
+	});
 }
 
 /**
@@ -727,9 +913,9 @@ $(document).ready(function(){
 	filters.push(f);
 	
 	configureHover();
+	configureLiveUpdate();
 	
-	getBenchmarks('');
+	updateTable(false);
 	
 	showSortOptions();
-	//showColumnOptions();
 });

@@ -25,6 +25,7 @@ def export(canvas, title, format='png'):
 	response = HttpResponse(content_type=mimetype)
 	
 	# Show the user a 'Save as..' dialogue if the graph is not PNG.
+	print format
 	if (format is not 'png'):
 		response['Content-Disposition'] = 'attachment; filename=%s.%s' % (title, format)
 	# Print to canvas with the right format
