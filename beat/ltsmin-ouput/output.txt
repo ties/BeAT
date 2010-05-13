@@ -9,7 +9,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 24 43 736654
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime lpo2lts-grey -c ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/t42.dir 2>&1
 END OF HEADER
 lpo2lts-grey: Writing output to ./ltsmin-models/mucrl/t42.dir
@@ -104,7 +104,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 25 42 005837
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime lpo-reach ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/f42.etf 2>&1
 END OF HEADER
 lpo-reach: Exploration order is bfs
@@ -269,7 +269,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 12 461213
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime ltsmin ./ltsmin-models/mucrl/f42.dir 2>&1
 END OF HEADER
 setting lts_write_segments to 1
@@ -291,7 +291,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 259352
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime nips2lts-grey ./ltsmin-models/nips/leader.b ./ltsmin-models/nips/leader.dir 2>&1
 END OF HEADER
 nips2lts-grey: NIPS language module initialized
@@ -370,7 +370,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 583645
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime nips-reach ./ltsmin-models/nips/leader.b ./ltsmin-models/nips/leader.etf 2>&1
 END OF HEADER
 nips-reach: Exploration order is bfs
@@ -504,7 +504,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 760990
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime etf2lts-grey ./ltsmin-models/nips/leader.etf ./ltsmin-models/nips/leader.etf.dir 2>&1
 END OF HEADER
 etf2lts-grey: ETF language module initialized
@@ -608,7 +608,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 983136
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime etf-reach ./ltsmin-models/etf/micro.etf 2>&1
 END OF HEADER
 etf-reach: Exploration order is bfs
@@ -908,7 +908,7 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 38 54 220630
-ToolVersion: ltsmin-1.5-eef445
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime etf-reach ./ltsmin-models/etf/cyclic_scheduler.15.1.etf 2>&1
 END OF HEADER
 etf-reach: Exploration order is bfs
