@@ -122,4 +122,7 @@ if __name__ == '__main__':
 	j.generate_all()
 	for job in j.jobs:
 		print job.name
+		if len(sys.argv) > 1:
+			with open('./'+job.name, 'w') as f:
+				f.write(job.script)
 	sys.exit(0)
