@@ -332,7 +332,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 ###################### dve version 1, -reach			 ######################
 a, created = Algorithm.objects.get_or_create(name='-reach')
 t, created = Tool.objects.get_or_create(name='dve')
-rx, created = Regex.objects.get_or_create(regex='dve-reach: .*(\\r\\n|\\n)(dve-reach: reachability took.*(\\r\\n|\\n)state space has (?P<scount>\\d+) states.*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
+rx, created = Regex.objects.get_or_create(regex='dve-reach: .*(\\r\\n|\\n)(dve-reach: reachability took.*(\\r\\n|\\n)state space has (?P<scount>\\d+) states.*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*|.*\*\* error .*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
 at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='order', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
@@ -376,7 +376,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 ###################### dve version 1, 2lts-grey ######################
 a, created = Algorithm.objects.get_or_create(name='2lts-grey')
 t, created = Tool.objects.get_or_create(name='dve')
-rx, created = Regex.objects.get_or_create(regex='dve2lts-grey: .*(\\r\\n|\\n)(dve2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+) .*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*error \\*\\*: exit.*|BDD error.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
+rx, created = Regex.objects.get_or_create(regex='dve2lts-grey: .*(\\r\\n|\\n)(dve2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+) .*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*error.*|BDD error.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
 at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='strategy', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})

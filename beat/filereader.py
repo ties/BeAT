@@ -132,6 +132,7 @@ class FileReader:
 		header_started = False
 		i = 0
 		done = False
+		offset = 0				#offset, to skip content between logs or before the header
 		#iterate 'till we've seen the whole log or when the header ends
 		while i < len(lines) and not done:
 			if header_started:
@@ -139,14 +140,15 @@ class FileReader:
 				if not lines[i].startswith("END OF HEADER"):
 					header.append(lines[i])
 					if lines[i].startswith("Call:"):
-						call = i-1
+						call = i-1 - offset
 					if lines[i].startswith("DateTime:"):
-						dt = i-1
+						dt = i-1 - offset
 				else:
 					done = True #stop
 			#we're not at the header yet, keep reading 'till we find the start
 			elif lines[i].startswith("BEGIN OF HEADER"):
 				header_started = True
+				offset = i
 			#point to the next line
 			i += 1
 		
@@ -182,6 +184,7 @@ class FileReader:
 		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
 		#parse the Call to find the supplied options
 		tmp = self.parse_call(header[call][6:], toolversion)
+	
 		if tmp:
 			#unpack the tuple
 			(parser, s, optlist, modelname) = tmp
@@ -241,9 +244,15 @@ class FileReader:
 		s = self.match_regex(r'^memtime (.*?)((?:2|-).*?)(?:$| .*$)', call)
 		#s should be like: [call, toolname, algorithmname]
 		if not s:
-			#that's bad
-			self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
-			return None
+			print "Warning, potential errors, entering experimental fix to try and make it work"
+			print call
+			print r'^/usr/local/bin/(.*?)((?:2|-).*?)(?:$| .*$)'
+			s = self.match_regex(r'^/usr/local/bin/(.*?)((?:2|-).*?)(?:$| .*$)', call)
+			print s
+			if not s:
+				#that's bad
+				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
+				return None
 
 		try:
 			t = Tool.objects.get(name=s[1])
@@ -286,15 +295,23 @@ class FileReader:
 		#read the options for the tool and convert them into a nice list
 		#arguments are discarded for now (also, some of those might be bash-parsed and not passed to the algorithm_tool)
 		import getopt
-		self.print_message(V_NOISY, "Notice: input for gnu_getopt: \n%s\n%s"%(shortopts,opts))
-		optlist, args = getopt.gnu_getopt(call.split(" ")[2:], shortopts, opts)
+		try:
+			self.print_message(V_NOISY, "Notice: input for gnu_getopt: \n%s\n%s"%(shortopts,opts))
+			if call.startswith("memtime"):
+				optlist, args = getopt.gnu_getopt(call.split(" ")[2:], shortopts, opts)
+			else:
+				optlist, args = getopt.gnu_getopt(call.split(" ")[1:], shortopts, opts)
+		except getopt.GetoptError as e:
+			self.print_message(V_VERBOSE, "Warning: gnu_getopt failed: %s"%(e))
+			return None
 		counter = 0
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
 		#we need a value, however; we'll use True
 		for t in optlist:
 			o, v = t
 			if not v:	#no parameter
-				optlist[counter]=(o[2:],True)
+				v=True
+
 			if not o.startswith('--'): #shortcut!
 				p = o[1:] #chop the '-'
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
@@ -377,7 +394,7 @@ class FileReader:
 		for tuple in optiondata:
 			name, value = tuple
 			if not name or not value:
-				self.print_message(V_VERBOSE, "Warning while checking: invalid option: name=<%>s value=<%s>"%(name,value))
+				self.print_message(V_VERBOSE, "Warning while checking: invalid option: name=<%s> value=<%s>"%(name,value))
 				valid=False
 			try:
 				o = Option.objects.get(name=name)
@@ -577,11 +594,10 @@ class FileReader:
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
 					#handle other errors
-					except Exception, e:
-						#an unknown error occured, skip this part
-						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
-						errorcounter+=1
-						raise e
+#					except Exception, e:
+#						#an unknown error occured, skip this part
+#						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
+#						errorcounter+=1
 				else:
 					#there was no data returned while parsing
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
