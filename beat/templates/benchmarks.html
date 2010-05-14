@@ -24,13 +24,9 @@
 							<option value="options">Options</option>
 							<option value="finished">Finished</option>
 						</select>
-						<ul class="mega">
-							<li class="mega">
-								<select size="1" class="filterStyle" id="filterStyle0">
-									<option value="empty">&lt;empty&gt;</option>
-								</select>
-							</li>
-						</ul>
+						<select size="1" class="filterStyle" id="filterStyle0">
+							<option value="empty">&lt;empty&gt;</option>
+						</select>
 						<input type="text" class="filterValue" id="filterValue0">
 					</td>
 					<td align="right" style="width:160px">
@@ -39,7 +35,6 @@
 					</td>
 				</tr>
 			</table>
-			<input type="submit" value="Update" onclick="updateTable(true);" />
 			<select size="1" class="sort" id="sort" onchange="changeSort(this.value);">
 				
 			</select>
@@ -62,32 +57,23 @@
 		
 		<!-- BENCHMARK TABLE -->
 		<form action="{% url benchmarks.views.compare %}" method="post" name="benchmark_form">{% csrf_token %}
-		<div class="scroll">
-			
-				<table class="benchmarks">
-					<tr>
-						<th>&nbsp;</th>
-						<th id="modelsort" class="sort">Model</th>
-						<th id="statessort" class="sort">States</th>
-						<th id="runtimesort" class="sort">Runtime</th>
-						<th id="memorysort" class="sort">Memory (RSS)</th>
-						<th id="finishedsort" class="sort">Finished</th>
-					</tr>
-					
-					{% for benchmark in benchmarks %}
-					<tr>
-						<td><input type="checkbox" name="benchmarks" value="{{ benchmark.id }}" /></td>
-						<td><label for="{{ benchmark.id }}">{{ benchmark.model }}</label></td>
-						<td>{{ benchmark.states_count }}</td>
-						<td>{{ benchmark.total_time }}</td>
-						<td>{{ benchmark.memory_RSS }}</td>
-						<td>{{ benchmark.finished }}</td>
-					</tr>
-					{% endfor %}
-				</table>
-				
-			
-		</div>
+			<table class="benchmarks">
+				<tr>
+					<th>&nbsp;</th>
+					<th id="modelsort" class="sort">Model</th>
+					<th id="statessort" class="sort">States</th>
+					<th id="runtimesort" class="sort">Runtime</th>
+					<th id="memorysort" class="sort">Memory (RSS)</th>
+					<th id="finishedsort" class="sort">Finished</th>
+				</tr>
+			</table>
+			<table class="paging">
+				<tr>
+					<td id="previous">&lt;</td>
+					<td id="paginginfo">Showing results 0-0 of 0 results with <input type="text" name="resperpage" id="resperpage" value="50" size="3" /> results per page</td>
+					<td id="next">&gt;</td>
+				</tr>
+			</table>
 		{{ form.name.errors }}
 		<p><label for="id_name">Title</label><input type="text" name="name" id="id_name" /></p>
 		<p>

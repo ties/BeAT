@@ -270,7 +270,7 @@ def index(request):
 """
 Show the list of benchmarks
 """
-@login_required
+@login_required()
 def benchmarks(request):
 	return render_to_response('benchmarks.html', {}, context_instance=RequestContext(request))
 

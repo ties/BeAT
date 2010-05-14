@@ -115,7 +115,10 @@ class FinishedFilter(Filter):
 		if self.finished==TRUE:
 			qs = qs.filter(finished__exact=True)
 		elif self.finished==FALSE:
+			print "filtering false:"
 			qs = qs.filter(finished__exact=False)
+			print "done!"
+			print qs.query
 		
 		return qs
 
@@ -139,5 +142,6 @@ def convertfilters(arr):
 				options[int(filter['options'][i])] = str((filter['values'])[i])
 			result[row] = OptionsFilter(row,options)
 		elif type==FINISHED:
+			print "Making finishedfilter with value: "+filter['value']
 			result[row] = FinishedFilter(row,filter['value'])
 	return result

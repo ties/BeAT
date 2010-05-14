@@ -1,13 +1,38 @@
-/* niet meer scrolling (en hoogte pas nu dus auto aan)
-.scroll {
-	height:40em;
-	overflow: auto;
-}
-*/
 table.benchmarks {
 	border-collapse:collapse;
 	margin:0px;
 	padding:0px;
+}
+
+table.paging{
+	border-collapse:collapse;
+	margin:0px;
+	padding:0px;
+}
+
+table.paging tr td{
+	background-color: #eee;
+	border: 1px solid #ccc;
+}
+
+#next,#previous{
+	width:20px;
+}
+
+#next{
+	text-align:right;
+}
+
+#paginginfo{
+	font-weight: bold;
+	line-height: 1.5;
+	padding-left: 30px;
+}
+
+#resperpage{
+	text-align: right;
+	margin: 0px;
+	padding: 0px;
 }
 
 .filterStyle{
@@ -52,6 +77,20 @@ table.benchmarks {
 	border: 1px solid #ccc;
 }
 
+span.ascending, span.descending{
+	background-repeat: no-repeat;
+	background-position: top center;
+	padding-top:5px;
+}
+
+span.ascending{
+	background-image: url('/site_media/img/sort_ASC.png');
+}
+
+span.descending{
+	background-image: url('/site_media/img/sort_DESC.png');
+}
+
 ul.mega{
 	text-align: left;
 	display: inline;
@@ -69,8 +108,8 @@ ul.mega li.mega div{
 	border:1px solid black;
 	background: white;
 	width: 18em;
-	height: 120px;
-	overflow: auto;
+	min-height: 120px;/* make it so this works with other browsers */
+	/*overflow: auto;*/
 	position: absolute;
 	top: 1.2em;
 	left: 0em;

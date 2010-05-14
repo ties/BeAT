@@ -1,0 +1,1 @@
+SELECT `benchmarks_benchmark`.`finished` FROM `benchmarks_benchmark` WHERE `benchmarks_benchmark`.`finished` = 0;
