@@ -510,7 +510,7 @@ class FileReader:
 				else:
 					self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
 				bov, c = BenchmarkOptionValue.objects.get_or_create(optionvalue=ov,benchmark=b)
-
+			return b
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
 			#existing benchmark; don't modify
@@ -580,7 +580,13 @@ class FileReader:
 				if data:
 					#write to the database
 					try:
-						self.write_to_db(data)
+						bench=self.write_to_db(data)
+						id=bench.pk
+						if id:
+							#write the log
+							self.write_to_log(run, "%d"%(id))
+							bench.logfile="%d"%(id)
+							bench.save()
 					#handle known error FileReaderError
 					except FileReaderError as fre:
 						#some known error occured, check how bad it is
@@ -594,10 +600,10 @@ class FileReader:
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
 					#handle other errors
-#					except Exception, e:
-#						#an unknown error occured, skip this part
-#						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
-#						errorcounter+=1
+					except Exception, e:
+						#an unknown error occured, skip this part
+						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
+						errorcounter+=1
 				else:
 					#there was no data returned while parsing
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
@@ -608,6 +614,36 @@ class FileReader:
 		#we're done! return how many errors we got
 		return errorcounter
 	#end of main
+
+
+	def write_to_log(self, lines, filename):
+		"""Saves the log contained in lines as a file specified by filename """
+		# # # # # # # # # # # # seperate the header
+		header_started = False
+		i = 0
+		done = False
+		#iterate 'till we've seen the whole log or when the header ends
+		while i < len(lines) and not done:
+			if header_started:
+				#we're reading the header, check for its end
+				if not lines[i].startswith("END OF HEADER"):
+					pass # a line of the header is seen
+				else:
+					done = True #stop
+			#we're not at the header yet, keep reading 'till we find the start
+			elif lines[i].startswith("BEGIN OF HEADER"):
+				header_started = True
+			#point to the next line
+			i += 1
+		
+		#split the header off
+		lines = lines[i:]
+
+		f = os.path.join(LOGS_PATH, filename)
+		with open(f, 'w') as file:
+			for x in lines:
+				file.write(x)
+
 
 	def parse_app_options(self):
 		"""Parse options for this script using python's optparse
