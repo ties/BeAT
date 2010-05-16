@@ -139,16 +139,21 @@ function makeData(f,s,c,p){
 	return data;
 }
 
+function checkRequest(req){
+	var str = JSON.stringify(req);
+	var res = (str!=lastRequestString);
+	if (!res)	console.log("Same request as last time!");
+	return res;
+}
+
 //new function to make request!
 function makeRequest(d){
-	var str = JSON.stringify(d);
-	if (str==lastRequestString){
-		console.log("Same request as last time! Skipping...");
+	if (!checkRequest(d)){
 		return;
 	}
+	var str = JSON.stringify(d);
 	
-	console.log("Making a request!");
-	console.log("Using data: "+str);
+	console.log("Making a request! Using data: "+str);
 	lastData = str;
 	
 	$.ajax({
@@ -388,7 +393,8 @@ function setSorting(id){
 		sort.sortorder = ASCENDING;
 		$("#"+id+" span").addClass('ascending');
 	}
-	console.log("Sending request after sorting");
+	console.log("Sending request after sorting (with page 0)");
+	paging.page = 0;
 	makeRequest(makeData(getFilters(),getSort(),getColumns(),getPaging()));
 }
 
@@ -451,7 +457,12 @@ function configureLiveUpdate(){
 	$(".filterStyle").focusout(function(){
 		var f = getFilters();
 		if (f!="error"){
-			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+			var d = makeData(f,getSort(),getColumns(),getPaging());
+			var c = checkRequest(d);
+			if (c){
+				paging.page = 0;
+				makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+			}
 		}else{
 			console.log("Error in filters, not updating");
 		}
@@ -459,7 +470,12 @@ function configureLiveUpdate(){
 	$(".filterValue").focusout(function(){
 		var f = getFilters();
 		if (f!="error"){
-			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+			var d = makeData(f,getSort(),getColumns(),getPaging());
+			var c = checkRequest(d);
+			if (c){
+				paging.page = 0;
+				makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+			}
 		}else{
 			console.log("Error in filters, not updating");
 		}
@@ -517,7 +533,12 @@ function removeMega(elem){
 	console.log('Remove megadropdownmenu: '+elem.id+', updating table!');
 	var f = getFilters();
 	if (f!="error"){
-		makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+		var d = makeData(f,getSort(),getColumns(),getPaging());
+		var c = checkRequest(d);
+		if (c){
+			paging.page = 0;
+			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+		}
 	}else{
 		console.log("Error in filters, not updating");
 	}
@@ -655,7 +676,12 @@ function removeFilterRow(row){
 	renewFilters();
 	var f = getFilters();
 	if (f!="error"){
-		makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+		var d = makeData(f,getSort(),getColumns(),getPaging());
+		var c = checkRequest(d);
+		if (c){
+			paging.page = 0;
+			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+		}
 	}else{
 		console.log("Error in filters, not updating");
 	}

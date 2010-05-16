@@ -4,7 +4,19 @@
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filter.js"></script>
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
 		
-		<h2>Benchmark Table<span id="ajaxload"></span></h2>
+		<h2 class="benchmarktitle">Benchmark Table</h2>
+		<ul class="mega">
+			<li class="mega">
+				<select size="1" onclick="return false;">
+					<option value="">Columns (hover)</option>
+				</select>
+				<div id="columns">
+					
+				</div>
+			</li>
+		</ul>
+		<span id="ajaxload"></span>
+		<br />
 		
 		<!-- FILTER TABLE -->
 		<form onsubmit="return false;">
@@ -35,16 +47,6 @@
 					</td>
 				</tr>
 			</table>
-			<ul class="mega">
-				<li class="mega">
-					<select size="1" onclick="return false;">
-						<option value="">Columns (hover)</option>
-					</select>
-					<div id="columns">
-						
-					</div>
-				</li>
-			</ul>
 		</form>
 		<!-- END FILTER TABLE -->
 		
@@ -63,7 +65,7 @@
 			<table class="paging">
 				<tr>
 					<td id="previous">&lt;</td>
-					<td id="paginginfo">Showing results 0-0 of 0 results with <input type="text" name="resperpage" id="resperpage" value="50" size="3" /> results per page</td>
+					<td id="paginginfo">Showing results 0-0 of 0 results with <input type="text" name="resperpage" id="resperpage" value="200" size="3" /> results per page</td>
 					<td id="next">&gt;</td>
 				</tr>
 			</table>
