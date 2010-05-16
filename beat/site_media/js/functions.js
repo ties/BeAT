@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	return;
 	$("#CheckAll").click(function(){//Als je op checkall clicked checkt/unchekced hij alle checkboxes in de benchmark lijst
 		if($("#CheckAll").attr("value") == "All"){
 			$(".benchmarks input[type=checkbox]").not(":checked").click();

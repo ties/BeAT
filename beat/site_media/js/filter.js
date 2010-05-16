@@ -188,8 +188,12 @@ function handleResponse(json){
 	extra_columns = json.columns
 	benchmarks = json.benchmarks;
 	benchmark_ids = json.benchmark_ids;
-	
 	console.log("Received "+benchmarks.length+" benchmarks!");
+	
+	//update checked benchmarks
+	updateCheckedBenchmarks();
+	
+	//show results
 	showResults();
 }
 
@@ -236,6 +240,51 @@ function updatePagingTable(){
 	var txt = 'Showing results '+begin+'-'+end+' of '+(benchmark_ids.length)+
 		' results with <input type="text" name="resperpage" id="resperpage" value="'+paging.resperpage+'" size="3" /> results per page';
 	$("#paginginfo").html(txt);
+}
+
+function updateCheckedBenchmarks(){
+	var len = checked_benchmarks.length;
+	var newarr = new Array();
+	
+	for (var i=0;i<benchmark_ids.length;i++){
+		if (checked_benchmarks.indexOf(benchmark_ids[i])!=-1)	newarr.push(benchmark_ids[i]);
+	}
+	checked_benchmarks = newarr;
+	console.log("Updated checked benchmarks: "+checked_benchmarks.toString()+", previous length: "+len+", new length: "+checked_benchmarks.length);
+}
+
+function checkAll(){
+	checked_benchmarks = benchmark_ids.slice();
+	$("#CheckAll").attr("value","None");
+	console.log("Checked all "+checked_benchmarks.length+" benchmarks");
+	updateCheckboxes();
+}
+
+function checkNone(){
+	console.log("Check none");
+	checked_benchmarks = new Array();
+	$("#CheckAll").attr("value","All");
+	updateCheckboxes();
+}
+
+function checkInvert(){
+	console.log("Invert selection");
+	var newarr = new Array();
+	for (var i=0;i<benchmark_ids.length;i++){
+		if (checked_benchmarks.indexOf(benchmark_ids[i])==-1)	newarr.push(benchmark_ids[i]);
+	}
+	checked_benchmarks = newarr;
+	updateCheckboxes();
+}
+
+function updateCheckboxes(){
+	$("table.benchmarks input").each(function(i,obj){
+		if (checked_benchmarks.indexOf(obj.value)!=-1){
+			$(obj).attr('checked',true);
+		}else{
+			$(obj).attr('checked',false);
+		}
+	});
 }
 
 /**
@@ -358,6 +407,7 @@ $(document).ready(function(){
 	f.type = EMPTY;
 	filters = new Array();
 	filters.push(f);
+	
 });
 
 /** ------------------ Functions for events etc! -------------------------- **/
@@ -387,10 +437,14 @@ function registerFunctionsAndEvents(){
 		previousPage();
 	});
 	
-	$("table.benchmarks input:checked").click(function(){
-		alert("checked "+this.id);
+	$("#CheckAll").click(function(){
+		console.log('starting function, value = '+$(this).attr('value'));
+		if ($(this).attr('value') == "All" )	checkAll();
+		else									checkNone();
 	});
-	
+	$("#InvertAll").click(function(){
+		checkInvert();
+	});
 }
 
 function configureLiveUpdate(){
@@ -413,7 +467,7 @@ function configureLiveUpdate(){
 }
 
 function configureCheckboxes(){
-	$("table.benchmarks input:checkbox").click(function(){
+	$("table.benchmarks input").click(function(){
 		//alert($(this).attr('value') + $(this).attr('checked'));
 		var id = parseInt($(this).attr('value'));
 		var index = checked_benchmarks.indexOf(id);
@@ -423,7 +477,7 @@ function configureCheckboxes(){
 		}else{
 			if (index!=-1)		checked_benchmarks.splice(index,1);
 		}
-		alert(checked_benchmarks.toString());
+		console.log("Currently checked benchmarks: "+checked_benchmarks.toString());
 	});
 }
 

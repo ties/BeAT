@@ -104,8 +104,7 @@ def getResponse(qs,data):
 	if optionsdone==False:
 		options = getOptions(qs)
 	
-	benchmark_ids = list(qs.values('id'))
-	
+	benchmark_ids = list(qs.values_list('id',flat=True))
 	print "Done getting possible models, algorithms, tools and options"
 	
 	extracolumns = getColumns(qs)
