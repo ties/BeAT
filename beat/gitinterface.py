@@ -1,6 +1,6 @@
 from git import *
 import time
-from os import system
+from os import *
 
 class GitInterface:
 	folder = ""
@@ -13,7 +13,9 @@ class GitInterface:
 		try:
 			Repo(self.folder)
 		except InvalidGitRepositoryError:
-			Repo.create(self.folder)
+			chdir(self.folder)
+			system("git init")
+			Repo(self.folder)
 
 	"""
 	This function will return a list of objects.
@@ -95,7 +97,9 @@ class GitInterface:
 	"""
 	def make_new_repository(self, folder):
 		self.folder = folder
-		return Repo.create(folder)
+		chdir(self.folder)
+		system("git init")
+		return Repo(self.folder)
 	
 	"""
 	Switches working repository
@@ -110,8 +114,8 @@ class GitInterface:
 	"""
 	def pull_from_git(self, git):
 		print "cd %s; git pull %s" % (self.folder, git)
-		system("cd %s" % self.folder)
-		system("git pull %s" % git)
+		chdir(self.folder)
+		system("git pull %s master" % git)
 
 #pull_from_git("git@github.com:ties/BeAT")
 #print get_date(get_matching_item(".", "c2bee8864"))
