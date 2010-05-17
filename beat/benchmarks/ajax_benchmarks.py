@@ -115,7 +115,14 @@ def getResponse(qs,data):
 	page = data['paging']['page']
 	resperpage = data['paging']['resperpage']
 	
-	result['benchmarks'] = list(qs.values('id','model__name','states_count','total_time','memory_RSS','finished')[page*resperpage : (page+1)*resperpage])
+	#newcolumns = ['id','model__name']
+	#for c in data['columns']:
+		#newcolumns.append(str(c))
+	
+	#print newcolumns
+	qs = apply(qs.values,data['columns'])
+	
+	result['benchmarks'] = list(qs[page*resperpage : (page+1)*resperpage]) #includes paging
 	result['columns'] = extracolumns
 	result['algorithms'] = algorithms
 	result['options'] = options
@@ -143,8 +150,8 @@ def getAlgorithms(qs):
 
 def getTools(qs):
 	tools = []
-	for tool in qs.values('tool','tool__name').order_by('tool__name').distinct():
-		tools.append({'id':tool['tool'],'name':tool['tool__name']})
+	for tool in qs.values('algorithm_tool__tool','algorithm_tool__tool__name').order_by('algorithm_tool__tool__name').distinct():
+		tools.append({'id':tool['algorithm_tool__tool'],'name':tool['algorithm_tool__tool__name']})
 	print "Tools:"
 	print tools
 	return tools
@@ -155,14 +162,14 @@ def getOptions(qs):
 	#This is needed for sqlite3, which does not support the keywords False and True in queries
 	q = q.replace(' False ',' 0 ')
 	q = q.replace(' True ',' 1 ')
-	print "check"
-	print q
+	#print "check"
+	#print q
 	cursor = connection.cursor()
-	print "check"
-	query = "SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))"
-	print query
+	#print "check"
+	#query = "SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))"
+	#print query
 	cursor.execute("SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))")
-	print "check"
+	#print "check"
 	options = []
 	for option in cursor:
 		options.append({'id':option[0],'name':option[1],'takes_argument':option[2]})

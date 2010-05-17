@@ -35,7 +35,14 @@ class ListFilter(Filter):
 		self.list = list
 	
 	def apply(self,qs):
-		f=str(self.type)+'__id__in'
+		f = ""
+		if self.type == MODEL:
+			f = "model__in"
+		elif self.type == ALGORITHM:
+			f = "algorithm_tool__algorithm__in"
+		elif self.type == TOOL:
+			f = "algorithm_tool__tool__in"
+		
 		col = {}
 		col[f] = list(set(self.list))
 		print "List filter:"

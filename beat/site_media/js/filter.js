@@ -59,9 +59,9 @@ var lastRequestString; //String of last succeeded request
 /** End of global variables and constants for sorting **/
 
 /** Global variables and constants for columns: **/
-	var columns = JSON.parse('{"column_names":["Model","States","Transitions","Runtime","Memory (RSS)","Memory (VSIZE)","Finished"],\
-							"column_db_names":["model__name","states_count","transition_count","total_time","memory_RSS","memory_VSIZE","finished"],\
-							"column_checked":[true,true,false,true,true,false,true]}');
+	var columns = JSON.parse('{"column_names":["States","Transitions","Runtime","Memory (RSS)","Memory (VSIZE)","Tool","Algorithm","Finished"],\
+							"column_db_names":["states_count","transition_count","total_time","memory_RSS","memory_VSIZE","algorithm_tool__tool__name","algorithm_tool__algorithm__name","finished"],\
+							"column_checked":[true,false,true,true,false,false,false,true]}');
 	/** global variable extra_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
 	var extra_columns;
 
@@ -78,6 +78,7 @@ var benchmarks = new Array();
 /** Global variable that keeps all the benchmark_ids **/
 var benchmark_ids = new Array();
 
+/** Global variable that keeps the paging settings, defaults to page 0 and 200 results per page **/
 var paging = JSON.parse('{"page":0,"resperpage":200}');
 
 /**
@@ -121,7 +122,10 @@ function filterstring(){
 	return print;
 }
 
-/** Function that checks whether a filter of type type is set **/
+/** 
+ * Function that checks whether a filter of type type is set
+ * @ensure result=true when a filter f has f.type==type
+ **/
 function hasFilter(type){
 	for (var i=0;i<filters.length;i++){
 		if (filters[i].type==type) return true;
@@ -129,7 +133,9 @@ function hasFilter(type){
 	return false;
 }
 
-//function to make data for the makeRequest-function!
+/**
+ * Function that takes 
+ **/
 function makeData(f,s,c,p){
 	var data = JSON.parse('{"filters":[],"sort":{},"columns":{},"paging":{}}');
 	data.filters = f;
@@ -200,6 +206,7 @@ function handleResponse(json){
 	
 	//show results
 	showResults();
+	renewFilters();
 }
 
 function showResults(){
@@ -207,13 +214,14 @@ function showResults(){
 	for (var i = 0; i<benchmarks.length; i++){
 		var benchmark = benchmarks[i];
 		var check = (checked_benchmarks.indexOf(benchmark.id)!=-1);
-		table+='<tr>\n\
-			<td><input type="checkbox"'+(check ? ' checked' : '')+' name="benchmarks" value="' + benchmark.id + '" /></td>\n\
-			<td><label for="{{ ' + benchmark.id + ' }}">' + benchmark.model__name + '</label></td>\n\
-			<td>' + benchmark.states_count + '</td>\n\
-			<td>' + (Math.round(benchmark.total_time*100)/100) + '</td>\n\
-			<td>' + benchmark.memory_RSS + '</td>\n\
-			<td>' + benchmark.finished + '</td></tr>';
+		
+		table+='<tr><td><input type="checkbox"'+(check ? ' checked' : '')+' name="benchmarks" value="' + benchmark.id + '" /></td>\n\
+			<td><label for="{{ ' + benchmark.id + ' }}">' + benchmark.model__name + '</label></td>';
+		
+		for (var j=0; j<columns.column_db_names.length;j++){
+			if (columns.column_checked[j])		table+='<td>'+benchmark[columns.column_db_names[j]]+'</td>';
+		}
+		table+='</tr>';
 	}
 	$("table.benchmarks").html(getTableHeaders()+table);
 	updatePagingTable();
@@ -226,6 +234,11 @@ function showResults(){
  */
 function getTableHeaders(){
 	var res = '<tr><th>&nbsp;</th>';
+	//contains model by default
+	var c = '';
+	if (sort.sort == 'model__name')		c = (sort.sortorder==ASCENDING ? 'ascending' : 'descending');
+	res+='<th id="model__name"><span class="'+c+'">Model</span></th>';
+	
 	for (var i=0;i<columns.column_names.length;i++){
 		if (columns.column_checked[i]){
 			var c = '';
@@ -375,7 +388,11 @@ function getSort(){
  *			result is in JSON-format, containing an object with an array "columns", containing all selected column-names
  */
 function getColumns(){
-	return columns.column_db_names;
+	var res = new Array('id','model__name');
+	for (var i=0;i<columns.column_checked.length;i++){
+		if (columns.column_checked[i])	res.push(columns.column_db_names[i]);
+	}
+	return res;
 }
 
 function setSorting(id){
@@ -405,7 +422,9 @@ function setSorting(id){
  *			configureHover is called
  */
 $(document).ready(function(){
+	showColumnOptions();
 	registerFunctionsAndEvents();
+	
 	makeRequest(makeData(getFilters(),getSort(),getColumns(),getPaging()));
 	
 	var f = JSON.parse(EMPTYFILTER);
@@ -434,6 +453,7 @@ function registerFunctionsAndEvents(){
 	
 	configureHover();
 	configureLiveUpdate();
+	configureColumnSelection();
 	
 	$("#next").click(function(){
 		nextPage();
@@ -450,6 +470,22 @@ function registerFunctionsAndEvents(){
 	});
 	$("#InvertAll").click(function(){
 		checkInvert();
+	});
+}
+
+function configureColumnSelection(){
+	$("#columns input").click(function(){
+		var val = $(this).attr('value');
+		var index = columns.column_db_names.indexOf(val);
+		if (index!=-1){
+			if (this.checked){
+				columns.column_checked[index] = true;
+				console.log('Set column '+val+' to true');
+			}else{
+				columns.column_checked[index] = false;
+				console.log('Set column '+val+' to false');
+			}
+		}
 	});
 }
 
@@ -513,6 +549,16 @@ function configureHover(){
 		
 		$(elem).hoverIntent(config);
 	});
+}
+
+function showColumnOptions(){
+	
+	var html = '';
+	for (var i=0;i<columns.column_db_names.length;i++){
+		html+= '<input type="checkbox" value="'+columns.column_db_names[i]+'"'+(columns.column_checked[i] ? ' checked' : '')+'>'+columns.column_names[i]+'<br />';
+	}
+	$("#columns").html(html);
+	
 }
 
 /**
