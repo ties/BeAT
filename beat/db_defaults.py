@@ -2,7 +2,10 @@ from benchmarks.models import *
 from datetime import datetime
 from gitinterface import *
 dummydate = datetime.now()
-repository = GitInterface(".")
+# code om te pullen van ltsmin git hier
+
+repository = GitInterface(os.path.join(GIT_PATH, "ltsmin"))
+#repository = GitInterface(".")
 version = "ltsmin-1.5-20-g6d5d0c"
 dummydate = datetime(*repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:]))[:6])
 emptyregex, created = Regex.objects.get_or_create(regex='')
