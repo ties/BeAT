@@ -96,7 +96,7 @@ class JobGenerator:
 		filenameBase = base + "-" + lang
 		
 		self.jobgen( stdNodes, greytool, "", modelname, filename=filenameBase+"-idx" )
-		self.jobgen( stdNodes, greytool, "-cache", modelname, filename=filenameBase+"-idx-cache" )
+		self.jobgen( stdNodes, greytool, "--cache", modelname, filename=filenameBase+"-idx-cache" )
 		for vset in ["list", "tree", "fdd"]:
 			self.jobgen( stdNodes, greytool, "--state vset --vset "+vset, modelname, filename=filenameBase+"-"+vset )
 			self.jobgen( stdNodes, greytool, "--state vset --vset "+vset+" --cache", modelname, filename=filenameBase+"-"+vset+"-cache" )
@@ -118,9 +118,6 @@ class JobGenerator:
 
 if __name__ == '__main__':
 	j = JobGenerator()
-	#print j.pbsgen("1", "lpo2lts-grey", "-cache", "dphil-10.tbf")
-	#time.sleep(3)
-	#j.suitegen("dphil-10.tbf")
 	j.generate_all()
 	for job in j.jobs:
 		print job.name
