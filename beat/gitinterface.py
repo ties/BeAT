@@ -1,6 +1,6 @@
 from git import *
 import time
-from os import *
+from os import chdir, system
 
 class GitInterface:
 	folder = ""
@@ -71,6 +71,21 @@ class GitInterface:
 		return h
 	
 	"""
+	Takes a Tag and gives the commit its part of.
+	@requires a string representing the tag of your object
+	@returns the item matching that tag or if non found the nieuwest tag.
+	"""
+	def match_from_tag(self, giventag):
+		repo = Repo(self.folder)
+		tagref = TagReference.list_items(repo)
+		x = 0
+		b = 1 > 0
+		while x < len(tagref)-1 and b:
+			b = not(str(tagref[x].path).endswith(giventag))
+			x = x + 1
+		return tagref[x-1].commit
+		
+	"""
 	Gives the committime of the given git.Commit
 	In the form of a time.struct_time object
 	"""
@@ -99,7 +114,6 @@ class GitInterface:
 		self.folder = folder
 		chdir(self.folder)
 		system("git init")
-		return Repo(self.folder)
 	
 	"""
 	Switches working repository
@@ -109,6 +123,13 @@ class GitInterface:
 	def switch_repository(self, folder):
 		self.folder = folder
 		
+	"""
+	Prefoms a git clone Action wiht the given repository and wil place it in the working directory.
+	@require Given directory does not contain a .git folder.
+	"""
+	def clone_repository(self, git):
+		chdir(self.folder)
+		system("git clone %s" % git)
 	"""
 	Allows pulling form git needs the git server as a string
 	"""
