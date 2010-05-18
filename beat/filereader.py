@@ -19,8 +19,8 @@ import sys		#for system calls
 import os		#for os.path.split()
 from optparse import OptionParser
 
-from settings import *
-from gitinterface import *
+from settings import LOGS_PATH, GIT_PATH
+#from gitinterface import *
 
 #django exceptions
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -155,13 +155,6 @@ class FileReader:
 		#split the header off
 		lines = lines[i:]
 		
-		#write logfile
-		#write to a file in LOGS_PATH
-		logfile = os.path.join(LOGS_PATH,"test.txt")
-		with open(logfile, 'w') as file:
-			for line in lines:
-				file.write(line)
-
 		# # # # # # # # # # # # analyze the header
 		match = regex.match(''.join(header))
 		if not match:
@@ -215,7 +208,7 @@ class FileReader:
 			'options':optlist,
 			'benchmark':(
 				dt, m.get('etime'), m.get('utime'), m.get('stime'), m.get('tcount'),
-				m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill'), logfile
+				m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill')
 			)
 		}
 		#the following ensures 'hardware' and 'options' always contain something iteratable
@@ -404,17 +397,17 @@ class FileReader:
 				valid = False
 
 		#Benchmark
-		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile = data['benchmark']
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
 		self.print_message(V_NOISY,"Statecount for this run is: %s, did it finish? %s"% (scount,finished))
 		if not date or utime <0 or stime <0 or etime <0 or tcount <0 or scount <0 or mVSIZE <0 or mRSS <0:
 			if not tcount or (not scount and not finished):
 				#tcount is allowed to be empty, scount is not given if excecution is ended prematurely
 				if not tcount:
 					tcount = 0
-					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile)
+					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
 				if not scount and not finished:
 					scount = 0
-					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile)
+					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
 			else:
 				self.print_message(V_VERBOSE, "Warning while checking: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
 				valid=False
@@ -480,18 +473,18 @@ class FileReader:
 			hardwarelist.append(h)
 		
 		#Benchmark
-		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished, logfile = data['benchmark']
+		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
 		#convert these to float explicitly
 		utime = float(utime)
 		stime = float(stime)
 		etime = float(etime)
 		#now create and save the db object
-		b, created = Benchmark.objects.get_or_create(model=m, tool=t, algorithm=a, algorithm_tool = at,
+		b, created = Benchmark.objects.get_or_create(model=m, algorithm_tool = at,
 			date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
 				'total_time':(utime+stime),
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
-				'memory_RSS':mRSS, 'finished':finished, 'logfile':logfile}
+				'memory_RSS':mRSS, 'finished':finished, 'logfile':None}
 		)
 		#connect the manytomany relations. this has to happen ONLY if newly created
 		if created:
@@ -554,25 +547,26 @@ class FileReader:
 			self.print_message(V_NOISY, "Notice: Reading from file: %s"%(f))
 			
 			#read the whole file, filling the runs_in_file matrix
-			with open(f, 'r') as file:
-				new_run=True
-				j=0
-				lines=[]
-				for line in file:
-					lines.append(line)
-					if line.startswith("REPORT ENDS HERE"):
-						#chop here
-						j+=1
-						new_run=True
-					elif new_run:
-						#new run, so we need to do some extra stuff
-						runs_in_file.append([])
-						runs_in_file[j].append(line)
-						new_run=False
-					else:
-						#just another line of run j.
-						runs_in_file[j].append(line)
-			
+			#with open(f, 'r') as file:
+			file = open(f, 'r')
+			new_run=True
+			j=0
+			lines=[]
+			for line in file:
+				lines.append(line)
+				if line.startswith("REPORT ENDS HERE"):
+					#chop here
+					j+=1
+					new_run=True
+				elif new_run:
+					#new run, so we need to do some extra stuff
+					runs_in_file.append([])
+					runs_in_file[j].append(line)
+					new_run=False
+				else:
+					#just another line of run j.
+					runs_in_file[j].append(line)
+			file.close()
 			#iterate over these runs we've read
 			for run in runs_in_file:
 				#parse the whole thing
@@ -688,6 +682,7 @@ class FileReaderError(Exception):
 #run the main method
 if __name__ == '__main__':
 	f = FileReader()
+	#f.main()
 	exitcode = f.main()
 	#print "%s\nLog: "%( exitcode)
 	for l in f.log:

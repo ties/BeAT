@@ -26,9 +26,6 @@ class Option(models.Model):
 class Benchmark(models.Model):
 	#Idenifying elements
 	model = models.ForeignKey('Model')
-	tool = models.ForeignKey('Tool')
-	algorithm = models.ForeignKey('Algorithm')
-	#will replace tool and algorithm(?)
 	algorithm_tool = models.ForeignKey('AlgorithmTool')
 	hardware = models.ManyToManyField('Hardware', through="BenchmarkHardware")
 	optionvalue = models.ManyToManyField('OptionValue', through="BenchmarkOptionValue")
@@ -44,7 +41,7 @@ class Benchmark(models.Model):
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
 	memory_RSS = models.IntegerField(verbose_name="Memory RSS (KB)") #rounded to kilobytes
 	finished = models.BooleanField(verbose_name="Run finished")
-	logfile = models.FilePathField(path=LOGS_PATH)
+	logfile = models.FilePathField(path=LOGS_PATH, blank=True, null=True)
 	
 	def __unicode__(self):
 		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)
