@@ -2,7 +2,7 @@ from django import forms
 from django.forms import widgets
 from django.db.models import Count
 
-from beat.benchmarks.models import Benchmark, Model, Algorithm, Tool, OptionValue
+from beat.benchmarks.models import Benchmark, Model, Algorithm, Tool, OptionValue, ModelComparison
 
 class ExportGraphForm(forms.Form):
 	FORMATS = (
@@ -19,14 +19,8 @@ class CompareForm(forms.Form):
 	name = forms.CharField(max_length=255, required=False)
 	
 class CompareModelsForm(forms.Form):
-	DATA_TYPES = (
-		('transitions', 'Transition count'),
-		('states', 'States count'),
-		('vsize', 'Memory VSIZE'),
-		('rss', 'Memory RSS'),
-	)
 	name = forms.CharField(max_length=255, required=False, help_text='A name for your comparison')
-	type = forms.ChoiceField(choices=DATA_TYPES, label='Data type', help_text='What type of data should be displayed in the graph?')
+	type = forms.ChoiceField(choices=ModelComparison.DATA_TYPES, label='Data type', help_text='What type of data should be displayed in the graph?')
 	tool = forms.ModelChoiceField(Tool.objects.all(), empty_label=None)
 	algorithm = forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None)
 	option = forms.ModelChoiceField(OptionValue.objects.all(), required=False)

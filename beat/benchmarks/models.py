@@ -44,7 +44,7 @@ class Benchmark(models.Model):
 	logfile = models.FilePathField(path=LOGS_PATH, blank=True, null=True)
 	
 	def __unicode__(self):
-		return "%s with %s-%s on %s" % (self.model, self.tool, self.algorithm, self.date_time)
+		return "%s with %s on %s" % (self.model, self.algorithm_tool, self.date_time)
 
 class Hardware(models.Model):
 	name = models.CharField(max_length=200) 
@@ -142,11 +142,20 @@ class Comparison(models.Model):
 		return "%s" % (self.name)
 
 class ModelComparison(models.Model):
+	TRANSITIONS 	= 'transitions'
+	STATES 			= 'states'
+	VSIZE 			= 'memory_VSIZE'
+	RSS 			= 'memory_RSS'
+	ELAPSED_TIME 	= 'elapsed_time'
+	TOTAL_TIME 		= 'total_time'
+	
 	DATA_TYPES = (
-		('transitions', 'Transition count'),
-		('states', 'States count'),
-		('vsize', 'Memory VSIZE'),
-		('rss', 'Memory RSS'),
+		(TRANSITIONS, 'Transition count'),
+		(STATES, 'States count'),
+		(VSIZE, 'Memory VSIZE'),
+		(RSS, 'Memory RSS'),
+		(ELAPSED_TIME, 'Elapsed Time'),
+		(TOTAL_TIME, 'Total Time'),
 	)
 	user = models.ForeignKey(User, related_name="owner_mc")
 	type = models.CharField(max_length=20, choices=DATA_TYPES)

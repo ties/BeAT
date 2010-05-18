@@ -12,18 +12,13 @@ class OptionValueInline(admin.TabularInline):
 class AlgorithmToolInline(admin.TabularInline):
 	model = AlgorithmTool
 	extra = 1
-
-class ToolAdmin(admin.ModelAdmin):
-	list_display = ['name']
-	
-	inlines = [AlgorithmToolInline]
 	
 class BenchmarkAdmin(admin.ModelAdmin):
-	list_display = ('model', 'tool', 'algorithm', 'algorithm_tool', 'date_time', 'finished', 'user_time', 'system_time', 'total_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count', 'logfile')
+	list_display = ('model', 'algorithm_tool', 'date_time', 'finished', 'user_time', 'system_time', 'total_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count', 'logfile')
 	list_filter = ['date_time']
-	search_fields = ['model__name', 'tool__name', 'algorithm__name']
+	search_fields = ['model__name', 'algorithm_tool__tool__name', 'algorithm_name__algorithm__name']
 	fieldsets = [
-		('Configuration', {'fields': ['model','tool','algorithm','algorithm_tool','finished']}),
+		('Configuration', {'fields': ['model','algorithm_tool','finished']}),
 		('Date information', {'fields': ['date_time']}),
 		('Output data', {'fields': ['user_time', 'system_time','total_time', 'elapsed_time','transition_count','states_count','memory_VSIZE', 'memory_RSS', 'logfile']}),
 	]
@@ -32,12 +27,14 @@ class BenchmarkAdmin(admin.ModelAdmin):
 	
 	
 admin.site.register(Model)
-admin.site.register(Tool, ToolAdmin)
+#admin.site.register(Tool, ToolAdmin)
+admin.site.register(Tool)
 #admin.site.register(Tool)
 admin.site.register(Regex)
 admin.site.register(Hardware)
 admin.site.register(Option)
-admin.site.register(Benchmark, BenchmarkAdmin)
+#admin.site.register(Benchmark, BenchmarkAdmin)
+admin.site.register(Benchmark)
 admin.site.register(Comparison)
 admin.site.register(ModelComparison)
 admin.site.register(Algorithm)

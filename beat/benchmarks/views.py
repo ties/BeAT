@@ -68,8 +68,8 @@ def scatterplot(request):
 	
 	# @TODO
 	# Take the two data sets from the db and intersect on model id
-	b1 = Benchmark.objects.filter(tool__name__exact='etf').filter(tool__version__exact='2')
-	b2 = Benchmark.objects.filter(tool__name__exact='etf').filter(model__in=[b.model.pk for b in b1]).filter(tool__version__exact='3')
+	b1 = Benchmark.objects.filter(algorithm_tool__tool__name__exact='etf').filter(algorithm_tool__tool__version__exact='2')
+	b2 = Benchmark.objects.filter(algorithm_tool__tool__name__exact='etf').filter(model__in=[b.model.pk for b in b1]).filter(tool__version__exact='3')
 	b1 = b1.filter(model__in=[b.model.pk for b in b2])
 	
 	# Make new arrays with only the elapsed time
@@ -178,54 +178,6 @@ def simple(request, id, format='png'):
 	response = graph.export(canvas, title, format)
 	return response
 
-def legend(*args, **kwargs):
-	"""
-	Overwrites the pylab legend function.
-
-	It adds another location identfier 'outer right'
-	which locates the legend on the right side of the plot
-
-	The args and kwargs are forwarded to the pylab legend function
-	"""
-	if kwargs.has_key('loc'):
-		loc = kwargs['loc']
-		loc = loc.split()
-
-		if loc[0] == 'outer':
-			# make a legend with out the location
-			# remove the location setting from the kwargs
-			kwargs.pop('loc')
-			leg = pylab.legend(loc=(0,0), *args, **kwargs)
-			frame = leg.get_frame()
-			currentAxes = pylab.gca()
-			currentAxesPos = currentAxes.get_position()
-			# scale plot by the part which is taken by the legend
-			plotScaling = frame.get_width()/currentAxesPos[2]
-
-			if loc[1] == 'right':
-				# scale the plot
-				currentAxes.set_position((currentAxesPos[0],
-				currentAxesPos[1],
-				currentAxesPos[2] * (1-plotScaling),
-				currentAxesPos[3]))
-				# set x and y coordinates of legend
-				leg._loc = (1 + leg.axespad, 1 - frame.get_height())
-
-			# doesn't work
-			#if loc[1] == 'left':
-			#	# scale the plot
-			#	currentAxes.set_position((currentAxesPos[0] + frame.get_width(),
-			#							  currentAxesPos[1],
-			#							  currentAxesPos[2] * (1-plotScaling),
-			#							  currentAxesPos[3]))
-			#	# set x and y coordinates of legend
-			#	leg._loc = (1 -.05 -  leg.axespad - frame.get_width(), 1 - frame.get_height())
-
-			pylab.draw_if_interactive()
-			return leg
-
-	return pylab.legend(*args, **kwargs)
-
 """
 Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
@@ -240,7 +192,6 @@ def graph_model(request, id, format='png'):
 	
 	# DB stuff
 	from django.db.models import Count
-	from beat.benchmarks.models import Model, ModelComparison
 	
 	# Take the ModelComparison from db and filter data
 	comparison = ModelComparison.objects.get(pk=id)
@@ -249,7 +200,7 @@ def graph_model(request, id, format='png'):
 	c_type = comparison.type
 	c_option = comparison.optionvalue
 	
-	fig=Figure(facecolor='w',figsize=(16,7))
+	fig=Figure(facecolor='w')
 	ax=fig.add_subplot(111)
 	
 	# Lists of colors, styles and markers to get a nice unique style for each line
@@ -270,7 +221,7 @@ def graph_model(request, id, format='png'):
 		
 		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
 		# Filter benchmarks based on the ModelComparison data
-		benchmarks = benchmarks.filter(algorithm = c_algo, tool = c_tool)
+		benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
 		
 		if (len(benchmarks) != 0):
 			# Filter options if specified
@@ -278,12 +229,19 @@ def graph_model(request, id, format='png'):
 				benchmarks = benchmarks.filter(optionvalue=c_option)
 			
 			# Static data types to plot in the graph
-			types = {
-				'transitions': [b.transition_count for b in benchmarks],
-				'states': [b.states_count for b in benchmarks],
-				'vsize': [b.memory_VSIZE for b in benchmarks],
-				'rss': [b.memory_RSS for b in benchmarks],
-			}[c_type] # c_type: datatype from ModelComparison object
+			types = []
+			if (c_type == ModelComparison.TRANSITIONS):
+				types = [b.transition_count for b in benchmarks]
+			elif (c_type == ModelComparison.STATES):
+				types = [b.states_count for b in benchmarks]
+			elif (c_type == ModelComparison.VSIZE):
+				types = [b.memory_VSIZE for b in benchmarks]
+			elif (c_type == ModelComparison.RSS):
+				types = [b.memory_RSS for b in benchmarks]
+			elif (c_type == ModelComparison.ELAPSED_TIME):
+				types = [b.elapsed_time for b in benchmarks]
+			elif (c_type == ModelComparison.TOTAL_TIME):
+				types = [b.total_time for b in benchmarks]
 			
 			# Plot data
 			lines = ax.plot(
@@ -299,13 +257,14 @@ def graph_model(request, id, format='png'):
 	title = title + ')'
 	
 	ax.set_title(title)
-	leg = ax.legend(fancybox=True, ncol=2,loc='upper right')
+	leg = ax.legend(fancybox=True, loc='upper left',bbox_to_anchor = (1,1.15), markerscale=5)
 	for t in leg.get_texts():
 		t.set_fontsize('xx-small')
 	ax.set_ylabel(c_type)
 	ax.set_xlabel('version')
 	fig.autofmt_xdate()
 	
+	fig.subplots_adjust(right=0.7)
 	# Output
 	canvas = FigureCanvas(fig)
 	#fig.savefig('benchmark.pdf')
@@ -391,7 +350,7 @@ def compare_detail(request, id, model=False):
 		c = get_object_or_404(ModelComparison,pk=id)
 		
 		models = Model.objects.values('id').annotate(num_models=Count('name'))
-		benches = Benchmark.objects.filter(tool=c.tool, algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
+		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
 		models = Model.objects.filter(id__in=[b.model.id for b in benches])
 		
 		form = ExportGraphForm()
