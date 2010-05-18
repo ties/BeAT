@@ -23,6 +23,7 @@ urlpatterns = patterns('',
 	url(r'^compare/model/(?P<id>\d+)/$', 'benchmarks.views.compare_detail', {'model' : True},name="detail_model"),
 	# Graph for the model-comparison
 	(r'^compare/model/(?P<id>\d+)/benchmark.png$', 'benchmarks.views.graph_model'),
+	url (r'^compare/model/(?P<id>\d+)/interactive$', 'benchmarks.views.interactive_model'),
 	
 	# View saved comparisons
 	(r'^user/compare/$', 'benchmarks.views.user_comparisons'),

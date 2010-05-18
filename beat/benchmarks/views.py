@@ -183,12 +183,13 @@ Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
 @param id ModelComparison ID from the database, used filter the benchmark data from the db.
 """
-def graph_model(request, id, format='png'):
+def graph_model(request, id, format='png', interactive=False):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
 	from matplotlib.figure import Figure
-
+	import matplotlib
+	import matplotlib.pyplot as plt
 	
 	# DB stuff
 	from django.db.models import Count
@@ -200,7 +201,7 @@ def graph_model(request, id, format='png'):
 	c_type = comparison.type
 	c_option = comparison.optionvalue
 	
-	fig=Figure(facecolor='w')
+	fig = plt.figure(facecolor='w')
 	ax=fig.add_subplot(111)
 	
 	# Lists of colors, styles and markers to get a nice unique style for each line
@@ -251,25 +252,34 @@ def graph_model(request, id, format='png'):
 				label = m['name'])
 
 	#Mark-up
-	title = '' + c_type + ' (' + c_tool.name + ', ' + c_algo.name
+	title = c_tool.name + c_algo.name
 	if c_option is not None:
 		title = title + ' [' + c_option + ']'
-	title = title + ')'
 	
 	ax.set_title(title)
 	leg = ax.legend(fancybox=True, loc='upper left',bbox_to_anchor = (1,1.15), markerscale=5)
 	for t in leg.get_texts():
 		t.set_fontsize('xx-small')
-	ax.set_ylabel(c_type)
-	ax.set_xlabel('version')
+	
+	y_label = c_type
+	for l in ModelComparison.DATA_TYPES:
+		a,b = l
+		if a == c_type:
+			y_label = b
+	ax.set_ylabel(y_label)
+	ax.set_xlabel('Revision date')
 	fig.autofmt_xdate()
 	
 	fig.subplots_adjust(right=0.7)
 	# Output
 	canvas = FigureCanvas(fig)
 	#fig.savefig('benchmark.pdf')
-	response = graph.export(canvas, comparison.name, format)
-	return response
+	if (interactive):
+		plt.show()
+		return redirect('benchmarks.views.index')
+	else: 
+		response = graph.export(canvas, comparison.name, format)
+		return response
 
 	#@login_required(redirect_field_name='next')
 def index(request):
@@ -412,9 +422,9 @@ def compare_model(request):
 			)
 			
 			c.hash = c.getHash()
-			if (c.name is ''): 
+			if (c.name == ''): 
 				c.name = str(id)
-				c.save()
+			c.save()
 			
 			#return render_to_response('compare_models.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
 			return redirect('detail_model', id=c.id)
@@ -425,3 +435,5 @@ def compare_model(request):
 		'form': form, 
 	}, context_instance=RequestContext(request))
 	
+def interactive_model(request, id):
+	return graph_model(request,id,interactive=True)
