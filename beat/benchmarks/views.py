@@ -178,6 +178,54 @@ def simple(request, id, format='png'):
 	response = graph.export(canvas, title, format)
 	return response
 
+def legend(*args, **kwargs):
+	"""
+	Overwrites the pylab legend function.
+
+	It adds another location identfier 'outer right'
+	which locates the legend on the right side of the plot
+
+	The args and kwargs are forwarded to the pylab legend function
+	"""
+	if kwargs.has_key('loc'):
+		loc = kwargs['loc']
+		loc = loc.split()
+
+		if loc[0] == 'outer':
+			# make a legend with out the location
+			# remove the location setting from the kwargs
+			kwargs.pop('loc')
+			leg = pylab.legend(loc=(0,0), *args, **kwargs)
+			frame = leg.get_frame()
+			currentAxes = pylab.gca()
+			currentAxesPos = currentAxes.get_position()
+			# scale plot by the part which is taken by the legend
+			plotScaling = frame.get_width()/currentAxesPos[2]
+
+			if loc[1] == 'right':
+				# scale the plot
+				currentAxes.set_position((currentAxesPos[0],
+				currentAxesPos[1],
+				currentAxesPos[2] * (1-plotScaling),
+				currentAxesPos[3]))
+				# set x and y coordinates of legend
+				leg._loc = (1 + leg.axespad, 1 - frame.get_height())
+
+			# doesn't work
+			#if loc[1] == 'left':
+			#	# scale the plot
+			#	currentAxes.set_position((currentAxesPos[0] + frame.get_width(),
+			#							  currentAxesPos[1],
+			#							  currentAxesPos[2] * (1-plotScaling),
+			#							  currentAxesPos[3]))
+			#	# set x and y coordinates of legend
+			#	leg._loc = (1 -.05 -  leg.axespad - frame.get_width(), 1 - frame.get_height())
+
+			pylab.draw_if_interactive()
+			return leg
+
+	return pylab.legend(*args, **kwargs)
+
 """
 Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
@@ -188,6 +236,7 @@ def graph_model(request, id, format='png'):
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
 	from matplotlib.figure import Figure
+
 	
 	# DB stuff
 	from django.db.models import Count
@@ -200,7 +249,7 @@ def graph_model(request, id, format='png'):
 	c_type = comparison.type
 	c_option = comparison.optionvalue
 	
-	fig=Figure(facecolor='w')
+	fig=Figure(facecolor='w',figsize=(16,7))
 	ax=fig.add_subplot(111)
 	
 	# Lists of colors, styles and markers to get a nice unique style for each line
@@ -238,7 +287,7 @@ def graph_model(request, id, format='png'):
 			
 			# Plot data
 			lines = ax.plot(
-				[b.tool.version for b in benchmarks], 
+				[b.algorithm_tool.date for b in benchmarks], 
 				types, 
 				marker + style + color,
 				label = m['name'])
@@ -250,11 +299,12 @@ def graph_model(request, id, format='png'):
 	title = title + ')'
 	
 	ax.set_title(title)
-	leg = ax.legend()
+	leg = ax.legend(fancybox=True, ncol=2,loc='upper right')
 	for t in leg.get_texts():
-		t.set_fontsize('small')
+		t.set_fontsize('xx-small')
 	ax.set_ylabel(c_type)
 	ax.set_xlabel('version')
+	fig.autofmt_xdate()
 	
 	# Output
 	canvas = FigureCanvas(fig)
