@@ -10,6 +10,9 @@ export DJANGO_SETTINGS_MODULE=settings
 #then
 #	echo "FAIL"
 #fi
+mkdir logs
+mkdir git
+mkdir git\ltsmin
 python db_defaults.py
 python filereader.py --noisy ltsmin-ouput/output.txt > log0.txt~
 python spawndata.py
