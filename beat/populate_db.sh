@@ -12,7 +12,10 @@ export DJANGO_SETTINGS_MODULE=settings
 #fi
 mkdir logs
 mkdir git
-mkdir git\ltsmin
+mkdir git/ltsmin
+cd git/ltsmin
+git init
+cd ../..
 python db_defaults.py
 python filereader.py --noisy ltsmin-ouput/output.txt > log0.txt~
 python spawndata.py

@@ -9,7 +9,7 @@ b = Benchmark.objects.all()
 for i in b:
 	at = i.algorithm_tool
 	x = at.date
-	somedate = datetime(x.year, (x.month+1+(random.random() < 0.5))%12, (x.day+1+(random.random() < 0.5))%28+1, x.hour, x.minute, x.second)
+	somedate = datetime(x.year, (x.month+1+(random.random() < 0.5))%12+1, (x.day+1+(random.random() < 0.5))%28+1, x.hour, x.minute, x.second)
 	at, c = AlgorithmTool.objects.get_or_create(tool=at.tool, algorithm=at.algorithm, version=at.version[-59:]+'1', regex=at.regex, date=somedate)
 	h = i.hardware.all()
 	o = i.optionvalue.all()

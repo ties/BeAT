@@ -15,3 +15,5 @@
 git/
 #location for logs:
 logs/
+#settings.py
+*settings.py

@@ -5,6 +5,7 @@ dummydate = datetime.now()
 # code om te pullen van ltsmin git hier
 
 repository = GitInterface(os.path.join(GIT_PATH, "ltsmin"))
+repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 #repository = GitInterface(".")
 version = "ltsmin-1.5-20-g6d5d0c"
 dummydate = datetime(*repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:]))[:6])
