@@ -79,7 +79,7 @@ class ExtraValue(models.Model):
 	value = models.CharField(max_length=200)
 	
 	def __unicode__(self):
-		return "%s %s" % (self.name)
+		return "%s=%s" % (self.name, self.value)
 
 class Tool(models.Model):	
 	name = models.CharField(max_length=200)

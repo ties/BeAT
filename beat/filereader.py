@@ -199,8 +199,11 @@ class FileReader:
 			self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
 			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (parser.regex, ''.join(lines)) )
 			return None
-		#matched=m
-		#remove etime,utime,stime,tcount,scount,vsize,rss,kill from matched
+
+		matched ={}
+		for key in m:
+			if key not in ["etime","utime","stime","tcount","scount","vsize","rss","kill"]:
+				matched[key]=m[key]
 		
 		#collect all relevant information into one dictionary
 		data = {
@@ -212,8 +215,8 @@ class FileReader:
 			'benchmark':(
 				dt, m.get('etime'), m.get('utime'), m.get('stime'), m.get('tcount'),
 				m.get('scount'), m.get('vsize'), m.get('rss'), not m.get('kill')
-			)
-			#'extravals':matched
+			),
+			'extravals':matched
 		}
 		#the following ensures 'hardware' and 'options' always contain something iteratable
 		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (m))
@@ -507,15 +510,18 @@ class FileReader:
 				else:
 					self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
 				bov, c = BenchmarkOptionValue.objects.get_or_create(optionvalue=ov,benchmark=b)
-			return b
 			
 			#ExtraValues
-			#extravals=data['extravals']
-			#for key in extravals:
-			#	val=extravals[key]
-			#	ev = ExtraValue(name=key, value=val, benchmark=b)
-			#	ev.save()
-			#return b
+			extravals=data['extravals']
+			if not extravals:
+				#nothing to see here, move along
+				return b
+			#create 'em
+			for key in extravals:
+				val=extravals[key]
+				ev = ExtraValue(name=key, value=val, benchmark=b)
+				ev.save()
+			return b
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
 			#existing benchmark; don't modify
