@@ -4,9 +4,11 @@ from os import chdir, system
 
 class GitInterface:
 	folder = ""
+	has_repository = 1 > 0
 	"""
 	@require folder to be an existion folder in the filesystem
-	@assure if folder contains a git repository it will use that repository. Else it will make a git repository there.
+	@assure if folder contains a git repository it will use that repository. Else it sets the working directory there and makes has_repository false.
+	to get a working repository use make_new_repository,switch_repository or clone_repository
 	"""
 	def __init__(self, folder):
 		self.folder = folder
@@ -14,8 +16,7 @@ class GitInterface:
 			Repo(self.folder)
 		except InvalidGitRepositoryError:
 			chdir(self.folder)
-			system("git init")
-			Repo(self.folder)
+			has_repository = 1 < 0
 
 	"""
 	This function will return a list of objects.
@@ -111,6 +112,7 @@ class GitInterface:
 	@assure given repository is working repository.
 	"""
 	def make_new_repository(self, folder):
+		has_repository = 1 > 0
 		self.folder = folder
 		chdir(self.folder)
 		system("git init")
@@ -121,6 +123,7 @@ class GitInterface:
 	@assure the working repository is the given repository.
 	"""
 	def switch_repository(self, folder):
+		has_repository = 1 > 0
 		self.folder = folder
 		
 	"""
@@ -130,6 +133,7 @@ class GitInterface:
 	def clone_repository(self, git):
 		chdir(self.folder)
 		system("git clone %s" % git)
+		has_repository = 1 > 0
 	"""
 	Allows pulling form git needs the git server as a string
 	"""
