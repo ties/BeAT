@@ -7,11 +7,11 @@ dummydate = datetime.now()
 repository = GitInterface(GIT_PATH)
 repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
-repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+#repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 
 
 version = "ltsmin-1.5-20-g6d5d0c"
-dummydate = datetime(*repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:]))[:6])
+dummydate = datetime(*repository.get_date(repository.get_matching_item(version[-6:]))[:6])
 emptyregex, created = Regex.objects.get_or_create(regex='')
 hw, created = Hardware.objects.get_or_create(name="x", memory=600, cpu='AMD', disk_space=21456, os='Linux')
 ###################### nips version 1, 2lts-grey ######################
