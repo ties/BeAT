@@ -4,7 +4,7 @@ from os import chdir, system
 
 class GitInterface:
 	folder = ""
-	has_repository = 1 > 0
+	has_repository = True
 	"""
 	@require folder to be an existion folder in the filesystem
 	@assure if folder contains a git repository it will use that repository. Else it sets the working directory there and makes has_repository false.
@@ -16,7 +16,7 @@ class GitInterface:
 			Repo(self.folder)
 		except InvalidGitRepositoryError:
 			chdir(self.folder)
-			has_repository = 1 < 0
+			has_repository = False
 
 	"""
 	This function will return a list of objects.
@@ -64,7 +64,7 @@ class GitInterface:
 		h = []
 		try:
 			# add every commit to a list.
-			while 0 < 1:
+			while True:
 				h.append(i.next())
 		except StopIteration:
 			# terminates the loop when all items are done.
@@ -112,19 +112,22 @@ class GitInterface:
 	@assure given repository is working repository.
 	"""
 	def make_new_repository(self, folder):
-		has_repository = 1 > 0
+		has_repository = True
 		self.folder = folder
 		chdir(self.folder)
 		system("git init")
 	
 	"""
 	Switches working repository
-	@require folder to contain a .git file.
-	@assure the working repository is the given repository.
+	@assure if folder contains a .git the working repository is the given repository with a repo. else you can now create a new repo here with clone_repository.
 	"""
 	def switch_repository(self, folder):
-		has_repository = 1 > 0
+		has_repository = True
 		self.folder = folder
+		try:
+			Repo(self.folder)
+		except InvalidGitRepositoryError:
+			has_repository = False
 		
 	"""
 	Prefoms a git clone Action wiht the given repository and wil place it in the working directory.
@@ -133,7 +136,7 @@ class GitInterface:
 	def clone_repository(self, git):
 		chdir(self.folder)
 		system("git clone %s" % git)
-		has_repository = 1 > 0
+		has_repository = True
 	"""
 	Allows pulling form git needs the git server as a string
 	"""
