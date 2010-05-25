@@ -19,7 +19,7 @@ import sys		#for system calls
 import os		#for os.path.split()
 from optparse import OptionParser
 
-from settings import LOGS_PATH, GIT_PATH
+from beat.settings import LOGS_PATH, GIT_PATH
 #from gitinterface import *
 
 #django exceptions
