@@ -109,16 +109,13 @@ def getTools(qs):
 	return tools
 
 def getOptions(qs):
-	q = str(qs.values_list('id').query)
-	#This is needed for sqlite3, which does not support the keywords False and True in queries
-	#q = q.replace(' False ',' 0 ')
-	#q = q.replace(' True ',' 1 ')
-	cursor = connection.cursor()
-	#query = "SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))"
-	cursor.execute("SELECT id,name,takes_argument FROM benchmarks_option WHERE EXISTS (SELECT id FROM benchmarks_optionvalue WHERE option_id=benchmarks_option.id AND EXISTS (SELECT id FROM benchmarks_benchmarkoptionvalue WHERE optionvalue_id=benchmarks_optionvalue.id AND benchmark_id IN ("+q+")));")
+	ops = ValidOption.objects.filter(algorithm_tool__in=qs.values_list("algorithm_tool__id"))
+	optionlist = ops.values("option__id","option__name","option__takes_argument").distinct()
 	options = []
-	for option in cursor:
-		options.append({'id':option[0],'name':option[1],'takes_argument':option[2]})
+	
+	for item in optionlist:
+		options.append({'id':item['option__id'],'name':item['option__name'],'takes_argument':item['option__takes_argument']})
+	
 	return options
 
 def sortQuerySet(qs,sort):
