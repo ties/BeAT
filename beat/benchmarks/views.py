@@ -483,7 +483,6 @@ def compare_scatterplot(request):
 			return redirect('detail_benchmark', id=c.id)
 	else:
 		form = CompareScatterplotForm() # An unbound form
-	print form
 	return render_to_response('compare_benchmarks_form.html', {
 		'form': form,
 	}, context_instance=RequestContext(request))
