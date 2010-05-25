@@ -103,7 +103,7 @@ class AlgorithmTool(models.Model):
 	date = models.DateTimeField()
 	
 	def __unicode__(self):
-		return "%s%s" % (self.tool, self.algorithm)
+		return "%s%s-%s" % (self.tool, self.algorithm, self.version)
 	
 class Algorithm(models.Model):
 	name = models.CharField(max_length=50)
@@ -130,10 +130,13 @@ class RegisteredShortcut(models.Model):
 
 class Comparison(models.Model):
 	user = models.ForeignKey(User, related_name="owner_c")
-	benchmarks = models.CommaSeparatedIntegerField(max_length=255)
-	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	name = models.CharField(max_length=255)
+	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	hash = models.CharField(max_length=40)
+	
+	algorithm_tool_a = models.ForeignKey('AlgorithmTool', related_name='at_a')
+	algorithm_tool_b = models.ForeignKey('AlgorithmTool', related_name='at_b')
+	optionvalue = models.ForeignKey('OptionValue', blank=True, null=True)	
 	
 	def getHash(self):
 		return  hash(str(self.id) + str(self.date_time))

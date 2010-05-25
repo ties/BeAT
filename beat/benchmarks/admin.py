@@ -40,6 +40,7 @@ admin.site.register(ModelComparison)
 admin.site.register(Algorithm)
 admin.site.register(RegisteredShortcut)
 admin.site.register(ExtraValue)
+admin.site.register(AlgorithmTool)
 
 admin.site.register(ValidOption)
 admin.site.register(OptionValue)
