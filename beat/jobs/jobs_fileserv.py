@@ -17,7 +17,6 @@ def to_tar(jobs):
 		tarinf = tarfile.TarInfo(name=job.name)
 		tarinf.size = len(job.script)
 		tfile.addfile(tarinf,file)
-		print tarinf.size
 	tfile.close()
 	tar_tempfile.flush()
 	return ("jobs.tar.gz",tar_tempfile)
