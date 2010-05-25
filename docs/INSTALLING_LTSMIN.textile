@@ -75,10 +75,11 @@ h5. Building a patched instance of Divine-cluster[1]
 
 
 Download divine-cluster-0.8.3 from "the Divine website":"http://divine.fi.muni.cz/page.php?page=download". Download version 0.8.3. Unpack the archive, and apply the "ltsmin-divine":"http://fmt.cs.utwente.nl/gitweb/?p=ltsmin.git;a=blob_plain;f=contrib/divine-cluster-0.8.3-ltsmin.patch;h=7862d34b6a3ae7b8a3db5a2ced0c0e1741036dca;hb=HEAD" patch to it.
+It appears the divine install sometimes fails with some message about EOF being undefined. Find the file dve_lexer.cc and add #include<stdio.h> to it.
+You need automake1.10
 
 <pre>
 	cd divine-cluster-0.8.3
-  	patch  -p1 < ../divine-cluster-0.8.3-ltsmin.patch
   	patch  -p1 < ../divine-cluster-0.8.3-ltsmin.patch
   	./configure --prefix=[divine-cluster prefix directory]
 	./make

@@ -8,7 +8,7 @@ mkdir git
 mkdir git/ltsmin
 
 python db_defaults.py
-python filereader.py --noisy ltsmin-ouput/output.txt > log0.txt~
+python filereader.py --noisy ltsmin-output/output.txt > log0.txt~
 python spawndata.py
 python spawndata.py
 python spawndata.py

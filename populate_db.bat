@@ -4,7 +4,7 @@ set DJANGO_SETTINGS_MODULE=beat.settings
 mkdir logs
 mkdir git\ltsmin
 python db_defaults.py
-python filereader.py --quiet ltsmin-ouput\output.txt
+python filereader.py --quiet ltsmin-output\output.txt
 python spawndata.py
 python spawndata.py
 python spawndata.py
