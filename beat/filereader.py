@@ -25,7 +25,7 @@ from settings import LOGS_PATH, GIT_PATH
 #django exceptions
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 #models
-from benchmarks.models import *
+from beat.benchmarks.models import *
 
 #the length of the header placed in the logs
 RUN_DETAILS_HEADER = 11

@@ -1,4 +1,4 @@
-from benchmarks.models import *
+from beat.benchmarks.models import *
 import random
 from datetime import datetime
 
