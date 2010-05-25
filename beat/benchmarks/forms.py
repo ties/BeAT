@@ -29,5 +29,8 @@ class CompareModelsForm(forms.Form):
 
 class JobGenForm(forms.Form):
 	models = forms.ModelMultipleChoiceField(Model.objects.all(), required=True)
-	tool = forms.ModelChoiceField(Tool.objects.all(), empty_label=None)
-	algorithm = forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None)
+	tool = forms.ModelChoiceField(Tool.objects.all(), empty_label=None, required=False)
+	algorithm = forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None, required=False)
+
+class SuiteGenForm(forms.Form):
+	models = forms.ModelMultipleChoiceField(Model.objects.all(), required=True)

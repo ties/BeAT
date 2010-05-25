@@ -20,8 +20,9 @@ def jobgen(request):
 	#fetch models
 	#m = Model.objects.all()
 	#display page
-	form = JobGenForm()
-	return render_to_response('jobgen.html', {'form':form}, context_instance=RequestContext(request))
+	jobform = JobGenForm()
+	suiteform = SuiteGenForm()
+	return render_to_response('jobgen.html', {'jform':jobform, 'sform':suiteform}, context_instance=RequestContext(request))
 
 """Generate batch job
 """
@@ -34,12 +35,38 @@ def jobgen_create(request):
 			t = form.cleaned_data['tool']
 			a = form.cleaned_data['algorithm']
 			m = form.cleaned_data['models']
-			from beat.jobs.jobs import *
-			j = JobGenerator()
+			import beat.jobs.jobs
+			j = beat.jobs.jobs.JobGenerator()
 			jobs = []
 			for x in m:
 				jobs.append(j.pbsgen("1", "%s%s"%(t.name,a.name),"--cache","%s"%(x.name)))
 			return render_to_response('jobgen_create.html', { 'job':jobs }, context_instance=RequestContext(request))
+		else:
+			return redirect('benchmarks.views.jobgen')
+	else:
+		return redirect('benchmarks.views.jobgen')
+
+"""Generate batch job suite
+"""
+@login_required
+def suitegen_create(request):
+	if request.method == 'POST': # If the form has been submitted...
+		form = JobGenForm(request.POST) # A form bound to the POST data
+		if (form.is_valid()):
+			# Process the data in form.cleaned_data
+			models = form.cleaned_data['models']
+			import beat.jobs.jobs
+			import beat.jobs.jobs_fileserv
+			j = beat.jobs.jobs.JobGenerator()
+			for model in models:
+				j.suitegen(model.name)
+			filename, file = beat.jobs.jobs_fileserv.to_tar(j.jobs)
+			response = HttpResponse(mimetype='application/x-gzip')
+			response['Content-Disposition'] = 'attachment; filename=%s' % filename
+			file.seek(0)	# Just making sure...
+			response.write(file.read())
+			response.flush()
+			return response
 		else:
 			return redirect('benchmarks.views.jobgen')
 	else:

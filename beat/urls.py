@@ -41,6 +41,7 @@ urlpatterns = patterns('',
 	#authorization should be here too
 	(r'^jobgen/$', 'benchmarks.views.jobgen'),
 	(r'^jobgen/go/$', 'benchmarks.views.jobgen_create'),
+	(r'^suitegen/go/$', 'benchmarks.views.suitegen_create'),
 	
 	# Uncomment the next line to enable the admin:
 	(r'^admin/', include(admin.site.urls)),
