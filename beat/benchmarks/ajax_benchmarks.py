@@ -115,7 +115,7 @@ def getOptions(qs):
 	#q = q.replace(' True ',' 1 ')
 	cursor = connection.cursor()
 	#query = "SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))"
-	cursor.execute("SELECT `benchmarks_option`.`id`,`benchmarks_option`.`name`,`benchmarks_option`.`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `benchmarks_optionvalue`.`id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `benchmarks_benchmarkoptionvalue`.`id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")));")
+	cursor.execute("SELECT id,name,takes_argument FROM `benchmarks_option` WHERE EXISTS (SELECT `benchmarks_optionvalue`.`id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `benchmarks_benchmarkoptionvalue`.`id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")));")
 	options = []
 	for option in cursor:
 		options.append({'id':option[0],'name':option[1],'takes_argument':option[2]})
