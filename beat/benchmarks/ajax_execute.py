@@ -13,5 +13,6 @@ def ajaxbenchmarks(request):
 	#print request.POST.keys()
 	#print request.POST.lists()
 	res = getBenchmarks(request)
-	dump = json.dumps(res)
+	dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime) else None
+	dump = json.dumps(res,default=dthandler)
 	return HttpResponse(dump,mimetype="application/json")

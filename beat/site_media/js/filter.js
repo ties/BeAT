@@ -50,9 +50,9 @@ var lastRequestString;
 
 /** Global variables and constants for columns: **/
 	/** Global variable which keeps default column names, the names of these columns in the database and whether they are checked or not **/
-	var columns = JSON.parse('{"column_names":["States","Transitions","Runtime","Memory (RSS)","Memory (VSIZE)","Tool","Algorithm","Finished"],\
-							"column_db_names":["states_count","transition_count","total_time","memory_RSS","memory_VSIZE","algorithm_tool__tool__name","algorithm_tool__algorithm__name","finished"],\
-							"column_checked":[true,false,true,true,false,false,false,true]}');
+	var columns = JSON.parse('{"column_names":["States","Transitions","Runtime","Memory (RSS)","Memory (VSIZE)","Tool","Algorithm","Date","Finished"],\
+							"column_db_names":["states_count","transition_count","total_time","memory_RSS","memory_VSIZE","algorithm_tool__tool__name","algorithm_tool__algorithm__name","date_time","finished"],\
+							"column_checked":[true,false,true,true,false,false,false,false,true]}');
 /** End of global variables and constants for columns **/
 
 /** Global variable where id's of checked benchmarks are stored **/
