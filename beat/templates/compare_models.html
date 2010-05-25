@@ -10,7 +10,4 @@
 		<input type="submit" value="Export" />
 		</form>
 
-		<form action="{% url benchmarks.views.interactive_model comparison.id %}" method="post">{% csrf_token %}		
-		<input type="submit" name="interactive"  value="Interactive mode" />
-		</form>
 {% endblock %}

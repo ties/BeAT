@@ -52,7 +52,7 @@ Produces a scatterplot from a set of benchmarks.
 TODO:
 @param id Comparison id to retrieve a set of Benchmark id's from the db (currently takes the whole dataset - no id yet)
 """ 
-def scatterplot(request):
+def scatterplot(request, id):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
@@ -68,8 +68,11 @@ def scatterplot(request):
 	
 	# @TODO
 	# Take the two data sets from the db and intersect on model id
-	b1 = Benchmark.objects.filter(algorithm_tool__tool__name__exact='etf').filter(algorithm_tool__tool__version__exact='2')
-	b2 = Benchmark.objects.filter(algorithm_tool__tool__name__exact='etf').filter(model__in=[b.model.pk for b in b1]).filter(tool__version__exact='3')
+	c = get_object_or_404(Comparison,id=id)
+	at_a = c.algorithm_tool_a
+	at_b = c.algorithm_tool_b
+	b1 = Benchmark.objects.filter(algorithm_tool=at_a)
+	b2 = Benchmark.objects.filter(algorithm_tool=at_b)
 	b1 = b1.filter(model__in=[b.model.pk for b in b2])
 	
 	# Make new arrays with only the elapsed time
@@ -95,8 +98,8 @@ def scatterplot(request):
 	# Axes mark-up
 	ax.set_xscale('log')
 	ax.set_yscale('log')
-	ax.set_xlabel('lpo', color='red')
-	ax.set_ylabel('nips', color='blue')
+	ax.set_xlabel(str(at_a), color='red')
+	ax.set_ylabel(str(at_b), color='blue')
 	ax.set_title('Runtime (s)', size='small')
 	ax.set_axis_bgcolor('#eeeeee')
 	ax.grid(True)
@@ -122,8 +125,8 @@ def scatterplot(request):
 	# Axes mark-up
 	ax.set_xscale('log')
 	ax.set_yscale('log')
-	ax.set_xlabel('lpo', color='red')
-	ax.set_ylabel('nips', color='blue')
+	ax.set_xlabel(str(at_a), color='red')
+	ax.set_ylabel(str(at_b), color='blue')
 	ax.set_axis_bgcolor('#eeeeee')
 	ax.grid(True)
 	
@@ -183,7 +186,7 @@ Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
 @param id ModelComparison ID from the database, used filter the benchmark data from the db.
 """
-def graph_model(request, id, format='png', interactive=False):
+def graph_model(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
@@ -254,7 +257,7 @@ def graph_model(request, id, format='png', interactive=False):
 	#Mark-up
 	title = c_tool.name + c_algo.name
 	if c_option is not None:
-		title = title + ' [' + c_option + ']'
+		title = title + ' [' + str(c_option) + ']'
 	
 	ax.set_title(title)
 	leg = ax.legend(fancybox=True, loc='upper left',bbox_to_anchor = (1,1.15), markerscale=5)
@@ -274,12 +277,8 @@ def graph_model(request, id, format='png', interactive=False):
 	# Output
 	canvas = FigureCanvas(fig)
 	#fig.savefig('benchmark.pdf')
-	if (interactive):
-		plt.show()
-		return redirect('benchmarks.views.index')
-	else: 
-		response = graph.export(canvas, comparison.name, format)
-		return response
+	response = graph.export(canvas, comparison.name, format)
+	return response
 
 	#@login_required(redirect_field_name='next')
 def index(request):
@@ -435,5 +434,29 @@ def compare_model(request):
 		'form': form, 
 	}, context_instance=RequestContext(request))
 	
-def interactive_model(request, id):
-	return graph_model(request,id,interactive=True)
+	
+def compare_scatterplot(request):
+	if request.method == 'POST': # If the form has been submitted...
+		form = CompareScatterplotForm(request.POST) # A form bound to the POST data
+		if form.is_valid(): # All validation rules pass
+			id_a = form.cleaned_data['a_algorithmtool']
+			id_b = form.cleaned_data['b_algorithmtool']
+			
+			c, created = Comparison.objects.get_or_create(
+				user = request.user, 
+				algorithm_tool_a = id_a,
+				algorithm_tool_b = id_b,
+				name = form.cleaned_data['name']
+			)
+			
+			c.hash = c.getHash()
+			if (c.name == ''): 
+				c.name = str(id_a)
+			c.save()
+			return redirect('detail_benchmark', id=c.id)
+	else:
+		form = CompareScatterplotForm() # An unbound form
+	print form
+	return render_to_response('compare_benchmarks_form.html', {
+		'form': form,
+	}, context_instance=RequestContext(request))

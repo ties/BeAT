@@ -1,0 +1,10 @@
+{% extends "base_site.html" %}
+{% block title %}Compare Benchmarks{% endblock %}
+{% block content %}
+
+		<h2>Models</h2>
+		<form action="{% url benchmarks.views.compare_scatterplot %}" method="post">{% csrf_token %}
+			<table>{{ form.as_table }}</table>
+		<input type="submit" value="Submit" />
+		</form>
+{% endblock %}
