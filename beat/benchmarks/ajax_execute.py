@@ -10,9 +10,7 @@ from datetime import datetime
 import json
 
 def ajaxbenchmarks(request):
-	#print request.POST.keys()
-	#print request.POST.lists()
 	res = getBenchmarks(request)
-	dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime) else None
+	dthandler = lambda obj: obj.date().isoformat() if isinstance(obj, datetime) else None
 	dump = json.dumps(res,default=dthandler)
 	return HttpResponse(dump,mimetype="application/json")
