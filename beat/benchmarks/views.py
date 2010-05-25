@@ -231,7 +231,8 @@ def graph_model(request, id, format='png'):
 	c_type = comparison.type
 	c_option = comparison.optionvalue
 	
-	fig = plt.figure(facecolor='w')
+	fig=Figure(facecolor='w')
+	#fig = plt.figure(facecolor='w')
 	ax=fig.add_subplot(111)
 	
 	# Lists of colors, styles and markers to get a nice unique style for each line
@@ -483,7 +484,6 @@ def compare_scatterplot(request):
 			return redirect('detail_benchmark', id=c.id)
 	else:
 		form = CompareScatterplotForm() # An unbound form
-	print form
 	return render_to_response('compare_benchmarks_form.html', {
 		'form': form,
 	}, context_instance=RequestContext(request))
