@@ -1,0 +1,46 @@
+TODO:
+
+-> parsen van speciale chars controleren/fixen (dubbele punten, komma's, etc, hoewel wat heronder staat werkt)
+-> data naar database
+
+
+this is a sample file
+every line that is does not start with 'start run' or 'end run' and is not inbetween a start run and an end run line is a comment
+The format looks like this (tildes before start run and end run to make them comment)
+
+~start run
+environment:
+<soft&hardware information; machines seperated by semicolons>
+type:<name>
+options:
+<options; comma-seperated switches, to prevent confusion, like so: -c,--strategy=bfs,-d,-a>
+tool output:
+<tool output>
+~end run
+
+<name> should uniquely identify the tool, IE. (name1 == name2) => output_style(name1) == output_style(name2)
+
+In this, soft&hardware information is formatted as a sequence of a name, a colon, a value and a comma.
+<name:value,name:value>
+Similarly, tool output:
+<option:value,option:value>
+
+start run
+environment:
+name:LAPTOP,CPU:AMD 1337,RAM:1024MB,HDD:1024GB,OS:Linux name 2.6.31-20-generic #57-Ubuntu SMP Mon Feb 8 UTC 2010 x86_64,LTSmin version:1.1
+type: test
+options:
+-c,--strategy=bfs
+tool output:
+transtions:1111111111,states:111111,Vsize:32456KB,RSS:3356KB,Utime:0.44,Systime:3.55,Elapsed:22.56,levels:22,algorithm:2lts-grey
+end run
+
+start run
+environment:
+name:LAPTOP,CPU:AMD 1337,RAM:1024MB,HDD:1024GB,OS:Linux name 2.6.31-20-generic #57-Ubuntu SMP Mon Feb 8 UTC 2010 x86_64,LTSmin version:1.1
+type: test
+options:
+-c,--strategy=bfs
+tool output:
+transtions:1111111111,states:111111,Vsize:32456KB,RSS:3356KB,Utime:0.44,Systime:3.55,Elapsed:22.56,levels:22,algorithm:2lts-grey
+end run
