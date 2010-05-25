@@ -45,8 +45,6 @@ class ListFilter(Filter):
 		
 		col = {}
 		col[f] = list(set(self.list))
-		print "List filter:"
-		print col
 		qs = qs.filter(**col)
 		return qs
 
@@ -87,8 +85,6 @@ class OptionsFilter(Filter):
 	
 	def apply(self,qs):
 		for k,v in self.options.iteritems():
-			print k
-			print v
 			qs = qs.filter(optionvalue__option__id__exact=k,optionvalue__value__iexact=str(v))
 		return qs
 
@@ -122,10 +118,7 @@ class FinishedFilter(Filter):
 		if self.finished==TRUE:
 			qs = qs.filter(finished__exact=True)
 		elif self.finished==FALSE:
-			print "filtering false:"
 			qs = qs.filter(finished__exact=False)
-			print "done!"
-			print qs.query
 		
 		return qs
 
@@ -149,6 +142,5 @@ def convertfilters(arr):
 				options[int(filter['options'][i])] = str((filter['values'])[i])
 			result[row] = OptionsFilter(row,options)
 		elif type==FINISHED:
-			print "Making finishedfilter with value: "+filter['value']
 			result[row] = FinishedFilter(row,filter['value'])
 	return result

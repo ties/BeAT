@@ -19,39 +19,6 @@ def getBenchmarks(request):
 	if 'data' in request.POST.keys():
 		data = json.loads(request.POST['data'])
 		data['filters'] = convertfilters(data['filters'])
-		print data['filters']
-		print data['sort']
-		print data['columns']
-		print data['paging']
-	"""
-	print 'check'
-	filters = {}
-	if 'filters' in request.POST.keys():
-		filters = convertfilters(json.loads(request.POST['filters']))
-	
-	print 'check'
-	
-	sort = "id"
-	sortorder = "ASC"
-	columns = DEFAULTCOLUMNS
-	paging = DEFAULTPAGING
-	
-	if 'sort' in request.POST.keys():
-		jsonsort = json.loads(request.POST['sort'])
-		sort = str(jsonsort['sort'])
-		sortorder = str(jsonsort['sortorder'])
-	
-	if 'columns' in request.POST.keys():
-		columns = json.loads(request.POST['columns'])
-		print '-------------cols'
-		print columns
-	
-	if 'paging' in request.POST.keys():
-		paging = json.loads(request.POST['paging'])
-	
-	print '---------------paging!'
-	print paging
-	"""
 	
 	res = getResponse(Benchmark.objects.all(),data)
 	
@@ -73,8 +40,6 @@ def getResponse(qs,data):
 	modeldone = False
 	
 	for k,f in data['filters'].iteritems():
-		print "Now starting filter row %i" % f.row
-		
 		if f.type==MODEL:
 			models = getModels(qs)
 			modeldone = True
@@ -90,7 +55,6 @@ def getResponse(qs,data):
 		
 		qs = f.apply(qs)
 	
-	print "Done applying filters"
 	#getting remaining results
 	if modeldone==False:
 		models = getModels(qs)
@@ -105,21 +69,14 @@ def getResponse(qs,data):
 		options = getOptions(qs)
 	
 	benchmark_ids = list(qs.values_list('id',flat=True))
-	print "Done getting possible models, algorithms, tools and options"
 	
 	extracolumns = getColumns(qs)
 	
-	print "sorting!"
 	qs = sortQuerySet(qs,data['sort'])
 	
 	page = data['paging']['page']
 	resperpage = data['paging']['resperpage']
 	
-	#newcolumns = ['id','model__name']
-	#for c in data['columns']:
-		#newcolumns.append(str(c))
-	
-	#print newcolumns
 	qs = apply(qs.values,data['columns'])
 	
 	result['benchmarks'] = list(qs[page*resperpage : (page+1)*resperpage]) #includes paging
@@ -130,7 +87,6 @@ def getResponse(qs,data):
 	result['models'] = models
 	result['benchmark_ids'] = benchmark_ids
 	
-	print "result made!"
 	return result
 
 def getModels(qs):
@@ -144,37 +100,25 @@ def getAlgorithms(qs):
 	algorithms = []
 	for algorithm in qs.values('algorithm_tool__algorithm','algorithm_tool__algorithm__name').order_by('algorithm_tool__algorithm__name').distinct():
 		algorithms.append({'id':algorithm['algorithm_tool__algorithm'],'name':algorithm['algorithm_tool__algorithm__name']})
-	print "Algorithms:"
-	print algorithms
 	return algorithms
 
 def getTools(qs):
 	tools = []
 	for tool in qs.values('algorithm_tool__tool','algorithm_tool__tool__name').order_by('algorithm_tool__tool__name').distinct():
 		tools.append({'id':tool['algorithm_tool__tool'],'name':tool['algorithm_tool__tool__name']})
-	print "Tools:"
-	print tools
 	return tools
 
 def getOptions(qs):
-	print "check"
 	q = str(qs.values_list('id').query)
 	#This is needed for sqlite3, which does not support the keywords False and True in queries
 	q = q.replace(' False ',' 0 ')
 	q = q.replace(' True ',' 1 ')
-	#print "check"
-	#print q
 	cursor = connection.cursor()
-	#print "check"
 	#query = "SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))"
-	#print query
 	cursor.execute("SELECT `id`,`name`,`takes_argument` FROM `benchmarks_option` WHERE EXISTS (SELECT `id` FROM `benchmarks_optionvalue` WHERE `benchmarks_optionvalue`.`option_id`=`benchmarks_option`.`id` AND EXISTS (SELECT `id` FROM `benchmarks_benchmarkoptionvalue` WHERE `benchmarks_benchmarkoptionvalue`.`optionvalue_id`=`benchmarks_optionvalue`.`id` AND `benchmarks_benchmarkoptionvalue`.`benchmark_id` IN ("+q+")))")
-	#print "check"
 	options = []
 	for option in cursor:
 		options.append({'id':option[0],'name':option[1],'takes_argument':option[2]})
-	print "OPTIONS:"
-	print options
 	return options
 
 def sortQuerySet(qs,sort):
@@ -186,7 +130,6 @@ def sortQuerySet(qs,sort):
 		
 	if sort['sortorder']==SORT_DESCENDING:
 		s = '-'+s
-	print 'sort with: '+s
 	qs = qs.order_by(s)
 	return qs
 
