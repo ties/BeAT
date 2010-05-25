@@ -1,4 +1,3 @@
-rm db.db
 python manage.py syncdb
 export DJANGO_SETTINGS_MODULE=settings
 

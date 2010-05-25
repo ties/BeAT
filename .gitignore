@@ -17,3 +17,5 @@ git/
 logs/
 #settings.py
 *settings.py
+cwd
+cwd/*

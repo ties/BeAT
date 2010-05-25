@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from tools.hash import hash
-from settings import *
+from beat.tools.hash import hash
+from beat.settings import *
 
 class Model(models.Model):
 	name = models.CharField(max_length=200)
