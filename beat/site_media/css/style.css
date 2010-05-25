@@ -68,6 +68,11 @@ table.paging tr td{
 .benchmarks tr:nth-child(odd) td:first-child {
 	background-color: #ccc;
 }
+
+.benchmarks tr:nth-child(even) {
+	background-color: #fff;
+}
+
 .benchmarks tr:hover {
 	background-color: #aaa;
 }
