@@ -231,7 +231,8 @@ def graph_model(request, id, format='png'):
 	c_type = comparison.type
 	c_option = comparison.optionvalue
 	
-	fig = plt.figure(facecolor='w')
+	fig=Figure(facecolor='w')
+	#fig = plt.figure(facecolor='w')
 	ax=fig.add_subplot(111)
 	
 	# Lists of colors, styles and markers to get a nice unique style for each line
