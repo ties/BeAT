@@ -566,6 +566,7 @@ class FileReader:
 			
 			#read the whole file, filling the runs_in_file matrix
 			#with open(f, 'r') as file:
+			print f
 			file = open(f, 'r')
 			new_run=True
 			j=0

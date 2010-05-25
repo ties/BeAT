@@ -1,25 +1,33 @@
+import os
+if "DJANGO_SETTINGS_MODULE" not in os.environ:
+	os.environ["DJANGO_SETTINGS_MODULE"] = "beat.settings"
+
 from beat.benchmarks.models import *
 from datetime import datetime
-from beat.gitinterface import *
+import sys
+import time
 
 dummydate = datetime.now()
+with_git = False
+if "with_git" in sys.argv:
+	with_git = True
+	from beat.gitinterface import *
+	repository = GitInterface(GIT_PATH)
+	repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+	repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
+	repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 
-repository = GitInterface(GIT_PATH)
-repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
-repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
-#repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
-
-
-ver = "ltsmin-1.5-20-g6d5d0c"
-dummydate = datetime(*repository.get_date(repository.get_matching_item(ver[-6:]))[:6])
+version = "ltsmin-1.5-20-g6d5d0c"
+if with_git:
+	dummydate = datetime(*repository.get_date(repository.get_matching_item(version[-6:]))[:6])
 emptyregex, created = Regex.objects.get_or_create(regex='')
 hw, created = Hardware.objects.get_or_create(name="x", memory=600, cpu='AMD', disk_space=21456, os='Linux')
 ###################### nips version 1, 2lts-grey ######################
 a, created = Algorithm.objects.get_or_create(name='2lts-grey')
 t, created = Tool.objects.get_or_create(name='nips')
 rx, created = Regex.objects.get_or_create(regex='nips2lts-grey: .*(\\r\\n|\\n)(nips2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+).*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
-#at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
+#at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='strategy', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='deadlock', takes_argument=False)
@@ -75,8 +83,8 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='2lts-grey')
 t, created = Tool.objects.get_or_create(name='lpo')
 rx, created = Regex.objects.get_or_create(regex='lpo2lts-grey: .*(\\r\\n|\\n)(lpo2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+) .*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
-#at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
+#at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='strategy', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='deadlock', takes_argument=False)
@@ -136,8 +144,8 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='-reach')
 t, created = Tool.objects.get_or_create(name='lpo')
 rx, created = Regex.objects.get_or_create(regex='lpo-reach: .*(\\r\\n|\\n)(lpo-reach: reachability took.*(\\r\\n|\\n)state space has (?P<scount>\\d+) states.*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
-#at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
+#at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='order', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='deadlock', takes_argument=False)
@@ -194,7 +202,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='-reach')
 t, created = Tool.objects.get_or_create(name='nips')
 rx, created = Regex.objects.get_or_create(regex='nips-reach: .*(\\r\\n|\\n)(nips-reach: reachability took.*(\\r\\n|\\n)state space has (?P<scount>\\d+) states.*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='order', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='deadlock', takes_argument=False)
@@ -238,7 +246,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='2lts-grey')
 t, created = Tool.objects.get_or_create(name='etf')
 rx, created = Regex.objects.get_or_create(regex='etf2lts-grey: .*(\\r\\n|\\n)(etf2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+) .*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='strategy', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='state', takes_argument=True)
@@ -296,7 +304,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='-reach')
 t, created = Tool.objects.get_or_create(name='etf')
 rx, created = Regex.objects.get_or_create(regex='etf-reach: .*(\\r\\n|\\n)etf-reach: reachability took.*(\\r\\n|\\n)(state space has (?P<scount>\\d+) states.*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='order', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='deadlock', takes_argument=False)
@@ -340,7 +348,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='-reach')
 t, created = Tool.objects.get_or_create(name='dve')
 rx, created = Regex.objects.get_or_create(regex='dve-reach: .*(\\r\\n|\\n)(dve-reach: reachability took.*(\\r\\n|\\n)state space has (?P<scount>\\d+) states.*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*|.*\*\* error .*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='order', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='deadlock', takes_argument=False)
@@ -384,7 +392,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='2lts-grey')
 t, created = Tool.objects.get_or_create(name='dve')
 rx, created = Regex.objects.get_or_create(regex='dve2lts-grey: .*(\\r\\n|\\n)(dve2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+) .*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*error.*|BDD error.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='strategy', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='state', takes_argument=True)
@@ -442,7 +450,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='2lts-grey')
 t, created = Tool.objects.get_or_create(name='lps')
 rx, created = Regex.objects.get_or_create(regex='lps2lts-grey: .*(\\r\\n|\\n)((?P<kill>Killed|.*?error:.*)|lps2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+) .*(\\r\\n|\\n)Exit) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='strategy', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='state', takes_argument=True)
@@ -502,7 +510,7 @@ rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option
 a, created = Algorithm.objects.get_or_create(name='-reach')
 t, created = Tool.objects.get_or_create(name='lps')
 rx, created = Regex.objects.get_or_create(regex='lps-reach: .*(\\r\\n|\\n)((?P<kill>Killed|.*?error:.*)|lps-reach: reachability took.*(\\r\\n|\\n)state space has (?P<scount>\\d+) states.*(\\r\\n|\\n)Exit) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB')
-at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=ver)
+at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version='ltsmin-1.5-20-g6d5d0c')
 op, created = Option.objects.get_or_create(name='order', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='deadlock', takes_argument=False)
