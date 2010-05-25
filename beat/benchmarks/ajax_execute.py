@@ -10,8 +10,8 @@ from datetime import datetime
 import json
 
 def ajaxbenchmarks(request):
-	print request.POST.keys()
-	print request.POST.lists()
+	#print request.POST.keys()
+	#print request.POST.lists()
 	res = getBenchmarks(request)
 	dump = json.dumps(res)
 	return HttpResponse(dump,mimetype="application/json")

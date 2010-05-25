@@ -1,6 +1,7 @@
-//new data
-var lastData; //Temporary string
-var lastRequestString; //String of last succeeded request
+/** Contains the String of the last attempted request (NOT the last request) **/
+var lastData;
+/** Contains the String of the last request **/
+var lastRequestString;
 
 /** Global variables and constants for filtering: **/
 	/** Constants containing possible filters: **/
@@ -20,17 +21,13 @@ var lastRequestString; //String of last succeeded request
 	var LISTFILTERS = new Array(MODEL,ALGORITHM,TOOL);
 	/** global constant array VALUEFILTERS which keeps the names of all the valuefilters in it **/
 	var VALUEFILTERS = new Array(MEMORY,RUNTIME,STATES,TRANSITIONS);
-	/** global constant which contains the class of the EMPTY filter **/
+	
+	/** global constants which contain the classes of the various filters **/
 	var EMPTYFILTER = '{"type" : "","row" : -1,"value" : ""}';
-	/** global constant which contains the class of the LIST filters **/
 	var LISTFILTER = '{"type" : "","row" : -1,"list" : []}';
-	/** global constant which contains the class of the VALUE filters **/
 	var VALUEFILTER = '{"type" : "","row" : -1,"style" : "","value": -1}';
-	/** global constant which contains the class of the DATE filter **/
 	var DATEFILTER = '{"type" : "","row" : -1,"style" : "","value": ""}';
-	/** global constant which contains the class of the OPTIONS filters **/
 	var OPTIONSFILTER = '{"type" : "","row" : -1,"options" : [],"values": []}';
-	/** global constant which contains the class of the FINISHED filter **/
 	var FINISHEDFILTER = '{"type" : "","row" : -1,"value" : []}';
 	
 	/** global array filters which keeps all the stored filters in it **/
@@ -43,28 +40,19 @@ var lastRequestString; //String of last succeeded request
 /** End of global variables and constants for filtering **/
 
 /** Global variables and constants for sorting: **/
-	
-	/** global array ORDERS which keeps all the possible orders in it **/
-	var ORDERS = new Array('id','model','states','runtime','memory_rss','finished');
+	/** Constant for ascending sortorder **/
 	var ASCENDING = "ASC";
+	/** Constant for descending sortorder **/
 	var DESCENDING = "DESC";
-	/** global variable current_order which keeps the current order in it **/
-	var current_sort = ORDERS[0];
-	/** global variable current_order which keeps the current order in it **/
-	var current_sort_order = "ASC";
+	/** Global variable which contains the sort and sortorder, defaults to "id" and ascending respectfully **/
 	var sort = JSON.parse('{"sort":"id","sortorder":"ASC"}');
-	
-	var previousfilter = "";
-	
 /** End of global variables and constants for sorting **/
 
 /** Global variables and constants for columns: **/
+	/** Global variable which keeps default column names, the names of these columns in the database and whether they are checked or not **/
 	var columns = JSON.parse('{"column_names":["States","Transitions","Runtime","Memory (RSS)","Memory (VSIZE)","Tool","Algorithm","Finished"],\
 							"column_db_names":["states_count","transition_count","total_time","memory_RSS","memory_VSIZE","algorithm_tool__tool__name","algorithm_tool__algorithm__name","finished"],\
 							"column_checked":[true,false,true,true,false,false,false,true]}');
-	/** global variable extra_colums which keeps the possible extra columns in it, which are derived from table extra_values in the database **/
-	var extra_columns;
-
 /** End of global variables and constants for columns **/
 
 /** Global variable where id's of checked benchmarks are stored **/
@@ -75,6 +63,7 @@ var updating = false;
 
 /** Global variable that keeps the benchmarks of the current page **/
 var benchmarks = new Array();
+
 /** Global variable that keeps all the benchmark_ids **/
 var benchmark_ids = new Array();
 
@@ -101,7 +90,7 @@ function sortFilters(){
 		f[filter.row] = filter;
 	});
 	filters = f;
-	console.log('Sorted filters');
+	//console.log('Sorted filters');
 }
 
 /**
@@ -134,32 +123,49 @@ function hasFilter(type){
 }
 
 /**
- * Function that takes 
+ * Function that creates the dataobject to be send to the server when making a request
+ * @param filters array	Contains the filters to be used by the server to make the result
+ * @param sort object	Contains an object with a value for sort and sortorder
+ * @param columns array	Contains all the names of the columns which should be displayed
+ * @param paging object	Contains an object with a value for page and resperpage
+ * @require filters != 'undefined' /\ sort != 'undefined' /\ columns != 'undefined' /\ paging != 'undefined'
+ * @ensure result.filters=filters /\ result.sort=sort /\ result.columns=columns /\ result.paging=paging
  **/
-function makeData(f,s,c,p){
+function makeData(filters,sort,columns,paging){
 	var data = JSON.parse('{"filters":[],"sort":{},"columns":{},"paging":{}}');
-	data.filters = f;
-	data.sort = s;
-	data.columns = c;
-	data.paging = p;
+	data.filters = filters;
+	data.sort = sort;
+	data.columns = columns;
+	data.paging = paging;
 	return data;
 }
 
+/**
+ * Function that returns whether the given request equals the last request
+ * @param req object The current request (a JSON object)
+ * @require req != 'undefined'
+ * @ensure result == JSON.stringify(req)!=lastRequestString
+ **/
 function checkRequest(req){
-	var str = JSON.stringify(req);
-	var res = (str!=lastRequestString);
-	if (!res)	console.log("Same request as last time!");
-	return res;
+	return (JSON.stringify(req)!=lastRequestString);
 }
 
-//new function to make request!
+/**
+ * Function that sends a request to the server
+ * @param d object The data to be send with the request (a JSON object)
+ * @require d != 'undefined'
+ * @ensure	The reply of the filter is send to handleResponse 
+ *			Errors are handled by giving an alert of the errordescription
+ *			An ajax load image is visible on the page while a request is being made
+ **/
 function makeRequest(d){
 	if (!checkRequest(d)){
+		//console.log('Same request as last time, skipping...');
 		return;
 	}
 	var str = JSON.stringify(d);
 	
-	console.log("Making a request! Using data: "+str);
+	//console.log("Making a request! Using data: "+str);
 	lastData = str;
 	
 	$.ajax({
@@ -179,7 +185,7 @@ function makeRequest(d){
 		complete: function(){
 					updating = false;
 					$("#ajaxload").html('');
-					console.log("Done!");
+					//console.log("Done!");
 				},
 		dataType: 'json'
 	});
@@ -187,28 +193,40 @@ function makeRequest(d){
 
 /**
  * Function that handles the response from the server
+ * @param json object The contents of the servers' reply (a JSON object)
  * @require 	json!='undefined'
  *				json is in JSON-format
  *				json contains the variables options, models, algorithms, tools, columns and benchmarks
- * @ensure The page is updated with the newly received values
+ * @ensure 		possible_options == json.options
+ *				possible_lists == new Array(json.models,json.algorithms,json.tools)
+ *				benchmarks == json.benchmarks
+ *				benchmark_ids == json.benchmark_ids
+ *				The checked_benchmarks variable is updated so that it does not contain id's that are not in the current QuerySet
+ *				The benchmarktable is updated with the newest values
+ *				The filters on the page are renewed
  */
 function handleResponse(json){
 	//set received values
 	possible_options = json.options;
 	possible_lists = new Array(json.models,json.algorithms,json.tools);
-	extra_columns = json.columns
 	benchmarks = json.benchmarks;
 	benchmark_ids = json.benchmark_ids;
-	console.log("Received "+benchmarks.length+" benchmarks!");
+	//console.log("Received "+benchmarks.length+" benchmarks!");
 	
-	//update checked benchmarks
 	updateCheckedBenchmarks();
 	
-	//show results
 	showResults();
 	renewFilters();
 }
 
+/**
+ * Function that shows the results of a request in the benchmarktable
+ * @require benchmarks!='undefined'
+ * @ensure 	The benchmarkresults contained in benchmarks are shown in the benchmarktable
+ *			The pagingtable (the small table under the benchmarktable showing the current resperpage etc.) is updated (updatePagingTable is called)
+ *			The headers are configured with sorting-functionality (configureSorting is called)
+ *			The checkboxes are configured with the click-event (configureCheckboxes is called)
+ **/
 function showResults(){
 	var table = "";
 	for (var i = 0; i<benchmarks.length; i++){
@@ -231,6 +249,9 @@ function showResults(){
 
 /**
  * Function that returns the headers to be added to the top of the table
+ * @require 	sort!='undefined'
+ *				columns!='undefined'
+ * @ensure 	The result contains a header for model__name and the headers for all checked columns
  */
 function getTableHeaders(){
 	var res = '<tr><th>&nbsp;</th>';
@@ -252,14 +273,27 @@ function getTableHeaders(){
 	return res;
 }
 
+/**
+ * Function that updates the paging table (small table under the benchmarktable containing the previous/next page buttons etc.)
+ * @require 	paging != 'undefined'
+ *				benchmark_ids != 'undefined'
+ * @ensure		The paging table (with id=paginginfo) is updated
+ **/
 function updatePagingTable(){
-	var begin = (paging.page*paging.resperpage+1);
+	var start = (paging.page*paging.resperpage+1);
 	var end = (benchmark_ids.length < ((paging.page+1)*paging.resperpage) ? benchmark_ids.length : ((paging.page+1)*paging.resperpage));
-	var txt = 'Showing results '+begin+'-'+end+' of '+(benchmark_ids.length)+
+	var txt = 'Showing results '+start+'-'+end+' of '+(benchmark_ids.length)+
 		' results with <input type="text" name="resperpage" id="resperpage" value="'+paging.resperpage+'" size="3" /> results per page';
 	$("#paginginfo").html(txt);
+	configureResperpage();
 }
 
+/**
+ * Function to update the global variable checked_benchmarks
+ * @require 	checked_benchmarks != 'undefined'
+ *				benchmark_ids != 'undefined'
+ * @ensure		checked_benchmarks contains all elements of old.checked_benchmarks that are also in benchmark_ids
+ **/
 function updateCheckedBenchmarks(){
 	var len = checked_benchmarks.length;
 	var newarr = new Array();
@@ -268,25 +302,43 @@ function updateCheckedBenchmarks(){
 		if (checked_benchmarks.indexOf(benchmark_ids[i])!=-1)	newarr.push(benchmark_ids[i]);
 	}
 	checked_benchmarks = newarr;
-	console.log("Updated checked benchmarks: "+checked_benchmarks.toString()+", previous length: "+len+", new length: "+checked_benchmarks.length);
+	//console.log("Updated checked benchmarks: "+checked_benchmarks.toString()+", previous length: "+len+", new length: "+checked_benchmarks.length);
 }
 
+/**
+ * Function to check all benchmarks in the current QuerySet
+ * @require 	benchmark_ids != 'undefined'
+ * @ensure 		checked_benchmarks = benchmark_ids.slice()
+ *				The checkboxes are updated (updateCheckboxes is called)
+ **/
 function checkAll(){
 	checked_benchmarks = benchmark_ids.slice();
 	$("#CheckAll").attr("value","None");
-	console.log("Checked all "+checked_benchmarks.length+" benchmarks");
+	//console.log("Checked all "+checked_benchmarks.length+" benchmarks");
 	updateCheckboxes();
 }
 
+/**
+ * Function to change current selection to an empty list
+ * @ensure 		checked_benchmarks.length==0
+ *				The checkboxes are updated (updateCheckboxes is called)
+ **/
 function checkNone(){
-	console.log("Check none");
+	//console.log("Check none");
 	checked_benchmarks = new Array();
 	$("#CheckAll").attr("value","All");
 	updateCheckboxes();
 }
 
+/**
+ * Function to invert te current selection
+ * @require 	checked_benchmarks != 'undefined'
+ *				benchmark_ids != 'undefined'
+ * @ensure 		checked_benchmarks = benchmark_ids - old.checked_benchmarks
+ *				The checkboxes are updated (updateCheckboxes is called)
+ **/
 function checkInvert(){
-	console.log("Invert selection");
+	//console.log("Invert selection");
 	var newarr = new Array();
 	for (var i=0;i<benchmark_ids.length;i++){
 		if (checked_benchmarks.indexOf(benchmark_ids[i])==-1)	newarr.push(benchmark_ids[i]);
@@ -295,20 +347,30 @@ function checkInvert(){
 	updateCheckboxes();
 }
 
+/**
+ * Function that updates all checkboxes to checked or unchecked
+ * @require 	checked_benchmarks != 'undefined'
+ * @ensure 		All checkboxes where checkbox.value is in checked_benchmarks are checked, all others are unchecked
+ **/
 function updateCheckboxes(){
 	$("table.benchmarks input").each(function(i,obj){
+		$(obj).attr('checked',(checked_benchmarks.indexOf(obj.value)!=-1));
+		/*
 		if (checked_benchmarks.indexOf(obj.value)!=-1){
 			$(obj).attr('checked',true);
 		}else{
 			$(obj).attr('checked',false);
-		}
+		}*/
 	});
 }
 
 /**
- * Function that returns the current filter
- * @ensure 	result!='undefined'
- *			result is in JSON-format, containing an array of objects
+ * Function that returns the current filters
+ * @require 	filters != 'undefined'
+ * @ensure 		result != 'undefined'
+ *				result == "error" when an error is found in one of the filters
+ *				result.length == 1 when the filtertable only contains one EMPTY filter
+ *				result == filters otherwise
  */
 function getFilters(){
 	storeFilters();
@@ -324,59 +386,70 @@ function getFilters(){
 	return filters;
 }
 
+/**
+ * Function that checks whether a filter is valid or not
+ * @require 	f != 'undefined'
+ * @ensure 		result is true if the filter is valid, false otherwise
+ **/
 function checkFilter(f){
 	if (f.type == EMPTY){
-		console.log("ERROR: EMPTY FILTER");
+		//console.log("ERROR: EMPTY FILTER");
 		return false;
 	}else if(f.type == DATE){
 		if (f.style.length==0){
-			console.log("ERROR: DATE FILTER STYLE HAS NO CONTENT");
+			//console.log("ERROR: DATE FILTER STYLE HAS NO CONTENT");
 			return false;
 		}else if(f.value.length==0){
-			console.log("ERROR: DATE FILTER VALUE HAS NO CONTENT");
+			//console.log("ERROR: DATE FILTER VALUE HAS NO CONTENT");
 			return false;
 		}else if(!f.value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/)){
-			console.log("ERROR: DATE FILTER VALUE DOES NOT MATCH DATE!");
+			//console.log("ERROR: DATE FILTER VALUE DOES NOT MATCH DATE!");
 			return false;
 		}
 	}else if(f.type == OPTIONS){
 		if (f.options.length==0){
-			console.log("ERROR: OPTIONS FILTER HAS NO CHECKS");
+			//console.log("ERROR: OPTIONS FILTER HAS NO CHECKS");
 			return false;
 		}
 	}else if(f.type == FINISHED){
 		if (f.value.length==0){
-			console.log("ERROR: FINISHED FILTER VALUE HAS NO CONTENT");
+			//console.log("ERROR: FINISHED FILTER VALUE HAS NO CONTENT");
 			return false;
 		}
 	}else if(LISTFILTERS.indexOf(f.type)!=-1){
 		if (f.list.length==0){
-			console.log("ERROR: LIST FILTER ("+f.type+"): LIST IS EMPTY");
+			//console.log("ERROR: LIST FILTER ("+f.type+"): LIST IS EMPTY");
 			return false;
 		}
 	}else if(VALUEFILTERS.indexOf(f.type)!=-1){
 		if (f.style.length==0){
-			console.log("ERROR: VALUE FILTER ("+f.type+") STYLE HAS NO CONTENT");
+			//console.log("ERROR: VALUE FILTER ("+f.type+") STYLE HAS NO CONTENT");
 			return false;
 		}else if(f.value.length==0){
-			console.log("ERROR: VALUE FILTER ("+f.type+") VALUE HAS NO CONTENT");
+			//console.log("ERROR: VALUE FILTER ("+f.type+") VALUE HAS NO CONTENT");
 			return false;
 		}else if((parseInt(f.value)+"")!=f.value){
-			console.log("ERROR: VALUE FILTER ("+f.type+") VALUE IS NOT AN INT");
+			//console.log("ERROR: VALUE FILTER ("+f.type+") VALUE IS NOT AN INT");
 			return false;
 		}
 	}
 	return true;
 }
 
+/**
+ * Function that returns the current paging variable
+ * @require paging != 'undefined'
+ * @ensure result == paging
+ **/
 function getPaging(){
 	return paging;
 }
 
 /**
  * Function that returns the current sorting
- * @ensure 	result!='undefined'
- *			result is in JSON-format, containing an object with a variable sort and a variable sortorder
+ * @require 	sort != 'undefined'
+ * @ensure 		result!='undefined'
+ *				result==sort
  */
 function getSort(){
 	return sort;
@@ -395,6 +468,15 @@ function getColumns(){
 	return res;
 }
 
+/**
+ * Function to change the current sorting
+ * @require 	sort != 'undefined'
+ *				id != 'undefined'
+ * @ensure 		If sort.sort == id then sort.sortorder is changed to the other possible value
+ *				If sort.sort != id then sort.sort = id
+ *				The headers of the benchmarktable are updated to the new sorting
+ *				paging.page is set to 0 and the benchmarktable is updated
+ **/
 function setSorting(id){
 	$("table.benchmarks tr th span").removeClass();
 	if (sort.sort == id){
@@ -410,22 +492,21 @@ function setSorting(id){
 		sort.sortorder = ASCENDING;
 		$("#"+id+" span").addClass('ascending');
 	}
-	console.log("Sending request after sorting (with page 0)");
+	//console.log("Sending request after sorting (with page 0)");
 	paging.page = 0;
 	makeRequest(makeData(getFilters(),getSort(),getColumns(),getPaging()));
 }
 
 /**
  * Function that is called when the document has finished loading.
- * @ensure	The Array.indexOf function is made /\
- *			The first filter f is added to filters with f.type=EMPTY and f.row=0 /\
- *			configureHover is called
+ * @ensure	showColumnOptions is called
+ *			registerFunctionsAndEvents is called
+ *			The first filter f is added to filters with f.type=EMPTY and f.row=0
+ *			makeRequest is called with a makeData over getFilters(), getSort(), getColumns() and getPaing()
  */
 $(document).ready(function(){
 	showColumnOptions();
 	registerFunctionsAndEvents();
-	
-	makeRequest(makeData(getFilters(),getSort(),getColumns(),getPaging()));
 	
 	var f = JSON.parse(EMPTYFILTER);
 	f.row = 0;
@@ -433,10 +514,21 @@ $(document).ready(function(){
 	filters = new Array();
 	filters.push(f);
 	
+	var d = makeData(getFilters(),getSort(),getColumns(),getPaging());
+	makeRequest(d);
+	
 });
 
 /** ------------------ Functions for events etc! -------------------------- **/
 
+/**
+ * Function that registers some functions and events
+ * @ensure 	Array.index is defined
+ *			configureHover is called
+ *			configureLiveUpdate is called
+ *			configureColumnSelection is called
+ *			Functionality for clicking the next-button, previous-button, check all/none-button and invert-button is added
+ **/
 function registerFunctionsAndEvents(){
 	
 	Array.prototype.indexOf = function (element,offset) {
@@ -454,6 +546,7 @@ function registerFunctionsAndEvents(){
 	configureHover();
 	configureLiveUpdate();
 	configureColumnSelection();
+	configureResperpage();
 	
 	$("#next").click(function(){
 		nextPage();
@@ -464,7 +557,7 @@ function registerFunctionsAndEvents(){
 	});
 	
 	$("#CheckAll").click(function(){
-		console.log('starting function, value = '+$(this).attr('value'));
+		//console.log('starting function, value = '+$(this).attr('value'));
 		if ($(this).attr('value') == "All" )	checkAll();
 		else									checkNone();
 	});
@@ -473,6 +566,27 @@ function registerFunctionsAndEvents(){
 	});
 }
 
+function configureResperpage(){
+	$("#resperpage").focusout(function(){
+		if (/(^-?\d\d*$)/.test($(this).attr("value"))){
+			paging.resperpage = parseInt($(this).attr("value"));
+			var f = getFilters();
+			if (f!="error"){
+				var d = makeData(f,getSort(),getColumns(),getPaging());
+				var c = checkRequest(d);
+				if (c){
+					paging.page = 0;
+					makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+				}
+			}//else	console.log("Error in filters, not updating");
+		}
+	});
+}
+
+/**
+ * Function to configure the selecting of a column
+ * @ensure When clicking on a column checkbox, the corresponding value in columns.checked_columns is set to the value of the checkbox
+ **/
 function configureColumnSelection(){
 	$("#columns input").click(function(){
 		var val = $(this).attr('value');
@@ -480,15 +594,18 @@ function configureColumnSelection(){
 		if (index!=-1){
 			if (this.checked){
 				columns.column_checked[index] = true;
-				console.log('Set column '+val+' to true');
+				//console.log('Set column '+val+' to true');
 			}else{
 				columns.column_checked[index] = false;
-				console.log('Set column '+val+' to false');
+				//console.log('Set column '+val+' to false');
 			}
 		}
 	});
 }
 
+/**
+ * Function to configure the automatic update of the benchmarktable when changing the filter
+ **/
 function configureLiveUpdate(){
 	$(".filterStyle").focusout(function(){
 		var f = getFilters();
@@ -499,9 +616,7 @@ function configureLiveUpdate(){
 				paging.page = 0;
 				makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
 			}
-		}else{
-			console.log("Error in filters, not updating");
-		}
+		}//else	console.log("Error in filters, not updating");
 	});
 	$(".filterValue").focusout(function(){
 		var f = getFilters();
@@ -512,15 +627,16 @@ function configureLiveUpdate(){
 				paging.page = 0;
 				makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
 			}
-		}else{
-			console.log("Error in filters, not updating");
-		}
+		}//else	console.log("Error in filters, not updating");
 	});
 }
 
+/**
+ * Function that configures the click-event for the checkboxes in the benchmarktable (for selecting benchmarks)
+ * @ensure When clicking on a checkbox, it's value is either added or removed from checked_benchmarks
+ **/
 function configureCheckboxes(){
 	$("table.benchmarks input").click(function(){
-		//alert($(this).attr('value') + $(this).attr('checked'));
 		var id = parseInt($(this).attr('value'));
 		var index = checked_benchmarks.indexOf(id);
 		
@@ -529,12 +645,34 @@ function configureCheckboxes(){
 		}else{
 			if (index!=-1)		checked_benchmarks.splice(index,1);
 		}
-		console.log("Currently checked benchmarks: "+checked_benchmarks.toString());
+		//console.log("Currently checked benchmarks: "+checked_benchmarks.toString());
+	});
+}
+
+function configureTokenizers(){
+	$(filters).each(function(i,obj){
+		//console.log("filterrow tokenize "+i);
+		var index = LISTFILTERS.indexOf(obj.type);
+		if (index!=-1){
+			$("#tokenize"+obj.row).tokenInput(possible_lists[index],10,obj.list);
+			//console.log("Tokenized row "+obj.row);
+		}
+	});
+	$(".token-input-input-token input").focusout(function(){
+		var f = getFilters();
+		if (f!="error"){
+			var d = makeData(f,getSort(),getColumns(),getPaging());
+			var c = checkRequest(d);
+			if (c){
+				paging.page = 0;
+				makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
+			}
+		}//else	console.log("Error in filters, not updating");
 	});
 }
 
 /**
- * Function that adds hoverIntent to all <li>-elements with class="mega"
+ * Function that adds hoverIntent to all <li>-elements with class "mega"
  * @ensure	Every <li>-element with the class "mega" has the hoverIntent configured with addMega as mouseover function and removeMega as mouseoutfunction
  */
 function configureHover(){
@@ -551,6 +689,9 @@ function configureHover(){
 	});
 }
 
+/**
+ * Function that sets the inner html of the columns-element
+ **/
 function showColumnOptions(){
 	
 	var html = '';
@@ -563,20 +704,21 @@ function showColumnOptions(){
 
 /**
  * Function called when a mega drop-down menu must be shown
- * @ensure	$(elem).hassClass("hovering")==True
+ * @ensure	$(elem).hasClass("hovering")==True
  */
 function addMega(elem){
 	$(elem).addClass("hovering");
-	console.log('Add megadropdownmenu: '+elem.id);
+	//console.log('Add megadropdownmenu: '+elem.id);
 }
 
 /**
  * Function called when a mega drop-down menu must be hidden
- * @ensure	$(elem).hassClass("hovering")==False
+ * @ensure	$(elem).hasClass("hovering")==False
+ *			The benchmarktable is updated if needed
  */
 function removeMega(elem){
 	$(elem).removeClass("hovering");
-	console.log('Remove megadropdownmenu: '+elem.id+', updating table!');
+	//console.log('Remove megadropdownmenu: '+elem.id+', updating table!');
 	var f = getFilters();
 	if (f!="error"){
 		var d = makeData(f,getSort(),getColumns(),getPaging());
@@ -585,11 +727,13 @@ function removeMega(elem){
 			paging.page = 0;
 			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
 		}
-	}else{
-		console.log("Error in filters, not updating");
-	}
+	}//else	console.log("Error in filters, not updating");
 }
 
+/**
+ * Function that configures the click-event of the headers of the benchmarktable
+ * @ensure When clicking a header, the function setSorting is called
+ **/
 function configureSorting(){
 	var headers = $("table.benchmarks tr th");
 	$(headers).each(function(i,h){
@@ -602,28 +746,32 @@ function configureSorting(){
 	});
 }
 
+/**
+ * Function to go to the next page of the benchmarktable, if there is one
+ * @ensure paging.page = old.paging.page + 1 and makeRequest is called if there is a next page and the filters don't contain an error
+ **/
 function nextPage(){
 	var check = benchmark_ids.length > ((paging.page+1)*paging.resperpage);
 	if (check){
-		paging.page++;
 		var f = getFilters();
 		if (f!="error"){
+			paging.page++;
 			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
-		}else{
-			console.log("Error in filters, not updating");
-		}
+		}//else	console.log("Error in filters, not updating");
 	}
 }
 
+/**
+ * Function to go to the previous page of the benchmarktable, if there is one
+ * @ensure paging.page = old.paging.page - 1 and makeRequest is called if there is a previous page and the filters don't contain an error
+ **/
 function previousPage(){
 	if (paging.page>0){
 		paging.page--;
 		var f = getFilters();
 		if (f!="error"){
 			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
-		}else{
-			console.log("Error in filters, not updating");
-		}
+		}//else	console.log("Error in filters, not updating");
 	}
 }
 
@@ -631,7 +779,8 @@ function previousPage(){
 
 /**
  * Function that changes the type of a filter-object
- * @require		elem!='undefined' /\ row>=0
+ * @require		elem!='undefined'
+ *				row>=0
  * @ensure		getFilter(row).type = $(elem).attr('value')
  */
 function changeFilterType(elem,row){
@@ -658,7 +807,7 @@ function changeFilterType(elem,row){
 	filters[row] = f;
 	
 	renewFilters();
-	console.log('Changed a filterrow, current filters: '+filterstring());
+	//console.log('Changed a filterrow, current filters: '+filterstring());
 }
 
 /**
@@ -684,14 +833,15 @@ function addFilterRow(row){
 	
 	sortFilters();
 	
-	console.log('Added a new filterrow, current filters: '+filterstring());
+	//console.log('Added a new filterrow, current filters: '+filterstring());
 	
 	renewFilters();
 }
 
 /**
  * Function that removes the filterrow with rownumber row
- * @require		row>=0 /\ filters.length>1
+ * @require		row>=0
+ *				filters.length>1
  * @ensure		The filterrow with rownumber row is removed from filters
  * 				The filter-objects in filters are ordered by rownumber
  */
@@ -717,7 +867,7 @@ function removeFilterRow(row){
 	filters = f;
 	sortFilters();
 	
-	console.log('Removed a filterrow, current filters: '+filterstring());
+	//console.log('Removed a filterrow, current filters: '+filterstring());
 	
 	renewFilters();
 	var f = getFilters();
@@ -728,13 +878,11 @@ function removeFilterRow(row){
 			paging.page = 0;
 			makeRequest(makeData(f,getSort(),getColumns(),getPaging()));
 		}
-	}else{
-		console.log("Error in filters, not updating");
-	}
+	}//else	console.log("Error in filters, not updating");
 }
 
 /**
- * Function that renews the filtertable according to the contents of filters
+ * Function that renews the filtertable
  */
 function renewFilters(){
 	sortFilters();
@@ -742,7 +890,7 @@ function renewFilters(){
 	for (var i=0;i<filters.length;i++){
 		var filter = filters[i];
 		if (filter.type==EMPTY)							rows+= EmptyFilterRow(filter);
-		else if (LISTFILTERS.indexOf(filter.type)!=-1)	rows+= ListFilterRow(filter);
+		else if (LISTFILTERS.indexOf(filter.type)!=-1)	rows+= ListFilterRowNew(filter);
 		else if (VALUEFILTERS.indexOf(filter.type)!=-1)	rows+= ValueFilterRow(filter);
 		else if (filter.type==DATE)						rows+= DateFilterRow(filter);
 		else if (filter.type==OPTIONS)					rows+= OptionsFilterRow(filter);
@@ -750,8 +898,9 @@ function renewFilters(){
 	}
 	$('#filters').html(rows);
 	configureHover();
+	configureTokenizers();
 	configureLiveUpdate();
-	console.log('Renewed filters');
+	//console.log('Renewed filters');
 }
 
 /**
@@ -938,6 +1087,33 @@ function ListFilterRow(filter){
 			return res;
 }
 
+function ListFilterRowNew(filter){
+	/** array which contains the filterStyles of the LIST filters **/
+	var res ='<tr id="filterrow'+filter.row+'">\n\
+				<td width="320" align="left">\n\
+					<select size="1" class="filterType" id="filterType'+filter.row+'" onchange="changeFilterType(this,'+filter.row+');">\n\
+						<option value="empty">&lt;empty&gt;</option>\n\
+						'+(filter.type!=MODEL && hasFilter(MODEL) ? '' : '<option value="model"'+(filter.type==MODEL ? ' selected' : '')+'>Model</option>')+'\n\
+						'+(filter.type!=ALGORITHM && hasFilter(ALGORITHM) ? '' : '<option value="algorithm"'+(filter.type==ALGORITHM ? ' selected' : '')+'>Algorithm</option>')+'\n\
+						'+(filter.type!=TOOL && hasFilter(TOOL) ? '' : '<option value="tool"'+(filter.type==TOOL ? ' selected' : '')+'>Tool</option>')+'\n\
+						<option value="date">Date</option>\n\
+						<option value="memory">Memory</option>\n\
+						<option value="runtime">Runtime</option>\n\
+						<option value="states">states</option>\n\
+						<option value="transitions">transitions</option>\n\
+						'+(hasFilter(OPTIONS) ? '' : '<option value="options">Options</option>')+'\n\
+						<option value="finished">Finished</option>\n\
+					</select>\n\
+					<input type="text" id="tokenize'+filter.row+'" class="'+filter.type+'" />\n\
+					</td>\n\
+				<td align="right" style="width:160px">\n\
+					<a class="remove" onclick="removeFilterRow('+filter.row+');"><img src="/site_media/img/remove_filter.png" alt="remove"></a>\n\
+					<a class="add" onclick="addFilterRow('+filter.row+');"><img src="/site_media/img/add_filter.png" alt="add"></a>\n\
+				</td>\n\
+			</tr>';
+	return res;
+}
+
 /**
  * Function that returns the HTML-code of a filterrow of one type OPTIONS
  * @require filter!='undefined'
@@ -995,13 +1171,13 @@ function OptionsFilterRow(filter){
 function storeFilters(){
 	$(filters).each(function(i,filter){
 		if (filter.type==EMPTY)							storeEmptyFilter(filter);
-		else if (LISTFILTERS.indexOf(filter.type)!=-1)	storeListFilter(filter);
+		else if (LISTFILTERS.indexOf(filter.type)!=-1)	storeListFilterNew(filter);
 		else if (VALUEFILTERS.indexOf(filter.type)!=-1)	storeValueFilter(filter);
 		else if (filter.type==DATE)						storeDateFilter(filter);
 		else if (filter.type==OPTIONS)					storeOptionsFilter(filter);
 		else if (filter.type==FINISHED)					storeFinishedFilter(filter);
 	});
-	console.log('Stored filter values');
+	//console.log('Stored filter values');
 }
 
 /**
@@ -1025,6 +1201,15 @@ function storeListFilter(filter){
 		if (opt.selected){
 			ids.push(parseInt(opt.value));
 		}
+	});
+	filter.list = ids;
+}
+
+function storeListFilterNew(filter){
+	var strids = $("#tokenize"+filter.row).attr("value").split(",");
+	var ids = new Array();
+	$(strids).each(function(i,val){
+		if (val!="")	ids.push(parseInt(val));
 	});
 	filter.list = ids;
 }

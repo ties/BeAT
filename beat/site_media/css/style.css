@@ -10,8 +10,6 @@ table.benchmarks {
 
 table.paging{
 	border-collapse:collapse;
-	margin:0px;
-	padding:0px;
 }
 
 table.paging tr td{
@@ -21,22 +19,23 @@ table.paging tr td{
 
 #next,#previous{
 	width:20px;
+	text-align: center;
+	cursor:pointer;
 }
 
-#next{
-	text-align:right;
+#next img, #previous img{
+	width:10px;
+	height:20px;
+	padding: 0px;
 }
 
 #paginginfo{
-	font-weight: bold;
-	line-height: 1.5;
 	padding-left: 30px;
+	font-weight: bold;
 }
 
 #resperpage{
 	text-align: right;
-	margin: 0px;
-	padding: 0px;
 }
 
 .filterStyle{
@@ -50,6 +49,7 @@ table.paging tr td{
 #filters td, #filters tr, #filters th, #filters select, #filters input{
 	margin:0px;
 	padding:0px;
+	vertical-align: top;
 }
 
 .remove img, .add img{

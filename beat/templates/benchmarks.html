@@ -1,8 +1,8 @@
 {% extends "base_site.html" %}
 {% block title %}Benchmarks{% endblock %}
 {% block content %}
-		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filter.js"></script>
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
+		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filter.js"></script>
 		
 		<h2 class="benchmarktitle">Benchmark Table</h2>
 		<ul class="mega">
@@ -64,9 +64,9 @@
 			</table>
 			<table class="paging">
 				<tr>
-					<td id="previous">&lt;</td>
+					<td id="previous"><img src="{{ MEDIA_URL }}img/prev_button.png" /></td>
 					<td id="paginginfo">Showing results 0-0 of 0 results with <input type="text" name="resperpage" id="resperpage" value="200" size="3" /> results per page</td>
-					<td id="next">&gt;</td>
+					<td id="next"><img src="{{ MEDIA_URL }}img/next_button.png" /></td>
 				</tr>
 			</table>
 		{{ form.name.errors }}
