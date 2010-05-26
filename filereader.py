@@ -79,6 +79,9 @@ class FileReader:
 				or true if this dictionary is empty
 			Otherwise, returns None.
 		"""
+		#this fixes an issue; this function would return a list, but we wanted a dictionary.
+		if not regex:
+			return {}
 		#compile the expression
 		if flags:
 			compiled = re.compile(regex, flags)
@@ -171,17 +174,14 @@ class FileReader:
 		
 		toolversion = m.get('toolversion')
 		tv = toolversion.split('-')
-		#g = GitInterface(os.path.join(GIT_PATH,'1'))
-		#gitdate = datetime(*g.get_date(g.get_matching_item(tv[len(tv)-1]))[:6])
-		
 		
 		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
+
 		#parse the Call to find the supplied options
 		tmp = self.parse_call(header[call][6:], toolversion)
-	
 		if tmp:
 			#unpack the tuple
-			(parser, s, optlist, modelname) = tmp
+			(regexes, s, optlist, modelname) = tmp
 		else:
 			#tmp is none, so something went wrong in parse_call()
 			return None
@@ -193,19 +193,39 @@ class FileReader:
 		self.print_message(V_NOISY, "Notice: Complete!")
 		
 		# # # # # # # # # # # # #parse the log content
-		m = self.match_regex(parser.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
-		self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
-		if not m:
-			#the regex did not match, print an error and return None
-			self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
-			self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (parser.regex, ''.join(lines)) )
-			return None
+		#m = self.match_regex(parser.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
+		#self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
+		#if not m:
+		#	#the regex did not match, print an error and return None
+		#	self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
+		#	self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (parser.regex, ''.join(lines)) )
+		#	return None
 
+		#matched ={}
+		#for key in m:
+		#	if key not in ["etime","utime","stime","tcount","scount","vsize","rss","kill"]:
+		#		matched[key]=m[key]
+		m = {}
+		first=True
+		for rex in regexes:
+			tmp = self.match_regex(rex.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
+			self.print_message(V_NOISY, "Notice: regex match gives: %s\n\tregex was:\"%s\""% (tmp,rex.regex))
+			if not tmp and first:
+				#the regex for the tool did not match, print an error and return None
+				self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
+				self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (rex.regex, ''.join(lines)) )
+				return None
+			else:
+				first=False
+			#append tmp to m, overwriting previous data
+			for key in tmp:
+				m[key]=tmp[key]
+
+		#we'll use m for basic information, matched for any user-specified groups
 		matched ={}
 		for key in m:
 			if key not in ["etime","utime","stime","tcount","scount","vsize","rss","kill"]:
 				matched[key]=m[key]
-		
 		#collect all relevant information into one dictionary
 		data = {
 			'model': modelname,
@@ -236,7 +256,7 @@ class FileReader:
 				call		A string that shows how the run was executed
 			Returns:
 				A tuple, containing:
-					a Regex object		which specifies how to parse this run
+					a tuple 			of a Regex object and a list of Regex objects, which specifies how to parse this run (single one is for tool, rest is per option)
 					a list				containing three elements; the call itself, the tool name and the algorithm name
 					a list				of tuples: (option, value), as getopt.gnu_getopt() except options without value will appear with value True (as opposed to gnu_getopt, which would provide an empty string
 					a string			containing the file name of the model
@@ -255,16 +275,20 @@ class FileReader:
 				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
 				return None
 
+		regexes=[]
 		try:
 			t = Tool.objects.get(name=s[1])
 			a = Algorithm.objects.get(name=s[2])
 			at = AlgorithmTool.objects.get(tool=t, algorithm=a, version=version)
+			regexes.append(at.regex)
 			shortopts = ''
 			#long options
 			opts = []
 			#fetch all valid options for this tool+algorithm combo
 			for o in ValidOption.objects.filter(algorithm_tool=at):
 				opts.append(o.option)
+				if o.regex.regex:
+					regexes.append(o.regex)
 			#find the appropriate short options
 			for option in opts:
 				try:
@@ -334,7 +358,7 @@ class FileReader:
 			tail = match.group(1)
 
 		#return as the docstring describes
-		return (at.regex, s, optlist, tail)
+		return (regexes, s, optlist, tail)
 	#end of parse_call
 	
 	def check_data_validity(self, data):
@@ -609,12 +633,14 @@ class FileReader:
 					#write to the database
 					try:
 						bench=self.write_to_db(data)
-						id=bench.pk
-						if id:
-							#write the log
-							log_file_path = self.write_to_log(run, "%d"%(id))
-							bench.logfile="%s"%(log_file_path)
-							bench.save()
+						created=bool(bench)
+						if bench:
+							id=bench.pk
+							if id:
+								#write the log
+								log_file_path = self.write_to_log(run, "%d"%(id))
+								bench.logfile="%s"%(log_file_path)
+								bench.save()
 						error=False
 					#handle known error FileReaderError
 					except FileReaderError as fre:
@@ -639,7 +665,10 @@ class FileReader:
 						if error:
 							self.print_message(V_QUIET, "Note: Error writing to database in file %s"%(f))
 						else:
-							self.print_message(V_QUIET, "Note: Added data to database, id: %s in file %s"%(bench.pk, f))
+							if created:
+								self.print_message(V_QUIET, "Note: Added data to database, id: %s in file %s"%(bench.pk, f))
+							else:
+								self.print_message(V_QUIET, "Note: Tried to add data to database, already exists, from file %s"%( f))
 				else:
 					#there was no data returned while parsing
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
