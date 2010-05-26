@@ -45,6 +45,7 @@ class FileReader:
 	log = []
 	#the verbosity level of this filereader. default is quiet.
 	verbose = V_QUIET
+	override = False
 	
 	def print_message(self, level, text):
 		"""Function to log, based on verbosity level
@@ -278,10 +279,10 @@ class FileReader:
 					pass
 		#handle database related errors
 		except ObjectDoesNotExist:
-			self.print_message(V_QUIET, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], version))
+			self.print_message(V_VERBOSE, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], version))
 			return None
 		except MultipleObjectsReturned:
-			self.print_message(V_QUIET, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))
+			self.print_message(V_VERBOSE, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))
 			return None
 		#translate all options Option->ascii, ignoring unicode-only characters
 		tmp = opts
@@ -566,7 +567,7 @@ class FileReader:
 			
 			#read the whole file, filling the runs_in_file matrix
 			#with open(f, 'r') as file:
-			print f
+			#print f
 			file = open(f, 'r')
 			new_run=True
 			j=0
@@ -600,6 +601,7 @@ class FileReader:
 							self.write_to_log(run, "%d"%(id))
 							bench.logfile="%d"%(id)
 							bench.save()
+						error=False
 					#handle known error FileReaderError
 					except FileReaderError as fre:
 						#some known error occured, check how bad it is
@@ -612,11 +614,18 @@ class FileReader:
 							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( fre.error))
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
+						error=True
 					#handle other errors
 					except Exception, e:
 						#an unknown error occured, skip this part
 						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
 						errorcounter+=1
+						error=True
+					finally:
+						if error:
+							self.print_message(V_QUIET, "Note: Error writing to database in file %s"%(f))
+						else:
+							self.print_message(V_QUIET, "Note: Added data to database, id: %s in file %s"%(bench.pk, f))
 				else:
 					#there was no data returned while parsing
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
@@ -670,6 +679,7 @@ class FileReader:
 		--quiet (verbosity errors only)
 		--verbose (verbosity errors and warnings)
 		--noisy (verbosity full)
+		--override
 		"""
 		parser = OptionParser()
 		parser.add_option("--silent", 
@@ -680,6 +690,8 @@ class FileReader:
 			action="store_const", const=V_VERBOSE, dest="verbose", help = "Print helpful things.")
 		parser.add_option("--noisy",
 			action="store_const", const=V_NOISY, dest="verbose", help = "Print everything.")
+		parser.add_option("--override",
+			action="store_const", const=True, dest="override", help = "Override existing data")
 		return parser.parse_args()
 	#end of parse_app_options
 #end of FileReader
