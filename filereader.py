@@ -494,8 +494,21 @@ class FileReader:
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
 				'memory_RSS':mRSS, 'finished':finished, 'logfile':None}
 		)
-		#connect the manytomany relations. this has to happen ONLY if newly created
-		if created:
+		#connect the manytomany relations. this has to happen ONLY if newly created, or when we override existing data
+		if created or self.override:
+			if self.override:
+				#delete and then create
+				old_id = b.pk
+				b.delete()
+				b, created = Benchmark.objects.get_or_create(model=m, algorithm_tool = at,
+					date_time=date, 
+					defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
+						'total_time':(utime+stime),
+						'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
+						'memory_RSS':mRSS, 'finished':finished, 'logfile':None}
+				)
+				self.print_message(V_VERBOSE, "Overridden a benchmark with ID: %s"%(old_id))
+			
 			self.print_message(V_NOISY,"Notice: created Benchmark entry: %s on %s, which ran on: %s"%(t.name, m.name, date))
 			for hardware in hardwarelist:
 				bh, c = BenchmarkHardware.objects.get_or_create(benchmark=b, hardware=hardware)
@@ -550,6 +563,7 @@ class FileReader:
 			(options, args) = self.parse_app_options()
 			self.verbose = options.verbose
 			file_list = args
+
 		#check if file(s) were provided
 		if not file_list:
 			if self.verbose:
@@ -598,8 +612,8 @@ class FileReader:
 						id=bench.pk
 						if id:
 							#write the log
-							self.write_to_log(run, "%d"%(id))
-							bench.logfile="%d"%(id)
+							log_file_path = self.write_to_log(run, "%d"%(id))
+							bench.logfile="%s"%(log_file_path)
 							bench.save()
 						error=False
 					#handle known error FileReaderError
@@ -663,13 +677,14 @@ class FileReader:
 		header= lines[:i]
 
 		f = os.path.join(LOGS_PATH, filename)
-		with open(f, 'w') as file:
+		with open(f, 'wb') as file:
 			for x in lines:
 				file.write(x)
-		f = os.path.join(LOGS_PATH, filename + ".header")
-		with open(f, 'w') as file:
+		fh = os.path.join(LOGS_PATH, filename + ".header")
+		with open(fh, 'wb') as file:
 			for x in lines:
 				file.write(x)
+		return f
 
 
 	def parse_app_options(self):
@@ -679,7 +694,7 @@ class FileReader:
 		--quiet (verbosity errors only)
 		--verbose (verbosity errors and warnings)
 		--noisy (verbosity full)
-		--override
+		--override overrides data that already exists in the database
 		"""
 		parser = OptionParser()
 		parser.add_option("--silent", 

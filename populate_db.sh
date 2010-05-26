@@ -3,11 +3,11 @@ rm beat/db.db
 python beat/manage.py syncdb
 export DJANGO_SETTINGS_MODULE=beat.settings
 
-rm -rf logs
-rm -rf git
-mkdir logs
-mkdir git
-mkdir git/ltsmin
+rm -rf beat/logs
+rm -rf beat/git
+mkdir beat/logs
+mkdir beat/git
+mkdir beat/git/ltsmin
 
 echo "... adding basic data..."
 python db_defaults.py
