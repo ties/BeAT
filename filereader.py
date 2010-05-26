@@ -651,8 +651,13 @@ class FileReader:
 		
 		#split the header off
 		lines = lines[i:]
+		header= lines[:i]
 
 		f = os.path.join(LOGS_PATH, filename)
+		with open(f, 'w') as file:
+			for x in lines:
+				file.write(x)
+		f = os.path.join(LOGS_PATH, filename + ".header")
 		with open(f, 'w') as file:
 			for x in lines:
 				file.write(x)
