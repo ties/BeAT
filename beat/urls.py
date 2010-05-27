@@ -53,6 +53,8 @@ urlpatterns = patterns('',
 	(r'^logout/$', 'django.contrib.auth.views.logout_then_login'),
 	(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
 	
+	# Overige pagina's
+	(r'^colophon/$', 'benchmarks.views.colophon'),
 )
 
 # static media: DEVELOPMENT ONLY!
