@@ -1,0 +1,18 @@
+{% extends "base_site.html" %}
+{% block title %}Job Generation{% endblock %}
+{% block content %}
+		<h2>Generate specific job</h2>
+		<form action="/jobgen/go/" method="post">{% csrf_token %}
+			<table>
+				{{jform}}
+			</table>
+		<input type="submit" value="Submit" />
+		</form>
+		<h2>Generate suite</h2>
+		<form action="/suitegen/go/" method="post">{% csrf_token %}
+			<table>
+				{{sform}}
+			</table>
+		<input type="submit" value="Submit" />
+		</form>
+{% endblock %}

@@ -1,4 +1,5 @@
 from beat.benchmarks.models import *
+from beat.comparisons.models import *
 from django.contrib import admin
 
 class HardwareInline(admin.TabularInline):

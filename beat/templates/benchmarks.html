@@ -51,7 +51,7 @@
 		<!-- END FILTER TABLE -->
 		
 		<!-- BENCHMARK TABLE -->
-		<form action="{% url benchmarks.views.compare %}" method="post" name="benchmark_form">{% csrf_token %}
+		<form action="{% url benchmarks.views.export_benchmarks %}" method="post" name="benchmark_form">{% csrf_token %}
 			<table class="benchmarks">
 				<tr>
 					<th>&nbsp;</th>
@@ -74,7 +74,6 @@
 		<p>
 			<input type="button" id="CheckAll" value="All" />
 			<input type="button" id="InvertAll" name="InvertAll" value="Invert" />
-			<input type="submit" name="compare" value="Compare" />
 			<input type="submit" name="export_csv"  value="Export CSV" />
 		</p>
 		</form>

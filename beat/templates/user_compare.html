@@ -7,9 +7,9 @@
 		<ul>
 			{% for b in b_comparisons %}
 				<li>
-					<a href="{% url detail_benchmark id=b.id %}?auth={{ b.hash }}">{{ b }}</a> 
+					<a href="{% url comparisons.views.detail_benchmark id=b.id %}?auth={{ b.hash }}">{{ b }}</a> 
 					- ({{ b.date_time|date:"SHORT_DATE_FORMAT" }} - {{ b.date_time|time:"H:i" }})
-					- <a href="{% url delete_benchmark id=b.id %}">delete</a>
+					- <a href="{% url comparisons.views.delete_benchmark id=b.id %}">delete</a>
 				</li>
 			{% endfor %}
 		</ul>
@@ -23,9 +23,9 @@
 		<ul>
 		{% for m in m_comparisons %}
 			<li>
-				<a href="{% url detail_model id=m.id%}?auth={{ m.hash }}">{{ m }}</a> 
+				<a href="{% url comparisons.views.detail_model id=m.id%}?auth={{ m.hash }}">{{ m }}</a> 
 				- ({{ m.date_time|date:"SHORT_DATE_FORMAT" }} - {{ m.date_time|time:"H:i" }})
-					- <a href="{% url delete_model id=m.id %}">delete</a>
+					- <a href="{% url comparisons.views.delete_model id=m.id %}">delete</a>
 			</li>
 		{% endfor %}
 		</ul>

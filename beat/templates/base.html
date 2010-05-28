@@ -83,9 +83,9 @@ Aenean commodo tellus in leo volutpat pretium. Cras imperdiet tempor nulla nec f
 				<ul>
 					<li><a href="{% url benchmarks.views.index %}">Index</a></li>
 					<li><a href="{% url benchmarks.views.benchmarks %}">Benchmarks</a></li>
-					<li><a href="{% url benchmarks.views.compare_scatterplot %}">Compare tools</a></li>
-					<li><a href="{% url benchmarks.views.compare_model %}">Compare models</a></li>
-					<li><a href="{% url benchmarks.views.jobgen%}">New Job</a></li>
+					<li><a href="{% url comparisons.views.compare_scatterplot %}">Compare tools</a></li>
+					<li><a href="{% url comparisons.views.compare_model %}">Compare models</a></li>
+					<li><a href="{% url jobs.views.jobgen %}">New Job</a></li>
 					<li><a href="{% url benchmarks.views.colophon %}">Colophon</a></li>
 				</ul>
 				{% if user.is_authenticated %}

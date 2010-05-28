@@ -1,0 +1,13 @@
+{% extends "base_site.html" %}
+{% block title %}Compare benchmarks{% endblock %}
+{% block content %}
+		<h2>Comparison: {{ comparison.name }}</h2>
+		<img src="scatterplot.png" alt="benchmark chart" />
+		<p><a href="/compare/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
+		
+		<form action="{% url comparisons.views.export_benchmark_graph comparison.id %}" method="post">{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Export" />
+		</form>
+
+{% endblock %}
