@@ -30,14 +30,15 @@ from beat.benchmarks.models import *
 #the length of the header placed in the logs
 RUN_DETAILS_HEADER = 11
 #verbosity levels
-V_NOISY = 2		#noisy:	as much as possible
-V_VERBOSE = 1	#verbose:	everything except informative messages (which are preceded by "notice:")
-V_QUIET = 0		#quiet:	errors only
-V_SILENT = -1	#silent: 	only errors that are dangerous for the database integrity
+V_NOISY = 2		#noisy:		print everything, including read input etc.
+V_VERBOSE = 1	#verbose:	print debug support
+V_QUIET = 0		#quiet:		print a line for each parsed log - default
+V_SILENT = -1	#silent: 	surpress all messages except those that indicate database failure
 
 #regular expression for the header
-regex = re.compile(r'Nodename: (?P<name>.*)(\r\n|\n).*(\r\n|\n)OS: (?P<OS>.*)(\r\n|\n)Kernel-name: (?P<Kernel_n>.*)(\r\n|\n)Kernel-release: (?P<Kernel_r>.*)(\r\n|\n)Kernel-version: (?P<Kernel_v>.*)(\r\n|\n).*(\r\n|\n)Processor: (?P<processor>.*)(\r\n|\n)Memory-total: (?P<memory_kb>[0-9]+)(\r\n|\n)DateTime: (?P<datetime>.*)(\r\n|\n)ToolVersion: (?P<toolversion>.*)(\r\n|\n)Call: (?P<call>.*)(\r\n|\n)', re.MULTILINE + re.DOTALL)
+header_regex = re.compile(r'Nodename: (?P<name>.*)(\r\n|\n).*(\r\n|\n)OS: (?P<OS>.*)(\r\n|\n)Kernel-name: (?P<Kernel_n>.*)(\r\n|\n)Kernel-release: (?P<Kernel_r>.*)(\r\n|\n)Kernel-version: (?P<Kernel_v>.*)(\r\n|\n).*(\r\n|\n)Processor: (?P<processor>.*)(\r\n|\n)Memory-total: (?P<memory_kb>[0-9]+)(\r\n|\n)DateTime: (?P<datetime>.*)(\r\n|\n)ToolVersion: (?P<toolversion>.*)(\r\n|\n)Call: (?P<call>.*)(\r\n|\n)', re.MULTILINE + re.DOTALL)
 
+#regular expression for extracting the model name from the filename of a log
 logextension = re.compile(r'(.*)\.e[0-9]+')
 
 class FileReader:
@@ -52,8 +53,7 @@ class FileReader:
 		Arguments:
 			level		the level from which this message should be printed
 			text		the message
-		
-		Both arguments are required.
+
 		Returns:
 			This function returns nothing.
 		"""
@@ -65,6 +65,7 @@ class FileReader:
 	def match_regex(self, regex, input, flags=None):
 		"""Matches a given regex on the input, given flags
 		This function compiles (with flags, if given) and matches the regex on the input.
+		Given an empty regex (ie. providing something that evaluates to False for regex) returns an empty dictionary
 		If the regex does not use groups (ie. the groupdict() method returns None), this method will return True on a match.
 		In other words, the function returns whether the regex matches, and returns the dictionary, if any.
 		Arguments:
@@ -72,14 +73,14 @@ class FileReader:
 			input		any string to be matched on
 			flags		a value to be passed to re.compile(), defaults to None.
 		
-		regex and input are required arguments.
 		Returns:
+			An empty dictionary if regex evaluates to False
 			On a match, a dictionary containing the named groups
 				or a list if the regex does not use named groups
 				or true if this dictionary is empty
 			Otherwise, returns None.
 		"""
-		#this fixes an issue; this function would return a list, but we wanted a dictionary.
+		#this fixes an issue; this function returned a list for the empty regex, but it makes more sense to get a dictionary
 		if not regex:
 			return {}
 		#compile the expression
@@ -112,9 +113,9 @@ class FileReader:
 			return list
 		else:
 			#there was no match, something probably went wrong
-			self.print_message(V_VERBOSE, "Warning: Regex  %s on input %s has an empty dictionary."%(regex, input))
-			if flags:
-				self.print_message(V_NOISY,"Notice: Flags argument to compiler: %s"%(flags))
+			#self.print_message(V_VERBOSE, "Warning: Regex  %s on input %s has an empty dictionary."%(regex, input))
+			#if flags:
+			#	self.print_message(V_NOISY,"Notice: Flags argument to compiler: %s"%(flags))
 			return None
 	#end of match_regex
 	
@@ -127,7 +128,7 @@ class FileReader:
 				None when some (non-fatal) error occurs, or:
 				A dictionary, as specified by parse_log.
 		"""
-		self.print_message(V_NOISY, "Notice: Reading run details and finding parser...")
+		self.print_message(V_NOISY, "Notice: Reading the header...")
 		# # # # # # # # # # # # seperate the header
 		header = []
 		#we save the ids of the 'Call: ' and 'DateTime: ' lines, so we can find them quickly
@@ -160,7 +161,7 @@ class FileReader:
 		lines = lines[i:]
 		
 		# # # # # # # # # # # # analyze the header
-		match = regex.match(''.join(header))
+		match = header_regex.match(''.join(header))
 		if not match:
 			self.print_message(V_QUIET, "Error: matching of regex on header failed. Are you sure the header is correctly formatted?")
 			return None
@@ -168,9 +169,9 @@ class FileReader:
 		m = match.groupdict()
 		if not m:
 			#matching the regex went quite wrong, the log must be broken
-			self.print_message(V_QUIET, "Error: no results form the header regex. Are you sure this log is complete?")
+			self.print_message(V_QUIET, "Error: missing data in the header. Are you sure this log is complete?")
 			return None
-		#m should contain the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
+		#m contains the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
 		
 		toolversion = m.get('toolversion')
 		tv = toolversion.split('-')
@@ -193,23 +194,12 @@ class FileReader:
 		self.print_message(V_NOISY, "Notice: Complete!")
 		
 		# # # # # # # # # # # # #parse the log content
-		#m = self.match_regex(parser.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
-		#self.print_message(V_NOISY, "Notice: regex match gives: %s"% (m))
-		#if not m:
-		#	#the regex did not match, print an error and return None
-		#	self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
-		#	self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (parser.regex, ''.join(lines)) )
-		#	return None
-
-		#matched ={}
-		#for key in m:
-		#	if key not in ["etime","utime","stime","tcount","scount","vsize","rss","kill"]:
-		#		matched[key]=m[key]
 		m = {}
 		first=True
 		for rex in regexes:
 			tmp = self.match_regex(rex.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
-			self.print_message(V_NOISY, "Notice: regex match gives: %s\n\tregex was:\"%s\""% (tmp,rex.regex))
+			if not first:
+				self.print_message(V_NOISY, "Notice: regex match gives: %s\n\tregex was:\"%s\""% (tmp,rex.regex))
 			if not tmp and first:
 				#the regex for the tool did not match, print an error and return None
 				self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
@@ -217,9 +207,10 @@ class FileReader:
 				return None
 			else:
 				first=False
-			#append tmp to m, overwriting previous data
+			#append tmp to m, overwriting previous data, if anything is persent
 			for key in tmp:
-				m[key]=tmp[key]
+				if tmp[key]:
+					m[key]=tmp[key]
 
 		#we'll use m for basic information, matched for any user-specified groups
 		matched ={}
@@ -239,7 +230,7 @@ class FileReader:
 			),
 			'extravals':matched
 		}
-		#the following ensures 'hardware' and 'options' always contain something iteratable
+		
 		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (m))
 
 		if data:
@@ -267,8 +258,8 @@ class FileReader:
 		if not s:
 			print "Warning, potential errors, entering experimental fix to try and make it work"
 			print call
-			print r'^/usr/local/bin/(.*?)((?:2|-).*?)(?:$| .*$)'
-			s = self.match_regex(r'^/usr/local/bin/(.*?)((?:2|-).*?)(?:$| .*$)', call)
+			print r'^.*/(.*?)((?:2|-).*?)(?:$| .*$)'
+			s = self.match_regex(r'^*/(.*?)((?:2|-).*?)(?:$| .*$)', call)
 			print s
 			if not s:
 				#that's bad
@@ -327,7 +318,7 @@ class FileReader:
 			else:
 				optlist, args = getopt.gnu_getopt(call.split(" ")[1:], shortopts, opts)
 		except getopt.GetoptError as e:
-			self.print_message(V_VERBOSE, "Warning: gnu_getopt failed: %s"%(e))
+			self.print_message(V_VERBOSE, "Warning: grabbing options failed: %s"%(e))
 			return None
 		counter = 0
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
@@ -442,6 +433,10 @@ class FileReader:
 					data['benchmark'] = (date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished)
 			else:
 				self.print_message(V_VERBOSE, "Warning while checking: invalid value in benchmark %s"% ((date, utime, stime, etime, tcount, scount, mVSIZE, mRSS)))
+				valid=False
+		for key in data['extravals']:
+			if data['extravals'][key] is None:
+				self.print_message(V_VERBOSE, "Warning while checking: invalid extra value for benchmark, name: %s"% (key))
 				valid=False
 		return (valid, data)
 	#end of check_data_validity
@@ -600,7 +595,7 @@ class FileReader:
 		errorcounter = 0
 		
 		for f in file_list:
-			runs_in_file=[] #matrix containing a list of lines for each run
+			runs_in_file=[]
 			self.print_message(V_NOISY, "Notice: Reading from file: %s"%(f))
 			
 			#read the whole file, filling the runs_in_file matrix
@@ -661,12 +656,13 @@ class FileReader:
 						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
 						errorcounter+=1
 						error=True
+					#print the right message
 					finally:
 						if error:
-							self.print_message(V_QUIET, "Note: Error writing to database in file %s"%(f))
+							self.print_message(V_QUIET, "Note: Error writing to database from file %s"%(f))
 						else:
 							if created:
-								self.print_message(V_QUIET, "Note: Added data to database, id: %s in file %s"%(bench.pk, f))
+								self.print_message(V_QUIET, "Note: Added data to database, id: %s from file %s"%(bench.pk, f))
 							else:
 								self.print_message(V_QUIET, "Note: Tried to add data to database, already exists, from file %s"%( f))
 				else:
