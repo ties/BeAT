@@ -43,7 +43,11 @@ class ModelComparison(models.Model):
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	name = models.CharField(max_length=255)
 	hash = models.CharField(max_length=27)
+	exclude_ids = models.CommaSeparatedIntegerField(max_length=255, blank=True)
 	
+	def get_absolute_url(self):
+		return "/compare/model/%i/" % self.id
+
 	def getHash(self):
 		return  hash(str(self.id) + str(self.date_time))
 	

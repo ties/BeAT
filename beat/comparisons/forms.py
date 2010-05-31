@@ -35,4 +35,5 @@ class CompareModelsForm(forms.Form):
 	option = forms.ModelChoiceField(OptionValue.objects.all(), required=False)
 	#models = forms.ModelMultipleChoiceField(Model.objects.all())
 
-
+class ExcludeIdForm(forms.Form):
+	ids = forms.ModelMultipleChoiceField(Benchmark.objects.all(), required=False, widget=widgets.CheckboxSelectMultiple)

@@ -28,5 +28,5 @@ def export(canvas, title, format='png'):
 	if (format is not 'png'):
 		response['Content-Disposition'] = 'attachment; filename=%s.%s' % (title, format)
 	# Print to canvas with the right format
-	canvas.print_figure(filename=response, format=format)
+	canvas.print_figure(filename=response, format=format, dpi=80)
 	return response
