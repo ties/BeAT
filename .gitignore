@@ -19,3 +19,4 @@ logs/
 *settings.py
 cwd
 cwd/*
+cache/
