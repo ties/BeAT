@@ -20,9 +20,14 @@ class CompareForm(forms.Form):
 	name = forms.CharField(max_length=255, required=False)
 
 class CompareScatterplotForm(forms.Form):
-	algo = AlgorithmTool.objects.all()
+	algo 				= AlgorithmTool.objects.all()
 	
-	name = forms.CharField(max_length=255, required=False)
+	name 				= forms.CharField(max_length=255, required=False)
+	a_algo 				= forms.ModelChoiceField(Algorithm.objects.all())
+	a_tool 				= forms.ModelChoiceField(Tool.objects.all())
+	a_version 			= forms.ChoiceField(choices=[(v,v) for v in [at['version'] for at in AlgorithmTool.objects.values('version').distinct()]])
+	
+	
 	a_algorithmtool 	= forms.ModelChoiceField(algo, label="AlgorithmTool A")
 	b_algorithmtool		= forms.ModelChoiceField(algo, label="AlgorithmTool B")
 	
@@ -34,6 +39,3 @@ class CompareModelsForm(forms.Form):
 	algorithm = forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None)
 	option = forms.ModelChoiceField(OptionValue.objects.all(), required=False)
 	#models = forms.ModelMultipleChoiceField(Model.objects.all())
-
-class ExcludeIdForm(forms.Form):
-	ids = forms.ModelMultipleChoiceField(Benchmark.objects.all(), required=False, widget=widgets.CheckboxSelectMultiple)

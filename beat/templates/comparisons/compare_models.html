@@ -4,31 +4,17 @@
 		<h2>Comparison: {{ comparison.name }}</h2>
 		<img src="benchmark.png" style="width:100%;" ismap usemap="#points" alt="Model compare graph" />
 		
-		
-		<!--
-	''' % (img_height, img_width, cmpd_height, cmpd_width))
-
-    # Figure height in pixels.
-    # HTML image coordinates have y=0 on the top.  Matplotlib
-    # has y=0 on the bottom.  We'll need to flip the numbers
-    for cid, x, y, imgname in zip(cids, xcoords, ycoords, imgnames): -->
-		
-		
-		<form action="{% url beat.comparisons.views.exclude_ids comparison.id %}" method="post" name="benchmark_form">{% csrf_token %}
 		<table class="benchmarks">
-				<tr>
-					<th>&nbsp;</th>
-					<th id="modelsort" class="sort">Model</th>
-					<th id="statessort" class="sort">States</th>
-					<th id="runtimesort" class="sort">Runtime</th>
-					<th id="memorysort" class="sort">Memory (RSS)</th>
-					<th id="finishedsort" class="sort">Finished</th>
-				</tr>
-			
+			<tr>
+				<th id="modelsort" class="sort">Model</th>
+				<th id="statessort" class="sort">States</th>
+				<th id="runtimesort" class="sort">Runtime</th>
+				<th id="memorysort" class="sort">Memory (RSS)</th>
+				<th id="finishedsort" class="sort">Finished</th>
+			</tr>
 			
 			{% for b in benches %}
 			<tr>
-				<td><input name="ids" type="checkbox"></td>
 				<td>{{ b.model }}</td>
 				<td>{{ b.states_count }}</td>
 				<td>{{ b.elapsed_time|floatformat:3 }}</td>
@@ -37,7 +23,6 @@
 			</tr>
 			{% endfor %}
 		</table>
-		</form>
 		
 		<p><a href="/compare/model/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 		

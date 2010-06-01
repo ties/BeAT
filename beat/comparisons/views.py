@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from forms import *
 from beat.tools import graph
+from django.views.decorators.cache import cache_page
 
 # MatPlotLib
 import numpy as np
@@ -13,6 +14,7 @@ Produces a scatterplot from a set of benchmarks.
 TODO:
 @param id Comparison id to retrieve a set of Benchmark id's from the db (currently takes the whole dataset - no id yet)
 """ 
+@cache_page(60 * 15)
 def scatterplot(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -106,6 +108,7 @@ Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
 @param id ModelComparison ID from the database, used filter the benchmark data from the db.
 """
+@cache_page(60 * 15)
 def graph_model(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -202,6 +205,7 @@ def graph_model(request, id, format='png'):
 	response = graph.export(canvas, comparison.name, format)
 	return response
 
+@login_required()
 def export_graph(request, id, model=False):
 	if request.method == 'POST': # If the form has been submitted...
 		form = ExportGraphForm(request.POST) # A form bound to the POST data
@@ -223,6 +227,7 @@ Deletes a Comparison if model=False; else deletes a ModelComparison
 @param id The id of the (Model)Comparison that needs to be deleted
 @TODO user authorisation
 """	
+@login_required()
 def comparison_delete(request, id, model=False):
 	if model:
 		c = ModelComparison.objects.get(pk=id)
@@ -266,6 +271,7 @@ def compare_detail(request, id, model=False):
 """
 ModelCompareForm handler
 """	
+@login_required()
 def compare_model(request):
 	"""
 	return render_to_response('compare_models_form.html', { 'tools' : Tool.objects.all() }, context_instance=RequestContext(request))
@@ -296,23 +302,8 @@ def compare_model(request):
 		'form': form, 
 	}, context_instance=RequestContext(request))
 	
-def exclude_ids(request, id):
-	if request.method == 'POST': # If the form has been submitted...
-		form = ExcludeIdForm(request.POST) # A form bound to the POST data
-		if form.is_valid(): # All validation rules pass
-			ids = form.cleaned_data['ids']
-			c = ModelComparison.objects.get(id)
-			c.exclude_ids = ids
-			c.save()
-			return redirect('detail_model', id=c.id)
-	else:
-		form = ExportGraphForm() # An unbound form
-
-	return render_to_response('comparisons/compare.html', {
-		'comparison' : Comparison.objects.get(pk=id), 'form': form,
-	}, context_instance=RequestContext(request))
-
 	
+@login_required()
 def compare_scatterplot(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareScatterplotForm(request.POST) # A form bound to the POST data
