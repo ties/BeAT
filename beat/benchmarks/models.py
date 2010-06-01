@@ -31,10 +31,10 @@ class Benchmark(models.Model):
 	date_time = models.DateTimeField(verbose_name="Time started")
 	
 	#Data
-	user_time = models.FloatField(verbose_name="User time (s)")
-	system_time = models.FloatField(verbose_name="System time (s)")
-	total_time = models.FloatField(verbose_name="User + System time (s)")
-	elapsed_time = models.FloatField(verbose_name="Elapsed time (s)")
+	user_time = models.DecimalField(max_digits=8,decimal_places=2,verbose_name="User time (s)")
+	system_time = models.DecimalField(max_digits=8,decimal_places=2,verbose_name="System time (s)")
+	total_time = models.DecimalField(max_digits=8,decimal_places=2,verbose_name="User + System time (s)")
+	elapsed_time = models.DecimalField(max_digits=8,decimal_places=2,verbose_name="Elapsed time (s)")
 	transition_count = models.BigIntegerField(verbose_name="Transitions", blank=True, null=True) #this may be null
 	states_count = models.BigIntegerField(verbose_name="States")
 	memory_VSIZE = models.IntegerField(verbose_name="Memory VSIZE (KB)") #rounded to kilobytes
