@@ -13,7 +13,7 @@ urlpatterns = patterns('beat.comparisons.views',
 	# Graph image for the model-comparison
 	(r'^tool/(?P<id>\d+)/scatterplot.png$', 'scatterplot'),
 	(r'^model/(?P<id>\d+)/benchmark.png$', 'graph_model'),
-	
+
 	# Exporting graphs
 	url (r'^tool/(?P<id>\d+)/export$', 'export_graph',name="export_benchmark_graph"),
 	url (r'^model/(?P<id>\d+)/export$', 'export_graph', {'model': True}, name="export_model_graph"),
@@ -26,3 +26,4 @@ urlpatterns = patterns('beat.comparisons.views',
 	url(r'^tool/(?P<id>\d+)/delete$', 'comparison_delete', name="delete_benchmark"),
 	url(r'^model/(?P<id>\d+)/delete$', 'comparison_delete', {'model' : True}, name="delete_model"),
 )
+
