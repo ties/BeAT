@@ -23,7 +23,7 @@ ul.token-input-list li input {
     border: 0;
     width: 130px;
     padding: 3px 8px;
-    background-color: white;
+    background-color: #fff;
 }
 
 li.token-input-token {
@@ -32,7 +32,7 @@ li.token-input-token {
     height: 1%;
     margin: 3px;
     padding: 0px 0px;
-    background-color: #d0efa0;
+    background-color: #9cc6f3;
     color: #000;
     font-weight: bold;
 	font-size: 9px;
@@ -68,8 +68,6 @@ div.token-input-dropdown {
     background-color: #fff;
     overflow: hidden;
     border: 1px solid #ccc;
-    /*border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;*/
     cursor: default;
     font-size: 9px;
     font-family: Verdana;
@@ -108,5 +106,5 @@ div.token-input-dropdown ul li em {
 }
 
 div.token-input-dropdown ul li.token-input-selected-dropdown-item {
-    background-color: #d0efa0;
+    background-color: #9cc6f3;
 }
