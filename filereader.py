@@ -17,6 +17,7 @@ import re		#regular expressions
 import datetime	#for datetime objects
 import sys		#for system calls
 import os		#for os.path.split()
+from decimal import Decimal #for use of DecimalField
 from optparse import OptionParser
 
 from beat.settings import LOGS_PATH, GIT_PATH
@@ -502,9 +503,9 @@ class FileReader:
 		#Benchmark
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
 		#convert these to float explicitly
-		utime = float(utime)
-		stime = float(stime)
-		etime = float(etime)
+		utime = Decimal(utime)
+		stime = Decimal(stime)
+		etime = Decimal(etime)
 		#now create and save the db object
 		b, created = Benchmark.objects.get_or_create(model=m, algorithm_tool = at,
 			date_time=date, 
