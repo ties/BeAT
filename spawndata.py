@@ -17,9 +17,9 @@ for i in b:
 	i.system_time = varieer(i.system_time)
 	i.elapsed_time = varieer(i.elapsed_time)
 	i.total_time = i.user_time + i.system_time + i.elapsed_time
-	bench, c = Benchmark.objects.get_or_create(model=i.model, algorithm_tool=at, date_time=i.date_time, defaults={'user_time':i.user_time,
-				'system_time':i.system_time,'elapsed_time':i.elapsed_time,
-				'total_time':i.total_time,
+	bench, c = Benchmark.objects.get_or_create(model=i.model, algorithm_tool=at, date_time=i.date_time, defaults={'user_time':str(i.user_time),
+				'system_time':str(i.system_time),'elapsed_time':str(i.elapsed_time),
+				'total_time':str(i.total_time),
 				'transition_count':i.transition_count, 'states_count':i.states_count,
 				'memory_VSIZE':i.memory_VSIZE, 'memory_RSS':i.memory_RSS, 'finished':i.finished})
 	
