@@ -4,7 +4,7 @@ from decimal import Decimal
 from datetime import datetime
 
 def varieer(time):
-	return Decimal(str(time * random.random()*(0.2 + 0.9)))
+	return Decimal(time) * Decimal(str(random.random()*(0.2 + 0.9)))
 
 b = Benchmark.objects.all()
 for i in b:
