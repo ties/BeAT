@@ -1,6 +1,8 @@
 import sys
 import time
 import os
+import django
+from django.template import Template, Context, loader
 
 class Job:
 	
@@ -14,6 +16,15 @@ class JobGenerator:
 	__directory = "."
 	jobs = []
 	
+	def pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=""):
+		if not filename:
+			filename = toolname
+		t = Template( open('jTemplate.tpl','r').read() )
+		#t = get_template('jobs/jTemplate.tpl')
+		c = Context({"nodes": nodes, "toolname": toolname, "tooloptions": tooloptions, "modelname":modelname, "prefix":prefix, "postfix":postfix, "filename":filename})
+		result = t.render(c);
+		print result
+		
 	
 	def __getSysInfo(self, toolname, modelname, tooloptions):
 		result = ""
@@ -51,8 +62,8 @@ class JobGenerator:
 		result += "echo Setting stack to 64MB\n"
 		result += "ulimit -s 65536\n"
 		return result
-	
-	def pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=None):
+		
+	def _pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=None):
 		"""Generates the jobs"""
 		result = ""
 		if filename is None:
