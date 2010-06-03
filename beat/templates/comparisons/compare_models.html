@@ -2,10 +2,31 @@
 {% block title %}Benchmarks{% endblock %}
 {% block content %}
 		<h2>Comparison: {{ comparison.name }}</h2>
-		<img src="benchmark.png" style="width:100%;" alt="Model compare graph" />
+		<img src="benchmark.png" style="width:100%;" ismap usemap="#points" alt="Model compare graph" />
+		
+		<table class="benchmarks">
+			<tr>
+				<th id="modelsort" class="sort">Model</th>
+				<th id="statessort" class="sort">States</th>
+				<th id="runtimesort" class="sort">Runtime</th>
+				<th id="memorysort" class="sort">Memory (RSS)</th>
+				<th id="finishedsort" class="sort">Finished</th>
+			</tr>
+			
+			{% for b in benches %}
+			<tr>
+				<td>{{ b.model }}</td>
+				<td>{{ b.states_count }}</td>
+				<td>{{ b.elapsed_time|floatformat:3 }}</td>
+				<td>{{ b.memory_RSS }}</td>
+				<td>{{ b.finished|yesno:"yes,no,maybe" }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+		
 		<p><a href="/compare/model/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 		
-		<form action="{% url comparisons.views.export_model_graph comparison.id %}" method="post">{% csrf_token %}
+		<form action="/compare/model/{{ comparison.id }}/export" method="post">{% csrf_token %}
 		{{ form.as_p }}
 		<input type="submit" value="Export" />
 		</form>

@@ -1,14 +1,21 @@
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render_to_response, redirect, get_object_or_404, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from forms import *
 from beat.tools import graph
+from django.views.decorators.cache import cache_page
+
+# MatPlotLib
+import numpy as np
+
 """
 Produces a scatterplot from a set of benchmarks.
 TODO:
 @param id Comparison id to retrieve a set of Benchmark id's from the db (currently takes the whole dataset - no id yet)
 """ 
-def scatterplot(request, id):
+@cache_page(60 * 15)
+def scatterplot(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
@@ -93,8 +100,7 @@ def scatterplot(request, id):
 	# Output graph
 	fig.set_size_inches(5,10)
 	canvas = FigureCanvas(fig)
-	response = HttpResponse(content_type='image/png')
-	canvas.print_png(response)
+	response = graph.export(canvas, c.name, format)
 	return response
 
 """
@@ -102,6 +108,7 @@ Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
 @param id ModelComparison ID from the database, used filter the benchmark data from the db.
 """
+@cache_page(60 * 15)
 def graph_model(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -191,12 +198,14 @@ def graph_model(request, id, format='png'):
 	fig.autofmt_xdate()
 	
 	fig.subplots_adjust(right=0.7)
+
 	# Output
 	canvas = FigureCanvas(fig)
 	#fig.savefig('benchmark.pdf')
 	response = graph.export(canvas, comparison.name, format)
 	return response
 
+@login_required()
 def export_graph(request, id, model=False):
 	if request.method == 'POST': # If the form has been submitted...
 		form = ExportGraphForm(request.POST) # A form bound to the POST data
@@ -205,13 +214,28 @@ def export_graph(request, id, model=False):
 			if model:
 				return graph_model(request, id, format)
 			else:
-				return simple(request, id, format)
+				return scatterplot(request, id, format)
 	else:
 		form = ExportGraphForm() # An unbound form
 
 	return render_to_response('comparisons/compare.html', {
 		'comparison' : Comparison.objects.get(pk=id), 'form': form,
 	}, context_instance=RequestContext(request))
+	
+"""
+Deletes a Comparison if model=False; else deletes a ModelComparison
+@param id The id of the (Model)Comparison that needs to be deleted
+@TODO user authorisation
+"""	
+@login_required()
+def comparison_delete(request, id, model=False):
+	if model:
+		c = ModelComparison.objects.get(pk=id)
+	else:
+		c = Comparison.objects.get(pk=id)
+	c.delete()
+	return redirect('/user/compare/')
+
 """
 Shows the comparison graph that is saved by a user.
 @param id Comparison id if model=False; else ModelComparison id
@@ -222,12 +246,13 @@ def compare_detail(request, id, model=False):
 	if model:
 		c = get_object_or_404(ModelComparison,pk=id)
 		
-		models = Model.objects.values('id').annotate(num_models=Count('name'))
-		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
-		models = Model.objects.filter(id__in=[b.model.id for b in benches])
+		#models = Model.objects.values('id').annotate(num_models=Count('name'))
+		#benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
+		#models = Model.objects.filter(id__in=[b.model.id for b in benches])
+		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm)
 		
 		form = ExportGraphForm()
-		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form,  }, context_instance=RequestContext(request))
+		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form,  'benches' : benches}, context_instance=RequestContext(request))
 	else:
 		c = get_object_or_404(Comparison,pk=id)
 		form = ExportGraphForm()
@@ -246,6 +271,7 @@ def compare_detail(request, id, model=False):
 """
 ModelCompareForm handler
 """	
+@login_required()
 def compare_model(request):
 	"""
 	return render_to_response('compare_models_form.html', { 'tools' : Tool.objects.all() }, context_instance=RequestContext(request))
@@ -264,7 +290,7 @@ def compare_model(request):
 			
 			c.hash = c.getHash()
 			if (c.name == ''): 
-				c.name = str(id)
+				c.name = str(c.id)
 			c.save()
 			
 			#return render_to_response('compare_models.html', { 'id' : comparison.id }, context_instance=RequestContext(request))
@@ -277,6 +303,7 @@ def compare_model(request):
 	}, context_instance=RequestContext(request))
 	
 	
+@login_required()
 def compare_scatterplot(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareScatterplotForm(request.POST) # A form bound to the POST data
@@ -293,7 +320,7 @@ def compare_scatterplot(request):
 			
 			c.hash = c.getHash()
 			if (c.name == ''): 
-				c.name = str(id_a)
+				c.name = str(c.id)
 			c.save()
 			return redirect('detail_benchmark', id=c.id)
 	else:

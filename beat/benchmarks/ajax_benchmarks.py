@@ -68,9 +68,11 @@ def getResponse(qs,data):
 	if optionsdone==False:
 		options = getOptions(qs)
 	
+	#Adding values of selected extra columns:
+	#Benchmark.objects.extra(select={"name":'SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id'})
 	benchmark_ids = list(qs.values_list('id',flat=True))
 	
-	extracolumns = getColumns(qs)
+	extracolumns = getExtraColumns(qs)
 	
 	qs = sortQuerySet(qs,data['sort'])
 	
@@ -109,7 +111,7 @@ def getTools(qs):
 	return tools
 
 def getOptions(qs):
-	ops = ValidOption.objects.filter(algorithm_tool__in=qs.values_list("algorithm_tool__id"))
+	ops = ValidOption.objects.filter(algorithm_tool__in=qs.values_list("algorithm_tool__id"))#use id's of benchmarks here
 	optionlist = ops.values("option__id","option__name","option__takes_argument").distinct()
 	options = []
 	
@@ -130,12 +132,7 @@ def sortQuerySet(qs,sort):
 	qs = qs.order_by(s)
 	return qs
 
-def getColumns(qs):
-	result = []
-	#result.append({'header':'Model','value':'model__name'})
-	#result.append({'header':'States','value':'states_count'})
-	#result.append({'header':'Runtime','value':'total_time'})
-	#result.append({'header':'Memory (RSS)','value':'memory_RSS'})
-	#result.append({'header':'Memory (VSIZE)','value':'memory_VSIZE'})
-	#result.append({'header':'Finished','value':'finished'})
-	return result
+def getExtraColumns(qs):
+	cols = ExtraValue.objects.filter(benchmark__in=qs.values_list("id")).values("name").distinct()
+	#test dit! print cols
+	return cols

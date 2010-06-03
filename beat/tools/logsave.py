@@ -25,7 +25,7 @@ if not path.exists(LOGS_PATH):
 	author = "Writer a@a.com"
 	c.author=c.committer=author
 	c.commit_time=c.author_time=int(time())
-	tz = parse_timezone('-0200')
+	tz = parse_timezone('+0200')
 	c.commit_timezone=c.author_timezone=tz
 	c.encoding="UTF-8"
 	c.message="initial commit"
@@ -65,9 +65,7 @@ def create_log(contents, filename=None, overwrite=False):
 		False on failure, the filename to which the log was saved on success.
 	Raises:
 		GitFileError	when the file exists while overwrite is False
-	"""
-#	if not filename:
-		
+	"""		
 	
 	if not contents:
 		return False

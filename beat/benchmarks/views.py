@@ -8,9 +8,6 @@ from beat.comparisons.models import Comparison, ModelComparison
 from beat.tools import graph, export_csv
 from forms import *
 
-# MatPlotLib
-import numpy as np
-
 #@login_required(redirect_field_name='next')
 def index(request):
 	return render_to_response('base.html', context_instance=RequestContext(request))
@@ -53,19 +50,6 @@ def user_comparisons(request):
 	b_comparisons = list(Comparison.objects.filter(user=request.user.id))
 	m_comparisons = list(ModelComparison.objects.filter(user=request.user.id))
 	return render_to_response('user_compare.html', { 'b_comparisons' : b_comparisons, 'm_comparisons' : m_comparisons }, context_instance=RequestContext(request))
-
-"""
-Deletes a Comparison if model=False; else deletes a ModelComparison
-@param id The id of the (Model)Comparison that needs to be deleted
-@TODO user authorisation
-"""	
-def user_comparison_delete(request, id, model=False):
-	if model:
-		c = ModelComparison.objects.get(pk=id)
-	else:
-		c = Comparison.objects.get(pk=id)
-	c.delete()
-	return redirect('/user/compare/')
 
 def colophon(request):
 	return render_to_response('colophon.html', context_instance=RequestContext(request))
