@@ -257,11 +257,8 @@ class FileReader:
 		s = self.match_regex(r'^memtime (.*?)((?:2|-).*?)(?:$| .*$)', call)
 		#s should be like: [call, toolname, algorithmname]
 		if not s:
-			print "Warning, potential errors, entering experimental fix to try and make it work"
-			print call
-			print r'^.*/(.*?)((?:2|-).*?)(?:$| .*$)'
+			#this is a fix introduced for an alternative naming scheme
 			s = self.match_regex(r'^*/(.*?)((?:2|-).*?)(?:$| .*$)', call)
-			print s
 			if not s:
 				#that's bad
 				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
@@ -590,6 +587,10 @@ class FileReader:
 				raise FileReaderError("Error: No file(s) provided.", debug_data=args)
 			else:
 				raise FileReaderError("Error: No file(s) provided.")
+		
+		if not self.verbose:
+			self.verbose=V_QUIET
+		
 		self.print_message(V_VERBOSE, "Verbosity level: %s"%(self.verbose))
 		
 		runcounter = 0
