@@ -38,6 +38,7 @@ urlpatterns = patterns('',
 	
 	# Overige pagina's
 	(r'^colophon/$', 'benchmarks.views.colophon')
+	(r'^tool_upload/$', 'benchmarks.views.tool_upload'),
 )
 
 # static media: DEVELOPMENT ONLY!

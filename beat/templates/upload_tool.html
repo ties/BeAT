@@ -1,12 +1,13 @@
 {% extends "base_site.html" %}
 {% block title %}Upload Tool{% endblock %}
 {% block content %}
-		<h2>Upload log</h2>
+		<h2>Upload Tool</h2><span id="ajaxLoad"></span>
 		
 		<!-- START CONTENT HERE -->
-		<form enctype="multipart/form-data" action="/upload/" method="post">{% csrf_token %}
-		{{ form.as_p }}
-		<input type="submit" value="Submit" />
+		<form action="{% url benchmarks.views.tool_upload %}" method="post">{% csrf_token %}
+			<table>{{ form.as_table }}</table>
+		<input type="submit" name= "submit" value="Submit" />
+		<button type="button">test</button>
 		</form>
 		<!-- END OF CONTENT -->
 {% endblock %}

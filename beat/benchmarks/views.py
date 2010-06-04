@@ -53,3 +53,50 @@ def user_comparisons(request):
 
 def colophon(request):
 	return render_to_response('colophon.html', context_instance=RequestContext(request))
+	
+
+def tool_upload(request):
+	import time
+	import sys
+	from beat.gitinterface import *
+	dummydate = datetime.now()
+	with_git = False
+	repository = GitInterface(os.path.join(GIT_PATH, 'ltsmin'))
+	if "with_git" in sys.argv:
+		with_git = True
+		repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+		repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
+		repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+		
+	no_error = True
+	if request.method == 'POST':
+		form = ToolUploadForm(request.POST)
+		if form.is_valid():
+			version_name = form.cleaned_data['version_name']
+			tool_name = form.cleaned_data['tool_name']
+			algorithm_name = form.cleaned_data['algorithm_name']
+			git_revision = form.cleaned_data['git_revision']
+			expression = form.cleaned_data['expression']
+			options = form.cleaned_data['options']
+			matching_item = repository.get_matching_item(git_revision)
+			if str(repository.get_sha(matching_item)).startswith(git_revision):
+				a, created = Algorithm.objects.get_or_create(name=algorithm_name)
+				t, created = Tool.objects.get_or_create(name=tool_name)
+				rx, created = Regex.objects.get_or_create(regex=options)
+				dummydate = datetime(*repository.get_date(repository.get_matching_item(revision))[:6])
+				at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=version_name)
+				y = options.split(';')
+				for z in y:
+					x = z.split(":")
+					op, created = Option.objects.get_or_create(name=x[0], takes_argument=(x[0].endswith("=")))
+					vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
+					try:
+						rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut=x[1])
+					except IndexError:
+						pass
+				form = ToolUploadForm()
+			else:
+				form = ToolUploadForm(initial={'tool_name' : tool_name, 'algorithm_name' : algorithm_name, 'git_revision' : 'git revision does not exist', 'expression' : expression, 'options' : options})
+	else:
+		form = ToolUploadForm()
+	return render_to_response('upload_tool.html', {'form': form,}, context_instance=RequestContext(request))
