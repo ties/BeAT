@@ -1,20 +1,28 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
+import re
 
 from beat.jobs.forms import *
+
+@login_required
+def jobgen_load(request):
+	match = re.search(r'/id=(?P<id>[0-9]+)', request.path)
+	id = match.group('id')
+	if not id:
+		return HttpResponseBadRequest()
+	id = int(id)
+	jfilter = get_object_or_404(JobsFilter, pk=id, user=request.user)
+	jobform = JobGenForm()
+	jobform.change_defaults(jfilter)
+	suiteform = SuiteGenForm()
+	return render_to_response('jobs/jobgen.html', {'jform':jobform, 'sform':suiteform}, context_instance=RequestContext(request))
 
 """Page for batch job generation
 """
 @login_required
 def jobgen(request):
-	#fetch tool/algorithms
-	#t = Tool.objects.all()
-	#a = Algorithm.objects.all()
-	#fetch models
-	#m = Model.objects.all()
-	#display page
 	jobform = JobGenForm()
 	suiteform = SuiteGenForm()
 	return render_to_response('jobs/jobgen.html', {'jform':jobform, 'sform':suiteform}, context_instance=RequestContext(request))
@@ -30,6 +38,14 @@ def jobgen_create(request):
 			t = form.cleaned_data['tool']
 			a = form.cleaned_data['algorithm']
 			m = form.cleaned_data['models']
+			if (form.name):
+				c, created = JobsFilter.objects.get_or_create(
+					name = name,
+					user = request.user,
+					tool = t,
+					algorithm = a,
+					model = m
+				)
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
 			jobs = []
@@ -66,3 +82,11 @@ def suitegen_create(request):
 			return redirect('jobgen')
 	else:
 		return redirect('jobgen')
+
+
+@login_required()
+def user_jobs(request):
+	jobs = (JobsFilter.objects.filter(user=request.user))
+	return render_to_response('jobs/user_jobs.html', { 'user_jobs' : jobs }, context_instance=RequestContext(request) )
+	
+	

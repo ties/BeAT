@@ -1,0 +1,20 @@
+{% extends "base_site.html" %}
+{% block title %}My Jobs{% endblock %}
+{% block content %}
+		<h2>My Jobs</h2>
+		<h3>Jobs</h3>
+		{% if user_jobs %}
+		<ul>
+			{% for j in user_jobs %}
+				<li>
+					<a href="/jobgen/id={{ j.pk }}/">{{ j }}</a> 
+					- ({{ j.date_time|date:"SHORT_DATE_FORMAT" }} - {{ j.date_time|time:"H:i" }})
+					- <a href="/user_jobs/{{ j.pk }}/delete">delete</a>
+				</li>
+			{% endfor %}
+		</ul>
+		{% else %}
+			<p>No saved jobs found</p>
+		{% endif %}
+		
+{% endblock %}
