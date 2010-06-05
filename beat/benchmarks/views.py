@@ -5,8 +5,9 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404, ge
 import datetime
 from beat.benchmarks.models import *
 from beat.comparisons.models import Comparison, ModelComparison
-from beat.tools import graph, export_csv
+from beat.tools import graph, export_csv, regex_tester
 from forms import *
+import json
 
 #@login_required(redirect_field_name='next')
 def index(request):
@@ -95,3 +96,8 @@ def tool_upload(request):
 	else:
 		form = ToolUploadForm()
 	return render_to_response('upload_tool.html', {'form': form,}, context_instance=RequestContext(request))
+
+def test_regex(request):
+	data = json.loads(request.POST['data'])
+	dump = json.dumps({'result': regex_tester.test_regex(data['regex'], data['testlog'])})
+	return HttpResponse(dump,mimetype="application/json")
