@@ -10,7 +10,17 @@ from os import *
 #time
 from time import time
 
-LOGS_PATH = path.join(getcwd(), "logs")
+from beat.settings import LOGS_PATH
+
+class GitFileError(Exception):
+	def __init__(self, error, filename=None):
+		self.error	  = error
+		self.filename = filename
+	def __str__(self):
+		if filename:
+			return "Error occured while working with %s: %s."%(filename, error)
+		else:
+			return "Error occured: %s."%(error)
 
 # initialize the repo if it doesn't exists, or load it if it does
 if not path.exists(LOGS_PATH):
@@ -38,7 +48,11 @@ if not path.exists(LOGS_PATH):
 	print "success!"
 else:
 	#this is how to create a Repo object from an existing repository
-	repo = Repo(LOGS_PATH)
+	from dulwich.errors import NotGitRepository
+	try:
+		repo = Repo(LOGS_PATH)
+	except NotGitRepository as e:
+		raise GitFileError("Error: the path %s exists but is not a git repository."%LOGS_PATH)
 
 #####static variables
 default_perms = 0100644
@@ -53,7 +67,7 @@ def get_latest_tree(repo):
     tree_id = commit.tree
     return repo.tree(tree_id)
 
-def create_log(contents, filename=None, overwrite=False):
+def create_log(contents, filename, overwrite=False):
 	"""creates a log with the specified content.
 	This function creates a log file in the git repository specified by LOGS_PATH in settings.py.
 	If a file with name filename exists, False is returned, unless overwrite=True.
@@ -68,18 +82,17 @@ def create_log(contents, filename=None, overwrite=False):
 	"""		
 	
 	if not contents:
-		return False
+		return "Error: empty contents"
+
+	if path.exists(path.join(LOGS_PATH, filename)) and not overwrite:
+		return "Error: file exists, overwrite not specified"
+
+
 	#create file
 	blob = Blob.from_string(contents)
 	tree = get_latest_tree(repo)
 
-	if not path.exists(path.join(LOGS_PATH, filename)):
-		tree[filename]=(default_perms, blob.id)
-	else:
-		if overwrite:
-			tree[filename]=(default_perms, blob.id)
-		else:
-			return False
+	tree[filename]=(default_perms, blob.id)
 
 	commit = Commit()
 	commit.tree=tree.id
@@ -109,15 +122,13 @@ def get_log(filename):
 		GitFileError		when the file does not exists, or when an exception is raised
 	NOT IMPLEMENTED YET
 	"""
-	pass
+	try:
+		for commit_id in repo.revision_history(repo.head()):
+			tree = repo.tree(repo.commit(repo.head()).tree)
+			if tree.__contains__(filename):
+				(perms, file_blob_id)=tree.__getitem__(filename)
+				return repo.get_blob(file_blob_id).as_raw_string()
+	except Exception as e:
+		raise GitFileError(e)
 
 
-class GitFileError(Exception):
-	def __init__(self, error, filename=None):
-		self.error	  = error
-		self.filename = filename
-	def __str__(self):
-		if filename:
-			return "Error occured while working with %s: %s."%(filename, error)
-		else:
-			return "Error occured: %s."%(error)

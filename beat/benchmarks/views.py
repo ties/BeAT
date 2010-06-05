@@ -58,15 +58,10 @@ def colophon(request):
 def tool_upload(request):
 	import time
 	import sys
-	from beat.gitinterface import *
-	dummydate = datetime.now()
+	import beat.gitinterface as g
+	dummydate = datetime.datetime.now()
 	with_git = False
-	repository = GitInterface(os.path.join(GIT_PATH, 'ltsmin'))
-	if "with_git" in sys.argv:
-		with_git = True
-		repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
-		repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
-		repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+	repository = g.GitInterface(os.path.join(GIT_PATH, 'ltsmin'))
 		
 	no_error = True
 	if request.method == 'POST':
