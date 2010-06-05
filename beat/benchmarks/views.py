@@ -98,5 +98,5 @@ def tool_upload(request):
 	return render_to_response('upload_tool.html', {'form': form,}, context_instance=RequestContext(request))
 
 def test_regex(request):
-	dump = json.dumps({'result': regex_tester.test_regex(request.POST['regex'], request.POST['testlog'])})
+	dump = json.dumps({'result': regex_tester.test_regex(request.POST.get('regex'), request.POST.get('testlog'))})
 	return HttpResponse(dump,mimetype="application/json")

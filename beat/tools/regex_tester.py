@@ -9,7 +9,7 @@ def test_regex(regex, sample_data):
 			return "Error: compilation failed"
 		match = compiled.match(sample_data)
 		if match:
-			return match
+			return str(match.groupdict())
 		else:
 			return "Error: no results"
 	except Exception as e:
