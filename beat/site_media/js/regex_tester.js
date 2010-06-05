@@ -8,7 +8,7 @@ function test(regex, log){
 	$.ajax({
 		url: '/regextester/',
 		type: 'POST',
-		data: "data="+JSON.stringify(data),
+		data: data,
 		beforeSend: function(){
 						$("#ajaxLoad").append('<img src="/site_media/img/ajaxload.gif" />');
 					},
