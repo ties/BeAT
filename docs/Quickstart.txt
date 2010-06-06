@@ -1,0 +1,42 @@
+BeAT Quickstart guide
+
+This file contains information that should get a user started on using BeAT. Unless noted otherwise, a linux environment is assumed for shell commands (which run on the server), while a modern browser with javascript is assumed for the web components. For the shell commands, it is assumed that the user has some idea of how bash works.
+
+Contents
+
+1. Importing log files
+2. Viewing benchmarks
+3. Comparing tools: scatterplots
+4. Comparing models: data over time
+5. Generating jobs
+6. Adding support for new tools
+
+
+Importing log files
+
+Current assumption: the log files are named {as those of elwin}.
+
+Information about possible options is provided by calling "python filereader.py --help" on the command line.
+
+Procedure to import a series of log files in some folder, using the absolute path (pathToLogFolder):
+
+* open a shell and browse to the main BeAT folder {on the test server, this is /var/www/django/BeAT}
+* make sure you have rights to write in ./beat/logs
+* call filereader.py on the log files, using the options (explained below) as desired. For example, the command:
+find ./ltsmin-output/ -type f | xargs python filereader.py --noisy
+feeds all logs in ./ltsmin-output/ -type f to the filereader with the option noisy.
+
+Alternatively, the pop_existing_db.sh script can be used; it sets the environment variable DJANGO_SETTINGS_MODULE to beat.settings and pushes all output into a file (log1.txt~), which can be used for debugging of the import script. The script will generate output on the fly, so tools such as less can be used to see the output as it is generated in the file. Execution of this script is as follows:
+./pop_existing_db.sh ./ltsmin-ouput/*
+
+options:
+--override
+	overrides existing data in the database (without further warning!)
+--noisy
+	sets the verbosity as high as possible
+--verbose (short option -v)
+	sets the verbosity high
+--quiet (short option -q)
+	sets the verbosity to one line per run (since a log may contain multiple runs)
+--silent
+	prints only warnings that indicate database failure

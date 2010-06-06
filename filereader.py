@@ -47,6 +47,7 @@ class FileReader:
 	log = []
 	#the verbosity level of this filereader. default is quiet.
 	verbose = V_QUIET
+	use_dulwich = False
 	override = False
 	
 	def print_message(self, level, text):
@@ -257,11 +258,8 @@ class FileReader:
 		s = self.match_regex(r'^memtime (.*?)((?:2|-).*?)(?:$| .*$)', call)
 		#s should be like: [call, toolname, algorithmname]
 		if not s:
-			print "Warning, potential errors, entering experimental fix to try and make it work"
-			print call
-			print r'^.*/(.*?)((?:2|-).*?)(?:$| .*$)'
+			#this is a fix introduced for an alternative naming scheme
 			s = self.match_regex(r'^*/(.*?)((?:2|-).*?)(?:$| .*$)', call)
-			print s
 			if not s:
 				#that's bad
 				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
@@ -304,10 +302,19 @@ class FileReader:
 		tmp = opts
 		opts = []
 		for i in tmp:
-			if i.takes_argument:
-				opts.append(i.name.encode('ascii', 'ignore') + '=')
+			if i.name.startswith("--"):
+				if i.takes_argument:
+					opts.append(i.name.encode('ascii', 'ignore')[2:] + '=')
+				else:
+					opts.append(i.name.encode('ascii', 'ignore')[2:])
+			elif i.name.startswith(" "):
+				#short option only: don't remember this
+				pass
 			else:
-				opts.append(i.name.encode('ascii', 'ignore'))
+				if i.takes_argument:
+					opts.append(i.name.encode('ascii', 'ignore') + '=')
+				else:
+					opts.append(i.name.encode('ascii', 'ignore'))
 
 		#read the options for the tool and convert them into a nice list
 		#arguments are discarded for now (also, some of those might be bash-parsed and not passed to the algorithm_tool)
@@ -540,26 +547,26 @@ class FileReader:
 				o = Option.objects.get(name=name)
 				ov, created = OptionValue.objects.get_or_create(option=o, value=value)
 				if created:
-					self.print_message(V_VERBOSE, "Notice: created a new OptionValue entry.")
+					self.print_message(V_NOISY, "Notice: created a new OptionValue entry.")
 				else:
-					self.print_message(V_VERBOSE, "Notice: OptionValue already exists:%s, %s"%(name,value))
+					self.print_message(V_NOISY, "Notice: OptionValue already exists:%s, %s"%(name,value))
 				bov, c = BenchmarkOptionValue.objects.get_or_create(optionvalue=ov,benchmark=b)
 			
 			#ExtraValues
 			extravals=data['extravals']
 			if not extravals:
 				#nothing to see here, move along
-				return b
+				return (created, b)
 			#create 'em
 			for key in extravals:
 				val=extravals[key]
 				ev = ExtraValue(name=key, value=val, benchmark=b)
 				ev.save()
-			return b
+			return (created, b)
 		else:
 			self.print_message(V_NOISY,"Notice: Benchmark already exists: %s on %s, which ran on: %s"%(t.name, m.name, date))
 			#existing benchmark; don't modify
-			return None
+			return (created, b)
 	#end of write_to_db
 
 	def main(self, file_arg=None, verbosity=0):
@@ -582,6 +589,8 @@ class FileReader:
 			#call from commandline, use parse_app_options()
 			(options, args) = self.parse_app_options()
 			self.verbose = options.verbose
+			self.override = options.override
+			self.use_dulwich = options.use_dulwich
 			file_list = args
 
 		#check if file(s) were provided
@@ -590,6 +599,10 @@ class FileReader:
 				raise FileReaderError("Error: No file(s) provided.", debug_data=args)
 			else:
 				raise FileReaderError("Error: No file(s) provided.")
+		
+		if not self.verbose:
+			self.verbose=V_QUIET
+		
 		self.print_message(V_VERBOSE, "Verbosity level: %s"%(self.verbose))
 		
 		runcounter = 0
@@ -627,17 +640,14 @@ class FileReader:
 				data = self.parse(run)
 				if data:
 					#write to the database
+					error=False
 					try:
-						bench=self.write_to_db(data)
-						created=bool(bench)
-						if bench:
+						(created, bench)=self.write_to_db(data)
+						if created:
 							id=bench.pk
-							if id:
-								#write the log
-								log_file_path = self.write_to_log(run, "%d"%(id))
-								bench.logfile="%s"%(log_file_path)
-								bench.save()
-						error=False
+							log_file_path = self.write_to_log(run, "%d"%(id))
+							bench.logfile="%s"%(log_file_path)
+							bench.save()
 					#handle known error FileReaderError
 					except FileReaderError as fre:
 						#some known error occured, check how bad it is
@@ -652,20 +662,26 @@ class FileReader:
 						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
 						error=True
 					#handle other errors
-					except Exception, e:
+					#except Exception, e:
 						#an unknown error occured, skip this part
-						self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
-						errorcounter+=1
-						error=True
+					#	self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
+					#	errorcounter+=1
+					#	error=True
 					#print the right message
 					finally:
 						if error:
 							self.print_message(V_QUIET, "Note: Error writing to database from file %s"%(f))
 						else:
 							if created:
-								self.print_message(V_QUIET, "Note: Added data to database, id: %s from file %s"%(bench.pk, f))
+								if self.verbose==V_VERBOSE:
+									self.print_message(V_VERBOSE, "Note: Added data to database, id: %s from file %s, with data %s"%(bench.pk, f, bench.get_print_data()))
+								else:
+									self.print_message(V_QUIET, "Note: Added data to database, id: %s from file %s"%(bench.pk, f))
 							else:
-								self.print_message(V_QUIET, "Note: Tried to add data to database, already exists, from file %s"%( f))
+								if self.verbose==V_VERBOSE:
+									self.print_message(V_VERBOSE, "Note: Tried to data to database, but essential data already exists, id: %s from file %s, with data %s"%(bench.pk, f, bench.get_print_data()))
+								else:
+									self.print_message(V_QUIET, "Note: Tried to add data to database, already exists, id: %s from file %s"%(bench.pk, f))
 				else:
 					#there was no data returned while parsing
 					self.print_message(V_VERBOSE, "Warning: no data, skipping run %s"%(runcounter))
@@ -703,13 +719,20 @@ class FileReader:
 		header= lines[:i]
 
 		f = os.path.join(LOGS_PATH, filename)
-		with open(f, 'wb') as file:
-			for x in lines:
-				file.write(x)
 		fh = os.path.join(LOGS_PATH, filename + ".header")
-		with open(fh, 'wb') as file:
-			for x in lines:
-				file.write(x)
+
+		if self.use_dulwich:
+			from beat.tools.logsave import create_log, __init_code__
+			repo = __init_code__()
+			create_log(repo, lines, f)
+			create_log(repo, header, fh)
+		else:
+			with open(f, 'wb') as file:
+				for x in lines:
+					file.write(x)
+			with open(fh, 'wb') as file:
+				for x in lines:
+					file.write(x)
 		return f
 
 
@@ -726,13 +749,15 @@ class FileReader:
 		parser.add_option("--silent", 
 			action="store_const", const=V_SILENT, dest = "verbose", help = "Print only dangerous errors (like database integrity warnings).")
 		parser.add_option("-q", "--quiet",
-			action="store_const", const=V_QUIET, dest="verbose", help = "Only print errors and bad warnings.")
+			action="store_const", const=V_QUIET, dest="verbose", help = "Print default amount of messages; one per item under normal circumstances.")
 		parser.add_option("-v", "--verbose",
-			action="store_const", const=V_VERBOSE, dest="verbose", help = "Print helpful things.")
+			action="store_const", const=V_VERBOSE, dest="verbose", help = "Print additional (helpful) information, such as a summary of added data.")
 		parser.add_option("--noisy",
-			action="store_const", const=V_NOISY, dest="verbose", help = "Print everything.")
+			action="store_const", const=V_NOISY, dest="verbose", help = "Print as much as possible. Useful for debugging this script, not intended for other use.")
 		parser.add_option("--override",
 			action="store_const", const=True, dest="override", help = "Override existing data")
+		parser.add_option("--dulwich",
+			action="store_const", const=True, dest="use_dulwich", help = "Use this switch if logs are to be saved to a local git repository")
 		return parser.parse_args()
 	#end of parse_app_options
 #end of FileReader

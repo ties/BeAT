@@ -41,7 +41,10 @@ urlpatterns = patterns('',
 	(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
 	
 	# Overige pagina's
-	(r'^colophon/$', 'benchmarks.views.colophon')
+	(r'^colophon/$', 'benchmarks.views.colophon'),
+	(r'^tool_upload/$', 'benchmarks.views.tool_upload'),
+	# Page to test a regular expression through AJAX
+	(r'^regextester/$','benchmarks.views.test_regex'),
 )
 
 # static media: DEVELOPMENT ONLY!
