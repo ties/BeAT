@@ -331,11 +331,12 @@ class FileReader:
 		counter = 0
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
 		#we need a value, however; we'll use True
+		print optlist
 		for t in optlist:
 			o, v = t
 			if not v:	#no parameter
 				v=True
-
+			
 			if not o.startswith('--'): #shortcut!
 				p = o[1:] #chop the '-'
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
@@ -343,8 +344,6 @@ class FileReader:
 					optlist[counter]=(rs.option.name, True)
 				else:
 					optlist[counter]=(rs.option.name, v)
-			else:
-				optlist[counter]=(o[2:], v)
 			counter+=1
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])
