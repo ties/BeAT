@@ -8,6 +8,7 @@ class JobsFilter(models.Model):
 	tool = models.ForeignKey('benchmarks.Tool')
 	algorithm = models.ForeignKey('benchmarks.Algorithm')
 	model = models.ForeignKey('benchmarks.Model')
+	options = models.CharField(max_length=255)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	
 	def __unicode__(self):

@@ -38,13 +38,15 @@ def jobgen_create(request):
 			t = form.cleaned_data['tool']
 			a = form.cleaned_data['algorithm']
 			m = form.cleaned_data['models']
+			o = form.cleaned_data['options']
 			if (form.name):
 				c, created = JobsFilter.objects.get_or_create(
 					name = name,
 					user = request.user,
 					tool = t,
 					algorithm = a,
-					model = m
+					model = m,
+					options = o
 				)
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
