@@ -39,7 +39,8 @@ def jobgen_create(request):
 			a = form.cleaned_data['algorithm']
 			m = form.cleaned_data['models']
 			o = form.cleaned_data['options']
-			if (form.name):
+			name = form.cleaned_data['name']
+			if name:
 				c, created = JobsFilter.objects.get_or_create(
 					name = name,
 					user = request.user,
@@ -50,10 +51,8 @@ def jobgen_create(request):
 				)
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
-			jobs = []
-			for x in m:
-				jobs.append(j.pbsgen("1", "%s%s"%(t.name,a.name),"--cache","%s"%(x.name)))
-			return render_to_response('jobs/jobgen_create.html', { 'job':jobs }, context_instance=RequestContext(request))
+			job = j.pbsgen("1", "%s%s"%(t.name,a.name),o,m);
+			return render_to_response('jobs/jobgen_create.html', { 'job':[job] }, context_instance=RequestContext(request))
 		else:
 			return redirect('jobgen')
 	else:
