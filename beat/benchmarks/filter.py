@@ -1,28 +1,32 @@
 from datetime import datetime
 
-MODEL = 'model'
-ALGORITHM = 'algorithm'
-TOOL = 'tool'
-MEMORY = 'memory'
-RUNTIME ='runtime'
-STATES ='states'
-TRANSITIONS ='transitions'
-DATE ='date'
-OPTIONS = 'options'
-FINISHED = 'finished'
+MODEL 			= 'model'
+ALGORITHM 		= 'algorithm'
+TOOL 			= 'tool'
+MEMORY 			= 'memory'
+RUNTIME 		= 'runtime'
+STATES 			= 'states'
+TRANSITIONS 	='transitions'
+DATE 			='date'
+OPTIONS 		= 'options'
+FINISHED 		= 'finished'
+COMPUTERNAME 	= 'computername'
+CPU 			= 'cpu'
+RAM				= 'ram'
+COMPUTERNAME	= 'computername'
 
-EQUAL = 'equal'
-GREATERTHAN = 'greaterthan'
-LESSTHAN = 'lessthan'
-ON = 'on'
-BEFORE= 'before'
-AFTER = 'after'
-TRUE = 'true'
-FALSE = 'false'
+EQUAL 			= 'equal'
+GREATERTHAN 	= 'greaterthan'
+LESSTHAN 		= 'lessthan'
+ON 				= 'on'
+BEFORE			= 'before'
+AFTER 			= 'after'
+TRUE 			= 'true'
+FALSE 			= 'false'
 
-LISTFILTERS = [MODEL,ALGORITHM,TOOL]
+LISTFILTERS = [MODEL,ALGORITHM,TOOL,COMPUTERNAME]
 
-VALUEFILTERS = [MEMORY,RUNTIME,STATES,TRANSITIONS]
+VALUEFILTERS = [MEMORY,RUNTIME,STATES,TRANSITIONS,RAM]
 
 class Filter(object):
 	def __init__(self, type, row):
@@ -42,6 +46,10 @@ class ListFilter(Filter):
 			f = "algorithm_tool__algorithm__in"
 		elif self.type == TOOL:
 			f = "algorithm_tool__tool__in"
+		elif self.type == COMPUTERNAME:
+			f = "hardware__in"
+		elif self.type == CPU:
+			f = "hardware__cpu__in"
 		
 		col = {}
 		col[f] = list(set(self.list))
@@ -64,6 +72,8 @@ class ValueFilter(Filter):
 			f="memory_RSS"
 		elif self.type==RUNTIME:
 			f="total_time"
+		elif self.type==RAM:
+			f="hardware__memory"
 		
 		if self.style==EQUAL:
 			f+="__exact"
@@ -122,6 +132,15 @@ class FinishedFilter(Filter):
 		
 		return qs
 
+class CPUFilter(Filter):
+	def __init__(self,row,list):
+		super(CPUFilter,self).__init__(CPU,row)
+		self.list = list
+	
+	def apply(self,qs):
+		qs = qs.filter(hardware__cpu__in=self.list)
+		return qs
+
 def convertfilters(arr):
 	result = {}
 	for filter in arr:
@@ -129,7 +148,7 @@ def convertfilters(arr):
 		type = filter['type']
 		if type in LISTFILTERS:
 			list = []
-			for v in filter['list']:
+			for v in filter['value']:
 				list.append(int(v))
 			result[row] = ListFilter(type,row,list)
 		elif type in VALUEFILTERS:
@@ -138,9 +157,11 @@ def convertfilters(arr):
 			result[row] = DateFilter(row,filter['style'],filter['value'])
 		elif type==OPTIONS:
 			options = {}
-			for i in range(len(filter['options'])):
-				options[int(filter['options'][i])] = str((filter['values'])[i])
+			for i in range(len(filter['value'][0])):
+				options[int(filter['value'][0][i])] = str((filter['value'][1])[i])
 			result[row] = OptionsFilter(row,options)
 		elif type==FINISHED:
 			result[row] = FinishedFilter(row,filter['value'])
+		elif type==CPU:
+			result[row] = CPUFilter(row,filter['value'])
 	return result

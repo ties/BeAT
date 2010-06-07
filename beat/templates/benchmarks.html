@@ -1,8 +1,8 @@
 {% extends "base_site.html" %}
 {% block title %}Benchmarks{% endblock %}
 {% block content %}
-		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
-		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filter.js"></script>
+		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/benchmarktable.js"></script>
+		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filtertable.js"></script>
 		
 		<h2 class="benchmarktitle">Benchmark Table</h2>
 		<ul class="mega">
@@ -19,63 +19,33 @@
 		<br />
 		
 		<!-- FILTER TABLE -->
-		<form onsubmit="return false;">
-			<table style="width:480px" id="filters" cellpadding="0" cellspacing="0">
-				<tr id="filterrow0">
-					<td width="320" align="left">
-						<select size="1" class="filterType" id="filterType0" onchange="changeFilterType(this,0);">
-							<option value="empty">&lt;empty&gt;</option>
-							<option value="model">Model</option>
-							<option value="algorithm">Algorithm</option>
-							<option value="tool">Tool</option>
-							<option value="date">Date</option>
-							<option value="memory">Memory</option>
-							<option value="runtime">Runtime</option>
-							<option value="states">states</option>
-							<option value="transitions">transitions</option>
-							<option value="options">Options</option>
-							<option value="finished">Finished</option>
-						</select>
-						<select size="1" class="filterStyle" id="filterStyle0">
-							<option value="empty">&lt;empty&gt;</option>
-						</select>
-						<input type="text" class="filterValue" id="filterValue0">
-					</td>
-					<td align="right" style="width:160px">
-						<a class="remove" onclick="removeFilterRow(0);"><img src="{{ MEDIA_URL }}img/remove_filter.png" alt="remove"></a>
-						<a class="add" onclick="addFilterRow(0);"><img src="{{ MEDIA_URL }}img/add_filter.png" alt="add"></a>
-					</td>
-				</tr>
-			</table>
-		</form>
+		<table id="filters" cellpadding="0" cellspacing="0"></table>
 		<!-- END FILTER TABLE -->
 		
 		<!-- BENCHMARK TABLE -->
-		<form action="{% url benchmarks.views.export_benchmarks %}" method="post" name="benchmark_form">{% csrf_token %}
-			<table class="benchmarks">
-				<tr>
-					<th>&nbsp;</th>
-					<th id="modelsort" class="sort">Model</th>
-					<th id="statessort" class="sort">States</th>
-					<th id="runtimesort" class="sort">Runtime</th>
-					<th id="memorysort" class="sort">Memory (RSS)</th>
-					<th id="finishedsort" class="sort">Finished</th>
-				</tr>
-			</table>
-			<table class="paging">
-				<tr>
-					<td id="previous"><img src="{{ MEDIA_URL }}img/prev_button.png" /></td>
-					<td id="paginginfo">Showing results 0-0 of 0 results with <input type="text" name="resperpage" id="resperpage" value="200" size="3" /> results per page</td>
-					<td id="next"><img src="{{ MEDIA_URL }}img/next_button.png" /></td>
-				</tr>
-			</table>
-		{{ form.name.errors }}
+		<table class="benchmarks">
+			<tr>
+				<th>&nbsp;</th>
+				<th id="modelsort" class="sort">Model</th>
+				<th id="statessort" class="sort">States</th>
+				<th id="runtimesort" class="sort">Runtime</th>
+				<th id="memorysort" class="sort">Memory (RSS)</th>
+				<th id="finishedsort" class="sort">Finished</th>
+			</tr>
+		</table>
+		<table class="paging">
+			<tr>
+				<td id="previous"><img src="{{ MEDIA_URL }}img/prev_button.png" /></td>
+				<td id="paginginfo">Showing results 0-0 of 0 results with <input type="text" name="resperpage" id="resperpage" value="200" size="3" /> results per page</td>
+				<td id="next"><img src="{{ MEDIA_URL }}img/next_button.png" /></td>
+			</tr>
+		</table>
 		<p><label for="id_name">Title</label><input type="text" name="name" id="id_name" /></p>
 		<p>
 			<input type="button" id="CheckAll" value="All" />
-			<input type="button" id="InvertAll" name="InvertAll" value="Invert" />
-			<input type="submit" name="export_csv"  value="Export CSV" />
+			<input type="button" id="InvertAll" value="Invert" />
+			<input type="button" id="checkedfilter" value="Filter Checked" />
+			<input type="button" name="export_csv"  value="Export CSV" />
 		</p>
-		</form>
 		<!-- END BENCHMARK TABLE -->
 {% endblock %}

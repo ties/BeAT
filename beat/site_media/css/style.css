@@ -46,6 +46,10 @@ table.paging tr td{
 	width: 80px;
 }
 
+#filters{
+	width: 320px;
+}
+
 #filters td, #filters tr, #filters th, #filters select, #filters input{
 	margin:0px;
 	padding:0px;
@@ -105,11 +109,14 @@ ul.mega{
 	display: inline;
 	padding: 0px;
 	margin: 0px;
+	min-width: 130px;
 }
 
 li.mega{
 	display: inline;
 	position: relative;
+	border: 1px solid #bbb;
+	width: 130px;
 }
 
 ul.mega li.mega div{
