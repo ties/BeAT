@@ -3,7 +3,7 @@ var ASCENDING = "ASC";
 /** Constant for descending sortorder **/
 var DESCENDING = "DESC";
 
-var DELAY = 2000;
+var DELAY = 600;
 
 /** Global variable which keeps default column names, the names of these columns in the database and whether they are checked or not **/
 var columns =	[
@@ -80,7 +80,9 @@ var data =	{
 
 var table;
 var timeout;
-var previousfilters = [];
+
+var previousRequest;
+var previousSucceededRequest;
 
 /**
  * Function that sends a request to the server
@@ -98,15 +100,19 @@ function makeRequest(d){
 	updating = true;
 	updateagain = false;
 	
+	var str = JSON.stringify(d);
+	previousRequest = str;
+	
 	$.ajax({
 		url: 			'ajax/benchmarks/',
 		type: 			'POST',
-		data: 			"data=" + JSON.stringify(data),
+		data: 			"data=" + str,
 		beforeSend: 	function(){
 							$("#ajaxload").append('<img src="/site_media/img/ajaxload.gif" />');
 						},
 		success: 		function(json){
 							handleResponse(json);
+							previousSucceededRequest = previousRequest;
 						},
 		error: 			function(XMLHttpRequest,textStatus,errorThrown){
 							alert("Error with getting results: "+textStatus);
@@ -114,14 +120,14 @@ function makeRequest(d){
 		complete: 		function(){
 							updating = false;
 							$("#ajaxload").html('');
-							if (updateagain)	update();
+							if (updateagain)	update(true);
 						},
 		dataType: 		'json'
 	});
 }
 
 //function that will start the makerequest
-function update(delay){
+function update(direct){
 	var filters = $(table).filters();
 	
 	//strip all filters that have an error:
@@ -131,12 +137,18 @@ function update(delay){
 	}
 	
 	data.filters = filters2;
+	var str = JSON.stringify(data);
 	
-	clearTimeout(timeout);
-	if (delay!='undefined'){
-		timeout = setTimeout(function(){makeRequest(data);},delay);
-		console.log('yay');
-	}else			timeout = setTimeout(function(){makeRequest(data);},DELAY);
+	if ((!updating && previousSucceededRequest != str) ||
+		(updating && previousRequest != str)){
+		
+		clearTimeout(timeout);
+		if (!direct && !updating)		timeout = setTimeout(function(){makeRequest(data);},DELAY);
+		else							timeout = setTimeout(function(){makeRequest(data);},0);
+		
+	}else{
+		console.log('skipping');
+	}
 }
 
 /**
@@ -367,7 +379,7 @@ function setSorting(id){
 
 function setSubset(){
 	data.subset = checked_benchmarks;
-	update(0);
+	update(true);
 }
 
 /**
@@ -391,7 +403,7 @@ $(document).ready(function(){
 		update();
 	});
 	
-	update(0);
+	update(true);
 	
 });
 

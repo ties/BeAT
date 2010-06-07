@@ -61,6 +61,7 @@
 						}
 						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
+						rewriteRow(filterobj,filterarray,table);
 					break;
 					case ALGORITHM:
 						var newval = [];
@@ -69,6 +70,7 @@
 						}
 						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
+						rewriteRow(filterobj,filterarray,table);
 					break;
 					case TOOL:
 						var newval = [];
@@ -77,6 +79,7 @@
 						}
 						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
+						rewriteRow(filterobj,filterarray,table);
 					break;
 					case COMPUTERNAME:
 						var newval = [];
@@ -85,6 +88,7 @@
 						}
 						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
+						rewriteRow(filterobj,filterarray,table);
 					break;
 					case CPU:
 						var newval = [];
@@ -94,6 +98,7 @@
 							}
 						}
 						filterobj.value = newval;
+						rewriteRow(filterobj,filterarray,table);
 					break;
 					case OPTIONS:
 						var newval = [[],[]];
@@ -105,10 +110,10 @@
 						}
 						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
+						rewriteRow(filterobj,filterarray,table);
 					break;
 				}
 			});
-			showTable(table, filterarray);
 		}
 		
 		initTable(filterarray);
@@ -213,7 +218,6 @@
 									.change(function(){
 										filterobj.value = $(this).val();
 										filterobj.error = true;
-										sendTrigger();
 									});
 					$(fvalue).addClass("filterValue");
 					
@@ -232,7 +236,7 @@
 				case STATES:
 				case TRANSITIONS:
 				case RAM:
-					filterobj.style = "equal";
+					if (filterobj.style == "")	filterobj.style = "equal";
 					
 					var fstyle = $('<select size="1" class="filterStyle" id="filterStyle'+filterobj.row+'"></select>')
 									.change(function(){
@@ -245,8 +249,8 @@
 					$(fstyle).append('<option value="lessthan"'+(filterobj.style=='lessthan' ? ' selected' : '')+'>Less than or equal to</option>');
 					
 					var fvalue = $('<input type="text" id="filterValue'+filterobj.row+'" value="'+filterobj.value+'" />')
-										.change(function(){
-											filterobj.value = parseInt($(this).val());
+										.keyup(function(){
+											filterobj.value = $(this).val();
 											filterobj.error = !(is_int(filterobj.value));
 											setErrorCSS(filterobj);
 											sendTrigger();
@@ -290,83 +294,8 @@
 					
 					rowcontent.push($(td1));
 					
-				break;/*
-				case ALGORITHM:
-					filterobj.style = "";
-					
-					var fvalue = $('<input type="text" id="filterValue'+filterobj.row+'" />')
-									.change(function(){
-										var arr = [];
-										$($(this).val().split(',')).each(function(i,str){
-											if (str.length && is_int(str)){
-												arr.push(parseInt(str));
-											}
-										});
-										filterobj.value = arr;
-										filterobj.error = (arr.length==0);
-										setErrorCSS(filterobj);
-										sendTrigger();
-									});
-					$(fvalue).addClass("filterValue");
-					
-					var td1 = $('<td></td>');
-					$(td1).attr('colspan',2);
-					$(td1).append(fvalue);
-					
-					rowcontent.push($(td1));
-					
 				break;
-				case TOOL:
-					filterobj.style = "";
-					
-					var fvalue = $('<input type="text" id="filterValue'+filterobj.row+'" />')
-									.change(function(){
-										var arr = [];
-										$($(this).val().split(',')).each(function(i,str){
-											if (str.length && is_int(str)){
-												arr.push(parseInt(str));
-											}
-										});
-										filterobj.value = arr;
-										filterobj.error = (arr.length==0);
-										setErrorCSS(filterobj);
-										sendTrigger();
-									});
-					$(fvalue).addClass("filterValue");
-					
-					var td1 = $('<td></td>');
-					$(td1).attr('colspan',2);
-					$(td1).append(fvalue);
-					
-					rowcontent.push($(td1));
-					
-				break;
-				case COMPUTERNAME:
-					filterobj.style = "";
-					
-					var fvalue = $('<input type="text" id="filterValue'+filterobj.row+'" />')
-									.change(function(){
-										var arr = [];
-										$($(this).val().split(',')).each(function(i,str){
-											if (str.length && is_int(str)){
-												arr.push(parseInt(str));
-											}
-										});
-										filterobj.value = arr;
-										filterobj.error = (arr.length==0);
-										setErrorCSS(filterobj);
-										sendTrigger();
-									});
-					$(fvalue).addClass("filterValue");
-					
-					var td1 = $('<td></td>');
-					$(td1).attr('colspan',2);
-					$(td1).append(fvalue);
-					
-					rowcontent.push($(td1));
-					
-				break;
-				*/
+				
 				case DATE:
 					if (!filterobj.style)	filterobj.style = "on";
 					
