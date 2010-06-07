@@ -17,15 +17,13 @@ table.paging tr td{
 	border: 1px solid #ccc;
 }
 
-#next,#previous{
+#next,#previous,#last,#first{
 	width:20px;
 	text-align: center;
 	cursor:pointer;
 }
 
-#next img, #previous img{
-	width:10px;
-	height:20px;
+#next img, #previous img, #last img, #first img{
 	padding: 0px;
 }
 

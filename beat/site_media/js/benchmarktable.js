@@ -431,6 +431,14 @@ function registerFunctionsAndEvents(){
 		previousPage();
 	});
 	
+	$("#last").click(function(){
+		lastPage();
+	});
+	
+	$("#first").click(function(){
+		firstPage();
+	});
+	
 	$("#CheckAll").click(function(){
 		//console.log('starting function, value = '+$(this).attr('value'));
 		if ($(this).attr('value') == "All" )	checkAll();
@@ -576,4 +584,14 @@ function previousPage(){
 		data.page--;
 		update();
 	}
+}
+
+function lastPage(){
+	data.page = Math.ceil(benchmark_ids.length / data.pagesize) - 1
+	update();
+}
+
+function firstPage(){
+	data.page = 0;
+	update();
 }
