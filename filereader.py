@@ -339,12 +339,9 @@ class FileReader:
 			if not o.startswith('--'): #shortcut!
 				p = o[1:] #chop the '-'
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
-				if not v:	#no parameter
-					optlist[counter]=(rs.option.name, True)
-				else:
-					optlist[counter]=(rs.option.name, v)
-			else:
-				optlist[counter]=(o[2:], v)
+			
+			optlist[counter]=(rs.option.name, v)
+			
 			counter+=1
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])

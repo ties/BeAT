@@ -1,3 +1,4 @@
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -8,7 +9,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 24 43 736654
-Call: memtime lpo2lts-grey -c ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/t42.dir 2>&1
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: memtime lpo2lts-grey --cache ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/t42.dir 2>&1
+END OF HEADER
 lpo2lts-grey: Writing output to ./ltsmin-models/mucrl/t42.dir
 lpo2lts-grey: loading model from ./ltsmin-models/mucrl/f42.tbf
 lpo2lts-grey: Start compiling ...
@@ -90,6 +93,7 @@ lpo2lts-grey: finishing the writing
 Exit [0]
 57.28 user, 0.48 system, 58.13 elapsed -- Max VSize = 42976KB, Max RSS = 20948KB
 REPORT ENDS HERE
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -100,7 +104,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 25 42 005837
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime lpo-reach ./ltsmin-models/mucrl/f42.tbf ./ltsmin-models/mucrl/f42.etf 2>&1
+END OF HEADER
 lpo-reach: Exploration order is bfs
 lpo-reach: opening ./ltsmin-models/mucrl/f42.tbf
 lpo-reach: Start compiling ...
@@ -252,6 +258,7 @@ lpo-reach: writing output took 0.220 real 0.220 user 0.000 sys
 Exit [0]
 208.51 user, 1.17 system, 210.36 elapsed -- Max VSize = 223036KB, Max RSS = 202840KB
 REPORT ENDS HERE
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -262,7 +269,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 12 461213
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime ltsmin ./ltsmin-models/mucrl/f42.dir 2>&1
+END OF HEADER
 setting lts_write_segments to 1
 original LTS has 380609 states,  1396512 transitions, and 2 labels
 reading took 0.330 real 0.280 user 0.040 sys
@@ -271,6 +280,7 @@ reduced LTS has 10706 states and  33995 transitions
 Exit [0]
 7.48 user, 0.09 system, 7.65 elapsed -- Max VSize = 54308KB, Max RSS = 35088KB
 REPORT ENDS HERE
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -281,7 +291,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 259352
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime nips2lts-grey ./ltsmin-models/nips/leader.b ./ltsmin-models/nips/leader.dir 2>&1
+END OF HEADER
 nips2lts-grey: NIPS language module initialized
 nips2lts-grey: Writing output to ./ltsmin-models/nips/leader.dir
 nips2lts-grey: loading model from ./ltsmin-models/nips/leader.b
@@ -347,6 +359,7 @@ nips2lts-grey: finishing the writing
 Exit [0]
 0.00 user, 0.02 system, 0.10 elapsed -- Max VSize = 3644KB, Max RSS = 156KB
 REPORT ENDS HERE
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -357,7 +370,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 583645
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime nips-reach ./ltsmin-models/nips/leader.b ./ltsmin-models/nips/leader.etf 2>&1
+END OF HEADER
 nips-reach: Exploration order is bfs
 nips-reach: NIPS language module initialized
 nips-reach: opening ./ltsmin-models/nips/leader.b
@@ -478,6 +493,7 @@ nips-reach: writing output took 0.000 real 0.000 user 0.000 sys
 Exit [0]
 0.02 user, 0.03 system, 0.10 elapsed -- Max VSize = 3644KB, Max RSS = 180KB
 REPORT ENDS HERE
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -488,7 +504,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 760990
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime etf2lts-grey ./ltsmin-models/nips/leader.etf ./ltsmin-models/nips/leader.etf.dir 2>&1
+END OF HEADER
 etf2lts-grey: ETF language module initialized
 etf2lts-grey: Writing output to ./ltsmin-models/nips/leader.etf.dir
 etf2lts-grey: loading model from ./ltsmin-models/nips/leader.etf
@@ -579,6 +597,7 @@ etf2lts-grey: finishing the writing
 Exit [0]
 0.01 user, 0.02 system, 0.10 elapsed -- Max VSize = 3644KB, Max RSS = 136KB
 REPORT ENDS HERE
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -589,7 +608,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 29 20 983136
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime etf-reach ./ltsmin-models/etf/micro.etf 2>&1
+END OF HEADER
 etf-reach: Exploration order is bfs
 etf-reach: ETF language module initialized
 etf-reach: opening ./ltsmin-models/etf/micro.etf
@@ -876,6 +897,7 @@ state space has 23797653084 states
 Exit [0]
 570.18 user, 1.98 system, 573.15 elapsed -- Max VSize = 212676KB, Max RSS = 194236KB
 REPORT ENDS HERE
+BEGIN OF HEADER
 Nodename: thiezorz.student.utwente.nl
 Hardware-name: x86_64
 OS: GNU/Linux
@@ -886,7 +908,9 @@ Hardware-platform: unknown
 Processor: unknown
 Memory-total: 1028804
 DateTime: 2010 03 16 13 38 54 220630
+ToolVersion: ltsmin-1.5-20-g6d5d0c
 Call: memtime etf-reach ./ltsmin-models/etf/cyclic_scheduler.15.1.etf 2>&1
+END OF HEADER
 etf-reach: Exploration order is bfs
 etf-reach: ETF language module initialized
 etf-reach: opening ./ltsmin-models/etf/cyclic_scheduler.15.1.etf
