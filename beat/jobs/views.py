@@ -2,24 +2,18 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404, ge
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseForbidden
-import re
-
+from beat.benchmarks.models import *
 from beat.jobs.forms import *
 
 @login_required
-def jobgen_load(request):
-	match = re.search(r'/id=(?P<id>[0-9]+)', request.path)
-	id = match.group('id')
-	if not id:
-		return HttpResponseBadRequest()
-	id = int(id)
+def jobgen_load(request,id):
 	jfilter = get_object_or_404(JobsFilter, pk=id, user=request.user)
 	data = {	'name':jfilter.name,
 				'nodes':jfilter.nodes,
-				'tool':jfilter.tool,
-				'algorithm':jfilter.algorithm,
+				'tool':jfilter.tool.pk,
+				'algorithm':jfilter.algorithm.pk,
 				'options':jfilter.options,
-				'model':jfilter.model,
+				'model':jfilter.model.pk,
 				'prefix':jfilter.prefix,
 				'postfix':jfilter.postfix
 			}
@@ -68,7 +62,7 @@ def jobgen_create(request):
 				)
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
-			job = j.pbsgen("1", "%s%s"%(t.name,a.name),o,m);
+			job = j.pbsgen("1", "%s%s"%(tool.name,algorithm.name),options,model,prefix=prefix,postfix=postfix,filename="%s.pbs"%(name));
 			return render_to_response('jobs/jobgen_create.html', { 'job':[job] }, context_instance=RequestContext(request))
 		else:
 			return redirect('/jobgen/')
@@ -80,7 +74,7 @@ def jobgen_create(request):
 @login_required
 def suitegen_create(request):
 	if request.method == 'POST': # If the form has been submitted...
-		form = JobGenForm(request.POST) # A form bound to the POST data
+		form = SuiteGenForm(request.POST) # A form bound to the POST data
 		if (form.is_valid()):
 			# Process the data in form.cleaned_data
 			models = form.cleaned_data['models']

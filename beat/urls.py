@@ -27,7 +27,7 @@ urlpatterns = patterns('',
 	(r'^jobgen/$', 'jobs.views.jobgen'),
 	(r'^jobgen/go/$', 'jobs.views.jobgen_create'),
 	(r'^suitegen/go/$', 'jobs.views.suitegen_create'),
-	(r'^jobgen/id=\d+/$', 'jobs.views.jobgen_load'),
+	(r'^jobgen/(?P<id>[0-9]+)/$', 'jobs.views.jobgen_load'),
 	
 	#View saved jobs
 	(r'^user_jobs', 'jobs.views.user_jobs'),

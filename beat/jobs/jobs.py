@@ -30,7 +30,7 @@ class JobGenerator:
 		self.jobs.append(j)
 		return j
 	
-	__ext2type = dict({'.lps': 'lps', '.tbf': 'lpo', '.b': 'nips', '.dve': 'dve'})
+	__ext2type = dict({'.lps': 'lps', '.tbf': 'lpo', '.b': 'nips', '.dve': 'dve', '.etf': 'etf'})
 	
 	def __extension_to_type(self, extension):
 		return self.__ext2type.get(extension)

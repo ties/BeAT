@@ -7,7 +7,7 @@
 		<ul>
 			{% for j in user_jobs %}
 				<li>
-					<a href="/jobgen/id={{ j.pk }}/">{{ j }}</a> 
+					<a href="/jobgen/{{ j.pk }}/">{{ j }}</a> 
 					- ({{ j.date_time|date:"SHORT_DATE_FORMAT" }} - {{ j.date_time|time:"H:i" }})
 					- <a href="/user_jobs/{{ j.pk }}/delete">delete</a>
 				</li>
