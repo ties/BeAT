@@ -82,14 +82,17 @@ def getResponse(qs,data):
 		pcnames = getPCNames(qs)
 	
 	#Adding values of selected extra columns:
-	#Benchmark.objects.extra(select={"name":'SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id'})
+	#In [4]: qs = qs.extra(select={"TestValue":"SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE 'TestValue'"})
+	#data['columns'].append("TestValue")
+	#for extraval in data['extracolumns']:
+		#qs = qs.extra(select={extraval:""})
+	#Benchmark.objects.extra(select={"TestValue":'SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name="TestValue"'})
+	qs = apply(qs.values, data['columns'])
 	benchmark_ids = list(qs.values_list('id',flat=True))
 	extracolumns = getExtraColumns(qs)
 	qs = sortQuerySet(qs,data['sort'],data['sortorder'])
 	page = data['page']
 	pagesize = data['pagesize']
-	
-	qs = apply(qs.values, data['columns'])
 	
 	result['benchmarks'] = list(qs[page*pagesize : (page+1)*pagesize]) #includes paging
 	result['columns'] = list(extracolumns)

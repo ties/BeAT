@@ -29,16 +29,17 @@ Take all selected benchmarks and redirect to compare page or show empty form
 def export_benchmarks(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form =  ExportForm(request.POST) # A form bound to the POST data
-		ids = json.loads(request.POST['ids'])
-		b = form.cleaned_data['benchmarks']
-		title = form.cleaned_data['name']
-		# Export CSV button has been clicked:
-		bs = Benchmark.objects.filter(id__in=ids)
-		if (title == ''):
-			title = 'benchmarks'
+		if form.is_valid():
+			ids = json.loads(request.POST['ids'])
+			b = form.cleaned_data['benchmarks']
+			title = form.cleaned_data['name']
+			# Export CSV button has been clicked:
+			bs = Benchmark.objects.filter(id__in=ids)
+			if (title == ''):
+				title = 'benchmarks'
 		
-		# Return CSV file to browser as download
-		return export_csv.export(bs, title)
+			# Return CSV file to browser as download
+			return export_csv.export(bs, title, ['logfile'])
 				
 	return render_to_response('benchmarks.html', {'form': form}, context_instance=RequestContext(request))
 """
