@@ -62,8 +62,24 @@ def jobgen_create(request):
 				)
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
-			job = j.pbsgen("1", "%s%s"%(tool.name,algorithm.name),options,model,prefix=prefix,postfix=postfix,filename="%s.pbs"%(name));
-			return render_to_response('jobs/jobgen_create.html', { 'job':[job] }, context_instance=RequestContext(request))
+			job = j.jobgen(nodes, "%s%s"%(tool.name,algorithm.name),options,model,prefix=prefix,postfix=postfix,filename="%s.pbs"%(name));
+			
+			import tempfile
+			filename = job.name
+			if name:
+				filename = 'beat_%s.pbs'%name
+			else:
+				filename = 'beat_%s.pbs'%filename
+			file = tempfile.TemporaryFile()
+			file.write(job.script)
+			file.flush()
+			file.seek(0)
+			response = HttpResponse(mimetype='application/pbs')
+			response['Content-Disposition'] = 'attachment; filename=%s' % filename
+			response.write(file.read())
+			response.flush()
+			return response
+			#return render_to_response('jobs/jobgen_create.html', { 'job':[job] }, context_instance=RequestContext(request))
 		else:
 			return redirect('/jobgen/')
 	else:

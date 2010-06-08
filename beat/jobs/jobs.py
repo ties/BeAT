@@ -43,7 +43,7 @@ class JobGenerator:
 		greytool = lang+"2lts-grey"
 		reachtool = lang+"-reach"
 		mpitool = lang+"2lts-mpi"
-		stdNodes = "1:E5335,walltime=4:00:00"
+		stdNodes = "1:E5220,walltime=4:00:00"
 		filenameBase = base + "-" + lang
 		
 		self.jobgen( stdNodes, greytool, "", modelname, filename=filenameBase+"-idx" )
@@ -56,7 +56,7 @@ class JobGenerator:
 				self.jobgen( stdNodes, reachtool, "--order "+order+" --vset "+vset, modelname, filename=filenameBase+"-"+order+"-"+vset )
 		
 		for W in [1, 2, 4]:
-			mpiNodes = str(W)+":ppn=6:E5335,walltime=4:00:00"
+			mpiNodes = str(W)+":ppn=6:E5220,walltime=4:00:00"
 			self.jobgen( mpiNodes, mpitool, "", modelname, filename=filenameBase+"-mpi-"+str(W)+"-6", prefix="mpirun -mca btl tcp,self" )
 			self.jobgen( mpiNodes, mpitool, "--cache", modelname, filename=filenameBase+"-mpi-cache-"+str(W)+"-6", prefix="mpirun -mca btl tcp,self" )
 		
