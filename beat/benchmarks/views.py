@@ -54,6 +54,23 @@ def user_comparisons(request):
 def colophon(request):
 	return render_to_response('colophon.html', context_instance=RequestContext(request))
 	
+def log_response(request, id):
+	b = Benchmark.objects.get(pk=id)
+	path = b.logfile
+	if not path:
+		try:
+			from beat.tools.logsave import __init_code__, get_log
+			repo = losgsave.__init_code__()
+			form = LogResponseForm(initial={'response': get_log(repo, path)})
+		except:
+			form = LogResponseForm(initial={'response': 'Error no file found'})
+	else:
+		contents = ""
+		with open(path, 'rb') as file:
+			for line in file:
+				contents+=line
+		form = LogResponseForm(initial={'response': contents})
+	return render_to_response('log_response.html', {'form': form,}, context_instance=RequestContext(request))	
 
 def tool_upload(request):
 	import time
