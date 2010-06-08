@@ -12,7 +12,8 @@ urlpatterns = patterns('',
 	(r'^benchmarks/ajax/', include('beat.benchmarks.ajax_urls')),
 	(r'^$', 'benchmarks.views.index'),
 	(r'^benchmarks/export/$', 'benchmarks.views.export_benchmarks'),
-	
+	(r'^benchmarks/(?P<id>\d+)/$', 'benchmarks.views.log_response'),
+
 	# Graph for benchmark-scatterplot, this needs to be implemented in views.benchmarks
 	(r'^benchmarks/$', 'benchmarks.views.benchmarks'),
 	
@@ -27,7 +28,7 @@ urlpatterns = patterns('',
 	(r'^jobgen/$', 'jobs.views.jobgen'),
 	(r'^jobgen/go/$', 'jobs.views.jobgen_create'),
 	(r'^suitegen/go/$', 'jobs.views.suitegen_create'),
-	(r'^jobgen/id=\d+/$', 'jobs.views.jobgen_load'),
+	(r'^jobgen/(?P<id>[0-9]+)/$', 'jobs.views.jobgen_load'),
 	
 	#View saved jobs
 	(r'^user_jobs', 'jobs.views.user_jobs'),

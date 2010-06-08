@@ -1,4 +1,4 @@
-
+#!/bin/bash
 {% include "pbs_header.tpl" %}
 
 {% include "modules.tpl" %}

@@ -71,7 +71,7 @@ var data =	{
 				sort:			"id",
 				sortorder:		ASCENDING,
 				columns:		getColumns(),
-				extracolumns:	[],
+				extracolumns:	["TestValue"],
 				page:			0,
 				pagesize:		200,
 				filters:		[],
@@ -461,6 +461,11 @@ function registerFunctionsAndEvents(){
 	});
 	$("#checkedfilter").click(function(){
 		setSubset();
+	});
+	
+	$("#csvform").submit(function(){
+		var ids = JSON.stringify(checked_benchmarks);
+		$("#ids").val(ids);
 	});
 }
 

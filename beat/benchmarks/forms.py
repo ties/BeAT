@@ -16,3 +16,6 @@ class ToolUploadForm(forms.Form):
 	test_log = forms.CharField(widget=forms.Textarea, required=False, help_text='enter a test log abov to see if your regular expression is correct')
 	log_check = forms.CharField(widget=forms.Textarea, required=False)
 	options = forms.CharField(widget=forms.Textarea, help_text='add option here like deadlock')
+
+class LogResponseForm(forms.Form):
+	response = forms.CharField(widget=forms.Textarea)
