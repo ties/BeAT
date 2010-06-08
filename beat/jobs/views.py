@@ -71,9 +71,9 @@ def jobgen_create(request):
 			job = j.pbsgen("1", "%s%s"%(t.name,a.name),o,m);
 			return render_to_response('jobs/jobgen_create.html', { 'job':[job] }, context_instance=RequestContext(request))
 		else:
-			return redirect('jobgen')
+			return redirect('/jobgen/')
 	else:
-		return redirect('jobgen')
+		return redirect('/jobgen/')
 
 """Generate batch job suite
 """
@@ -97,9 +97,9 @@ def suitegen_create(request):
 			response.flush()
 			return response
 		else:
-			return redirect('jobgen')
+			return redirect('/jobgen/')
 	else:
-		return redirect('jobgen')
+		return redirect('/jobgen/')
 
 
 @login_required
