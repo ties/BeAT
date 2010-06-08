@@ -11,7 +11,8 @@ class Comparison(models.Model):
 	
 	algorithm_tool_a = models.ForeignKey('benchmarks.AlgorithmTool', related_name='at_a')
 	algorithm_tool_b = models.ForeignKey('benchmarks.AlgorithmTool', related_name='at_b')
-	optionvalue = models.ForeignKey('benchmarks.OptionValue', blank=True, null=True)	
+	optionvalue_a = models.ManyToManyField('benchmarks.OptionValue', related_name='op_a',blank=True, null=True)	
+	optionvalue_b = models.ManyToManyField('benchmarks.OptionValue', related_name='op_b',blank=True, null=True)	
 	
 	def getHash(self):
 		return  hash(str(self.id) + str(self.date_time))
@@ -42,7 +43,7 @@ class ModelComparison(models.Model):
 	optionvalue = models.ForeignKey('benchmarks.OptionValue', blank=True, null=True)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	name = models.CharField(max_length=255)
-	hash = models.CharField(max_length=27)
+	hash = models.CharField(max_length=40)
 	
 	def get_absolute_url(self):
 		return "/compare/model/%i/" % self.id

@@ -2,7 +2,7 @@ from django import forms
 from django.forms import widgets
 from django.db.models import Count
 
-from beat.benchmarks.models import Benchmark, Model, Algorithm, Tool, OptionValue, AlgorithmTool
+from beat.benchmarks.models import Benchmark, Model, Algorithm, Tool, OptionValue, AlgorithmTool, ValidOption
 from beat.comparisons.models import *
 
 class ExportGraphForm(forms.Form):
@@ -26,11 +26,14 @@ class CompareScatterplotForm(forms.Form):
 	a_algo 				= forms.ModelChoiceField(Algorithm.objects.all())
 	a_tool 				= forms.ModelChoiceField(Tool.objects.all())
 	a_version 			= forms.ChoiceField(choices=[(v,v) for v in [at['version'] for at in AlgorithmTool.objects.values('version').distinct()]])
+	a_options			= forms.ModelMultipleChoiceField(OptionValue.objects.all())
+	a_algorithmtool	 	= forms.ModelChoiceField(algo, label="Result set A")
 	
-	
-	a_algorithmtool 	= forms.ModelChoiceField(algo, label="AlgorithmTool A")
-	b_algorithmtool		= forms.ModelChoiceField(algo, label="AlgorithmTool B")
-	
+	b_algo 				= forms.ModelChoiceField(Algorithm.objects.all())
+	b_tool 				= forms.ModelChoiceField(Tool.objects.all())
+	b_version 			= forms.ChoiceField(choices=[(v,v) for v in [at['version'] for at in AlgorithmTool.objects.values('version').distinct()]])
+	b_options			= forms.ModelMultipleChoiceField(OptionValue.objects.all())
+	b_algorithmtool		= forms.ModelChoiceField(algo, label="Result set B")
 	
 class CompareModelsForm(forms.Form):
 	name = forms.CharField(max_length=255, required=False, help_text='A name for your comparison')
