@@ -42,14 +42,12 @@
 				<td id="last"><img src="{{ MEDIA_URL }}img/icons/resultset_last.png" /></td>
 			</tr>
 		</table>
-		<p>
-			<input type="button" id="CheckAll" value="All" />
-			<input type="button" id="InvertAll" value="Invert" />
-			<input type="button" id="checkedfilter" value="Filter Checked" />
-			<form id="csvform" action="/benchmarks/export/" method="POST" enctype="multipart/form-data"> {% csrf_token %}
-				<input type="submit" id="exportcsv"  value="Export CSV" />
-				<input type="hidden" id="ids" name="ids" />
-			</form>
-		</p>
+		<input type="button" id="CheckAll" value="All" />
+		<input type="button" id="InvertAll" value="Invert" />
+		<input type="button" id="checkedfilter" value="Filter Checked" />
+		<form id="csvform" action="/benchmarks/export/" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+			<input type="submit" id="exportcsv"  value="Export CSV" />
+			<input type="hidden" id="ids" name="ids" />
+		</form>
 		<!-- END BENCHMARK TABLE -->
 {% endblock %}

@@ -146,8 +146,6 @@ function update(direct){
 		if (!direct && !updating)		timeout = setTimeout(function(){makeRequest(data);},DELAY);
 		else							timeout = setTimeout(function(){makeRequest(data);},0);
 		
-	}else{
-		console.log('skipping');
 	}
 }
 
@@ -171,7 +169,6 @@ function handleResponse(json){
 	
 	benchmarks = json.benchmarks;
 	benchmark_ids = json.benchmark_ids;
-	console.log("Received "+benchmarks.length+" benchmarks!");
 	
 	updateCheckedBenchmarks();
 	
@@ -279,7 +276,6 @@ function updateCheckedBenchmarks(){
 		if (checked_benchmarks.indexOf(benchmark_ids[i])!=-1)	newarr.push(benchmark_ids[i]);
 	}
 	checked_benchmarks = newarr;
-	//console.log("Updated checked benchmarks: "+checked_benchmarks.toString()+", previous length: "+len+", new length: "+checked_benchmarks.length);
 }
 
 /**
@@ -291,7 +287,6 @@ function updateCheckedBenchmarks(){
 function checkAll(){
 	checked_benchmarks = benchmark_ids.slice();
 	$("#CheckAll").attr("value","None");
-	//console.log("Checked all "+checked_benchmarks.length+" benchmarks");
 	updateCheckboxes();
 }
 
@@ -301,7 +296,6 @@ function checkAll(){
  *				The checkboxes are updated (updateCheckboxes is called)
  **/
 function checkNone(){
-	//console.log("Check none");
 	checked_benchmarks = new Array();
 	$("#CheckAll").attr("value","All");
 	updateCheckboxes();
@@ -315,7 +309,6 @@ function checkNone(){
  *				The checkboxes are updated (updateCheckboxes is called)
  **/
 function checkInvert(){
-	//console.log("Invert selection");
 	var newarr = new Array();
 	for (var i=0;i<benchmark_ids.length;i++){
 		if (checked_benchmarks.indexOf(benchmark_ids[i])==-1)	newarr.push(benchmark_ids[i]);
@@ -372,7 +365,6 @@ function setSorting(id){
 		data.sortorder = ASCENDING;
 		$("#"+id+" span").addClass('ascending');
 	}
-	//console.log("Sending request after sorting (with page 0)");
 	data.page = 0;
 	update();
 }
@@ -452,7 +444,6 @@ function registerFunctionsAndEvents(){
 	});
 	
 	$("#CheckAll").click(function(){
-		//console.log('starting function, value = '+$(this).attr('value'));
 		if ($(this).attr('value') == "All" )	checkAll();
 		else									checkNone();
 	});
@@ -509,7 +500,6 @@ function configureCheckboxes(){
 		}else{
 			if (index!=-1)		checked_benchmarks.splice(index,1);
 		}
-		//console.log("Currently checked benchmarks: "+checked_benchmarks.toString());
 	});
 }
 
@@ -550,7 +540,6 @@ function showColumnOptions(){
  */
 function addMega(elem){
 	$(elem).addClass("hovering");
-	//console.log('Add megadropdownmenu: '+elem.id);
 }
 
 /**

@@ -494,7 +494,6 @@ $.TokenList = function (input, settings) {
 		var i=0;
 		var res = new Array();
 		while (i<searcharray.length && res.length<numberofresults){
-			console.log("checking "+searcharray[i].name.toLowerCase() + "with" + query.toLowerCase())
 			if (searcharray[i].name.toLowerCase().indexOf(query.toLowerCase())!=-1)
 				res.push(searcharray[i]);
 			i++;

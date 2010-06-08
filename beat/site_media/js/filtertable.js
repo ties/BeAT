@@ -40,8 +40,6 @@
 			for (var i=0; i < filterarray.length; i++){
 				res.push($.extend({},filterarray[i]));
 			}
-			console.log('testing');
-			console.log(res);
 			return res;
 		}
 		
@@ -59,7 +57,6 @@
 						for (var j=0;j<filterobj.value.length;j++){
 							if (indexOfId(context.models,filterobj.value[j])!=-1)		newval.push(filterobj.value[j]);
 						}
-						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
 						rewriteRow(filterobj,filterarray,table);
 					break;
@@ -68,7 +65,6 @@
 						for (var j=0;j<filterobj.value.length;j++){
 							if (indexOfId(context.algorithms,filterobj.value[j])!=-1)		newval.push(filterobj.value[j]);
 						}
-						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
 						rewriteRow(filterobj,filterarray,table);
 					break;
@@ -77,7 +73,6 @@
 						for (var j=0;j<filterobj.value.length;j++){
 							if (indexOfId(context.tools,filterobj.value[j])!=-1)		newval.push(filterobj.value[j]);
 						}
-						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
 						rewriteRow(filterobj,filterarray,table);
 					break;
@@ -86,7 +81,6 @@
 						for (var j=0;j<filterobj.value.length;j++){
 							if (indexOfId(context.computernames,filterobj.value[j])!=-1)		newval.push(filterobj.value[j]);
 						}
-						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
 						rewriteRow(filterobj,filterarray,table);
 					break;
@@ -108,7 +102,6 @@
 								newval[1].push(filterobj.value[1][j]);
 							}
 						}
-						console.log("new array "+filterobj.type+": "+newval.toString());
 						filterobj.value = newval;
 						rewriteRow(filterobj,filterarray,table);
 					break;

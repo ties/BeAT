@@ -18,9 +18,9 @@ table.paging tr td{
 }
 
 #next,#previous,#last,#first{
-	width:20px;
 	text-align: center;
 	cursor:pointer;
+	padding: 0px;
 }
 
 #next img, #previous img, #last img, #first img{
@@ -28,12 +28,13 @@ table.paging tr td{
 }
 
 #paginginfo{
-	padding-left: 30px;
+	padding: 0px 0px 0px 30px;
 	font-weight: bold;
 }
 
 #pagesize{
 	text-align: right;
+	margin: 0px;
 }
 
 .filterStyle{
