@@ -14,8 +14,16 @@ def jobgen_load(request):
 		return HttpResponseBadRequest()
 	id = int(id)
 	jfilter = get_object_or_404(JobsFilter, pk=id, user=request.user)
-	jobform = JobGenForm()
-	jobform.change_defaults(jfilter)
+	data = {	'name':jfilter.name,
+				'nodes':jfilter.nodes,
+				'tool':jfilter.tool,
+				'algorithm':jfilter.algorithm,
+				'options':jfilter.options,
+				'model':jfilter.model,
+				'prefix':jfilter.prefix,
+				'postfix':jfilter.postfix
+			}
+	jobform = JobGenForm(data)
 	suiteform = SuiteGenForm()
 	return render_to_response('jobs/jobgen.html', {'jform':jobform, 'sform':suiteform}, context_instance=RequestContext(request))
 
@@ -34,20 +42,29 @@ def jobgen_create(request):
 	if request.method == 'POST': # If the form has been submitted...	
 		form = JobGenForm(request.POST) # A form bound to the POST data
 		if (form.is_valid()):
+			user = request.user
+			
 			# Process the data in form.cleaned_data
-			t = form.cleaned_data['tool']
-			a = form.cleaned_data['algorithm']
-			m = form.cleaned_data['models']
-			o = form.cleaned_data['options']
 			name = form.cleaned_data['name']
+			nodes = form.cleaned_data['nodes']
+			tool = form.cleaned_data['tool']
+			algorithm = form.cleaned_data['algorithm']
+			options = form.cleaned_data['options']
+			model = form.cleaned_data['model']
+			prefix = form.cleaned_data['prefix']
+			postfix = form.cleaned_data['postfix']
+			
 			if name:
 				c, created = JobsFilter.objects.get_or_create(
+					user = user,
 					name = name,
-					user = request.user,
-					tool = t,
-					algorithm = a,
-					model = m,
-					options = o
+					nodes = nodes,
+					tool = tool,
+					algorithm = algorithm,
+					options = options,
+					model = model,
+					prefix = prefix,
+					postfix = postfix
 				)
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
@@ -85,7 +102,7 @@ def suitegen_create(request):
 		return redirect('jobgen')
 
 
-@login_required()
+@login_required
 def user_jobs(request):
 	jobs = (JobsFilter.objects.filter(user=request.user))
 	return render_to_response('jobs/user_jobs.html', { 'user_jobs' : jobs }, context_instance=RequestContext(request) )

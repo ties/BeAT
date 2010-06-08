@@ -6,17 +6,13 @@ from django.shortcuts import get_object_or_404
 
 class JobGenForm(forms.Form):
 	name		= forms.CharField(max_length=255, required=False)
+	nodes		= forms.CharField(max_length=255, required=yes, initial="1:E5220")
 	tool		= forms.ModelChoiceField(Tool.objects.all(), empty_label=None, required=True)
 	algorithm	= forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None, required=True)
-	models		= forms.ModelChoiceField(Model.objects.all().extra(order_by = ['name']), required=True)
 	options		= forms.CharField(max_length=255, required=False)
-	
-	def change_defaults(self, jfilter):
-		self.name		= forms.CharField(max_length=255, required=False, initial=jfilter.name)
-		self.tool		= forms.ModelChoiceField(Tool.objects.all(), empty_label=None, required=True, initial=jfilter.tool)
-		self.algoritm	= forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None, required=True, initial=jfilter.algorithm)
-		self.models		= forms.ModelChoiceField(Model.objects.all().extra(order_by = ['name']), required=True, initial=jfilter.model)
-		self.options	= forms.CharField(max_length=255, required=False, initial=jfilter.options)
+	model		= forms.ModelChoiceField(Model.objects.all().extra(order_by = ['name']), required=True)
+	prefix		= forms.CharField(max_length=255, required=False)
+	postfix		= forms.CharField(max_length=255, required=False)
 	
 class SuiteGenForm(forms.Form):
 	models = forms.ModelMultipleChoiceField(Model.objects.all(), required=True)
