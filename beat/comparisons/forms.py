@@ -22,17 +22,17 @@ class CompareForm(forms.Form):
 class CompareScatterplotForm(forms.Form):
 	algo 				= AlgorithmTool.objects.all()
 	
-	name 				= forms.CharField(max_length=255, required=False)
-	a_algo 				= forms.ModelChoiceField(Algorithm.objects.all())
-	a_tool 				= forms.ModelChoiceField(Tool.objects.all())
-	a_version 			= forms.ChoiceField(choices=[(v,v) for v in [at['version'] for at in AlgorithmTool.objects.values('version').distinct()]])
-	a_options			= forms.ModelMultipleChoiceField(OptionValue.objects.all())
+	name 				= forms.CharField(max_length=255, required=False, label="Name")
+	a_algo 				= forms.ModelChoiceField(Algorithm.objects.all(), label="Algorithm")
+	a_tool 				= forms.ModelChoiceField(Tool.objects.all(), label="Tool")
+	a_version 			= forms.ChoiceField(choices=[(v,v) for v in [at['version'] for at in AlgorithmTool.objects.values('version').distinct()]], label="Version")
+	a_options			= forms.ModelMultipleChoiceField(OptionValue.objects.all(), label="Options", required=False)
 	a_algorithmtool	 	= forms.ModelChoiceField(algo, label="Result set A")
 	
-	b_algo 				= forms.ModelChoiceField(Algorithm.objects.all())
-	b_tool 				= forms.ModelChoiceField(Tool.objects.all())
-	b_version 			= forms.ChoiceField(choices=[(v,v) for v in [at['version'] for at in AlgorithmTool.objects.values('version').distinct()]])
-	b_options			= forms.ModelMultipleChoiceField(OptionValue.objects.all())
+	b_algo 				= forms.ModelChoiceField(Algorithm.objects.all(), label="Algorithm")
+	b_tool 				= forms.ModelChoiceField(Tool.objects.all(), label="Tool")
+	b_version 			= forms.ChoiceField(choices=[(v,v) for v in [at['version'] for at in AlgorithmTool.objects.values('version').distinct()]], label="Version")
+	b_options			= forms.ModelMultipleChoiceField(OptionValue.objects.all(), label="Options", required=False)
 	b_algorithmtool		= forms.ModelChoiceField(algo, label="Result set B")
 	
 class CompareModelsForm(forms.Form):

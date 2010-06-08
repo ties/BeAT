@@ -141,3 +141,20 @@ ul.mega li.hovering div {
 #csvform{
 	display: inline;
 }
+
+/* COMPARE FORM */
+
+table.compare_form  select {
+	width:100%;
+}
+
+.titlecell {
+	background-color: #ddd;
+	text-align: center;
+	font-weight: bold;
+	color: #000;
+}
+.optioncell {
+	vertical-align: top;
+	font-weight: bold;
+}

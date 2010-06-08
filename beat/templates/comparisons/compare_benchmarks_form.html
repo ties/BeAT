@@ -4,7 +4,56 @@
 
 		<h2>Models</h2>
 		<form action="{% url comparisons.views.compare_scatterplot %}" method="post">{% csrf_token %}
-			<table>{{ form.as_table }}</table>
-		<input type="submit" value="Submit" />
+			<table class="compare_form">
+				<tr>
+					<th><label for="id_name">{{ form.name.label_tag }}</label></th>
+					<td colspan="2">{{ form.name }}</td>
+				</tr>
+				
+				<tr>
+					<td colspan="3" class="titlecell">SELECT SET A</td>
+				</tr>
+
+				<tr>
+					<th><label for="id_a_algo">{{ form.a_algo.label_tag }}</label></th>
+					<td>{{ form.a_algo }}</td>
+					<td rowspan="4" class="optioncell">{{ form.a_options.label_tag }}<br />{{ form.a_options }}</td>
+				</tr>
+				<tr>
+					<th><label for="id_a_tool">{{ form.a_tool.label_tag }}</label></th>
+					<td>{{ form.a_tool }}</td>
+				</tr>
+				<tr>
+					<th><label for="id_a_version">{{ form.a_version.label_tag }}</label></th>
+					<td>{{ form.a_version }}</td>
+				</tr>
+				<tr>
+					<th><label for="id_a_algorithmtool">{{ form.a_algorithmtool.label_tag }}</label></th>
+					<td>{{ form.a_algorithmtool }}</td>
+				</tr>
+							
+
+				<tr><td colspan="3" class="titlecell">SELECT SET B</td></tr>
+
+				<tr>
+					<th><label for="id_b_algo">{{ form.b_algo.label_tag }}</label></th>
+					<td>{{ form.b_algo }}</td>
+					<td rowspan="4" class="optioncell">{{ form.b_options.label_tag }}<br />{{ form.a_options }}</td>
+				</tr>
+				<tr>
+					<th><label for="id_b_tool">{{ form.b_tool.label_tag }}</label></th>
+					<td>{{ form.b_tool }}</td>
+				</tr>
+				<tr>
+					<th><label for="id_b_version">{{ form.b_version.label_tag }}</label></th>
+					<td>{{ form.b_version }}</td>
+				</tr>
+				<tr>
+					<th><label for="id_b_algorithmtool">{{ form.b_algorithmtool.label_tag }}</label></th>
+					<td>{{ form.b_algorithmtool }}</td>
+				</tr>
+
+			</table>
+			<input type="submit" value="Submit" />
 		</form>
 {% endblock %}

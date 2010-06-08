@@ -11,6 +11,7 @@ class Comparison(models.Model):
 	
 	algorithm_tool_a = models.ForeignKey('benchmarks.AlgorithmTool', related_name='at_a')
 	algorithm_tool_b = models.ForeignKey('benchmarks.AlgorithmTool', related_name='at_b')
+	
 	optionvalue_a = models.ManyToManyField('benchmarks.OptionValue', related_name='op_a',blank=True, null=True)	
 	optionvalue_b = models.ManyToManyField('benchmarks.OptionValue', related_name='op_b',blank=True, null=True)	
 	
