@@ -137,3 +137,7 @@ ul.mega li.mega div select{
 ul.mega li.hovering div {
 	display: block;
 }
+
+#csvform{
+	display: inline;
+}

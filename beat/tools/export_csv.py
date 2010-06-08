@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.template import RequestContext, loader
 from django.db.models.loading import get_model
 
-def export(qs, title="QuerySet"):
+def export(qs, title="QuerySet", exclude=[]):
 	model = qs.model
 	response = HttpResponse(mimetype='text/csv')
 	response['Content-Disposition'] = 'attachment; filename=%s.csv' % title
@@ -11,7 +11,8 @@ def export(qs, title="QuerySet"):
 	# Write headers to CSV file
 	headers = []
 	for field in model._meta.fields:
-		headers.append(field.name)
+		if not (field.name in exclude):
+			headers.append(field.name)
 	writer.writerow(headers)
 	# Write data to CSV file
 	for obj in qs:
