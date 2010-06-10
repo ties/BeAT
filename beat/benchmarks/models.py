@@ -46,7 +46,7 @@ class Benchmark(models.Model):
 		return "%s with %s on %s" % (self.model, self.algorithm_tool, self.date_time)
 	
 	def get_print_data(self):
-		return "model = %s, algorithmtool = %s, start time = %s, run times: User = %s System = %s Elapsed = %s, transition count = %s, state count = %s, memory: VSize = %s RSS = %s, finished = %s"%(self.model.name, self.algorithm_tool, self.date_time, self.user_time, self.system_time, self.elapsed_time, self.transition_count, self.states_count, self.memory_VSIZE, self.memory_RSS, self.finished)
+		return "model = %s\n algorithmtool = %s\n start time = %s\n User time = %s\n System time = %s\n Elapsed time = %s\n transition count = %s\n state count = %s\n memory VSize = %s\n memory RSS = %s\n finished = %s"%(self.model.name, self.algorithm_tool, self.date_time, self.user_time, self.system_time, self.elapsed_time, self.transition_count, self.states_count, self.memory_VSIZE, self.memory_RSS, self.finished)
 #self.print_message(V_VERBOSE, "Note: Tried to data to database, but essential data already exists, id: %s from file %s, with data %s"%(bench.pk, f, bench.get_print_data()))		
 
 class Hardware(models.Model):

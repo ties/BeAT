@@ -671,12 +671,12 @@ class FileReader:
 						else:
 							if created:
 								if self.verbose==V_VERBOSE:
-									self.print_message(V_VERBOSE, "Note: Added data to database, id: %s from file %s, with data %s"%(bench.pk, f, bench.get_print_data()))
+									self.print_message(V_VERBOSE, "Note: Added data to database, id: %s from file %s, with data\n %s"%(bench.pk, f, bench.get_print_data()))
 								else:
 									self.print_message(V_QUIET, "Note: Added data to database, id: %s from file %s"%(bench.pk, f))
 							else:
 								if self.verbose==V_VERBOSE:
-									self.print_message(V_VERBOSE, "Note: Tried to data to database, but essential data already exists, id: %s from file %s, with data %s"%(bench.pk, f, bench.get_print_data()))
+									self.print_message(V_VERBOSE, "Note: Tried to data to database, but essential data already exists, id: %s from file %s, with data\n %s"%(bench.pk, f, bench.get_print_data()))
 								else:
 									self.print_message(V_QUIET, "Note: Tried to add data to database, already exists, id: %s from file %s"%(bench.pk, f))
 				else:
@@ -783,8 +783,8 @@ if __name__ == '__main__':
 	f = FileReader()
 	#f.main()
 	exitcode = f.main()
-	#print "%s\nLog: "%( exitcode)
-	for l in f.log:
-		print l
-	sys.exit(exitcode)
-
+	print "Saw %d error(s)." %exitcode
+	if exitcode:
+		sys.exit(1)
+	else:
+		sys.exit(0)
