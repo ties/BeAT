@@ -17,25 +17,24 @@ table.paging tr td{
 	border: 1px solid #ccc;
 }
 
-#next,#previous{
-	width:20px;
+#next,#previous,#last,#first{
 	text-align: center;
 	cursor:pointer;
+	padding: 0px;
 }
 
-#next img, #previous img{
-	width:10px;
-	height:20px;
+#next img, #previous img, #last img, #first img{
 	padding: 0px;
 }
 
 #paginginfo{
-	padding-left: 30px;
+	padding: 0px 0px 0px 30px;
 	font-weight: bold;
 }
 
-#resperpage{
+#pagesize{
 	text-align: right;
+	margin: 0px;
 }
 
 .filterStyle{
@@ -44,6 +43,10 @@ table.paging tr td{
 
 .filterType, .filterValue, .optionValue{
 	width: 80px;
+}
+
+#filters{
+	width: 320px;
 }
 
 #filters td, #filters tr, #filters th, #filters select, #filters input{
@@ -105,11 +108,14 @@ ul.mega{
 	display: inline;
 	padding: 0px;
 	margin: 0px;
+	min-width: 130px;
 }
 
 li.mega{
 	display: inline;
 	position: relative;
+	border: 1px solid #bbb;
+	width: 130px;
 }
 
 ul.mega li.mega div{
@@ -131,4 +137,25 @@ ul.mega li.mega div select{
 
 ul.mega li.hovering div {
 	display: block;
+}
+
+#csvform{
+	display: inline;
+}
+
+/* COMPARE FORM */
+
+table.compare_form  select {
+	width:100%;
+}
+
+.titlecell {
+	background-color: #ddd;
+	text-align: center;
+	font-weight: bold;
+	color: #000;
+}
+.optioncell {
+	vertical-align: top;
+	font-weight: bold;
 }

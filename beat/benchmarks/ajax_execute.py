@@ -7,10 +7,18 @@ from django.core import serializers
 from beat.benchmarks.filter import *
 from beat.benchmarks.ajax_benchmarks import *
 from datetime import datetime
+from decimal import Decimal
 import json
+
+class BenchmarkJSON(json.JSONEncoder):
+	def default (self, obj):
+		if isinstance(obj,datetime):
+			return obj.date().isoformat()
+		if isinstance(obj,Decimal):
+			return float(obj)
+		return json.JSONEncoder.default(self,obj)
 
 def ajaxbenchmarks(request):
 	res = getBenchmarks(request)
-	dthandler = lambda obj: obj.date().isoformat() if isinstance(obj, datetime) else None
-	dump = json.dumps(res,default=dthandler)
+	dump = json.dumps(res,cls=BenchmarkJSON)
 	return HttpResponse(dump,mimetype="application/json")

@@ -5,23 +5,30 @@ from datetime import datetime
 from django.db import connection,transaction
 import json
 
-DEFAULTSORT = {'sort':'id','sortorder':'ASC'}
-SORTS = {'model':'model__name','id':'id','states':'states_count','runtime':'total_time','memory_rss':'memory_RSS','finished':'finished'}
 SORT_ASCENDING = 'ASC'
 SORT_DESCENDING = 'DESC'
-DEFAULTCOLUMNS = {}
-DEFAULTPAGING = {'page':0,'resperpage':200}
 
-DEFAULTDATA = {'filters':[],'sort':DEFAULTSORT,'columns':DEFAULTCOLUMNS,'paging':DEFAULTPAGING}
+DEFAULTSORT = 'id'
+DEFAULTSORTORDER = SORT_ASCENDING
+SORTS = {}
+DEFAULTCOLUMNS = []
+DEFAULTFILTERS = {}
+DEFAULTPAGE = 0
+DEFAULTPAGESIZE = 200
+
+DEFAULTDATA = 	{
+					'filters':		DEFAULTFILTERS,
+					'sort':			DEFAULTSORT,
+					'sortorder':	DEFAULTSORTORDER,
+					'columns':		DEFAULTCOLUMNS,
+					'page':			DEFAULTPAGE,
+					'pagesize':		DEFAULTPAGESIZE
+				}
 
 def getBenchmarks(request):
-	data = DEFAULTDATA
-	if 'data' in request.POST.keys():
-		data = json.loads(request.POST['data'])
-		data['filters'] = convertfilters(data['filters'])
-	
+	data = json.loads(request.POST['data'])
+	data['filters'] = convertfilters(data['filters'])
 	res = getResponse(Benchmark.objects.all(),data)
-	
 	return res
 
 def getResponse(qs,data):
@@ -32,63 +39,79 @@ def getResponse(qs,data):
 	options = []
 	tools = []
 	models = []
+	cpus = []
+	pcnames = []
 	benchmark_ids = []
 	
-	algorithmdone = False
-	optionsdone = False
-	tooldone = False
-	modeldone = False
+	if len(data['subset']) != 0:
+		qs = qs.filter(id__in=data['subset'])
 	
 	for k,f in data['filters'].iteritems():
 		if f.type==MODEL:
 			models = getModels(qs)
-			modeldone = True
 		if f.type==ALGORITHM:
 			algorithms = getAlgorithms(qs)
-			algorithmdone = True
 		elif f.type==TOOL:
 			tools = getTools(qs)
-			tooldone = True
 		elif f.type==OPTIONS:
 			options = getOptions(qs)
-			optionsdone = True
+		elif f.type==CPU:
+			cpus = getCPUs(qs)
+		elif f.type==COMPUTERNAME:
+			pcnames = getPCNames(qs)
 		
 		qs = f.apply(qs)
 	
 	#getting remaining results
-	if modeldone==False:
+	if len(models)==0:
 		models = getModels(qs)
 	
-	if algorithmdone==False:
+	if len(algorithms)==0:
 		algorithms = getAlgorithms(qs)
 	
-	if tooldone==False:
+	if len(tools)==0:
 		tools = getTools(qs)
 	
-	if optionsdone==False:
+	if len(options)==0:
 		options = getOptions(qs)
 	
+	if len(cpus)==0:
+		cpus = getCPUs(qs)
+	
+	if len(pcnames)==0:
+		pcnames = getPCNames(qs)
+	
+	columns = data['columns']
+	#selectdict = {}
+	#for extraval in data['extracolumns']:
+		#columns.append(extraval)
+		#selectdict[extraval] = "SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE '"+extraval+"'"
+	
+	#qs = qs.extra(select = selectdict)
+	
 	#Adding values of selected extra columns:
-	#Benchmark.objects.extra(select={"name":'SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id'})
+	#In [4]: qs = qs.extra(select={"TestValue":"SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE 'TestValue'"})
+	#data['columns'].append("TestValue")
+	#for extraval in data['extracolumns']:
+		#qs = qs.extra(select={extraval:""})
+	#Benchmark.objects.extra(select={"TestValue":'SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name="TestValue"'})
+	#print columns
+	qs = apply(qs.values, columns)
 	benchmark_ids = list(qs.values_list('id',flat=True))
-	
 	extracolumns = getExtraColumns(qs)
+	qs = sortQuerySet(qs,data['sort'],data['sortorder'])
+	page = data['page']
+	pagesize = data['pagesize']
 	
-	qs = sortQuerySet(qs,data['sort'])
-	
-	page = data['paging']['page']
-	resperpage = data['paging']['resperpage']
-	
-	qs = apply(qs.values,data['columns'])
-	
-	result['benchmarks'] = list(qs[page*resperpage : (page+1)*resperpage]) #includes paging
-	result['columns'] = extracolumns
+	result['benchmarks'] = list(qs[page*pagesize : (page+1)*pagesize]) #includes paging
+	result['columns'] = list(extracolumns)
 	result['algorithms'] = algorithms
 	result['options'] = options
 	result['tools'] = tools
 	result['models'] = models
+	result['cpus'] = cpus
+	result['computernames'] = pcnames
 	result['benchmark_ids'] = benchmark_ids
-	
 	return result
 
 def getModels(qs):
@@ -98,7 +121,6 @@ def getModels(qs):
 	return models
 
 def getAlgorithms(qs):
-	#return list(qs.values('algorithm_tool__algorithm','algorithm_tool__algorithm__name').order_by('algorithm_tool__algorithm__name').distinct())
 	algorithms = []
 	for algorithm in qs.values('algorithm_tool__algorithm','algorithm_tool__algorithm__name').order_by('algorithm_tool__algorithm__name').distinct():
 		algorithms.append({'id':algorithm['algorithm_tool__algorithm'],'name':algorithm['algorithm_tool__algorithm__name']})
@@ -120,19 +142,30 @@ def getOptions(qs):
 	
 	return options
 
-def sortQuerySet(qs,sort):
-	s = sort['sort']
-	
+def getCPUs(qs):
+	hw = Hardware.objects.values_list("cpu",flat=True).distinct()
+	list = []
+	for i in range(0,len(hw)):
+		list.append({'id':i,'name':hw[i]})
+	return list
+
+def getPCNames(qs):
+	hw = Hardware.objects.values("id","name")
+	list = []
+	for item in hw:
+		list.append({'id':item['id'],'name':item['name']})
+	return list
+
+def sortQuerySet(qs,sort,sortorder):
 	#translate if needed
-	if s in SORTS.keys():
-		s = SORTS[s]
+	#if sort in SORTS.keys():
+		#sort = SORTS[sort]
 		
-	if sort['sortorder']==SORT_DESCENDING:
-		s = '-'+s
-	qs = qs.order_by(s)
+	if sortorder == SORT_DESCENDING:
+		sort = '-' + sort
+	qs = qs.order_by(sort)
 	return qs
 
 def getExtraColumns(qs):
 	cols = ExtraValue.objects.filter(benchmark__in=qs.values_list("id")).values("name").distinct()
-	#test dit! print cols
 	return cols

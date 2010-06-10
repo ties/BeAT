@@ -1,10 +1,31 @@
 {% extends "base_site.html" %}
 {% block title %}Compare benchmarks{% endblock %}
+
+{% block head %}
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/jquery.flot.min.js"></script>
+{% endblock %}
+
 {% block content %}
 		<h2>Comparison: {{ comparison.name }}</h2>
 		<img src="scatterplot.png" alt="benchmark chart" />
 		<p><a href="/compare/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 		
+		<table class="benchmarks">
+		<tr>
+			<th>Model</th>
+			<th>Runtime A (sec)</th>
+			<th>Runtime B (sec)</th>
+			<th>VSIZE A (KB)</th>
+			<th>VSIZE B (KB)</th>
+		</tr>
+		{% for l in list %}
+			<tr>
+				{% for i in l %}
+				<td>{{ i }}</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+		</table>
 		<form action="/compare/tool/{{ comparison.id }}/export" method="post">{% csrf_token %}
 		{{ form.as_p }}
 		<input type="submit" value="Export" />

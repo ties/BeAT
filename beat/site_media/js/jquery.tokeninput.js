@@ -53,7 +53,7 @@ $.fn.tokenInput = function (searcharray,numberofresults,prepop) {
 		selectedDropdownItem: "token-input-selected-dropdown-item",
 		inputToken: "token-input-input-token"
 	}
-
+	
 	return this.each(function () {
 		var list = new $.TokenList(this, settings);
 	});
@@ -237,7 +237,6 @@ $.TokenList = function (input, settings) {
 				var this_token = $("<li><p>"+li_data[i].name+"</p> </li>")
 					.addClass(settings.classes.token)
 					.insertBefore(input_token);
-
 				$("<span>x</span>")
 					.addClass(settings.classes.tokenDelete)
 					.appendTo(this_token)
@@ -309,7 +308,7 @@ $.TokenList = function (input, settings) {
 
 		var id_string = li_data.id + ","
 		hidden_input.val(hidden_input.val() + id_string);
-		
+		$(hidden_input).trigger('change');
 		token_count++;
 		
 		if(settings.tokenLimit != null && settings.tokenLimit >= token_count) {
@@ -379,6 +378,7 @@ $.TokenList = function (input, settings) {
 				.val("")
 				.focus();
 		}
+		$(hidden_input).trigger('change');
 	}
 
 	function hide_dropdown () {
@@ -494,12 +494,13 @@ $.TokenList = function (input, settings) {
 		var i=0;
 		var res = new Array();
 		while (i<searcharray.length && res.length<numberofresults){
-			if (searcharray[i].name.indexOf(query)!=-1)
+			if (searcharray[i].name.toLowerCase().indexOf(query.toLowerCase())!=-1)
 				res.push(searcharray[i]);
 			i++;
 		}
 		return res;
 	}
+	
 };
 
 })(jQuery);

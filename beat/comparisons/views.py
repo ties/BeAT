@@ -5,6 +5,7 @@ from django.template import RequestContext
 from forms import *
 from beat.tools import graph
 from django.views.decorators.cache import cache_page
+from decimal import Decimal
 
 # MatPlotLib
 import numpy as np
@@ -39,8 +40,8 @@ def scatterplot(request, id, format='png'):
 	b1 = b1.filter(model__in=[b.model.pk for b in b2])
 	
 	# Make new arrays with only the elapsed time
-	t1 = [b.elapsed_time for b in b1]
-	t2 = [b.elapsed_time for b in b2]
+	t1 = [(float(b.elapsed_time)) for b in b1]
+	t2 = [(float(b.elapsed_time)) for b in b2]
 	
 	# Color mask: if t[i] < t[2] --> blue dot in graph; else red dot
 	mask = []
@@ -255,8 +256,28 @@ def compare_detail(request, id, model=False):
 		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form,  'benches' : benches}, context_instance=RequestContext(request))
 	else:
 		c = get_object_or_404(Comparison,pk=id)
+		
+		at_a = c.algorithm_tool_a
+		at_b = c.algorithm_tool_b
+		b1 = Benchmark.objects.filter(algorithm_tool=at_a)
+		b2 = Benchmark.objects.filter(algorithm_tool=at_b)
+		b1 = b1.filter(model__in=[b.model.pk for b in b2])
+
+		# Model should be consistent for b1 and b2, so doesn't matter which you pick
+		model = [b.model.name for b in b1]
+		
+		# Memory
+		m1 = [b.memory_VSIZE for b in b1]
+		m2 = [b.memory_VSIZE for b in b2]
+		
+		# Make new arrays with only the elapsed time
+		t1 = [(float(b.elapsed_time)) for b in b1]
+		t2 = [(float(b.elapsed_time)) for b in b2]
+		
+		list = zip(model,m1,m2,t1,t2)
+		
 		form = ExportGraphForm()
-		response = render_to_response('comparisons/compare.html', { 'comparison' : c, 'form' : form }, context_instance=RequestContext(request))
+		response = render_to_response('comparisons/compare.html', { 'comparison' : c, 'form' : form, 'list' : list }, context_instance=RequestContext(request))
 	
 	# Check if the user has rights to see the results:
 	#	- Either the user provided a correct query string like ?auth=<hash>
