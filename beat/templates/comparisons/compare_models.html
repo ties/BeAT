@@ -1,5 +1,10 @@
 {% extends "base_site.html" %}
 {% block title %}Benchmarks{% endblock %}
+
+{% block head %}
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/jquery.flot.min.js"></script>
+{% endblock %}
+	  
 {% block content %}
 		<h2>Comparison: {{ comparison.name }}</h2>
 		<img src="benchmark.png" style="width:100%;" ismap usemap="#points" alt="Model compare graph" />
