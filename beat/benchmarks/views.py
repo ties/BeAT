@@ -51,39 +51,50 @@ def user_comparisons(request):
 	m_comparisons = list(ModelComparison.objects.filter(user=request.user.id))
 	return render_to_response('user_compare.html', { 'b_comparisons' : b_comparisons, 'm_comparisons' : m_comparisons }, context_instance=RequestContext(request))
 
+"""
+Shows the colophone page for this project.
+"""
 def colophon(request):
 	return render_to_response('colophon.html', context_instance=RequestContext(request))
-	
+
+"""
+Shows a log file for the given database id. if no such file is found it will return a file not found in the response form.
+"""	
 def log_response(request, id):
+	#fetch the id benchmark object form the database
 	b = Benchmark.objects.get(pk=id)
 	path = b.logfile
-	if not path:
-		try:
+	if not path: # check to see if path is not a path
+		try: # try to get the data form beat if it is not a system path
 			from beat.tools.logsave import __init_code__, get_log
 			repo = losgsave.__init_code__()
 			form = LogResponseForm(initial={'response': get_log(repo, path)})
-		except:
+		except: #else return file not found
 			form = LogResponseForm(initial={'response': 'Error no file found'})
-	else:
+	else: # read out the file and put it in the form
 		contents = ""
 		with open(path, 'rb') as file:
 			for line in file:
 				contents+=line
 		form = LogResponseForm(initial={'response': contents})
-	return render_to_response('log_response.html', {'form': form,}, context_instance=RequestContext(request))	
+	return render_to_response('log_response.html', {'form': form,}, context_instance=RequestContext(request))
 
+"""
+This method allows for the uploading of tool to the database. 
+It will take the reqest read out the form and attempt to put it in the database.
+"""
 def tool_upload(request):
 	import time
 	import sys
 	import beat.gitinterface as g
 	dummydate = datetime.datetime.now()
 	with_git = False
-	repository = g.GitInterface(os.path.join(GIT_PATH, 'ltsmin'))
+	repository = g.GitInterface(os.path.join(GIT_PATH, 'ltsmin')) # get the repository of ltsmin on the system.
 		
 	no_error = True
 	if request.method == 'POST':
-		form = ToolUploadForm(request.POST)
-		if form.is_valid():
+		form = ToolUploadForm(request.POST) # if post has bene called 
+		if form.is_valid(): #check if it was a valid form that we can read
 			version_name = form.cleaned_data['version_name']
 			tool_name = form.cleaned_data['tool_name']
 			algorithm_name = form.cleaned_data['algorithm_name']
@@ -91,27 +102,29 @@ def tool_upload(request):
 			expression = form.cleaned_data['expression']
 			options = form.cleaned_data['options']
 			matching_item = repository.get_matching_item(git_revision)
-			if str(repository.get_sha(matching_item)).startswith(git_revision):
+			# get all data form the form and store it
+			if str(repository.get_sha(matching_item)).startswith(git_revision): # check if the igven git revision really is the version we want. because of how get_matching_item works.
 				a, created = Algorithm.objects.get_or_create(name=algorithm_name)
 				t, created = Tool.objects.get_or_create(name=tool_name)
 				rx, created = Regex.objects.get_or_create(regex=options)
 				dummydate = datetime(*repository.get_date(repository.get_matching_item(revision))[:6])
 				at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=version_name)
-				y = options.split(';')
-				for z in y:
-					x = z.split(":")
+				#put all the data in the database.
+				y = options.split(';') #split the options on a semi colon
+				for z in y: #then for each spitted option
+					x = z.split(":") # spit again on colon so we got the option and its shot cut after each other.
 					op, created = Option.objects.get_or_create(name=x[0], takes_argument=(x[0].endswith("=")))
 					vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
-					try:
+					try: # try if it has a shot cut if not it skips that part.
 						rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut=x[1])
 					except IndexError:
 						pass
-				form = ToolUploadForm()
-			else:
+				form = ToolUploadForm() # return empty form if all is well
+			else: # return the filled in form wiht the comment on the git revision and that it dous not exist.
 				form = ToolUploadForm(initial={'tool_name' : tool_name, 'algorithm_name' : algorithm_name, 'git_revision' : 'git revision does not exist', 'expression' : expression, 'options' : options})
 	else:
-		form = ToolUploadForm()
-	return render_to_response('upload_tool.html', {'form': form,}, context_instance=RequestContext(request))
+		form = ToolUploadForm() # return empty form if post was not used
+	return render_to_response('upload_tool.html', {'form': form,}, context_instance=RequestContext(request)) # return the page with the form.
 
 def test_regex(request):
 	dump = json.dumps({'result': regex_tester.test_regex(request.POST.get('regex'), request.POST.get('testlog'))})
