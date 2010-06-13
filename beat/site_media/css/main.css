@@ -67,12 +67,25 @@ body{
 /*	Blokken met inhoud. Breedte wordt bepaald door de span-x style.
 		Het enige wat we hier dus doen is de schaduw, padding */
 .blok{
-	-moz-box-shadow: 			5px 5px 5px #666;/* horizontal vertical spread #color */
-	-webkit-box-shadow: 	5px 5px 5px #666;
+	-moz-box-shadow: 			5px 5px 5px #888;/* horizontal vertical spread #color */
+	-webkit-box-shadow: 	5px 5px 5px #888;
+	box-shadow: 			5px 5px 5px #888;/* horizontal vertical spread #color */
+	
+	-moz-border-radius:0 0 3px 3px;
+	-webkit-border-radius:0 0 3px 3px;
+	border-radius:0 0 3px 3px;
+	
 	box-shadow: 					5px 5px 5px #666;
 	background:						white;
 	padding:							10px;
-	margin:								5px 0px 15px 10px;
+	margin:								0	0	15px 10px;
+}
+
+/* Een blok direct na een ander blok. Rond de bovenkant ook af. */
+.blok + .blok{
+	-moz-border-radius:				3px 3px 3px 3px;
+	-webkit-border-radius:			3px 3px 3px 3px;
+	border-radius:					3px 3px 3px 3px;
 }
 
 .graph {
