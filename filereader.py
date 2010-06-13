@@ -178,7 +178,7 @@ class FileReader:
 		toolversion = m.get('toolversion')
 		tv = toolversion.split('-')
 		
-		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('OS')+" "+m.get('Kernel_n')+" "+m.get('Kernel_r')+" "+m.get('Kernel_v'))]
+		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('Kernel_v'))]
 
 		#parse the Call to find the supplied options
 		tmp = self.parse_call(header[call][6:], toolversion)
