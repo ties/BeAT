@@ -10,6 +10,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # Django settings for BeAT project.
 
 DEBUG = True
+#DEBUG does leak _some_ internal state. Do not use this for production.
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -34,7 +35,7 @@ DATABASES = {
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Europe/Amsterdam'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -101,7 +102,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 	'django.contrib.admin',
 	'beat.benchmarks',
-	'beat.graphs'
+	'beat.graphs',
+	'beat.comparisons'
 )
 
 STATIC_DOC_ROOT = os.path.join(SITE_ROOT, 'templates')

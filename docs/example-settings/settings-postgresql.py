@@ -10,6 +10,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # Django settings for BeAT project.
 
 DEBUG = True
+#DEBUG does leak _some_ internal state. Do not use this for production.
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -101,7 +102,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 	'django.contrib.admin',
 	'beat.benchmarks',
-	'beat.graphs'
+	'beat.graphs',
+	'beat.comparisons'
 )
 
 STATIC_DOC_ROOT = os.path.join(SITE_ROOT, 'templates')
