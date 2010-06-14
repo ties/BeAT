@@ -151,44 +151,43 @@ def graph_model(request, id, format='png'):
 	axisNum = 0 # Counts the number of lines (to produce a unique style for each line)
 	modelNames = Model.objects.values('name').annotate(num_models=Count('name'))
 	
-	if len(modelNames) != 0:
-		# Plot a line for each model
-		for m in modelNames:
-			axisNum += 1
-			style = styles[axisNum % len(styles) ]
-			color = colors[axisNum % len(colors) ]
-			marker = markers[axisNum % len(markers) ]
+	# Plot a line for each model
+	for m in modelNames:
+		axisNum += 1
+		style = styles[axisNum % len(styles) ]
+		color = colors[axisNum % len(colors) ]
+		marker = markers[axisNum % len(markers) ]
+		
+		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
+		# Filter benchmarks based on the ModelComparison data
+		benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
+		
+		if (len(benchmarks) != 0):
+			# Filter options if specified
+			if c_option is not None:
+				benchmarks = benchmarks.filter(optionvalue=c_option)
 			
-			benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
-			# Filter benchmarks based on the ModelComparison data
-			benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
+			# Static data types to plot in the graph
+			types = []
+			if (c_type == ModelComparison.TRANSITIONS):
+				types = [b.transition_count for b in benchmarks]
+			elif (c_type == ModelComparison.STATES):
+				types = [b.states_count for b in benchmarks]
+			elif (c_type == ModelComparison.VSIZE):
+				types = [b.memory_VSIZE for b in benchmarks]
+			elif (c_type == ModelComparison.RSS):
+				types = [b.memory_RSS for b in benchmarks]
+			elif (c_type == ModelComparison.ELAPSED_TIME):
+				types = [b.elapsed_time for b in benchmarks]
+			elif (c_type == ModelComparison.TOTAL_TIME):
+				types = [b.total_time for b in benchmarks]
 			
-			if (len(benchmarks) != 0):
-				# Filter options if specified
-				if c_option is not None:
-					benchmarks = benchmarks.filter(optionvalue=c_option)
-				
-				# Static data types to plot in the graph
-				types = []
-				if (c_type == ModelComparison.TRANSITIONS):
-					types = [b.transition_count for b in benchmarks]
-				elif (c_type == ModelComparison.STATES):
-					types = [b.states_count for b in benchmarks]
-				elif (c_type == ModelComparison.VSIZE):
-					types = [b.memory_VSIZE for b in benchmarks]
-				elif (c_type == ModelComparison.RSS):
-					types = [b.memory_RSS for b in benchmarks]
-				elif (c_type == ModelComparison.ELAPSED_TIME):
-					types = [b.elapsed_time for b in benchmarks]
-				elif (c_type == ModelComparison.TOTAL_TIME):
-					types = [b.total_time for b in benchmarks]
-				
-				# Plot data
-				lines = ax.plot(
-					[b.algorithm_tool.date for b in benchmarks], 
-					types, 
-					marker + style + color,
-					label = m['name'])
+			# Plot data
+			lines = ax.plot(
+				[b.algorithm_tool.date for b in benchmarks], 
+				types, 
+				marker + style + color,
+				label = m['name'])
 
 	#Mark-up
 	title = c_tool.name + c_algo.name
