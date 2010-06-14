@@ -264,6 +264,17 @@ def compare_detail(request, id, model=False):
 		#models = Model.objects.filter(id__in=[b.model.id for b in benches])
 		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm)
 		
+		test = []
+		last_model = benches[0].model
+		last_array = []
+		test.append(last_array)
+		for b in benches:
+			if b.model == last_model:
+				last_array.append(b)
+			else:
+				last_model = b.model
+				last_array = test.append([])
+				
 		form = ExportGraphForm()
 		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form,  'benches' : benches}, context_instance=RequestContext(request))
 	else:
