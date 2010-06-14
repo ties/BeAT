@@ -18,14 +18,16 @@
 				<th id="finishedsort" class="sort">Finished</th>
 			</tr>
 			
-			{% for b in benches %}
-			<tr>
-				<td>{{ b.model }}</td>
-				<td>{{ b.states_count }}</td>
-				<td>{{ b.elapsed_time|floatformat:3 }}</td>
-				<td>{{ b.memory_RSS }}</td>
-				<td>{{ b.finished|yesno:"yes,no,maybe" }}</td>
-			</tr>
+			{% for res in results %}
+				{% for b in res %}
+				<tr>
+					<td>{{ b.model }}</td>
+					<td>{{ b.states_count }}</td>
+					<td>{{ b.elapsed_time|floatformat:3 }}</td>
+					<td>{{ b.memory_RSS }}</td>
+					<td>{{ b.finished|yesno:"yes,no,maybe" }}</td>
+				</tr>
+				{% endfor %}
 			{% empty %}
 			<tr>
 				<td colspan="5">Result set is empty.</td>

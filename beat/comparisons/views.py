@@ -120,7 +120,7 @@ Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
 @param id ModelComparison ID from the database, used filter the benchmark data from the db.
 """
-@cache_page(60 * 15)
+#@cache_page(60 * 15)
 def graph_model(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -269,19 +269,22 @@ def compare_detail(request, id, model=False):
 		#models = Model.objects.filter(id__in=[b.model.id for b in benches])
 		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm)
 		benchesjson = serializers.serialize("json", benches)
-		test = []
+		
+		# Fetch an array of containing arrays of benchmark objects with equal model
+		results = []
 		last_model = benches[0].model
 		last_array = []
-		test.append(last_array)
+		results.append(last_array)
 		for b in benches:
 			if b.model == last_model:
 				last_array.append(b)
 			else:
 				last_model = b.model
-				last_array = test.append([])
+				last_array = results.append([b])
+		print results
 				
 		form = ExportGraphForm()
-		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form,  'benches' : benches, 'json' : benchesjson}, context_instance=RequestContext(request))
+		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form, 'json' : benchesjson, 'results' : results}, context_instance=RequestContext(request))
 	else:
 		c = get_object_or_404(Comparison,pk=id)
 		
