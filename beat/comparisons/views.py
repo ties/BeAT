@@ -6,6 +6,7 @@ from forms import *
 from beat.tools import graph
 from django.views.decorators.cache import cache_page
 from decimal import Decimal
+from django.core import serializers
 
 # MatPlotLib
 import numpy as np
@@ -218,6 +219,10 @@ def graph_model(request, id, format='png'):
 	response = graph.export(canvas, comparison.name, format)
 	return response
 
+	
+def compareform(request):
+	return export_graph(1,2,true)
+	
 @login_required()
 def export_graph(request, id, model=False):
 	if request.method == 'POST': # If the form has been submitted...
@@ -263,9 +268,9 @@ def compare_detail(request, id, model=False):
 		#benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
 		#models = Model.objects.filter(id__in=[b.model.id for b in benches])
 		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm)
-		
+		benchesjson = serializers.serialize("json", benches)
 		form = ExportGraphForm()
-		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form,  'benches' : benches}, context_instance=RequestContext(request))
+		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form,  'benches' : benches, 'json' : benchesjson}, context_instance=RequestContext(request))
 	else:
 		c = get_object_or_404(Comparison,pk=id)
 		
