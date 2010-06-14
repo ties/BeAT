@@ -24,6 +24,10 @@
 				<td>{{ i }}</td>
 				{% endfor %}
 			</tr>
+		{% empty %}
+			<tr>
+				<td colspan="5">Result set is empty.</td>
+			</tr>
 		{% endfor %}
 		</table>
 		<form action="/compare/tool/{{ comparison.id }}/export" method="post">{% csrf_token %}

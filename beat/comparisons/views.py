@@ -37,67 +37,77 @@ def scatterplot(request, id, format='png'):
 	at_b = c.algorithm_tool_b
 	b1 = Benchmark.objects.filter(algorithm_tool=at_a)
 	b2 = Benchmark.objects.filter(algorithm_tool=at_b)
-	b1 = b1.filter(model__in=[b.model.pk for b in b2])
+	#b1 = b1.filter(model__in=[b.model.pk for b in b2])
+	b1 = b1 & b2
 	
-	# Make new arrays with only the elapsed time
-	t1 = [(float(b.elapsed_time)) for b in b1]
-	t2 = [(float(b.elapsed_time)) for b in b2]
-	
-	# Color mask: if t[i] < t[2] --> blue dot in graph; else red dot
-	mask = []
-	for index in range(len(t1)):
-		if t1[index] < t2[index]:
-			mask.append(cc.to_rgb('blue'))
-		else:
-			mask.append(cc.to_rgb('red'))
-	
-	# Draw a linear function from .001 until the first power of 10 greater than max_value
-	max_value_t = max(max(b1.values('elapsed_time')),max(b2.values('elapsed_time')))['elapsed_time']
-	max_value_t = math.pow(10,math.ceil(math.log10(max_value_t)))
-	ax.plot(np.arange(0,max_value_t,step=.001),np.arange(0,max_value_t,step=.001),'k-')
-	
-	# Plot data
-	ax.scatter(t1, t2, s=10, color=mask, marker='o')
-	
-	# Axes mark-up
-	ax.set_xscale('log')
-	ax.set_yscale('log')
-	ax.set_xlabel(str(at_a), color='red')
-	ax.set_ylabel(str(at_b), color='blue')
-	ax.set_title('Runtime (s)', size='small')
-	ax.set_axis_bgcolor('#eeeeee')
-	ax.grid(True)
+	if len(b1) != 0:
+		# Make new arrays with only the elapsed time
+		t1 = [(float(b.elapsed_time)) for b in b1]
+		t2 = [(float(b.elapsed_time)) for b in b2]
 		
-	# -------- Plotting memory data starts here in a new subplot ---------
-	ax=fig.add_subplot(212)
-	m1 = [b.memory_VSIZE for b in b1]
-	m2 = [b.memory_VSIZE for b in b2]
+		# Color mask: if t[i] < t[2] --> blue dot in graph; else red dot
+		mask = []
+		for index in range(len(t1)):
+			if t1[index] < t2[index]:
+				mask.append(cc.to_rgb('blue'))
+			else:
+				mask.append(cc.to_rgb('red'))
+		
+		# Draw a linear function from .001 until the first power of 10 greater than max_value
+		max_value_t = max(max(b1.values('elapsed_time')),max(b2.values('elapsed_time')))['elapsed_time']
+		max_value_t = math.pow(10,math.ceil(math.log10(max_value_t)))
+		ax.plot(np.arange(0,max_value_t,step=.001),np.arange(0,max_value_t,step=.001),'k-')
+		
+		# Plot data
+		ax.scatter(t1, t2, s=10, color=mask, marker='o')
+		
+		# Axes mark-up
+		ax.set_xscale('log')
+		ax.set_yscale('log')
+		ax.set_xlabel(str(at_a), color='red')
+		ax.set_ylabel(str(at_b), color='blue')
+		ax.set_title('Runtime (s)', size='small')
+		ax.set_axis_bgcolor('#eeeeee')
+		ax.grid(True)
+			
+		# -------- Plotting memory data starts here in a new subplot ---------
+		ax=fig.add_subplot(212)
+		m1 = [b.memory_VSIZE for b in b1]
+		m2 = [b.memory_VSIZE for b in b2]
+		
+		# Color mask again
+		mask = []
+		for index in range(len(t1)):
+			if m1[index] < m2[index]:
+				mask.append(cc.to_rgb('blue'))
+			else:
+				mask.append(cc.to_rgb('red'))
+		
+		# Plot linear function again
+		max_value_m = max(max(b1.values('memory_VSIZE')),max(b2.values('memory_VSIZE')))['memory_VSIZE']
+		max_value_m = math.pow(10,math.ceil(math.log10(max_value_m)))
+		ax.plot(np.arange(0,max_value_m),np.arange(0,max_value_m),'k-')
+		
+		# Axes mark-up
+		ax.set_xscale('log')
+		ax.set_yscale('log')
+		ax.set_xlabel(str(at_a), color='red')
+		ax.set_ylabel(str(at_b), color='blue')
+		ax.grid(True)
+		
+		# Plot data
+		ax.scatter(m1,m2,s=10,color=mask,marker='o')
+		ax.set_title('Memory VSIZE (kb)', size='small')
+	# Result set is empty
+	else: 
+		ax=fig.add_subplot(211)
+		ax.set_title('Runtime (s)', size='small')
+		ax.text(0.3,0.5,"Empty result set.") 
+		ax=fig.add_subplot(212)
+		ax.set_title('Memory VSIZE (kb)', size='small')
+		ax.text(0.3,0.5,"Empty result set.")
 	
-	# Color mask again
-	mask = []
-	for index in range(len(t1)):
-		if m1[index] < m2[index]:
-			mask.append(cc.to_rgb('blue'))
-		else:
-			mask.append(cc.to_rgb('red'))
-	
-	# Plot linear function again
-	max_value_m = max(max(b1.values('memory_VSIZE')),max(b2.values('memory_VSIZE')))['memory_VSIZE']
-	max_value_m = math.pow(10,math.ceil(math.log10(max_value_m)))
-	ax.plot(np.arange(0,max_value_m),np.arange(0,max_value_m),'k-')
-	
-	# Axes mark-up
-	ax.set_xscale('log')
-	ax.set_yscale('log')
-	ax.set_xlabel(str(at_a), color='red')
-	ax.set_ylabel(str(at_b), color='blue')
 	ax.set_axis_bgcolor('#eeeeee')
-	ax.grid(True)
-	
-	# Plot data
-	ax.scatter(m1,m2,s=10,color=mask,marker='o')
-	ax.set_title('Memory VSIZE (kb)', size='small')
-	
 	# Output graph
 	fig.set_size_inches(5,10)
 	canvas = FigureCanvas(fig)
@@ -141,43 +151,44 @@ def graph_model(request, id, format='png'):
 	axisNum = 0 # Counts the number of lines (to produce a unique style for each line)
 	modelNames = Model.objects.values('name').annotate(num_models=Count('name'))
 	
-	# Plot a line for each model
-	for m in modelNames:
-		axisNum += 1
-		style = styles[axisNum % len(styles) ]
-		color = colors[axisNum % len(colors) ]
-		marker = markers[axisNum % len(markers) ]
-		
-		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
-		# Filter benchmarks based on the ModelComparison data
-		benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
-		
-		if (len(benchmarks) != 0):
-			# Filter options if specified
-			if c_option is not None:
-				benchmarks = benchmarks.filter(optionvalue=c_option)
+	if len(modelNames) != 0:
+		# Plot a line for each model
+		for m in modelNames:
+			axisNum += 1
+			style = styles[axisNum % len(styles) ]
+			color = colors[axisNum % len(colors) ]
+			marker = markers[axisNum % len(markers) ]
 			
-			# Static data types to plot in the graph
-			types = []
-			if (c_type == ModelComparison.TRANSITIONS):
-				types = [b.transition_count for b in benchmarks]
-			elif (c_type == ModelComparison.STATES):
-				types = [b.states_count for b in benchmarks]
-			elif (c_type == ModelComparison.VSIZE):
-				types = [b.memory_VSIZE for b in benchmarks]
-			elif (c_type == ModelComparison.RSS):
-				types = [b.memory_RSS for b in benchmarks]
-			elif (c_type == ModelComparison.ELAPSED_TIME):
-				types = [b.elapsed_time for b in benchmarks]
-			elif (c_type == ModelComparison.TOTAL_TIME):
-				types = [b.total_time for b in benchmarks]
+			benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
+			# Filter benchmarks based on the ModelComparison data
+			benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
 			
-			# Plot data
-			lines = ax.plot(
-				[b.algorithm_tool.date for b in benchmarks], 
-				types, 
-				marker + style + color,
-				label = m['name'])
+			if (len(benchmarks) != 0):
+				# Filter options if specified
+				if c_option is not None:
+					benchmarks = benchmarks.filter(optionvalue=c_option)
+				
+				# Static data types to plot in the graph
+				types = []
+				if (c_type == ModelComparison.TRANSITIONS):
+					types = [b.transition_count for b in benchmarks]
+				elif (c_type == ModelComparison.STATES):
+					types = [b.states_count for b in benchmarks]
+				elif (c_type == ModelComparison.VSIZE):
+					types = [b.memory_VSIZE for b in benchmarks]
+				elif (c_type == ModelComparison.RSS):
+					types = [b.memory_RSS for b in benchmarks]
+				elif (c_type == ModelComparison.ELAPSED_TIME):
+					types = [b.elapsed_time for b in benchmarks]
+				elif (c_type == ModelComparison.TOTAL_TIME):
+					types = [b.total_time for b in benchmarks]
+				
+				# Plot data
+				lines = ax.plot(
+					[b.algorithm_tool.date for b in benchmarks], 
+					types, 
+					marker + style + color,
+					label = m['name'])
 
 	#Mark-up
 	title = c_tool.name + c_algo.name
@@ -186,9 +197,11 @@ def graph_model(request, id, format='png'):
 	
 	ax.set_title(title)
 	leg = ax.legend(fancybox=True, loc='upper left',bbox_to_anchor = (1,1.15), markerscale=5)
-	for t in leg.get_texts():
-		t.set_fontsize('xx-small')
 	
+	if leg is not None:
+		for t in leg.get_texts():
+			t.set_fontsize('xx-small')
+		
 	y_label = c_type
 	for l in ModelComparison.DATA_TYPES:
 		a,b = l

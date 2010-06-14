@@ -26,6 +26,10 @@
 				<td>{{ b.memory_RSS }}</td>
 				<td>{{ b.finished|yesno:"yes,no,maybe" }}</td>
 			</tr>
+			{% empty %}
+			<tr>
+				<td colspan="5">Result set is empty.</td>
+			</tr>
 			{% endfor %}
 		</table>
 		
