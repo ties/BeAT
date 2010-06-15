@@ -62,7 +62,7 @@ Shows a log file for the given database id. if no such file is found it will ret
 """	
 def log_response(request, id):
 	#fetch the id benchmark object form the database
-	b = Benchmark.objects.get(pk=id)
+	"""
 	path = b.logfile
 	output = "Model name: "
 	output += str(b.model)
@@ -95,22 +95,40 @@ def log_response(request, id):
 	output += "\nFinished: "
 	output += str(b.finished)
 	output += "\n"
+	#if not path: # check to see if path is not a path
+	#	try: # try to get the data form beat if it is not a system path
+	#		from beat.tools.logsave import __init_code__, get_log
+	#		repo = losgsave.__init_code__()
+	#		output += et_log(repo, path)
+			#form = LogResponseForm(initial={'response': output})
+	#	except: #else return file not found
+			#form = LogResponseForm(initial={'response': 'Error no file found'})
+	#else: # read out the file and put it in the form
+	#	contents = ""
+	#	with open(path, 'rb') as file:
+	#		for line in file:
+	#			contents+=line
+	#	output+= contents
+		#form = LogResponseForm(initial={'response': output})
+	"""
+	
+	b = Benchmark.objects.get(pk=id)
+	path = b.logfile
+	ov = b.optionvalue.all()
+	hw = b.hardware.all()
+	loglist = []
 	if not path: # check to see if path is not a path
 		try: # try to get the data form beat if it is not a system path
 			from beat.tools.logsave import __init_code__, get_log
 			repo = losgsave.__init_code__()
-			output += et_log(repo, path)
-			form = LogResponseForm(initial={'response': output})
+			log = get_log(repo, path)
 		except: #else return file not found
-			form = LogResponseForm(initial={'response': 'Error no file found'})
-	else: # read out the file and put it in the form
-		contents = ""
+			log = 'Error: log file not found'
+	else: # rad out the file and put it in the form
 		with open(path, 'rb') as file:
 			for line in file:
-				contents+=line
-		output+= contents
-		form = LogResponseForm(initial={'response': output})
-	return render_to_response('log_response.html', {'form': form,}, context_instance=RequestContext(request))
+				loglist.append(line)
+	return render_to_response('log_response.html', {'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
 
 """
 This method allows for the uploading of tool to the database. 

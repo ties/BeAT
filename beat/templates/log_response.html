@@ -1,8 +1,36 @@
 {% extends "base_site.html" %}
 {% block title %}Response{% endblock %}
 {% block content %}
-	<h2>Response</h2>
 	<!-- START CONTENT HERE -->
-	{{ form.as_p }}
+	<table>
+	<tr><th>Tool</th><td>{{b.algorithm_tool.tool.name}}</td></tr>
+	<tr><th>Algorithm</th><td>{{b.algorithm_tool.algorithm.name}}</td></tr>
+	<tr><th>Model</th><td>{{b.model.name}}</td></tr>
+	<tr><th>User Time</th><td>{{b.user_time}}</td></tr>
+	<tr><th>System Time</th><td>{{b.system_time}}</td></tr>
+	<tr><th>Elapsed Time</th><td>{{b.elapsed_time}}</td></tr>
+	<tr><th>Transition Count</th><td>{{b.transition_count}}</td></tr>
+	<tr><th>States Count</th><td>{{b.states_count}}</td></tr>
+	<tr><th>Memory VSize</th><td>{{b.memory_VSIZE}}</td></tr>
+	<tr><th>Memory RSS</th><td>{{b.memory_RSS}}</td></tr>
+	<tr><th>Finished</th><td>{{b.finished}}</td></tr>
+	</table>
+	<table>
+	<tr><th>Ran on</th></tr>
+	{% for i in hardware %}
+		<tr><td>{{ i }}</td></tr>
+	{% endfor %}
+	</table>
+	<table>
+	<tr><th>Name</th><th>Value</th></tr>
+	{% for i in optionvalue %}
+		<tr><td>{{i.option.name}}</td><td>{{i.value}}</td></tr>
+	{% endfor %}
+	</table>
+	<p>
+	{% for i in log %}
+	{{i}}<br/>
+	{% endfor %}
+	</p>
 	<!-- END OF CONTENT -->
 {% endblock %}
