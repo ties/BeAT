@@ -497,7 +497,7 @@ class FileReader:
 					h.disk_space = disk_space
 					h.save()
 			else:
-				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, kernelversion=os, defaults={'disk_space': 0})
 			if created:
 				self.print_message(V_NOISY, "Notice: created a new Hardware entry:%s"%(name))
 			else:
@@ -637,7 +637,8 @@ class FileReader:
 				data = self.parse(run)
 				if data:
 					#write to the database
-					error=False
+					error=True
+					created=False
 					try:
 						(created, bench)=self.write_to_db(data)
 						if created:
@@ -645,6 +646,7 @@ class FileReader:
 							log_file_path = self.write_to_log(run, "%d"%(id))
 							bench.logfile="%s"%(log_file_path)
 							bench.save()
+						error = False
 					#handle known error FileReaderError
 					except FileReaderError as fre:
 						#some known error occured, check how bad it is
@@ -657,7 +659,6 @@ class FileReader:
 							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( fre.error))
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
-						error=True
 					#handle other errors
 					#except Exception, e:
 						#an unknown error occured, skip this part
