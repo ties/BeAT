@@ -60,58 +60,7 @@ def colophon(request):
 """
 Shows a log file for the given database id. if no such file is found it will return a file not found in the response form.
 """	
-def log_response(request, id):
-	#fetch the id benchmark object form the database
-	"""
-	path = b.logfile
-	output = "Model name: "
-	output += str(b.model)
-	output += "\nAlgorithm Tool: "
-	output += str(b.algorithm_tool)
-	output += "\nHardware: "
-	for hw in b.hardware.all():
-		output += str(hw)
-	output += "\nOptionvalue: "
-	for opt in b.optionvalue.all():
-		output += str(opt)
-	output += "\ndate time: "
-	output += str(b.date_time)
-	output += "\nUsertime: "
-	output += str(b.user_time)
-	output += "\nSystem Time: "
-	output += str(b.system_time)
-	output += "\nTotal Time: "
-	output += str(b.total_time)
-	output += "\nElapsed Time: "
-	output += str(b.elapsed_time)
-	output += "\nTrasistion Count: "
-	output += str(b.transition_count)
-	output += "\nStates Count: "
-	output += str(b.states_count)
-	output += "\nMemory VSize: "
-	output += str(b.memory_VSIZE)
-	output += "\nMemory RSS: "
-	output += str(b.memory_RSS)
-	output += "\nFinished: "
-	output += str(b.finished)
-	output += "\n"
-	#if not path: # check to see if path is not a path
-	#	try: # try to get the data form beat if it is not a system path
-	#		from beat.tools.logsave import __init_code__, get_log
-	#		repo = losgsave.__init_code__()
-	#		output += et_log(repo, path)
-			#form = LogResponseForm(initial={'response': output})
-	#	except: #else return file not found
-			#form = LogResponseForm(initial={'response': 'Error no file found'})
-	#else: # read out the file and put it in the form
-	#	contents = ""
-	#	with open(path, 'rb') as file:
-	#		for line in file:
-	#			contents+=line
-	#	output+= contents
-		#form = LogResponseForm(initial={'response': output})
-	"""
-	
+def log_response(request, id):	
 	b = Benchmark.objects.get(pk=id)
 	path = b.logfile
 	ov = b.optionvalue.all()
