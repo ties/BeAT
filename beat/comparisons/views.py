@@ -6,7 +6,12 @@ from forms import *
 from beat.tools import graph
 from django.views.decorators.cache import cache_page
 from decimal import Decimal
+#json export voor model instanties
+#zoals: resultsjson = serializers.serialize("json", results) maar dan met model instanties ipv array.
 from django.core import serializers
+#json
+import json
+from benchmarks.ajax_execute import BenchmarkJSON
 
 # MatPlotLib
 import numpy as np
@@ -266,25 +271,29 @@ def compare_detail(request, id, model=False):
 		
 		#models = Model.objects.values('id').annotate(num_models=Count('name'))
 		#benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
-		#models = Model.objects.filter(id__in=[b.model.id for b in benches])
-		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm)
-		benchesjson = serializers.serialize("json", benches)
+		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).order_by('model__name')
 		
+		models = Model.objects.filter(id__in=[b.model.id for b in benches])
+
 		# Fetch an array of containing arrays of benchmark objects with equal model
-		results = []
-		last_model = benches[0].model
-		last_array = []
-		results.append(last_array)
-		for b in benches:
-			if b.model == last_model:
-				last_array.append(b)
-			else:
-				last_model = b.model
-				last_array = results.append([b])
-		print results
-				
+#		results = []
+#		last_model = benches[0].model
+#		last_array = []
+#		results.append(last_array)
+#		for b in benches:
+#			if b.model == last_model:
+#				last_array.append(b)
+#			else:
+#				last_model = b.model
+#				last_array = results.append([b])
+#				
+#		resultsjson = json.dumps(results,cls=BenchmarkJSON)
+		benchjson = serializers.serialize("json", benches)		
+		modeljson = serializers.serialize("json", models)
+		
+		
 		form = ExportGraphForm()
-		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form, 'json' : benchesjson, 'results' : results}, context_instance=RequestContext(request))
+		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form, 'benches' : benches, 'benchjson' : benchjson, 'modeljson' : modeljson}, context_instance=RequestContext(request))
 	else:
 		c = get_object_or_404(Comparison,pk=id)
 		

@@ -18,8 +18,7 @@
 				<th id="finishedsort" class="sort">Finished</th>
 			</tr>
 			
-			{% for res in results %}
-				{% for b in res %}
+			{% for b in benches %}
 				<tr>
 					<td>{{ b.model }}</td>
 					<td>{{ b.states_count }}</td>
@@ -27,7 +26,6 @@
 					<td>{{ b.memory_RSS }}</td>
 					<td>{{ b.finished|yesno:"yes,no,maybe" }}</td>
 				</tr>
-				{% endfor %}
 			{% empty %}
 			<tr>
 				<td colspan="5">Result set is empty.</td>
@@ -36,8 +34,10 @@
 		</table>
 		<script type="text/javascript">
 		{% autoescape off %}
-			{{ json }}
+			benchmarkData = {{ benchjson }}
+			modelData = {{ modeljson }}
 		{%  endautoescape %}
+			
 		</script>
 		<p><a href="/compare/model/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 		
