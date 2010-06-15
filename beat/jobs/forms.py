@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 class JobGenForm(forms.Form):
 	name		= forms.CharField(max_length=255, required=False)
-	nodes		= forms.CharField(max_length=255, required=True, initial="1:E5220,walltime=4:00:00")
+	nodes		= forms.CharField(max_length=255, required=True, initial="1:E5520,walltime=4:00:00")
 	tool		= forms.ModelChoiceField(Tool.objects.all(), empty_label=None, required=True)
 	algorithm	= forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None, required=True)
 	options		= forms.CharField(max_length=255, required=False)
