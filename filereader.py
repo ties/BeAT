@@ -491,7 +491,7 @@ class FileReader:
 		for tuple in hwdata:
 			name, memory, cpu, disk_space, os = tuple
 			if disk_space > 0:
-				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': disk_space})
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, kernelversion=os, defaults={'disk_space': disk_space})
 				#if the DB did contain h but missed disk_space information:
 				if not created and h.disk_space==0:
 					h.disk_space = disk_space

@@ -64,6 +64,34 @@ def log_response(request, id):
 	#fetch the id benchmark object form the database
 	b = Benchmark.objects.get(pk=id)
 	path = b.logfile
+	output = "Model name: "
+	output += b.model
+	output += "\n Algorithm Tool: "
+	output += b.algorithm_tool
+	output += "\n Hardware: "
+	output += b.hardware
+	output += "\n Optionvalue"
+	output += b.optionvalue
+	output += "\n date time: "
+	output += b.date_time
+	output += "\n usertime: "
+	output += b.user_time
+	output += "\n System Time: "
+	output += b.system_time
+	output += "\n Total Time: "
+	output += b.total_time
+	output += "\n Elapsed Time: "
+	output += b.elapsed_time
+	output += "\n Trasistion Count: "
+	output += b.transition_count
+	output += "\n States Count: "
+	output += b.states_count
+	output += "\n Memory VSize: "
+	output += b.memory_VSIZE
+	output += "\n Memory RSS: "
+	output += b.memory_RSS
+	output += "\n Finished: "
+	output += b.finished
 	if not path: # check to see if path is not a path
 		try: # try to get the data form beat if it is not a system path
 			from beat.tools.logsave import __init_code__, get_log
