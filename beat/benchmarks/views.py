@@ -65,38 +65,42 @@ def log_response(request, id):
 	b = Benchmark.objects.get(pk=id)
 	path = b.logfile
 	output = "Model name: "
-	output += b.model
-	output += "\n Algorithm Tool: "
-	output += b.algorithm_tool
-	output += "\n Hardware: "
-	output += b.hardware
-	output += "\n Optionvalue"
-	output += b.optionvalue
-	output += "\n date time: "
-	output += b.date_time
-	output += "\n usertime: "
-	output += b.user_time
-	output += "\n System Time: "
-	output += b.system_time
-	output += "\n Total Time: "
-	output += b.total_time
-	output += "\n Elapsed Time: "
-	output += b.elapsed_time
-	output += "\n Trasistion Count: "
-	output += b.transition_count
-	output += "\n States Count: "
-	output += b.states_count
-	output += "\n Memory VSize: "
-	output += b.memory_VSIZE
-	output += "\n Memory RSS: "
-	output += b.memory_RSS
-	output += "\n Finished: "
-	output += b.finished
+	output += str(b.model)
+	output += "\nAlgorithm Tool: "
+	output += str(b.algorithm_tool)
+	output += "\nHardware: "
+	for hw in b.hardware.all():
+		output += str(hw)
+	output += "\nOptionvalue: "
+	for opt in b.optionvalue.all():
+		output += str(opt)
+	output += "\ndate time: "
+	output += str(b.date_time)
+	output += "\nUsertime: "
+	output += str(b.user_time)
+	output += "\nSystem Time: "
+	output += str(b.system_time)
+	output += "\nTotal Time: "
+	output += str(b.total_time)
+	output += "\nElapsed Time: "
+	output += str(b.elapsed_time)
+	output += "\nTrasistion Count: "
+	output += str(b.transition_count)
+	output += "\nStates Count: "
+	output += str(b.states_count)
+	output += "\nMemory VSize: "
+	output += str(b.memory_VSIZE)
+	output += "\nMemory RSS: "
+	output += str(b.memory_RSS)
+	output += "\nFinished: "
+	output += str(b.finished)
+	output += "\n"
 	if not path: # check to see if path is not a path
 		try: # try to get the data form beat if it is not a system path
 			from beat.tools.logsave import __init_code__, get_log
 			repo = losgsave.__init_code__()
-			form = LogResponseForm(initial={'response': get_log(repo, path)})
+			output += et_log(repo, path)
+			form = LogResponseForm(initial={'response': output})
 		except: #else return file not found
 			form = LogResponseForm(initial={'response': 'Error no file found'})
 	else: # read out the file and put it in the form
@@ -104,7 +108,8 @@ def log_response(request, id):
 		with open(path, 'rb') as file:
 			for line in file:
 				contents+=line
-		form = LogResponseForm(initial={'response': contents})
+		output+= contents
+		form = LogResponseForm(initial={'response': output})
 	return render_to_response('log_response.html', {'form': form,}, context_instance=RequestContext(request))
 
 """

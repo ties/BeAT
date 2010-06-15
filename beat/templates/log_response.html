@@ -1,20 +1,8 @@
 {% extends "base_site.html" %}
-
 {% block title %}Response{% endblock %}
-
 {% block content %}
-
-		<h2>Response</h2>
-
-				
-
-				<!-- START CONTENT HERE -->
-
-						<form>{% csrf_token %}
-
-									{{ form.as_p }}
-											</form>
-
-													<!-- END OF CONTENT -->
-
-													{% endblock %}
+	<h2>Response</h2>
+	<!-- START CONTENT HERE -->
+	{{ form.as_p }}
+	<!-- END OF CONTENT -->
+{% endblock %}
