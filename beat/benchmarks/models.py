@@ -54,7 +54,7 @@ class Hardware(models.Model):
 	memory = models.BigIntegerField(verbose_name="memory (KB)")
 	cpu = models.CharField(max_length=200, verbose_name="CPU name")
 	disk_space = models.BigIntegerField(verbose_name="disk space (KB)")
-	os = models.CharField(max_length=200, verbose_name="operating system")
+	kernelversion = models.CharField(max_length=200, verbose_name="Kernel version")
 
 	def __unicode__(self):
 		return "%s @ %sKB RAM, %s, %s" % (self.name, self.memory, self.cpu, self.os)

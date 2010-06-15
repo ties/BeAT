@@ -71,7 +71,7 @@ var data =	{
 				sort:			"id",
 				sortorder:		ASCENDING,
 				columns:		getColumns(),
-				extracolumns:	["TestValue"],
+				extracolumns:	[],
 				page:			0,
 				pagesize:		200,
 				filters:		[],
@@ -171,8 +171,26 @@ function handleResponse(json){
 	benchmark_ids = json.benchmark_ids;
 	
 	updateCheckedBenchmarks();
-	
+	updateExtraValues(json.extracolumns);
 	showResults();
+}
+
+function updateExtraValues(arr){
+	//filter old values from data['extracolumns']
+	var extracolumns = [];
+	for (var i=0; i<data['extracolumns'].length; i++){
+		if (arr.indexOf(data['extracolumns'][i])!=-1)	extracolumns.push(data['extracolumns'][i]);
+	}
+	data['extracolumns'] = extracolumns;
+	
+	//write new table
+	var html = '';
+	for (var i=0; i<arr.length; i++){
+		html+= '<input type="checkbox" value="'+arr[i]+'"'+(extracolumns.indexOf(arr[i])!=-1 ? ' checked' : '')+'>'+arr[i]+'<br />';
+	}
+	$("#extravalues").html(html);
+	//configure
+	configureExtraValues();
 }
 
 /**
@@ -196,6 +214,9 @@ function showResults(){
 			
 			for (var j=0; j<columns.length;j++){
 				if (columns[j].checked)		table+='<td>'+benchmark[columns[j].db_name]+'</td>';
+			}
+			for (var j=0; j<data.extracolumns.length;j++){
+				table+='<td>'+benchmark[data.extracolumns[j]]+'</td>';
 			}
 			table+='</tr>';
 			
@@ -243,6 +264,14 @@ function getTableHeaders(){
 			res+='<th id="'+columns[i].db_name+'"><span class="'+c+'">'+columns[i].name+'</span></th>';
 		}
 	}
+	for (var i=0; i<data.extracolumns.length; i++){
+		var c = '';
+		if (data.extracolumns[i] == data.sort){
+			c = (data.sortorder == ASCENDING ? 'ascending' : 'descending');
+		}
+		res+='<th id="'+data.extracolumns[i]+'"><span class="'+c+'">'+data.extracolumns[i]+'</span></th>';
+	}
+	
 	res+='</tr>';
 	return res;
 }
@@ -476,6 +505,18 @@ function configurePagesize(){
  * @ensure When clicking on a column checkbox, the corresponding value in columns.checked_columns is set to the value of the checkbox
  **/
 function configureColumnSelection(){
+	$("#columns input").click(function(){
+		var val = $(this).attr('value');
+		for (var i = 0; i<columns.length;i++){
+			if (columns[i].db_name == val)	columns[i].checked = this.checked;
+		}
+		
+		data.columns = getColumns();
+	});
+}
+
+function configureExtraValues(){
+	//copied code, does not work!
 	$("#columns input").click(function(){
 		var val = $(this).attr('value');
 		for (var i = 0; i<columns.length;i++){

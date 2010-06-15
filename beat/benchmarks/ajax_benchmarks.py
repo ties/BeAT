@@ -32,85 +32,67 @@ def getBenchmarks(request):
 	return res
 
 def getResponse(qs,data):
-	result = {}
-	
-	benchmarks = []
-	algorithms = []
-	options = []
-	tools = []
-	models = []
-	cpus = []
-	pcnames = []
-	benchmark_ids = []
+	result = {'benchmarks':[],
+				'columns':[],
+				'algorithms':[],
+				'options':[],
+				'tools':[],
+				'models':[],
+				'cpus':[],
+				'computernames':[],
+				'benchmark_ids':[]}
 	
 	if len(data['subset']) != 0:
 		qs = qs.filter(id__in=data['subset'])
 	
 	for k,f in data['filters'].iteritems():
 		if f.type==MODEL:
-			models = getModels(qs)
+			result['models'] = getModels(qs)
 		if f.type==ALGORITHM:
-			algorithms = getAlgorithms(qs)
+			result['algorithms'] = getAlgorithms(qs)
 		elif f.type==TOOL:
-			tools = getTools(qs)
+			result['tools'] = getTools(qs)
 		elif f.type==OPTIONS:
-			options = getOptions(qs)
+			result['options'] = getOptions(qs)
 		elif f.type==CPU:
-			cpus = getCPUs(qs)
+			result['cpus'] = getCPUs(qs)
 		elif f.type==COMPUTERNAME:
-			pcnames = getPCNames(qs)
+			result['computernames'] = getComputerNames(qs)
 		
 		qs = f.apply(qs)
 	
 	#getting remaining results
-	if len(models)==0:
-		models = getModels(qs)
+	if len(result['models'])==0:
+		result['models'] = getModels(qs)
 	
-	if len(algorithms)==0:
-		algorithms = getAlgorithms(qs)
+	if len(result['algorithms'])==0:
+		result['algorithms'] = getAlgorithms(qs)
 	
-	if len(tools)==0:
-		tools = getTools(qs)
+	if len(result['tools'])==0:
+		result['tools'] = getTools(qs)
 	
-	if len(options)==0:
-		options = getOptions(qs)
+	if len(result['options'])==0:
+		result['options'] = getOptions(qs)
 	
-	if len(cpus)==0:
-		cpus = getCPUs(qs)
+	if len(result['cpus'])==0:
+		result['cpus'] = getCPUs(qs)
 	
-	if len(pcnames)==0:
-		pcnames = getPCNames(qs)
+	if len(result['computernames'])==0:
+		result['computernames'] = getComputerNames(qs)
 	
 	columns = data['columns']
-	#selectdict = {}
-	#for extraval in data['extracolumns']:
-		#columns.append(extraval)
-		#selectdict[extraval] = "SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE '"+extraval+"'"
+	selectdict = {}
+	for extraval in data['extracolumns']:
+		columns.append(extraval)
+		selectdict[extraval] = "SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE '"+extraval+"'"
+	qs = qs.extra(select = selectdict)
 	
-	#qs = qs.extra(select = selectdict)
-	
-	#Adding values of selected extra columns:
-	#In [4]: qs = qs.extra(select={"TestValue":"SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE 'TestValue'"})
-	#data['columns'].append("TestValue")
-	#for extraval in data['extracolumns']:
-		#qs = qs.extra(select={extraval:""})
-	#Benchmark.objects.extra(select={"TestValue":'SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name="TestValue"'})
-	#print columns
 	qs = apply(qs.values, columns)
 	benchmark_ids = list(qs.values_list('id',flat=True))
-	extracolumns = getExtraColumns(qs)
 	qs = sortQuerySet(qs,data['sort'],data['sortorder'])
-	page = data['page']
-	pagesize = data['pagesize']
 	
-	result['benchmarks'] = list(qs[page*pagesize : (page+1)*pagesize]) #includes paging
-	result['columns'] = list(extracolumns)
-	result['algorithms'] = algorithms
-	result['options'] = options
-	result['tools'] = tools
-	result['models'] = models
-	result['cpus'] = cpus
-	result['computernames'] = pcnames
+	result['benchmarks'] = list(qs[data['page'] * data['pagesize'] : (data['page'] + 1) * data['pagesize']]) #includes paging
+	result['extracolumns'] = list(getExtraColumns(qs))
 	result['benchmark_ids'] = benchmark_ids
 	return result
 
@@ -149,7 +131,7 @@ def getCPUs(qs):
 		list.append({'id':i,'name':hw[i]})
 	return list
 
-def getPCNames(qs):
+def getComputerNames(qs):
 	hw = Hardware.objects.values("id","name")
 	list = []
 	for item in hw:
@@ -167,5 +149,5 @@ def sortQuerySet(qs,sort,sortorder):
 	return qs
 
 def getExtraColumns(qs):
-	cols = ExtraValue.objects.filter(benchmark__in=qs.values_list("id")).values("name").distinct()
+	cols = ExtraValue.objects.filter(benchmark__in=qs.values_list("id")).values_list("name",flat=True).distinct()
 	return cols
