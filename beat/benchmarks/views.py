@@ -60,6 +60,7 @@ def colophon(request):
 """
 Shows a log file for the given database id. if no such file is found it will return a file not found in the response form.
 """	
+@login_required
 def log_response(request, id):	
 	b = Benchmark.objects.get(pk=id)
 	path = b.logfile
@@ -78,7 +79,7 @@ def log_response(request, id):
 		with open(path, 'rb') as file:
 			for line in file:
 				loglist.append(line)
-	return render_to_response('log_response.html', {'extravalues':ev,'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
+	return render_to_response('log_response.html', {'ev':ev,'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
 
 """
 This method allows for the uploading of tool to the database. 

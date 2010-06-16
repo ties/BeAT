@@ -25,7 +25,7 @@
 	<h2>Options</h2>
 	<table>
 	<tr><th>Name</th><th>Value</th></tr>
-	{% for i in optionvalue %}
+	{% for i in ov %}
 		<tr><td>{{i.option.name}}</td><td>{{i.value}}</td></tr>
 	{% empty %}
 		<tr><td colspan=2>No options provided</td></tr>
@@ -34,7 +34,7 @@
 	<h2>Additional Data</h2>
 	<table>
 	<tr><th>Name</th><th>Value</th></tr>
-	{% for i in extravalues %}
+	{% for i in ev %}
 		<tr><td>{{i.name}}</td><td>{{i.value}}</td></tr>
 	{% empty %}
 		<tr><td colspan=2>No additional data found</td></tr>
