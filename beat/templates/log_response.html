@@ -2,6 +2,7 @@
 {% block title %}Response{% endblock %}
 {% block content %}
 	<!-- START CONTENT HERE -->
+	<h2>Basic Data</h2>
 	<table>
 	<tr><th>Tool</th><td>{{b.algorithm_tool.tool.name}}</td></tr>
 	<tr><th>Algorithm</th><td>{{b.algorithm_tool.algorithm.name}}</td></tr>
@@ -15,21 +16,34 @@
 	<tr><th>Memory RSS</th><td>{{b.memory_RSS}}</td></tr>
 	<tr><th>Finished</th><td>{{b.finished}}</td></tr>
 	</table>
-	<table>
-	<tr><th>Ran on</th></tr>
+	<h2>Hardware Profile</h2>
+	<ul>
 	{% for i in hardware %}
-		<tr><td>{{ i }}</td></tr>
+		<li>{{ i }}</li>
 	{% endfor %}
-	</table>
+	</ul>
+	<h2>Options</h2>
 	<table>
 	<tr><th>Name</th><th>Value</th></tr>
 	{% for i in optionvalue %}
 		<tr><td>{{i.option.name}}</td><td>{{i.value}}</td></tr>
+	{% empty %}
+		<tr><td colspan=2>No options provided</td></tr>
 	{% endfor %}
 	</table>
+	<h2>Additional Data</h2>
+	<table>
+	<tr><th>Name</th><th>Value</th></tr>
+	{% for i in extravalues %}
+		<tr><td>{{i.name}}</td><td>{{i.value}}</td></tr>
+	{% empty %}
+		<tr><td colspan=2>No additional data found</td></tr>
+	{% endfor %}
+	</table>
+	<h2>Log File</h2>
 	<p>
 	{% for i in log %}
-	{{i}}<br/>
+	{{i|linebreaksbr}}
 	{% endfor %}
 	</p>
 	<!-- END OF CONTENT -->

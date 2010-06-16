@@ -65,6 +65,7 @@ def log_response(request, id):
 	path = b.logfile
 	ov = b.optionvalue.all()
 	hw = b.hardware.all()
+	ev = ExtraValue.objects.filter(benchmark=b)
 	loglist = []
 	if not path: # check to see if path is not a path
 		try: # try to get the data form beat if it is not a system path
@@ -77,12 +78,13 @@ def log_response(request, id):
 		with open(path, 'rb') as file:
 			for line in file:
 				loglist.append(line)
-	return render_to_response('log_response.html', {'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
+	return render_to_response('log_response.html', {'extravalues':ev,'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
 
 """
 This method allows for the uploading of tool to the database. 
 It will take the reqest read out the form and attempt to put it in the database.
 """
+@login_required
 def tool_upload(request):
 	import time
 	import sys
