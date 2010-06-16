@@ -40,5 +40,5 @@ class CompareModelsForm(forms.Form):
 	type = forms.ChoiceField(choices=ModelComparison.DATA_TYPES, label='Data type', help_text='What type of data should be displayed in the graph?')
 	tool = forms.ModelChoiceField(Tool.objects.all(), empty_label=None)
 	algorithm = forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None)
-	option = forms.ModelChoiceField(OptionValue.objects.all(), required=False)
+	option = forms.ModelMultipleChoiceField(OptionValue.objects.all(), required=False)
 	#models = forms.ModelMultipleChoiceField(Model.objects.all())

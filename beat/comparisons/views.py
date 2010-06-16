@@ -166,7 +166,7 @@ def graph_model(request, id, format='png'):
 		
 		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
 		# Filter benchmarks based on the ModelComparison data
-		benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
+		benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool, benchmarkoptionvalue = c_option).order_by('algorithm_tool__date')
 		
 		if (len(benchmarks) != 0):
 			# Filter options if specified
@@ -340,11 +340,13 @@ def compare_model(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
+			options = ','.join(str(o.id) for o in form.cleaned_data['option'])
+			
 			c, created = ModelComparison.objects.get_or_create(
 				user = request.user, 
 				algorithm = form.cleaned_data['algorithm'],
 				tool = form.cleaned_data['tool'],
-				optionvalue = form.cleaned_data['option'],
+				optionvalue = options,
 				type = form.cleaned_data['type'],
 				name = form.cleaned_data['name']
 			)
