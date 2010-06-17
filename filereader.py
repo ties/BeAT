@@ -259,7 +259,7 @@ class FileReader:
 		#s should be like: [call, toolname, algorithmname]
 		if not s:
 			#this is a fix introduced for an alternative naming scheme
-			s = self.match_regex(r'^*/(.*?)((?:2|-).*?)(?:$| .*$)', call)
+			s = self.match_regex(r'^.*?(.*?)((?:2|-).*?)(?:$| .*$)', call)
 			if not s:
 				#that's bad
 				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
@@ -334,15 +334,18 @@ class FileReader:
 		for t in optlist:
 			o, v = t
 			if not v:	#no parameter
-				v=True
+				optlist[counter]=(o,True)
 
 			if not o.startswith('--'): #shortcut!
 				p = o[1:] #chop the '-'
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
-			
-			optlist[counter]=(rs.option.name, v)
+				if v:
+					optlist[counter]=(rs.option.name, v)
+				else:
+					optlist[counter]=(rs.option.name, True)
 			
 			counter+=1
+		
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])
 		#tail contains the filename of the log
@@ -542,8 +545,8 @@ class FileReader:
 			for tuple in optiondata:
 				name, value = tuple
 				o = Option.objects.get(name=name)
-				ov, created = OptionValue.objects.get_or_create(option=o, value=value)
-				if created:
+				ov, c = OptionValue.objects.get_or_create(option=o, value=value)
+				if c:
 					self.print_message(V_NOISY, "Notice: created a new OptionValue entry.")
 				else:
 					self.print_message(V_NOISY, "Notice: OptionValue already exists:%s, %s"%(name,value))

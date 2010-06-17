@@ -87,6 +87,8 @@ at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx,
 #at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version=version)
 op, created = Option.objects.get_or_create(name='--strategy', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
+op, created = Option.objects.get_or_create(name='--state', takes_argument=True)
+vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='--deadlock', takes_argument=False)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut='d')
