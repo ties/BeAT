@@ -182,7 +182,7 @@ def graph_model(request, id, format='png'):
 		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
 		# Filter benchmarks based on the ModelComparison data
 		benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
-		benchmarks = benchFind(benchmarks,c_option.all())
+		benchmarks = benchFind(benchmarks,[o.id for o in c_option.all()])
 		
 		if (len(benchmarks) != 0):
 			
