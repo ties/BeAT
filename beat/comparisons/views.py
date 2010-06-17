@@ -290,7 +290,6 @@ def compare_detail(request, id, model=False):
 		
 		models = Model.objects.filter(id__in=[b.model.id for b in benches])
 
-<<<<<<< HEAD
 		# Fetch an array of containing arrays of benchmark objects with equal model
 #		results = []
 #		last_model = benches[0].model
@@ -305,11 +304,8 @@ def compare_detail(request, id, model=False):
 #				
 #		resultsjson = json.dumps(results,cls=BenchmarkJSON)
  
-=======
 		benchjson = serializers.serialize("json", benches)		
 		modeljson = serializers.serialize("json", models)
->>>>>>> ba50f1a99c61b75dfd16eaf29ec1a225c8da0abd
-		
 		
 		form = ExportGraphForm()
 		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form, 'benches' : benches, 'benchjson' : benchjson, 'modeljson' : modeljson}, context_instance=RequestContext(request))
