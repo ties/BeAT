@@ -288,8 +288,7 @@ def compare_detail(request, id, model=False):
 #				last_array = results.append([b])
 #				
 #		resultsjson = json.dumps(results,cls=BenchmarkJSON)
-		benchjson = serializers.serialize("json", benches)		
-		modeljson = serializers.serialize("json", models)
+ 
 		
 		
 		form = ExportGraphForm()
