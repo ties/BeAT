@@ -18,11 +18,13 @@ if "with_git" in sys.argv:
 	repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
 	repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 
-version = "ltsmin-1.5-20-g6d5d0c"
+#version = "ltsmin-1.5-20-g6d5d0c"
 if with_git:
 	dummydate = datetime(*repository.get_date(repository.get_matching_item(version[-6:]))[:6])
 
-do_import(version)
+for i in sys.argv:
+	if i.startswith("ltsmin"):
+		do_import(i)
 
 def do_import(version):
 	emptyregex, created = Regex.objects.get_or_create(regex='')

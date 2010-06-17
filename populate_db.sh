@@ -10,7 +10,8 @@ mkdir beat/git
 #mkdir beat/git/ltsmin
 
 echo "... adding basic data..."
-python db_defaults.py
+python db_defaults.py with_git ltsmin-1.5-20-g6d5d0c
+python db_defaults.py with_git ltsmin-1.5-19-g0f5585
 echo "... reading test logs..."
 python filereader.py --noisy ltsmin-output/output.txt
 # > log0.txt~
