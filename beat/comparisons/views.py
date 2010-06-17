@@ -339,8 +339,10 @@ def compare_detail(request, id, model=False):
 		
 		list = zip(model,t1,t2,m1,m2)
 		
+		scatterjson = json.dumps(list)
+		
 		form = ExportGraphForm()
-		response = render_to_response('comparisons/compare.html', { 'comparison' : c, 'form' : form, 'list' : list }, context_instance=RequestContext(request))
+		response = render_to_response('comparisons/compare.html', { 'comparison' : c, 'form' : form, 'list' : list, 'scatterdata' : scatterjson }, context_instance=RequestContext(request))
 	
 	# Check if the user has rights to see the results:
 	#	- Either the user provided a correct query string like ?auth=<hash>
