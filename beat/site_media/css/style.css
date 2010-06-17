@@ -103,6 +103,10 @@ span.descending{
 	background-image: url('/site_media/img/sort_DESC.png');
 }
 
+#sidebar ul, #sidebar h1{
+	margin-bottom: 10px;
+}
+
 ul.mega{
 	text-align: left;
 	display: inline;
@@ -155,7 +159,6 @@ table.compare_form  select {
 	font-weight: bold;
 	color: #000;
 }
-.optioncell {
+.vtop {
 	vertical-align: top;
-	font-weight: bold;
 }

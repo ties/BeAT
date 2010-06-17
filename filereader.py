@@ -178,7 +178,7 @@ class FileReader:
 		toolversion = m.get('toolversion')
 		tv = toolversion.split('-')
 		
-		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('Kernel_v'))]
+		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('Kernel_r'))]
 
 		#parse the Call to find the supplied options
 		tmp = self.parse_call(header[call][6:], toolversion)
@@ -259,12 +259,12 @@ class FileReader:
 		#s should be like: [call, toolname, algorithmname]
 		if not s:
 			#this is a fix introduced for an alternative naming scheme
-			s = self.match_regex(r'^*/(.*?)((?:2|-).*?)(?:$| .*$)', call)
+			s = self.match_regex(r'^.*?(.*?)((?:2|-).*?)(?:$| .*$)', call)
 			if not s:
 				#that's bad
 				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
 				return None
-
+		
 		regexes=[]
 		try:
 			t = Tool.objects.get(name=s[1])
@@ -329,20 +329,24 @@ class FileReader:
 			self.print_message(V_VERBOSE, "Warning: grabbing options failed: %s"%(e))
 			return None
 		counter = 0
+		args[-1]=args[-1][:-1]
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
 		#we need a value, however; we'll use True
 		for t in optlist:
 			o, v = t
 			if not v:	#no parameter
-				v=True
+				optlist[counter]=(o,True)
 
 			if not o.startswith('--'): #shortcut!
 				p = o[1:] #chop the '-'
 				rs = RegisteredShortcut.objects.get(algorithm_tool=at, shortcut=p)
-			
-			optlist[counter]=(rs.option.name, v)
+				if v:
+					optlist[counter]=(rs.option.name, v)
+				else:
+					optlist[counter]=(rs.option.name, True)
 			
 			counter+=1
+		
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])
 		#tail contains the filename of the log
@@ -491,13 +495,13 @@ class FileReader:
 		for tuple in hwdata:
 			name, memory, cpu, disk_space, os = tuple
 			if disk_space > 0:
-				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': disk_space})
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, kernelversion=os, defaults={'disk_space': disk_space})
 				#if the DB did contain h but missed disk_space information:
 				if not created and h.disk_space==0:
 					h.disk_space = disk_space
 					h.save()
 			else:
-				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, os=os, defaults={'disk_space': 0})
+				h, created = Hardware.objects.get_or_create(name=name, memory=memory, cpu=cpu, kernelversion=os, defaults={'disk_space': 0})
 			if created:
 				self.print_message(V_NOISY, "Notice: created a new Hardware entry:%s"%(name))
 			else:
@@ -542,8 +546,8 @@ class FileReader:
 			for tuple in optiondata:
 				name, value = tuple
 				o = Option.objects.get(name=name)
-				ov, created = OptionValue.objects.get_or_create(option=o, value=value)
-				if created:
+				ov, c = OptionValue.objects.get_or_create(option=o, value=value)
+				if c:
 					self.print_message(V_NOISY, "Notice: created a new OptionValue entry.")
 				else:
 					self.print_message(V_NOISY, "Notice: OptionValue already exists:%s, %s"%(name,value))
@@ -637,7 +641,8 @@ class FileReader:
 				data = self.parse(run)
 				if data:
 					#write to the database
-					error=False
+					error=True
+					created=False
 					try:
 						(created, bench)=self.write_to_db(data)
 						if created:
@@ -645,6 +650,7 @@ class FileReader:
 							log_file_path = self.write_to_log(run, "%d"%(id))
 							bench.logfile="%s"%(log_file_path)
 							bench.save()
+						error = False
 					#handle known error FileReaderError
 					except FileReaderError as fre:
 						#some known error occured, check how bad it is
@@ -657,7 +663,6 @@ class FileReader:
 							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( fre.error))
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
-						error=True
 					#handle other errors
 					#except Exception, e:
 						#an unknown error occured, skip this part

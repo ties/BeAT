@@ -15,7 +15,7 @@ class AlgorithmToolInline(admin.TabularInline):
 	extra = 1
 	
 class BenchmarkAdmin(admin.ModelAdmin):
-	list_display = ('model', 'algorithm_tool', 'date_time', 'finished', 'user_time', 'system_time', 'total_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count', 'logfile')
+	list_display = ('model', 'algorithm_tool', 'date_time', 'finished', 'user_time', 'system_time', 'total_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
 	list_filter = ['date_time']
 	search_fields = ['model__name', 'algorithm_tool__tool__name', 'algorithm_name__algorithm__name']
 	fieldsets = [
@@ -34,8 +34,8 @@ admin.site.register(Tool)
 admin.site.register(Regex)
 admin.site.register(Hardware)
 admin.site.register(Option)
-#admin.site.register(Benchmark, BenchmarkAdmin)
-admin.site.register(Benchmark)
+admin.site.register(Benchmark, BenchmarkAdmin)
+#admin.site.register(Benchmark)
 admin.site.register(Comparison)
 admin.site.register(ModelComparison)
 admin.site.register(Algorithm)
@@ -45,3 +45,4 @@ admin.site.register(AlgorithmTool)
 
 admin.site.register(ValidOption)
 admin.site.register(OptionValue)
+admin.site.register(BenchmarkOptionValue)

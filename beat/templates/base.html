@@ -78,7 +78,7 @@ Aenean commodo tellus in leo volutpat pretium. Cras imperdiet tempor nulla nec f
 			
 		{% endblock %}
 			<!-- SIDEBAR -->
-			<div class="span-6 sidebar last ">
+			<div class="span-6 sidebar last " id="sidebar">
 				{% block sidebar %}
 				<h1>Navigation</h1>
 				<ul>
@@ -88,6 +88,7 @@ Aenean commodo tellus in leo volutpat pretium. Cras imperdiet tempor nulla nec f
 					<li><a href="{% url comparisons.views.compare_model %}">Compare models</a></li>
 					<li><a href="{% url jobs.views.jobgen %}">New Job</a></li>
 					<li><a href="{% url benchmarks.views.colophon %}">Colophon</a></li>
+					<li><a href="{% url benchmarks.views.tool_upload %}">Tool upload</a></li>
 				</ul>
 				{% if user.is_authenticated %}
 				<h1>Personal content</h1>

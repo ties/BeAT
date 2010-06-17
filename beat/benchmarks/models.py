@@ -46,7 +46,7 @@ class Benchmark(models.Model):
 		return "%s with %s on %s" % (self.model, self.algorithm_tool, self.date_time)
 	
 	def get_print_data(self):
-		return "model = %s\n algorithmtool = %s\n start time = %s\n User time = %s\n System time = %s\n Elapsed time = %s\n transition count = %s\n state count = %s\n memory VSize = %s\n memory RSS = %s\n finished = %s"%(self.model.name, self.algorithm_tool, self.date_time, self.user_time, self.system_time, self.elapsed_time, self.transition_count, self.states_count, self.memory_VSIZE, self.memory_RSS, self.finished)
+		return "model = %s\n algorithmtool = %s\n options = %s\n start time = %s\n User time = %s\n System time = %s\n Elapsed time = %s\n transition count = %s\n state count = %s\n memory VSize = %s\n memory RSS = %s\n finished = %s"%(self.model.name, self.algorithm_tool, self.optionvalue.all(),self.date_time, self.user_time, self.system_time, self.elapsed_time, self.transition_count, self.states_count, self.memory_VSIZE, self.memory_RSS, self.finished)
 #self.print_message(V_VERBOSE, "Note: Tried to data to database, but essential data already exists, id: %s from file %s, with data %s"%(bench.pk, f, bench.get_print_data()))		
 
 class Hardware(models.Model):
@@ -57,7 +57,7 @@ class Hardware(models.Model):
 	kernelversion = models.CharField(max_length=200, verbose_name="Kernel version")
 
 	def __unicode__(self):
-		return "%s @ %sKB RAM, %s, %s" % (self.name, self.memory, self.cpu, self.os)
+		return "%s @ %sKB RAM, %s, %s" % (self.name, self.memory, self.cpu, self.kernelversion)
 	
 	class Meta:
 		verbose_name_plural = "Hardware"
@@ -72,6 +72,9 @@ class BenchmarkHardware(models.Model):
 class BenchmarkOptionValue(models.Model):
 	benchmark = models.ForeignKey('Benchmark')
 	optionvalue = models.ForeignKey('OptionValue')
+	
+	def __unicode__(self):
+		return "%s - %s" % (self.benchmark, self.optionvalue)
 	
 	class Meta:
 		verbose_name_plural = "Benchmark OptionValue"

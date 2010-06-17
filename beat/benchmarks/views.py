@@ -60,29 +60,32 @@ def colophon(request):
 """
 Shows a log file for the given database id. if no such file is found it will return a file not found in the response form.
 """	
-def log_response(request, id):
-	#fetch the id benchmark object form the database
+@login_required
+def log_response(request, id):	
 	b = Benchmark.objects.get(pk=id)
 	path = b.logfile
+	ov = b.optionvalue.all()
+	hw = b.hardware.all()
+	ev = ExtraValue.objects.filter(benchmark=b)
+	loglist = []
 	if not path: # check to see if path is not a path
 		try: # try to get the data form beat if it is not a system path
 			from beat.tools.logsave import __init_code__, get_log
 			repo = losgsave.__init_code__()
-			form = LogResponseForm(initial={'response': get_log(repo, path)})
+			log = get_log(repo, path)
 		except: #else return file not found
-			form = LogResponseForm(initial={'response': 'Error no file found'})
-	else: # read out the file and put it in the form
-		contents = ""
+			log = 'Error: log file not found'
+	else: # rad out the file and put it in the form
 		with open(path, 'rb') as file:
 			for line in file:
-				contents+=line
-		form = LogResponseForm(initial={'response': contents})
-	return render_to_response('log_response.html', {'form': form,}, context_instance=RequestContext(request))
+				loglist.append(line)
+	return render_to_response('log_response.html', {'ev':ev,'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
 
 """
 This method allows for the uploading of tool to the database. 
 It will take the reqest read out the form and attempt to put it in the database.
 """
+@login_required
 def tool_upload(request):
 	import time
 	import sys

@@ -5,6 +5,6 @@ mkdir logs
 mkdir git\ltsmin
 python db_defaults.py
 python filereader.py --quiet ltsmin-output\output.txt
-python spawndata.py
-python spawndata.py
-python spawndata.py
+echo python spawndata.py
+echo python spawndata.py
+echo python spawndata.py

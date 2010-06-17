@@ -1,20 +1,50 @@
 {% extends "base_site.html" %}
-
 {% block title %}Response{% endblock %}
-
 {% block content %}
-
-		<h2>Response</h2>
-
-				
-
-				<!-- START CONTENT HERE -->
-
-						<form>{% csrf_token %}
-
-									{{ form.as_p }}
-											</form>
-
-													<!-- END OF CONTENT -->
-
-													{% endblock %}
+	<!-- START CONTENT HERE -->
+	<h2>Basic Data</h2>
+	<table>
+	<tr><th>Tool</th><td>{{b.algorithm_tool.tool.name}}</td></tr>
+	<tr><th>Algorithm</th><td>{{b.algorithm_tool.algorithm.name}}</td></tr>
+	<tr><th>Model</th><td>{{b.model.name}}</td></tr>
+	<tr><th>User Time</th><td>{{b.user_time}}</td></tr>
+	<tr><th>System Time</th><td>{{b.system_time}}</td></tr>
+	<tr><th>Elapsed Time</th><td>{{b.elapsed_time}}</td></tr>
+	<tr><th>Transition Count</th><td>{{b.transition_count}}</td></tr>
+	<tr><th>States Count</th><td>{{b.states_count}}</td></tr>
+	<tr><th>Memory VSize</th><td>{{b.memory_VSIZE}}</td></tr>
+	<tr><th>Memory RSS</th><td>{{b.memory_RSS}}</td></tr>
+	<tr><th>Finished</th><td>{{b.finished}}</td></tr>
+	</table>
+	<h2>Hardware Profile</h2>
+	<ul>
+	{% for i in hardware %}
+		<li>{{ i }}</li>
+	{% endfor %}
+	</ul>
+	<h2>Options</h2>
+	<table>
+	<tr><th>Name</th><th>Value</th></tr>
+	{% for i in ov %}
+		<tr><td>{{i.option.name}}</td><td>{{i.value}}</td></tr>
+	{% empty %}
+		<tr><td colspan=2>No options provided</td></tr>
+	{% endfor %}
+	</table>
+	<h2>Additional Data</h2>
+	<table>
+	<tr><th>Name</th><th>Value</th></tr>
+	{% for i in ev %}
+		<tr><td>{{i.name}}</td><td>{{i.value}}</td></tr>
+	{% empty %}
+		<tr><td colspan=2>No additional data found</td></tr>
+	{% endfor %}
+	</table>
+	<h2>Log File</h2>
+	<p>
+	{% for i in log %}
+	{{i|linebreaksbr}}
+	{% endfor %}
+	</p>
+	<!-- END OF CONTENT -->
+{% endblock %}

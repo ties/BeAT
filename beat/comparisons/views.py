@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404, ge
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from forms import *
-from beat.tools import graph
+from beat.tools import graph, intersect
 from django.views.decorators.cache import cache_page
 from decimal import Decimal
 #json export voor model instanties
@@ -16,12 +16,16 @@ from benchmarks.ajax_execute import BenchmarkJSON
 # MatPlotLib
 import numpy as np
 
+
+def printlabel(at, ov):
+	return str(at) + ' ' + str(','.join([str(o) for o in ov.all()]))
+
 """
 Produces a scatterplot from a set of benchmarks.
 TODO:
 @param id Comparison id to retrieve a set of Benchmark id's from the db (currently takes the whole dataset - no id yet)
 """ 
-@cache_page(60 * 15)
+#@cache_page(60 * 15)
 def scatterplot(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -36,16 +40,20 @@ def scatterplot(request, id, format='png'):
 	# Make a subplot for the Elapsed Time data of a benchmark set
 	ax=fig.add_subplot(211)
 	
-	# @TODO
-	# Take the two data sets from the db and intersect on model id
+	# Fetch two benchmarks sets from DB
 	c = get_object_or_404(Comparison,id=id)
 	at_a = c.algorithm_tool_a
 	at_b = c.algorithm_tool_b
+	
 	b1 = Benchmark.objects.filter(algorithm_tool=at_a)
 	b2 = Benchmark.objects.filter(algorithm_tool=at_b)
-	#b1 = b1.filter(model__in=[b.model.pk for b in b2])
-	b1 = b1 & b2
 	
+	b1 = b1.filter(model__in=[b.model.pk for b in b2])
+	b2 = b2.filter(model__in=[b.model.pk for b in b1])
+	
+	b1 = benchFind(b1,[o.id for o in c.optionvalue_a.all()])
+	b2 = benchFind(b2,[o.id for o in c.optionvalue_b.all()])
+
 	if len(b1) != 0:
 		# Make new arrays with only the elapsed time
 		t1 = [(float(b.elapsed_time)) for b in b1]
@@ -60,7 +68,7 @@ def scatterplot(request, id, format='png'):
 				mask.append(cc.to_rgb('red'))
 		
 		# Draw a linear function from .001 until the first power of 10 greater than max_value
-		max_value_t = max(max(b1.values('elapsed_time')),max(b2.values('elapsed_time')))['elapsed_time']
+		max_value_t = max(max(t1),max(t2))
 		max_value_t = math.pow(10,math.ceil(math.log10(max_value_t)))
 		ax.plot(np.arange(0,max_value_t,step=.001),np.arange(0,max_value_t,step=.001),'k-')
 		
@@ -70,10 +78,9 @@ def scatterplot(request, id, format='png'):
 		# Axes mark-up
 		ax.set_xscale('log')
 		ax.set_yscale('log')
-		ax.set_xlabel(str(at_a), color='red')
-		ax.set_ylabel(str(at_b), color='blue')
+		ax.set_xlabel(printlabel(at_a,c.optionvalue_a), color='red')
+		ax.set_ylabel(printlabel(at_b,c.optionvalue_b), color='blue')
 		ax.set_title('Runtime (s)', size='small')
-		ax.set_axis_bgcolor('#eeeeee')
 		ax.grid(True)
 			
 		# -------- Plotting memory data starts here in a new subplot ---------
@@ -90,15 +97,15 @@ def scatterplot(request, id, format='png'):
 				mask.append(cc.to_rgb('red'))
 		
 		# Plot linear function again
-		max_value_m = max(max(b1.values('memory_VSIZE')),max(b2.values('memory_VSIZE')))['memory_VSIZE']
+		max_value_m = max(max(m1),max(m2))
 		max_value_m = math.pow(10,math.ceil(math.log10(max_value_m)))
 		ax.plot(np.arange(0,max_value_m),np.arange(0,max_value_m),'k-')
 		
 		# Axes mark-up
 		ax.set_xscale('log')
 		ax.set_yscale('log')
-		ax.set_xlabel(str(at_a), color='red')
-		ax.set_ylabel(str(at_b), color='blue')
+		ax.set_xlabel(printlabel(at_a,c.optionvalue_a), color='red')
+		ax.set_ylabel(printlabel(at_b,c.optionvalue_b), color='blue')
 		ax.grid(True)
 		
 		# Plot data
@@ -113,13 +120,21 @@ def scatterplot(request, id, format='png'):
 		ax.set_title('Memory VSIZE (kb)', size='small')
 		ax.text(0.3,0.5,"Empty result set.")
 	
-	ax.set_axis_bgcolor('#eeeeee')
 	# Output graph
 	fig.set_size_inches(5,10)
 	canvas = FigureCanvas(fig)
 	response = graph.export(canvas, c.name, format)
 	return response
 
+#finds the benchmarks from b with the optionvalues as specified in ovs
+def benchFind(b, ovs):
+	res = []
+	for benchmark in b:
+		opts = [o.id for o in benchmark.optionvalue.all()]
+		if (set(opts) == set(ovs)):
+			res.append(benchmark)
+	return res
+	
 """
 Output a graph for model comparison.
 So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
@@ -167,11 +182,9 @@ def graph_model(request, id, format='png'):
 		benchmarks = Benchmark.objects.filter(model__name__exact = m['name'])
 		# Filter benchmarks based on the ModelComparison data
 		benchmarks = benchmarks.filter(algorithm_tool__algorithm = c_algo, algorithm_tool__tool = c_tool).order_by('algorithm_tool__date')
+		benchmarks = benchFind(benchmarks,[o.id for o in c_option.all()])
 		
 		if (len(benchmarks) != 0):
-			# Filter options if specified
-			if c_option is not None:
-				benchmarks = benchmarks.filter(optionvalue=c_option)
 			
 			# Static data types to plot in the graph
 			types = []
@@ -197,13 +210,14 @@ def graph_model(request, id, format='png'):
 
 	#Mark-up
 	title = c_tool.name + c_algo.name
-	if c_option is not None:
-		title = title + ' [' + str(c_option) + ']'
+	if c_option.all():
+		options = [str(o) for o in c_option.all()]
+		title = title + ' [' + ','.join(options) + ']'
 	
 	ax.set_title(title)
 	leg = ax.legend(fancybox=True, loc='upper left',bbox_to_anchor = (1,1.15), markerscale=5)
 	
-	if leg is not None:
+	if leg:
 		for t in leg.get_texts():
 			t.set_fontsize('xx-small')
 		
@@ -272,9 +286,11 @@ def compare_detail(request, id, model=False):
 		#models = Model.objects.values('id').annotate(num_models=Count('name'))
 		#benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
 		benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).order_by('model__name')
+		benches = benchFind(benches,[o.id for o in c.optionvalue.all()])
 		
 		models = Model.objects.filter(id__in=[b.model.id for b in benches])
 
+<<<<<<< HEAD
 		# Fetch an array of containing arrays of benchmark objects with equal model
 #		results = []
 #		last_model = benches[0].model
@@ -289,6 +305,10 @@ def compare_detail(request, id, model=False):
 #				
 #		resultsjson = json.dumps(results,cls=BenchmarkJSON)
  
+=======
+		benchjson = serializers.serialize("json", benches)		
+		modeljson = serializers.serialize("json", models)
+>>>>>>> ba50f1a99c61b75dfd16eaf29ec1a225c8da0abd
 		
 		
 		form = ExportGraphForm()
@@ -298,9 +318,17 @@ def compare_detail(request, id, model=False):
 		
 		at_a = c.algorithm_tool_a
 		at_b = c.algorithm_tool_b
+		
 		b1 = Benchmark.objects.filter(algorithm_tool=at_a)
 		b2 = Benchmark.objects.filter(algorithm_tool=at_b)
+		
 		b1 = b1.filter(model__in=[b.model.pk for b in b2])
+		b2 = b2.filter(model__in=[b.model.pk for b in b1])
+		
+		b1 = benchFind(b1,[o.id for o in c.optionvalue_a.all()])
+		b2 = benchFind(b2,[o.id for o in c.optionvalue_b.all()])
+		
+		#b1 = intersect.intersect(b1,b2)
 
 		# Model should be consistent for b1 and b2, so doesn't matter which you pick
 		model = [b.model.name for b in b1]
@@ -310,10 +338,10 @@ def compare_detail(request, id, model=False):
 		m2 = [b.memory_VSIZE for b in b2]
 		
 		# Make new arrays with only the elapsed time
-		t1 = [(float(b.elapsed_time)) for b in b1]
-		t2 = [(float(b.elapsed_time)) for b in b2]
+		t1 = [(float(b.total_time)) for b in b1]
+		t2 = [(float(b.total_time)) for b in b2]
 		
-		list = zip(model,m1,m2,t1,t2)
+		list = zip(model,t1,t2,m1,m2)
 		
 		form = ExportGraphForm()
 		response = render_to_response('comparisons/compare.html', { 'comparison' : c, 'form' : form, 'list' : list }, context_instance=RequestContext(request))
@@ -339,14 +367,17 @@ def compare_model(request):
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
-			c, created = ModelComparison.objects.get_or_create(
+			
+			c = ModelComparison.objects.create(
 				user = request.user, 
 				algorithm = form.cleaned_data['algorithm'],
 				tool = form.cleaned_data['tool'],
-				optionvalue = form.cleaned_data['option'],
 				type = form.cleaned_data['type'],
 				name = form.cleaned_data['name']
 			)
+			
+			for o in OptionValue.objects.filter(id__in=form.cleaned_data['option']):
+				c.optionvalue.add(o)
 			
 			c.hash = c.getHash()
 			if (c.name == ''): 
@@ -371,13 +402,19 @@ def compare_scatterplot(request):
 			id_a = form.cleaned_data['a_algorithmtool']
 			id_b = form.cleaned_data['b_algorithmtool']
 			
-			c, created = Comparison.objects.get_or_create(
+			c = Comparison.objects.create(
 				user = request.user, 
 				algorithm_tool_a = id_a,
 				algorithm_tool_b = id_b,
 				name = form.cleaned_data['name']
 			)
 			
+			for o_a in OptionValue.objects.filter(id__in=form.cleaned_data['a_options']):
+				c.optionvalue_a.add(o_a)
+			for o_b in OptionValue.objects.filter(id__in=form.cleaned_data['b_options']):
+				c.optionvalue_b.add(o_b)
+			
+			# Add many-to-many fields for 
 			c.hash = c.getHash()
 			if (c.name == ''): 
 				c.name = str(c.id)

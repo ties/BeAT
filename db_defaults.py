@@ -21,7 +21,7 @@ version = "ltsmin-1.5-20-g6d5d0c"
 if with_git:
 	dummydate = datetime(*repository.get_date(repository.get_matching_item(version[-6:]))[:6])
 emptyregex, created = Regex.objects.get_or_create(regex='')
-hw, created = Hardware.objects.get_or_create(name="x", memory=600, cpu='AMD', disk_space=21456, os='Linux')
+hw, created = Hardware.objects.get_or_create(name="x", memory=600, cpu='AMD', disk_space=21456, kernelversion='2.6.32')
 ###################### nips version 1, 2lts-grey ######################
 a, created = Algorithm.objects.get_or_create(name='2lts-grey')
 t, created = Tool.objects.get_or_create(name='nips')
@@ -86,6 +86,8 @@ rx, created = Regex.objects.get_or_create(regex='lpo2lts-grey: .*(\\r\\n|\\n)(lp
 at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=version)
 #at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=repository.get_date(repository.get_matching_item(version[version.rindex('-')+1:])), version=version)
 op, created = Option.objects.get_or_create(name='--strategy', takes_argument=True)
+vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
+op, created = Option.objects.get_or_create(name='--state', takes_argument=True)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 op, created = Option.objects.get_or_create(name='--deadlock', takes_argument=False)
 vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})

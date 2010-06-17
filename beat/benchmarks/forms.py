@@ -17,5 +17,5 @@ class ToolUploadForm(forms.Form):
 	log_check = forms.CharField(widget=forms.Textarea, required=False)
 	options = forms.CharField(widget=forms.Textarea, help_text='add option here like deadlock')
 
-class LogResponseForm(forms.Form):
-	response = forms.CharField(widget=forms.Textarea)
+#class LogResponseForm(forms.Form):
+#	response = forms.CharField(widget=forms.Textarea)
