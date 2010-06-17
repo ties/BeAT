@@ -1,0 +1,2975 @@
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo-reach --order bfs --vset fdd brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 12 06 649407
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo-reach --order bfs --vset fdd brp.tbf
+END OF HEADER
+lpo-reach: Exploration order is bfs
+lpo-reach: opening brp.tbf
+lpo-reach: Start compiling ...
+lpo-reach: .... end compiling.
+lpo-reach: creating a new string index
+lpo-reach: creating a new string index
+lpo-reach: model brp.tbf loaded
+lpo-reach: Creating a BuDDy fdd domain.
+lpo-reach: ratio 64, maximum increase 1000000, minimum free 20
+lpo-reach: length is 21, there are 45 groups
+lpo-reach: got initial state
+lpo-reach: level 0 has 1 states ( 336 nodes )
+lpo-reach: visited 0 has 1 states ( 336 nodes )
+lpo-reach: level 1 has 40 states ( 344 nodes )
+lpo-reach: visited 1 has 40 states ( 363 nodes )
+lpo-reach: level 2 has 40 states ( 344 nodes )
+lpo-reach: visited 2 has 81 states ( 384 nodes )
+lpo-reach: level 3 has 40 states ( 942 nodes )
+lpo-reach: visited 3 has 120 states ( 1136 nodes )
+lpo-reach: level 4 has 80 states ( 976 nodes )
+lpo-reach: visited 4 has 200 states ( 1168 nodes )
+lpo-reach: level 5 has 80 states ( 1784 nodes )
+lpo-reach: visited 5 has 281 states ( 1992 nodes )
+lpo-reach: level 6 has 80 states ( 949 nodes )
+lpo-reach: visited 6 has 360 states ( 2120 nodes )
+lpo-reach: level 7 has 80 states ( 905 nodes )
+lpo-reach: visited 7 has 441 states ( 2326 nodes )
+lpo-reach: level 8 has 80 states ( 1435 nodes )
+lpo-reach: visited 8 has 521 states ( 2884 nodes )
+lpo-reach: level 9 has 160 states ( 1475 nodes )
+lpo-reach: visited 9 has 681 states ( 2895 nodes )
+lpo-reach: level 10 has 160 states ( 2418 nodes )
+lpo-reach: visited 10 has 841 states ( 4254 nodes )
+lpo-reach: level 11 has 160 states ( 1557 nodes )
+lpo-reach: visited 11 has 1001 states ( 4272 nodes )
+lpo-reach: level 12 has 132 states ( 1593 nodes )
+lpo-reach: visited 12 has 1134 states ( 4388 nodes )
+lpo-reach: level 13 has 172 states ( 2826 nodes )
+lpo-reach: visited 13 has 1306 states ( 5624 nodes )
+lpo-reach: level 14 has 303 states ( 2911 nodes )
+lpo-reach: visited 14 has 1610 states ( 5207 nodes )
+lpo-reach: level 15 has 264 states ( 4630 nodes )
+lpo-reach: visited 15 has 1873 states ( 7560 nodes )
+lpo-reach: level 16 has 264 states ( 3633 nodes )
+lpo-reach: visited 16 has 2138 states ( 7735 nodes )
+lpo-reach: level 17 has 223 states ( 3327 nodes )
+lpo-reach: visited 17 has 2362 states ( 8557 nodes )
+lpo-reach: level 18 has 223 states ( 4417 nodes )
+lpo-reach: visited 18 has 2585 states ( 9373 nodes )
+lpo-reach: level 19 has 355 states ( 3726 nodes )
+lpo-reach: visited 19 has 2942 states ( 8997 nodes )
+lpo-reach: level 20 has 327 states ( 5456 nodes )
+lpo-reach: visited 20 has 3269 states ( 10266 nodes )
+lpo-reach: level 21 has 328 states ( 4541 nodes )
+lpo-reach: visited 21 has 3597 states ( 11006 nodes )
+lpo-reach: level 22 has 289 states ( 4266 nodes )
+lpo-reach: visited 22 has 3887 states ( 11559 nodes )
+lpo-reach: level 23 has 269 states ( 4915 nodes )
+lpo-reach: visited 23 has 4155 states ( 12911 nodes )
+lpo-reach: level 24 has 400 states ( 4609 nodes )
+lpo-reach: visited 24 has 4555 states ( 12706 nodes )
+lpo-reach: level 25 has 406 states ( 5496 nodes )
+lpo-reach: visited 25 has 4962 states ( 12858 nodes )
+lpo-reach: level 26 has 394 states ( 6233 nodes )
+lpo-reach: visited 26 has 5358 states ( 14179 nodes )
+lpo-reach: level 27 has 434 states ( 6173 nodes )
+lpo-reach: visited 27 has 5792 states ( 14345 nodes )
+lpo-reach: level 28 has 409 states ( 6977 nodes )
+lpo-reach: visited 28 has 6202 states ( 16282 nodes )
+lpo-reach: level 29 has 301 states ( 4971 nodes )
+lpo-reach: visited 29 has 6503 states ( 16636 nodes )
+lpo-reach: level 30 has 300 states ( 5689 nodes )
+lpo-reach: visited 30 has 6803 states ( 16947 nodes )
+lpo-reach: level 31 has 330 states ( 6349 nodes )
+lpo-reach: visited 31 has 7133 states ( 17530 nodes )
+lpo-reach: level 32 has 433 states ( 6103 nodes )
+lpo-reach: visited 32 has 7566 states ( 17760 nodes )
+lpo-reach: level 33 has 417 states ( 6569 nodes )
+lpo-reach: visited 33 has 7985 states ( 18795 nodes )
+lpo-reach: level 34 has 249 states ( 4594 nodes )
+lpo-reach: visited 34 has 8235 states ( 18979 nodes )
+lpo-reach: level 35 has 248 states ( 4177 nodes )
+lpo-reach: visited 35 has 8484 states ( 18421 nodes )
+lpo-reach: level 36 has 242 states ( 5240 nodes )
+lpo-reach: visited 36 has 8726 states ( 18399 nodes )
+lpo-reach: level 37 has 352 states ( 4724 nodes )
+lpo-reach: visited 37 has 9079 states ( 18067 nodes )
+lpo-reach: level 38 has 333 states ( 5163 nodes )
+lpo-reach: visited 38 has 9411 states ( 17660 nodes )
+lpo-reach: level 39 has 194 states ( 3502 nodes )
+lpo-reach: visited 39 has 9607 states ( 17974 nodes )
+lpo-reach: level 40 has 118 states ( 2424 nodes )
+lpo-reach: visited 40 has 9726 states ( 17939 nodes )
+lpo-reach: level 41 has 125 states ( 3582 nodes )
+lpo-reach: visited 41 has 9850 states ( 18010 nodes )
+lpo-reach: level 42 has 168 states ( 3790 nodes )
+lpo-reach: visited 42 has 10019 states ( 17618 nodes )
+lpo-reach: level 43 has 221 states ( 4343 nodes )
+lpo-reach: visited 43 has 10240 states ( 16405 nodes )
+lpo-reach: level 44 has 122 states ( 2974 nodes )
+lpo-reach: visited 44 has 10363 states ( 15967 nodes )
+lpo-reach: level 45 has 64 states ( 1849 nodes )
+lpo-reach: visited 45 has 10428 states ( 15664 nodes )
+lpo-reach: level 46 has 32 states ( 1904 nodes )
+lpo-reach: visited 46 has 10460 states ( 15056 nodes )
+lpo-reach: level 47 has 24 states ( 1160 nodes )
+lpo-reach: visited 47 has 10484 states ( 14896 nodes )
+lpo-reach: level 48 has 38 states ( 1033 nodes )
+lpo-reach: visited 48 has 10523 states ( 14595 nodes )
+lpo-reach: level 49 has 17 states ( 583 nodes )
+lpo-reach: visited 49 has 10541 states ( 14385 nodes )
+lpo-reach: level 50 has 8 states ( 346 nodes )
+lpo-reach: visited 50 has 10550 states ( 14356 nodes )
+lpo-reach: Exploration took 2295 group checks and 2295 next state calls
+lpo-reach: reachability took 1.680 real 1.670 user 0.000 sys
+state space has 10550 states
+( 14356 final BDD nodes; 18979 peak nodes; 6977 peak nodes per level )
+Exit [0]
+2.14 user, 0.08 system, 2.30 elapsed -- Max VSize = 63312KB, Max RSS = 30004KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo-reach --order bfs --vset list brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 12 37 632726
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo-reach --order bfs --vset list brp.tbf
+END OF HEADER
+lpo-reach: Exploration order is bfs
+lpo-reach: opening brp.tbf
+lpo-reach: Start compiling ...
+lpo-reach: .... end compiling.
+lpo-reach: creating a new string index
+lpo-reach: creating a new string index
+lpo-reach: model brp.tbf loaded
+lpo-reach: Creating an AtermDD list domain.
+lpo-reach: length is 21, there are 45 groups
+lpo-reach: got initial state
+lpo-reach: level 0 has 1 states ( 23 nodes )
+lpo-reach: visited 0 has 1 states ( 23 nodes )
+lpo-reach: level 1 has 40 states ( 62 nodes )
+lpo-reach: visited 1 has 41 states ( 64 nodes )
+lpo-reach: level 2 has 40 states ( 62 nodes )
+lpo-reach: visited 2 has 81 states ( 66 nodes )
+lpo-reach: level 3 has 40 states ( 99 nodes )
+lpo-reach: visited 3 has 121 states ( 152 nodes )
+lpo-reach: level 4 has 80 states ( 102 nodes )
+lpo-reach: visited 4 has 201 states ( 159 nodes )
+lpo-reach: level 5 has 80 states ( 191 nodes )
+lpo-reach: visited 5 has 281 states ( 218 nodes )
+lpo-reach: level 6 has 80 states ( 138 nodes )
+lpo-reach: visited 6 has 361 states ( 266 nodes )
+lpo-reach: level 7 has 80 states ( 136 nodes )
+lpo-reach: visited 7 has 441 states ( 320 nodes )
+lpo-reach: level 8 has 80 states ( 136 nodes )
+lpo-reach: visited 8 has 521 states ( 367 nodes )
+lpo-reach: level 9 has 160 states ( 141 nodes )
+lpo-reach: visited 9 has 681 states ( 371 nodes )
+lpo-reach: level 10 has 160 states ( 270 nodes )
+lpo-reach: visited 10 has 841 states ( 540 nodes )
+lpo-reach: level 11 has 160 states ( 217 nodes )
+lpo-reach: visited 11 has 1001 states ( 545 nodes )
+lpo-reach: level 12 has 133 states ( 181 nodes )
+lpo-reach: visited 12 has 1134 states ( 552 nodes )
+lpo-reach: level 13 has 172 states ( 269 nodes )
+lpo-reach: visited 13 has 1306 states ( 646 nodes )
+lpo-reach: level 14 has 304 states ( 282 nodes )
+lpo-reach: visited 14 has 1610 states ( 625 nodes )
+lpo-reach: level 15 has 264 states ( 426 nodes )
+lpo-reach: visited 15 has 1874 states ( 837 nodes )
+lpo-reach: level 16 has 264 states ( 356 nodes )
+lpo-reach: visited 16 has 2138 states ( 822 nodes )
+lpo-reach: level 17 has 224 states ( 333 nodes )
+lpo-reach: visited 17 has 2362 states ( 886 nodes )
+lpo-reach: level 18 has 224 states ( 379 nodes )
+lpo-reach: visited 18 has 2586 states ( 961 nodes )
+lpo-reach: level 19 has 356 states ( 345 nodes )
+lpo-reach: visited 19 has 2942 states ( 939 nodes )
+lpo-reach: level 20 has 328 states ( 486 nodes )
+lpo-reach: visited 20 has 3270 states ( 1070 nodes )
+lpo-reach: level 21 has 328 states ( 444 nodes )
+lpo-reach: visited 21 has 3598 states ( 1125 nodes )
+lpo-reach: level 22 has 289 states ( 424 nodes )
+lpo-reach: visited 22 has 3887 states ( 1133 nodes )
+lpo-reach: level 23 has 269 states ( 481 nodes )
+lpo-reach: visited 23 has 4156 states ( 1266 nodes )
+lpo-reach: level 24 has 400 states ( 500 nodes )
+lpo-reach: visited 24 has 4556 states ( 1225 nodes )
+lpo-reach: level 25 has 407 states ( 574 nodes )
+lpo-reach: visited 25 has 4963 states ( 1272 nodes )
+lpo-reach: level 26 has 395 states ( 601 nodes )
+lpo-reach: visited 26 has 5358 states ( 1378 nodes )
+lpo-reach: level 27 has 434 states ( 532 nodes )
+lpo-reach: visited 27 has 5792 states ( 1369 nodes )
+lpo-reach: level 28 has 410 states ( 625 nodes )
+lpo-reach: visited 28 has 6202 states ( 1553 nodes )
+lpo-reach: level 29 has 302 states ( 521 nodes )
+lpo-reach: visited 29 has 6504 states ( 1545 nodes )
+lpo-reach: level 30 has 300 states ( 518 nodes )
+lpo-reach: visited 30 has 6804 states ( 1572 nodes )
+lpo-reach: level 31 has 330 states ( 542 nodes )
+lpo-reach: visited 31 has 7134 states ( 1666 nodes )
+lpo-reach: level 32 has 433 states ( 523 nodes )
+lpo-reach: visited 32 has 7567 states ( 1667 nodes )
+lpo-reach: level 33 has 418 states ( 594 nodes )
+lpo-reach: visited 33 has 7985 states ( 1785 nodes )
+lpo-reach: level 34 has 250 states ( 454 nodes )
+lpo-reach: visited 34 has 8235 states ( 1758 nodes )
+lpo-reach: level 35 has 249 states ( 404 nodes )
+lpo-reach: visited 35 has 8484 states ( 1718 nodes )
+lpo-reach: level 36 has 243 states ( 461 nodes )
+lpo-reach: visited 36 has 8727 states ( 1763 nodes )
+lpo-reach: level 37 has 352 states ( 392 nodes )
+lpo-reach: visited 37 has 9079 states ( 1707 nodes )
+lpo-reach: level 38 has 333 states ( 459 nodes )
+lpo-reach: visited 38 has 9412 states ( 1710 nodes )
+lpo-reach: level 39 has 195 states ( 347 nodes )
+lpo-reach: visited 39 has 9607 states ( 1692 nodes )
+lpo-reach: level 40 has 119 states ( 247 nodes )
+lpo-reach: visited 40 has 9726 states ( 1693 nodes )
+lpo-reach: level 41 has 125 states ( 320 nodes )
+lpo-reach: visited 41 has 9851 states ( 1700 nodes )
+lpo-reach: level 42 has 168 states ( 299 nodes )
+lpo-reach: visited 42 has 10019 states ( 1669 nodes )
+lpo-reach: level 43 has 221 states ( 372 nodes )
+lpo-reach: visited 43 has 10240 states ( 1563 nodes )
+lpo-reach: level 44 has 123 states ( 281 nodes )
+lpo-reach: visited 44 has 10363 states ( 1522 nodes )
+lpo-reach: level 45 has 65 states ( 169 nodes )
+lpo-reach: visited 45 has 10428 states ( 1506 nodes )
+lpo-reach: level 46 has 32 states ( 146 nodes )
+lpo-reach: visited 46 has 10460 states ( 1461 nodes )
+lpo-reach: level 47 has 24 states ( 88 nodes )
+lpo-reach: visited 47 has 10484 states ( 1449 nodes )
+lpo-reach: level 48 has 39 states ( 81 nodes )
+lpo-reach: visited 48 has 10523 states ( 1425 nodes )
+lpo-reach: level 49 has 18 states ( 54 nodes )
+lpo-reach: visited 49 has 10541 states ( 1405 nodes )
+lpo-reach: level 50 has 9 states ( 31 nodes )
+lpo-reach: visited 50 has 10550 states ( 1403 nodes )
+lpo-reach: Exploration took 2295 group checks and 2295 next state calls
+lpo-reach: reachability took 0.570 real 0.560 user 0.000 sys
+state space has 10550 states
+( 1403 final BDD nodes; 1785 peak nodes; 625 peak nodes per level )
+Exit [0]
+0.99 user, 0.08 system, 1.10 elapsed -- Max VSize = 49016KB, Max RSS = 15732KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo-reach --order bfs2 --vset fdd brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 11 04 658145
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo-reach --order bfs2 --vset fdd brp.tbf
+END OF HEADER
+lpo-reach: Exploration order is bfs2
+lpo-reach: opening brp.tbf
+lpo-reach: Start compiling ...
+lpo-reach: .... end compiling.
+lpo-reach: creating a new string index
+lpo-reach: creating a new string index
+lpo-reach: model brp.tbf loaded
+lpo-reach: Creating a BuDDy fdd domain.
+lpo-reach: ratio 64, maximum increase 1000000, minimum free 20
+lpo-reach: length is 21, there are 45 groups
+lpo-reach: got initial state
+lpo-reach: visited 0 has 1 states ( 336 nodes )
+lpo-reach: visited 1 has 40 states ( 363 nodes )
+lpo-reach: visited 2 has 81 states ( 384 nodes )
+lpo-reach: visited 3 has 120 states ( 1136 nodes )
+lpo-reach: visited 4 has 200 states ( 1168 nodes )
+lpo-reach: visited 5 has 281 states ( 1992 nodes )
+lpo-reach: visited 6 has 360 states ( 2120 nodes )
+lpo-reach: visited 7 has 441 states ( 2326 nodes )
+lpo-reach: visited 8 has 521 states ( 2884 nodes )
+lpo-reach: visited 9 has 681 states ( 2895 nodes )
+lpo-reach: visited 10 has 841 states ( 4254 nodes )
+lpo-reach: visited 11 has 1001 states ( 4272 nodes )
+lpo-reach: visited 12 has 1134 states ( 4388 nodes )
+lpo-reach: visited 13 has 1306 states ( 5624 nodes )
+lpo-reach: visited 14 has 1610 states ( 5207 nodes )
+lpo-reach: visited 15 has 1873 states ( 7560 nodes )
+lpo-reach: visited 16 has 2138 states ( 7735 nodes )
+lpo-reach: visited 17 has 2362 states ( 8557 nodes )
+lpo-reach: visited 18 has 2585 states ( 9373 nodes )
+lpo-reach: visited 19 has 2942 states ( 8997 nodes )
+lpo-reach: visited 20 has 3269 states ( 10266 nodes )
+lpo-reach: visited 21 has 3597 states ( 11006 nodes )
+lpo-reach: visited 22 has 3887 states ( 11559 nodes )
+lpo-reach: visited 23 has 4155 states ( 12911 nodes )
+lpo-reach: visited 24 has 4555 states ( 12706 nodes )
+lpo-reach: visited 25 has 4962 states ( 12858 nodes )
+lpo-reach: visited 26 has 5358 states ( 14179 nodes )
+lpo-reach: visited 27 has 5792 states ( 14345 nodes )
+lpo-reach: visited 28 has 6202 states ( 16282 nodes )
+lpo-reach: visited 29 has 6503 states ( 16636 nodes )
+lpo-reach: visited 30 has 6803 states ( 16947 nodes )
+lpo-reach: visited 31 has 7133 states ( 17530 nodes )
+lpo-reach: visited 32 has 7566 states ( 17760 nodes )
+lpo-reach: visited 33 has 7985 states ( 18795 nodes )
+lpo-reach: visited 34 has 8235 states ( 18979 nodes )
+lpo-reach: visited 35 has 8484 states ( 18421 nodes )
+lpo-reach: visited 36 has 8726 states ( 18399 nodes )
+lpo-reach: visited 37 has 9079 states ( 18067 nodes )
+lpo-reach: visited 38 has 9411 states ( 17660 nodes )
+lpo-reach: visited 39 has 9607 states ( 17974 nodes )
+lpo-reach: visited 40 has 9726 states ( 17939 nodes )
+lpo-reach: visited 41 has 9850 states ( 18010 nodes )
+lpo-reach: visited 42 has 10019 states ( 17618 nodes )
+lpo-reach: visited 43 has 10240 states ( 16405 nodes )
+lpo-reach: visited 44 has 10363 states ( 15967 nodes )
+lpo-reach: visited 45 has 10428 states ( 15664 nodes )
+lpo-reach: visited 46 has 10460 states ( 15056 nodes )
+lpo-reach: visited 47 has 10484 states ( 14896 nodes )
+lpo-reach: visited 48 has 10523 states ( 14595 nodes )
+lpo-reach: visited 49 has 10541 states ( 14385 nodes )
+lpo-reach: visited 50 has 10550 states ( 14356 nodes )
+lpo-reach: Exploration took 2295 group checks and 2295 next state calls
+lpo-reach: reachability took 3.900 real 3.880 user 0.000 sys
+state space has 10550 states
+( 14356 final BDD nodes; 18979 peak nodes )
+Exit [0]
+4.35 user, 0.07 system, 4.50 elapsed -- Max VSize = 63312KB, Max RSS = 30008KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo-reach --order bfs2 --vset list brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 11 35 643747
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo-reach --order bfs2 --vset list brp.tbf
+END OF HEADER
+lpo-reach: Exploration order is bfs2
+lpo-reach: opening brp.tbf
+lpo-reach: Start compiling ...
+lpo-reach: .... end compiling.
+lpo-reach: creating a new string index
+lpo-reach: creating a new string index
+lpo-reach: model brp.tbf loaded
+lpo-reach: Creating an AtermDD list domain.
+lpo-reach: length is 21, there are 45 groups
+lpo-reach: got initial state
+lpo-reach: visited 0 has 1 states ( 23 nodes )
+lpo-reach: visited 1 has 41 states ( 64 nodes )
+lpo-reach: visited 2 has 81 states ( 66 nodes )
+lpo-reach: visited 3 has 121 states ( 152 nodes )
+lpo-reach: visited 4 has 201 states ( 159 nodes )
+lpo-reach: visited 5 has 281 states ( 218 nodes )
+lpo-reach: visited 6 has 361 states ( 266 nodes )
+lpo-reach: visited 7 has 441 states ( 320 nodes )
+lpo-reach: visited 8 has 521 states ( 367 nodes )
+lpo-reach: visited 9 has 681 states ( 371 nodes )
+lpo-reach: visited 10 has 841 states ( 540 nodes )
+lpo-reach: visited 11 has 1001 states ( 545 nodes )
+lpo-reach: visited 12 has 1134 states ( 552 nodes )
+lpo-reach: visited 13 has 1306 states ( 646 nodes )
+lpo-reach: visited 14 has 1610 states ( 625 nodes )
+lpo-reach: visited 15 has 1874 states ( 837 nodes )
+lpo-reach: visited 16 has 2138 states ( 822 nodes )
+lpo-reach: visited 17 has 2362 states ( 886 nodes )
+lpo-reach: visited 18 has 2586 states ( 961 nodes )
+lpo-reach: visited 19 has 2942 states ( 939 nodes )
+lpo-reach: visited 20 has 3270 states ( 1070 nodes )
+lpo-reach: visited 21 has 3598 states ( 1125 nodes )
+lpo-reach: visited 22 has 3887 states ( 1133 nodes )
+lpo-reach: visited 23 has 4156 states ( 1266 nodes )
+lpo-reach: visited 24 has 4556 states ( 1225 nodes )
+lpo-reach: visited 25 has 4963 states ( 1272 nodes )
+lpo-reach: visited 26 has 5358 states ( 1378 nodes )
+lpo-reach: visited 27 has 5792 states ( 1369 nodes )
+lpo-reach: visited 28 has 6202 states ( 1553 nodes )
+lpo-reach: visited 29 has 6504 states ( 1545 nodes )
+lpo-reach: visited 30 has 6804 states ( 1572 nodes )
+lpo-reach: visited 31 has 7134 states ( 1666 nodes )
+lpo-reach: visited 32 has 7567 states ( 1667 nodes )
+lpo-reach: visited 33 has 7985 states ( 1785 nodes )
+lpo-reach: visited 34 has 8235 states ( 1758 nodes )
+lpo-reach: visited 35 has 8484 states ( 1718 nodes )
+lpo-reach: visited 36 has 8727 states ( 1763 nodes )
+lpo-reach: visited 37 has 9079 states ( 1707 nodes )
+lpo-reach: visited 38 has 9412 states ( 1710 nodes )
+lpo-reach: visited 39 has 9607 states ( 1692 nodes )
+lpo-reach: visited 40 has 9726 states ( 1693 nodes )
+lpo-reach: visited 41 has 9851 states ( 1700 nodes )
+lpo-reach: visited 42 has 10019 states ( 1669 nodes )
+lpo-reach: visited 43 has 10240 states ( 1563 nodes )
+lpo-reach: visited 44 has 10363 states ( 1522 nodes )
+lpo-reach: visited 45 has 10428 states ( 1506 nodes )
+lpo-reach: visited 46 has 10460 states ( 1461 nodes )
+lpo-reach: visited 47 has 10484 states ( 1449 nodes )
+lpo-reach: visited 48 has 10523 states ( 1425 nodes )
+lpo-reach: visited 49 has 10541 states ( 1405 nodes )
+lpo-reach: visited 50 has 10550 states ( 1403 nodes )
+lpo-reach: Exploration took 2295 group checks and 2295 next state calls
+lpo-reach: reachability took 1.220 real 1.220 user 0.010 sys
+state space has 10550 states
+( 1403 final BDD nodes; 1785 peak nodes )
+Exit [0]
+1.66 user, 0.06 system, 1.80 elapsed -- Max VSize = 52284KB, Max RSS = 19028KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo-reach --order chain --vset fdd brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 13 08 637293
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo-reach --order chain --vset fdd brp.tbf
+END OF HEADER
+lpo-reach: Exploration order is chain
+lpo-reach: opening brp.tbf
+lpo-reach: Start compiling ...
+lpo-reach: .... end compiling.
+lpo-reach: creating a new string index
+lpo-reach: creating a new string index
+lpo-reach: model brp.tbf loaded
+lpo-reach: Creating a BuDDy fdd domain.
+lpo-reach: ratio 64, maximum increase 1000000, minimum free 20
+lpo-reach: length is 21, there are 45 groups
+lpo-reach: got initial state
+lpo-reach: visited 0 has 1 states ( 336 nodes )
+lpo-reach: visited 1 has 81 states ( 384 nodes )
+lpo-reach: visited 2 has 321 states ( 2078 nodes )
+lpo-reach: visited 3 has 441 states ( 2326 nodes )
+lpo-reach: visited 4 has 881 states ( 3885 nodes )
+lpo-reach: visited 5 has 1120 states ( 4242 nodes )
+lpo-reach: visited 6 has 1814 states ( 5576 nodes )
+lpo-reach: visited 7 has 2366 states ( 8275 nodes )
+lpo-reach: visited 8 has 3070 states ( 8650 nodes )
+lpo-reach: visited 9 has 3686 states ( 10557 nodes )
+lpo-reach: visited 10 has 4411 states ( 11062 nodes )
+lpo-reach: visited 11 has 5123 states ( 13319 nodes )
+lpo-reach: visited 12 has 5991 states ( 14672 nodes )
+lpo-reach: visited 13 has 6892 states ( 17727 nodes )
+lpo-reach: visited 14 has 7678 states ( 16718 nodes )
+lpo-reach: visited 15 has 8296 states ( 18586 nodes )
+lpo-reach: visited 16 has 9088 states ( 16735 nodes )
+lpo-reach: visited 17 has 9559 states ( 17395 nodes )
+lpo-reach: visited 18 has 9933 states ( 17338 nodes )
+lpo-reach: visited 19 has 10282 states ( 16635 nodes )
+lpo-reach: visited 20 has 10404 states ( 15569 nodes )
+lpo-reach: visited 21 has 10442 states ( 15296 nodes )
+lpo-reach: visited 22 has 10550 states ( 14356 nodes )
+lpo-reach: Exploration took 1035 group checks and 1035 next state calls
+lpo-reach: reachability took 2.130 real 2.120 user 0.000 sys
+state space has 10550 states
+( 14356 final BDD nodes; 18586 peak nodes )
+Exit [0]
+2.57 user, 0.08 system, 2.70 elapsed -- Max VSize = 63312KB, Max RSS = 30004KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo-reach --order chain --vset list brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 13 39 633388
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo-reach --order chain --vset list brp.tbf
+END OF HEADER
+lpo-reach: Exploration order is chain
+lpo-reach: opening brp.tbf
+lpo-reach: Start compiling ...
+lpo-reach: .... end compiling.
+lpo-reach: creating a new string index
+lpo-reach: creating a new string index
+lpo-reach: model brp.tbf loaded
+lpo-reach: Creating an AtermDD list domain.
+lpo-reach: length is 21, there are 45 groups
+lpo-reach: got initial state
+lpo-reach: visited 0 has 1 states ( 23 nodes )
+lpo-reach: visited 1 has 81 states ( 66 nodes )
+lpo-reach: visited 2 has 321 states ( 262 nodes )
+lpo-reach: visited 3 has 441 states ( 320 nodes )
+lpo-reach: visited 4 has 881 states ( 479 nodes )
+lpo-reach: visited 5 has 1121 states ( 542 nodes )
+lpo-reach: visited 6 has 1814 states ( 651 nodes )
+lpo-reach: visited 7 has 2366 states ( 860 nodes )
+lpo-reach: visited 8 has 3070 states ( 901 nodes )
+lpo-reach: visited 9 has 3687 states ( 1041 nodes )
+lpo-reach: visited 10 has 4412 states ( 1099 nodes )
+lpo-reach: visited 11 has 5123 states ( 1253 nodes )
+lpo-reach: visited 12 has 5992 states ( 1379 nodes )
+lpo-reach: visited 13 has 6893 states ( 1620 nodes )
+lpo-reach: visited 14 has 7679 states ( 1569 nodes )
+lpo-reach: visited 15 has 8296 states ( 1709 nodes )
+lpo-reach: visited 16 has 9089 states ( 1593 nodes )
+lpo-reach: visited 17 has 9559 states ( 1638 nodes )
+lpo-reach: visited 18 has 9933 states ( 1641 nodes )
+lpo-reach: visited 19 has 10282 states ( 1578 nodes )
+lpo-reach: visited 20 has 10404 states ( 1499 nodes )
+lpo-reach: visited 21 has 10442 states ( 1476 nodes )
+lpo-reach: visited 22 has 10550 states ( 1403 nodes )
+lpo-reach: Exploration took 1035 group checks and 1035 next state calls
+lpo-reach: reachability took 0.650 real 0.640 user 0.010 sys
+state space has 10550 states
+( 1403 final BDD nodes; 1709 peak nodes )
+Exit [0]
+1.09 user, 0.06 system, 1.20 elapsed -- Max VSize = 51276KB, Max RSS = 17896KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey --state vset --vset fdd --cache brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 14 10 634897
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey --state vset --vset fdd --cache brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: Creating a BuDDy fdd domain.
+lpo2lts-grey: ratio 64, maximum increase 1000000, minimum free 20
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: 10550 reachable states represented symbolically with 14356 nodes
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+4.24 user, 0.08 system, 4.41 elapsed -- Max VSize = 67360KB, Max RSS = 32872KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey --state vset --vset fdd brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 14 41 627160
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey --state vset --vset fdd brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: Creating a BuDDy fdd domain.
+lpo2lts-grey: ratio 64, maximum increase 1000000, minimum free 20
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: 10550 reachable states represented symbolically with 14356 nodes
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+4.31 user, 0.07 system, 4.40 elapsed -- Max VSize = 63056KB, Max RSS = 29668KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey --cache brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 15 12 632019
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey --cache brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.87 user, 0.05 system, 1.00 elapsed -- Max VSize = 45964KB, Max RSS = 11416KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 15 43 613543
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.94 user, 0.04 system, 1.00 elapsed -- Max VSize = 41740KB, Max RSS = 8360KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey --state vset --vset list --cache brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 16 14 613068
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey --state vset --vset list --cache brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: Creating an AtermDD list domain.
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: 10550 reachable states represented symbolically with 1403 nodes
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+1.04 user, 0.06 system, 1.20 elapsed -- Max VSize = 50480KB, Max RSS = 15964KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey --state vset --vset list brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 16 45 598554
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey --state vset --vset list brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: Creating an AtermDD list domain.
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: 10550 reachable states represented symbolically with 1403 nodes
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+1.10 user, 0.05 system, 1.20 elapsed -- Max VSize = 46240KB, Max RSS = 12820KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: mpirun -mca btl tcp,self memtime lpo2lts-mpi brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 17 16 707429
+[n16:24607] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_ofud: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+[n16:24607] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_openib: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-mpi brp.tbf
+END OF HEADER
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 4/ 6): 4: new index tag 1 owned by 1
+( 4/ 6): 4: new index tag 2 owned by 2
+( 5/ 6): 5: new index tag 1 owned by 1
+( 5/ 6): 5: new index tag 2 owned by 2
+( 1/ 6): 1: new index tag 1 owned by 1
+( 1/ 6): 1: new index tag 2 owned by 2
+( 2/ 6): 2: new index tag 1 owned by 1
+( 2/ 6): 2: new index tag 2 owned by 2
+( 2/ 6): model brp.tbf loaded
+( 5/ 6): model brp.tbf loaded
+( 4/ 6): model brp.tbf loaded
+( 1/ 6): model brp.tbf loaded
+( 3/ 6): 3: new index tag 1 owned by 1
+( 3/ 6): 3: new index tag 2 owned by 2
+( 3/ 6): model brp.tbf loaded
+( 0/ 6): 0: new index tag 1 owned by 1
+( 0/ 6): 0: new index tag 2 owned by 2
+( 0/ 6): model brp.tbf loaded
+( 0/ 6): model created
+( 1/ 6): model created
+( 3/ 6): model created
+( 5/ 6): model created
+( 4/ 6): model created
+( 2/ 6): model created
+( 0/ 6): there are 0 state labels and 1 edge labels
+( 1/ 6): there are 0 state labels and 1 edge labels
+( 4/ 6): there are 0 state labels and 1 edge labels
+( 3/ 6): there are 0 state labels and 1 edge labels
+( 5/ 6): there are 0 state labels and 1 edge labels
+( 2/ 6): there are 0 state labels and 1 edge labels
+( 0/ 6): initial state computed at 0
+( 0/ 6): initial state translated at 0
+( 0/ 6): folding initial state at 0
+( 3/ 6): initial state computed at 3
+( 3/ 6): initial state translated at 3( 5/ 6): initial state computed at 5
+( 5/ 6): initial state translated at 5
+( 2/ 6): initial state computed at 2
+( 2/ 6): initial state translated at 2
+( 1/ 6): initial state computed at 1
+( 1/ 6): initial state translated at 1
+( 4/ 6): initial state computed at 4
+( 4/ 6): initial state translated at 4
+
+( 0/ 6): No output, just counting the number of states
+( 1/ 6): No output, just counting the number of states
+( 3/ 6): No output, just counting the number of states
+( 4/ 6): No output, just counting the number of states
+( 5/ 6): No output, just counting the number of states
+( 2/ 6): No output, just counting the number of states
+( 0/ 6): exploring level 1
+( 0/ 6): level 1: 1 explored 40 transitions 41 visited
+( 0/ 6): exploring level 2
+( 0/ 6): level 2: 41 explored 80 transitions 81 visited
+( 0/ 6): exploring level 3
+( 0/ 6): level 3: 81 explored 120 transitions 121 visited
+( 0/ 6): exploring level 4
+( 0/ 6): level 4: 121 explored 200 transitions 201 visited
+( 0/ 6): exploring level 5
+( 0/ 6): level 5: 201 explored 280 transitions 281 visited
+( 0/ 6): exploring level 6
+( 0/ 6): level 6: 281 explored 360 transitions 361 visited
+( 0/ 6): exploring level 7
+( 0/ 6): level 7: 361 explored 440 transitions 441 visited
+( 0/ 6): exploring level 8
+( 0/ 6): level 8: 441 explored 520 transitions 521 visited
+( 0/ 6): exploring level 9
+( 0/ 6): level 9: 521 explored 680 transitions 681 visited
+( 0/ 6): exploring level 10
+( 0/ 6): level 10: 681 explored 840 transitions 841 visited
+( 0/ 6): exploring level 11
+( 0/ 6): level 11: 841 explored 1000 transitions 1001 visited
+( 0/ 6): exploring level 12
+( 0/ 6): level 12: 1001 explored 1160 transitions 1134 visited
+( 0/ 6): exploring level 13
+( 0/ 6): level 13: 1134 explored 1332 transitions 1306 visited
+( 0/ 6): exploring level 14
+( 0/ 6): level 14: 1306 explored 1636 transitions 1610 visited
+( 0/ 6): exploring level 15
+( 0/ 6): level 15: 1610 explored 1940 transitions 1874 visited
+( 0/ 6): exploring level 16
+( 0/ 6): level 16: 1874 explored 2244 transitions 2138 visited
+( 0/ 6): exploring level 17
+( 0/ 6): level 17: 2138 explored 2508 transitions 2362 visited
+( 0/ 6): exploring level 18
+( 0/ 6): level 18: 2362 explored 2732 transitions 2586 visited
+( 0/ 6): exploring level 19
+( 0/ 6): level 19: 2586 explored 3088 transitions 2942 visited
+( 0/ 6): exploring level 20
+( 0/ 6): level 20: 2942 explored 3456 transitions 3270 visited
+( 0/ 6): exploring level 21
+( 0/ 6): level 21: 3270 explored 3824 transitions 3598 visited
+( 0/ 6): exploring level 22
+( 0/ 6): level 22: 3598 explored 4192 transitions 3887 visited
+( 0/ 6): exploring level 23
+( 0/ 6): level 23: 3887 explored 4481 transitions 4156 visited
+( 0/ 6): exploring level 24
+( 0/ 6): level 24: 4156 explored 4881 transitions 4556 visited
+( 0/ 6): exploring level 25
+( 0/ 6): level 25: 4556 explored 5347 transitions 4963 visited
+( 0/ 6): exploring level 26
+( 0/ 6): level 26: 4963 explored 5794 transitions 5358 visited
+( 0/ 6): exploring level 27
+( 0/ 6): level 27: 5358 explored 6318 transitions 5792 visited
+( 0/ 6): exploring level 28
+( 0/ 6): level 28: 5792 explored 6792 transitions 6202 visited
+( 0/ 6): exploring level 29
+( 0/ 6): level 29: 6202 explored 7214 transitions 6504 visited
+( 0/ 6): exploring level 30
+( 0/ 6): level 30: 6504 explored 7543 transitions 6804 visited
+( 0/ 6): exploring level 31
+( 0/ 6): level 31: 6804 explored 7886 transitions 7134 visited
+( 0/ 6): exploring level 32
+( 0/ 6): level 32: 7134 explored 8345 transitions 7567 visited
+( 0/ 6): exploring level 33
+( 0/ 6): level 33: 7567 explored 8827 transitions 7985 visited
+( 0/ 6): exploring level 34
+( 0/ 6): level 34: 7985 explored 9245 transitions 8235 visited
+( 0/ 6): exploring level 35
+( 0/ 6): level 35: 8235 explored 9522 transitions 8484 visited
+( 0/ 6): exploring level 36
+( 0/ 6): level 36: 8484 explored 9777 transitions 8727 visited
+( 0/ 6): exploring level 37
+( 0/ 6): level 37: 8727 explored 10149 transitions 9079 visited
+( 0/ 6): exploring level 38
+( 0/ 6): level 38: 9079 explored 10559 transitions 9412 visited
+( 0/ 6): exploring level 39
+( 0/ 6): level 39: 9412 explored 10892 transitions 9607 visited
+( 0/ 6): exploring level 40
+( 0/ 6): level 40: 9607 explored 11090 transitions 9726 visited
+( 0/ 6): exploring level 41
+( 0/ 6): level 41: 9726 explored 11215 transitions 9851 visited
+( 0/ 6): exploring level 42
+( 0/ 6): level 42: 9851 explored 11389 transitions 10019 visited
+( 0/ 6): exploring level 43
+( 0/ 6): level 43: 10019 explored 11615 transitions 10240 visited
+( 0/ 6): exploring level 44
+( 0/ 6): level 44: 10240 explored 11836 transitions 10363 visited
+( 0/ 6): exploring level 45
+( 0/ 6): level 45: 10363 explored 11959 transitions 10428 visited
+( 0/ 6): exploring level 46
+( 0/ 6): level 46: 10428 explored 12030 transitions 10460 visited
+( 0/ 6): exploring level 47
+( 0/ 6): level 47: 10460 explored 12062 transitions 10484 visited
+( 0/ 6): exploring level 48
+( 0/ 6): level 48: 10484 explored 12104 transitions 10523 visited
+( 0/ 6): exploring level 49
+( 0/ 6): level 49: 10523 explored 12143 transitions 10541 visited
+( 0/ 6): exploring level 50
+( 0/ 6): level 50: 10541 explored 12161 transitions 10550 visited
+( 0/ 6): exploring level 51
+State space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.58 user, 0.31 system, 1.00 elapsed -- Max VSize = 102548KB, Max RSS = 11336KB
+Exit [0]
+0.59 user, 0.32 system, 1.00 elapsed -- Max VSize = 102596KB, Max RSS = 11436KB
+Exit [0]
+0.57 user, 0.33 system, 1.00 elapsed -- Max VSize = 102620KB, Max RSS = 11284KB
+Exit [0]
+0.58 user, 0.34 system, 1.00 elapsed -- Max VSize = 102552KB, Max RSS = 11224KB
+Exit [0]
+0.57 user, 0.21 system, 1.01 elapsed -- Max VSize = 102596KB, Max RSS = 11340KB
+Exit [0]
+0.57 user, 0.22 system, 1.00 elapsed -- Max VSize = 102556KB, Max RSS = 11232KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: mpirun -mca btl tcp,self memtime lpo2lts-mpi brp.tbf
+BEGIN OF HEADER
+Nodename: n25
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 31 47 614231
+[n25:31127] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_ofud: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+[n25:31127] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_openib: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-mpi brp.tbf
+END OF HEADER
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 1/12): 1: new index tag 1 owned by 1
+( 1/12): 1: new index tag 2 owned by 2
+( 2/12): 2: new index tag 1 owned by 1
+( 2/12): 2: new index tag 2 owned by 2
+( 5/12): 5: new index tag 1 owned by 1
+( 5/12): 5: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 0/12): 0: new index tag 1 owned by 1
+( 0/12): 0: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 3/12): 3: new index tag 1 owned by 1
+( 3/12): 3: new index tag 2 owned by 2
+( 4/12): 4: new index tag 1 owned by 1
+( 4/12): 4: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(10/12): 10: new index tag 1 owned by 1
+(11/12): 11: new index tag 1 owned by 1
+(11/12): 11: new index tag 2 owned by 2
+(10/12): 10: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... MCRL grey box: .... eend compiling.
+nd compiling.
+( 7/12): 7: new index tag 1 owned by 1
+( 7/12): 7: new index tag 2 owned by 2
+( 8/12): 8: new index tag 1 owned by 1
+( 8/12): 8: new index tag 2 owned by 2
+( 6/12): 6: new index tag 1 owned by 1
+( 6/12): 6: new index tag 2 owned by 2
+( 9/12): 9: new index tag 1 owned by 1
+( 9/12): 9: new index tag 2 owned by 2
+( 3/12): model brp.tbf loaded
+( 2/12): model brp.tbf loaded
+( 0/12): model brp.tbf loaded
+( 4/12): model brp.tbf loaded
+( 1/12): model brp.tbf loaded
+( 5/12): model brp.tbf loaded
+( 7/12): model brp.tbf loaded
+(11/12): model brp.tbf loaded
+( 8/12): model brp.tbf loaded
+( 6/12): model brp.tbf loaded
+(10/12): model brp.tbf loaded
+( 9/12): model brp.tbf loaded
+( 1/12): model created
+( 0/12): model created
+( 3/12): model created
+( 2/12): model created
+( 7/12): model created
+( 4/12): model created
+( 8/12): model created
+( 5/12): model created
+( 6/12): model created
+(11/12): model created
+(10/12): model created
+( 9/12): model created
+( 1/12): there are 0 state labels and 1 edge labels
+( 4/12): there are 0 state labels and 1 edge labels
+( 0/12): ( 3/12): there are 0 state labels and 1 edge labels
+( 5/12): there are 0 state labels and 1 edge labels
+there are 0 state labels and 1 edge labels
+( 2/12): there are 0 state labels and 1 edge labels
+( 7/12): there are 0 state labels and 1 edge labels
+(11/12): ( 8/12): there are 0 state labels and 1 edge labels
+( 6/12): there are 0 state labels and 1 edge labels
+there are 0 state labels and 1 edge labels
+(10/12): there are 0 state labels and 1 edge labels
+( 1/12): initial state computed at 1
+( 1/12): initial state translated at 1
+( 0/12): initial state computed at 0
+( 0/12): initial state translated at 0
+( 0/12): folding initial state at 0
+( 4/12): initial state computed at 4
+( 4/12): initial state translated at 4
+( 2/12): initial state computed at 2
+( 2/12): initial state translated at 2
+( 3/12): initial state computed at 3
+( 3/12): initial state translated at 3
+( 5/12): initial state computed at 5
+( 5/12): initial state translated at 5
+( 9/12): there are 0 state labels and 1 edge labels
+( 0/12): No output, just counting the number of states
+( 4/12): No output, just counting the number of states
+( 1/12): No output, just counting the number of states
+( 2/12): No output, just counting the number of states
+( 3/12): No output, just counting the number of states
+( 5/12): No output, just counting the number of states
+( 7/12): initial state computed at 7
+( 7/12): initial state translated at 7
+( 6/12): initial state computed at 6
+( 6/12): initial state translated at 6
+( 8/12): initial state computed at 8
+( 8/12): initial state translated at 8
+(10/12): initial state computed at 10
+(10/12): initial state translated at 10
+( 9/12): initial state computed at 9
+( 9/12): initial state translated at 9
+(11/12): initial state computed at 11
+(11/12): initial state translated at 11
+( 6/12): No output, just counting the number of states
+( 7/12): No output, just counting the number of states
+( 8/12): No output, just counting the number of states
+(10/12): No output, just counting the number of states
+(11/12): No output, just counting the number of states
+( 9/12): No output, just counting the number of states
+( 0/12): exploring level 1
+( 0/12): level 1: 1 explored 40 transitions 41 visited
+( 0/12): exploring level 2
+( 0/12): level 2: 41 explored 80 transitions 81 visited
+( 0/12): exploring level 3
+( 0/12): level 3: 81 explored 120 transitions 121 visited
+( 0/12): exploring level 4
+( 0/12): level 4: 121 explored 200 transitions 201 visited
+( 0/12): exploring level 5
+( 0/12): level 5: 201 explored 280 transitions 281 visited
+( 0/12): exploring level 6
+( 0/12): level 6: 281 explored 360 transitions 361 visited
+( 0/12): exploring level 7
+( 0/12): level 7: 361 explored 440 transitions 441 visited
+( 0/12): exploring level 8
+( 0/12): level 8: 441 explored 520 transitions 521 visited
+( 0/12): exploring level 9
+( 0/12): level 9: 521 explored 680 transitions 681 visited
+( 0/12): exploring level 10
+( 0/12): level 10: 681 explored 840 transitions 841 visited
+( 0/12): exploring level 11
+( 0/12): level 11: 841 explored 1000 transitions 1001 visited
+( 0/12): exploring level 12
+( 0/12): level 12: 1001 explored 1160 transitions 1134 visited
+( 0/12): exploring level 13
+( 0/12): level 13: 1134 explored 1332 transitions 1306 visited
+( 0/12): exploring level 14
+( 0/12): level 14: 1306 explored 1636 transitions 1610 visited
+( 0/12): exploring level 15
+( 0/12): level 15: 1610 explored 1940 transitions 1874 visited
+( 0/12): exploring level 16
+( 0/12): level 16: 1874 explored 2244 transitions 2138 visited
+( 0/12): exploring level 17
+( 0/12): level 17: 2138 explored 2508 transitions 2362 visited
+( 0/12): exploring level 18
+( 0/12): level 18: 2362 explored 2732 transitions 2586 visited
+( 0/12): exploring level 19
+( 0/12): level 19: 2586 explored 3088 transitions 2942 visited
+( 0/12): exploring level 20
+( 0/12): level 20: 2942 explored 3456 transitions 3270 visited
+( 0/12): exploring level 21
+( 0/12): level 21: 3270 explored 3824 transitions 3598 visited
+( 0/12): exploring level 22
+( 0/12): level 22: 3598 explored 4192 transitions 3887 visited
+( 0/12): exploring level 23
+( 0/12): level 23: 3887 explored 4481 transitions 4156 visited
+( 0/12): exploring level 24
+( 0/12): level 24: 4156 explored 4881 transitions 4556 visited
+( 0/12): exploring level 25
+( 0/12): level 25: 4556 explored 5347 transitions 4963 visited
+( 0/12): exploring level 26
+( 0/12): level 26: 4963 explored 5794 transitions 5358 visited
+( 0/12): exploring level 27
+( 0/12): level 27: 5358 explored 6318 transitions 5792 visited
+( 0/12): exploring level 28
+( 0/12): level 28: 5792 explored 6792 transitions 6202 visited
+( 0/12): exploring level 29
+( 0/12): level 29: 6202 explored 7214 transitions 6504 visited
+( 0/12): exploring level 30
+( 0/12): level 30: 6504 explored 7543 transitions 6804 visited
+( 0/12): exploring level 31
+( 0/12): level 31: 6804 explored 7886 transitions 7134 visited
+( 0/12): exploring level 32
+( 0/12): level 32: 7134 explored 8345 transitions 7567 visited
+( 0/12): exploring level 33
+( 0/12): level 33: 7567 explored 8827 transitions 7985 visited
+( 0/12): exploring level 34
+( 0/12): level 34: 7985 explored 9245 transitions 8235 visited
+( 0/12): exploring level 35
+( 0/12): level 35: 8235 explored 9522 transitions 8484 visited
+( 0/12): exploring level 36
+( 0/12): level 36: 8484 explored 9777 transitions 8727 visited
+( 0/12): exploring level 37
+( 0/12): level 37: 8727 explored 10149 transitions 9079 visited
+( 0/12): exploring level 38
+( 0/12): level 38: 9079 explored 10559 transitions 9412 visited
+( 0/12): exploring level 39
+( 0/12): level 39: 9412 explored 10892 transitions 9607 visited
+( 0/12): exploring level 40
+( 0/12): level 40: 9607 explored 11090 transitions 9726 visited
+( 0/12): exploring level 41
+( 0/12): level 41: 9726 explored 11215 transitions 9851 visited
+( 0/12): exploring level 42
+( 0/12): level 42: 9851 explored 11389 transitions 10019 visited
+( 0/12): exploring level 43
+( 0/12): level 43: 10019 explored 11615 transitions 10240 visited
+( 0/12): exploring level 44
+( 0/12): level 44: 10240 explored 11836 transitions 10363 visited
+( 0/12): exploring level 45
+( 0/12): level 45: 10363 explored 11959 transitions 10428 visited
+( 0/12): exploring level 46
+( 0/12): level 46: 10428 explored 12030 transitions 10460 visited
+( 0/12): exploring level 47
+( 0/12): level 47: 10460 explored 12062 transitions 10484 visited
+( 0/12): exploring level 48
+( 0/12): level 48: 10484 explored 12104 transitions 10523 visited
+( 0/12): exploring level 49
+( 0/12): level 49: 10523 explored 12143 transitions 10541 visited
+( 0/12): exploring level 50
+( 0/12): level 50: 10541 explored 12161 transitions 10550 visited
+( 0/12): exploring level 51
+State space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.75 user, 0.19 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12080KB
+Exit [0]
+0.71 user, 0.21 system, 1.60 elapsed -- Max VSize = 103440KB, Max RSS = 12096KB
+Exit [0]
+0.71 user, 0.19 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12124KB
+Exit [0]
+0.73 user, 0.20 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12120KB
+Exit [0]
+0.73 user, 0.21 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12120KB
+Exit [0]
+0.67 user, 0.22 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12112KB
+Exit [0]
+0.63 user, 0.74 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12132KB
+Exit [0]
+0.52 user, 0.83 system, 1.60 elapsed -- Max VSize = 105680KB, Max RSS = 12316KB
+Exit [0]
+0.57 user, 0.78 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12120KB
+Exit [0]
+0.70 user, 0.65 system, 1.60 elapsed -- Max VSize = 103504KB, Max RSS = 12084KB
+Exit [0]
+0.56 user, 0.80 system, 1.60 elapsed -- Max VSize = 103488KB, Max RSS = 12096KB
+Exit [0]
+0.68 user, 0.68 system, 1.60 elapsed -- Max VSize = 103440KB, Max RSS = 12116KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: mpirun -mca btl tcp,self memtime lpo2lts-mpi brp.tbf
+BEGIN OF HEADER
+Nodename: n25
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 32 18 586610
+[n25:31284] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_ofud: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+[n25:31284] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_openib: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-mpi brp.tbf
+END OF HEADER
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 6/24): 6: new index tag 1 owned by 1
+( 7/24): 7: new index tag 1 owned by 1
+( 6/24): 6: new index tag 2 owned by 2
+( 7/24): 7: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(10/24): 10: new index tag 1 owned by 1
+(10/24): 10: new index tag 2 owned by 2
+( 0/24): 0: new index tag 1 owned by 1
+( 0/24): 0: new index tag 2 owned by 2
+( 4/24): 4: new index tag 1 owned by 1
+( 4/24): 4: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 1/24): 1: new index tag 1 owned by 1
+( 1/24): 1: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+(11/24): 11: new index tag 1 owned by 1
+(11/24): 11: new index tag 2 owned by 2
+(14/24): 14: new index tag 1 owned by 1
+(14/24): 14: new index tag 2 owned by 2
+(17/24): 17: new index tag 1 owned by 1
+(13/24): 13: new index tag 1 owned by 1
+(17/24): 17: new index tag 2 owned by 2
+(13/24): 13: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+(16/24): 16: new index tag 1 owned by 1
+(16/24): 16: new index tag 2 owned by 2
+( 3/24): 3: new index tag 1 owned by 1
+( 3/24): 3: new index tag 2 owned by 2
+( 5/24): 5: new index tag 1 owned by 1
+( 5/24): 5: new index tag 2 owned by 2
+( 2/24): 2: new index tag 1 owned by 1
+( 2/24): 2: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 9/24): 9: new index tag 1 owned by 1
+( 8/24): 8: new index tag 1 owned by 1
+( 8/24): 8: new index tag 2 owned by 2( 9/24): 9: new index tag 2 owned by 2
+
+MCRL grey box: .... end compiling.
+(12/24): 12: new index tag 1 owned by 1
+(12/24): 12: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+(15/24): 15: new index tag 1 owned by 1
+(15/24): 15: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(22/24): 22: new index tag 1 owned by 1
+(21/24): 21: new index tag 1 owned by 1
+(21/24): 21: new index tag 2 owned by 2
+(22/24): 22: new index tag 2 owned by 2
+(23/24): (20/24): 20: new index tag 1 owned by 1
+23: new index tag 1 owned by 1
+(20/24): 20: new index tag 2 owned by 2
+(23/24): 23: new index tag 2 owned by 2
+(18/24): 18: new index tag 1 owned by 1
+(18/24): 18: new index tag 2 owned by 2
+(19/24): 19: new index tag 1 owned by 1
+(19/24): 19: new index tag 2 owned by 2
+( 0/24): model brp.tbf loaded
+( 2/24): model brp.tbf loaded
+( 4/24): model brp.tbf loaded
+( 3/24): model brp.tbf loaded
+( 5/24): model brp.tbf loaded
+( 1/24): model brp.tbf loaded
+( 6/24): model brp.tbf loaded
+(17/24): model brp.tbf loaded
+( 9/24): model brp.tbf loaded
+(13/24): model brp.tbf loaded
+(11/24): model brp.tbf loaded
+(12/24): model brp.tbf loaded
+(18/24): model brp.tbf loaded
+(15/24)(21/24): model brp.tbf loaded
+(14/24): model brp.tbf loaded
+(23/24): model brp.tbf loaded
+( 7/24): model brp.tbf loaded
+(16/24): model brp.tbf loaded
+(22/24): model brp.tbf loaded
+(10/24): model brp.tbf loaded
+: (20/24): model brp.tbf loaded
+( 8/24): model brp.tbf loaded
+model brp.tbf loaded(19/24): model brp.tbf loaded
+
+( 0/24): model created
+( 1/24): model created
+( 3/24): model created
+( 2/24): model created
+( 4/24): model created
+( 5/24): model created
+( 6/24): model created
+( 7/24): model created
+( 8/24): model created
+( 9/24): model created
+(10/24): model created
+(11/24): model created
+(18/24): model created
+(13/24): model created
+(12/24): model created
+(20/24): model created
+(17/24)(14/24): model created
+: model created(19/24): model created
+
+(16/24): model created
+(21/24): model created
+(23/24): model created
+(15/24): (22/24): model created
+model created
+( 0/24): there are 0 state labels and 1 edge labels
+( 1/24): there are 0 state labels and 1 edge labels
+( 3/24): there are 0 state labels and 1 edge labels
+( 4/24): there are 0 state labels and 1 edge labels
+( 2/24): there are 0 state labels and 1 edge labels
+( 5/24): there are 0 state labels and 1 edge labels
+( 8/24): there are 0 state labels and 1 edge labels
+(13/24): there are 0 state labels and 1 edge labels
+( 6/24): there are 0 state labels and 1 edge labels
+(12/24): there are 0 state labels and 1 edge labels
+(18/24): there are 0 state labels and 1 edge labels
+( 7/24): there are 0 state labels and 1 edge labels
+(14/24): there are 0 state labels and 1 edge labels
+(20/24): there are 0 state labels and 1 edge labels
+(11/24): there are 0 state labels and 1 edge labels
+(16/24): there are 0 state labels and 1 edge labels
+(22/24): there are 0 state labels and 1 edge labels
+(10/24): there are 0 state labels and 1 edge labels
+(17/24): there are 0 state labels and 1 edge labels
+(19/24): there are 0 state labels and 1 edge labels
+( 0/24): initial state computed at 0
+( 0/24): initial state translated at 0
+( 0/24): folding initial state at 0
+(15/24)(21/24): there are 0 state labels and 1 edge labels
+( 1/24): initial state computed at 1
+( 1/24): initial state translated at 1
+( 3/24): initial state computed at 3
+( 3/24): initial state translated at 3
+( 4/24): initial state computed at 4
+( 4/24): initial state translated at 4
+( 2/24): initial state computed at 2
+( 2/24): initial state translated at 2
+( 5/24): initial state computed at 5
+( 5/24): initial state translated at 5
+( 9/24): there are 0 state labels and 1 edge labels
+: (23/24): there are 0 state labels and 1 edge labels
+there are 0 state labels and 1 edge labels
+( 6/24): initial state computed at 6
+( 6/24): initial state translated at 6
+(12/24): initial state computed at 12
+(12/24): initial state translated at 12
+( 7/24): initial state computed at 7
+( 7/24): initial state translated at 7
+(13/24): initial state computed at 13
+(13/24): initial state translated at 13
+(18/24): initial state computed at 18
+(18/24): initial state translated at 18
+( 8/24): initial state computed at 8
+( 8/24): initial state translated at 8
+(14/24): initial state computed at 14
+(14/24): initial state translated at 14
+(20/24): initial state computed at 20
+(20/24): initial state translated at 20
+( 9/24): initial state computed at 9
+( 9/24): initial state translated at 9
+(16/24): initial state computed at 16
+(16/24): initial state translated at 16
+(23/24): initial state computed at 23
+(23/24): initial state translated at 23
+(10/24): initial state computed at 10
+(10/24): initial state translated at 10
+(17/24): initial state computed at 17
+(17/24): initial state translated at 17
+(19/24): initial state computed at 19
+(19/24): initial state translated at 19
+(11/24): initial state computed at 11
+(11/24): initial state translated at 11
+(15/24)(22/24): initial state computed at 22
+(22/24): initial state translated at 22
+: (21/24): initial state computed at 21
+(21/24): initial state translated at 21
+initial state computed at 15( 0/24): No output, just counting the number of states
+
+( 1/24): No output, just counting the number of states
+( 4/24): No output, just counting the number of states
+( 2/24): No output, just counting the number of states
+(15/24)( 5/24): No output, just counting the number of states
+( 3/24): No output, just counting the number of states
+: initial state translated at 15
+( 8/24): No output, just counting the number of states
+(12/24): No output, just counting the number of states
+( 6/24): No output, just counting the number of states
+(13/24): No output, just counting the number of states
+( 7/24): No output, just counting the number of states
+(14/24): No output, just counting the number of states
+(18/24): No output, just counting the number of states
+( 9/24): No output, just counting the number of states
+(16/24): No output, just counting the number of states
+(20/24): No output, just counting the number of states
+(11/24): No output, just counting the number of states
+(17/24): No output, just counting the number of states
+(19/24): No output, just counting the number of states
+(10/24): No output, just counting the number of states
+(15/24)(21/24): No output, just counting the number of states
+: (23/24): No output, just counting the number of states
+No output, just counting the number of states(22/24): No output, just counting the number of states
+
+( 0/24): exploring level 1
+( 0/24): level 1: 1 explored 40 transitions 41 visited
+( 0/24): exploring level 2
+( 0/24): level 2: 41 explored 80 transitions 81 visited
+( 0/24): exploring level 3
+( 0/24): level 3: 81 explored 120 transitions 121 visited
+( 0/24): exploring level 4
+( 0/24): level 4: 121 explored 200 transitions 201 visited
+( 0/24): exploring level 5
+( 0/24): level 5: 201 explored 280 transitions 281 visited
+( 0/24): exploring level 6
+( 0/24): level 6: 281 explored 360 transitions 361 visited
+( 0/24): exploring level 7
+( 0/24): level 7: 361 explored 440 transitions 441 visited
+( 0/24): exploring level 8
+( 0/24): level 8: 441 explored 520 transitions 521 visited
+( 0/24): exploring level 9
+( 0/24): level 9: 521 explored 680 transitions 681 visited
+( 0/24): exploring level 10
+( 0/24): level 10: 681 explored 840 transitions 841 visited
+( 0/24): exploring level 11
+( 0/24): level 11: 841 explored 1000 transitions 1001 visited
+( 0/24): exploring level 12
+( 0/24): level 12: 1001 explored 1160 transitions 1134 visited
+( 0/24): exploring level 13
+( 0/24): level 13: 1134 explored 1332 transitions 1306 visited
+( 0/24): exploring level 14
+( 0/24): level 14: 1306 explored 1636 transitions 1610 visited
+( 0/24): exploring level 15
+( 0/24): level 15: 1610 explored 1940 transitions 1874 visited
+( 0/24): exploring level 16
+( 0/24): level 16: 1874 explored 2244 transitions 2138 visited
+( 0/24): exploring level 17
+( 0/24): level 17: 2138 explored 2508 transitions 2362 visited
+( 0/24): exploring level 18
+( 0/24): level 18: 2362 explored 2732 transitions 2586 visited
+( 0/24): exploring level 19
+( 0/24): level 19: 2586 explored 3088 transitions 2942 visited
+( 0/24): exploring level 20
+( 0/24): level 20: 2942 explored 3456 transitions 3270 visited
+( 0/24): exploring level 21
+( 0/24): level 21: 3270 explored 3824 transitions 3598 visited
+( 0/24): exploring level 22
+( 0/24): level 22: 3598 explored 4192 transitions 3887 visited
+( 0/24): exploring level 23
+( 0/24): level 23: 3887 explored 4481 transitions 4156 visited
+( 0/24): exploring level 24
+( 0/24): level 24: 4156 explored 4881 transitions 4556 visited
+( 0/24): exploring level 25
+( 0/24): level 25: 4556 explored 5347 transitions 4963 visited
+( 0/24): exploring level 26
+( 0/24): level 26: 4963 explored 5794 transitions 5358 visited
+( 0/24): exploring level 27
+( 0/24): level 27: 5358 explored 6318 transitions 5792 visited
+( 0/24): exploring level 28
+( 0/24): level 28: 5792 explored 6792 transitions 6202 visited
+( 0/24): exploring level 29
+( 0/24): level 29: 6202 explored 7214 transitions 6504 visited
+( 0/24): exploring level 30
+( 0/24): level 30: 6504 explored 7543 transitions 6804 visited
+( 0/24): exploring level 31
+( 0/24): level 31: 6804 explored 7886 transitions 7134 visited
+( 0/24): exploring level 32
+( 0/24): level 32: 7134 explored 8345 transitions 7567 visited
+( 0/24): exploring level 33
+( 0/24): level 33: 7567 explored 8827 transitions 7985 visited
+( 0/24): exploring level 34
+( 0/24): level 34: 7985 explored 9245 transitions 8235 visited
+( 0/24): exploring level 35
+( 0/24): level 35: 8235 explored 9522 transitions 8484 visited
+( 0/24): exploring level 36
+( 0/24): level 36: 8484 explored 9777 transitions 8727 visited
+( 0/24): exploring level 37
+( 0/24): level 37: 8727 explored 10149 transitions 9079 visited
+( 0/24): exploring level 38
+( 0/24): level 38: 9079 explored 10559 transitions 9412 visited
+( 0/24): exploring level 39
+( 0/24): level 39: 9412 explored 10892 transitions 9607 visited
+( 0/24): exploring level 40
+( 0/24): level 40: 9607 explored 11090 transitions 9726 visited
+( 0/24): exploring level 41
+( 0/24): level 41: 9726 explored 11215 transitions 9851 visited
+( 0/24): exploring level 42
+( 0/24): level 42: 9851 explored 11389 transitions 10019 visited
+( 0/24): exploring level 43
+( 0/24): level 43: 10019 explored 11615 transitions 10240 visited
+( 0/24): exploring level 44
+( 0/24): level 44: 10240 explored 11836 transitions 10363 visited
+( 0/24): exploring level 45
+( 0/24): level 45: 10363 explored 11959 transitions 10428 visited
+( 0/24): exploring level 46
+( 0/24): level 46: 10428 explored 12030 transitions 10460 visited
+( 0/24): exploring level 47
+( 0/24): level 47: 10460 explored 12062 transitions 10484 visited
+( 0/24): exploring level 48
+( 0/24): level 48: 10484 explored 12104 transitions 10523 visited
+( 0/24): exploring level 49
+( 0/24): level 49: 10523 explored 12143 transitions 10541 visited
+( 0/24): exploring level 50
+( 0/24): level 50: 10541 explored 12161 transitions 10550 visited
+( 0/24): exploring level 51
+State space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.77 user, 1.13 system, 2.02 elapsed -- Max VSize = 105284KB, Max RSS = 13664KB
+Exit [0]
+0.61 user, 1.29 system, 2.02 elapsed -- Max VSize = 105412KB, Max RSS = 13656KB
+Exit [0]
+0.76 user, 1.12 system, 2.02 elapsed -- Max VSize = 105284KB, Max RSS = 13652KB
+Exit [0]
+0.63 user, 1.25 system, 2.02 elapsed -- Max VSize = 105412KB, Max RSS = 13672KB
+Exit [0]
+0.63 user, 1.26 system, 2.02 elapsed -- Max VSize = 105412KB, Max RSS = 13648KB
+Exit [0]
+0.65 user, 1.24 system, 2.04 elapsed -- Max VSize = 105284KB, Max RSS = 13652KB
+Exit [0]
+0.69 user, 1.21 system, 2.10 elapsed -- Max VSize = 105344KB, Max RSS = 13644KB
+Exit [0]
+0.55 user, 1.35 system, 2.10 elapsed -- Max VSize = 107648KB, Max RSS = 13952KB
+Exit [0]
+0.63 user, 1.26 system, 2.10 elapsed -- Max VSize = 105460KB, Max RSS = 13716KB
+Exit [0]
+0.61 user, 1.29 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13700KB
+Exit [0]
+0.64 user, 1.26 system, 2.10 elapsed -- Max VSize = 105416KB, Max RSS = 13680KB
+Exit [0]
+0.63 user, 1.26 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13692KB
+Exit [0]
+0.68 user, 1.22 system, 2.10 elapsed -- Max VSize = 105416KB, Max RSS = 13676KB
+Exit [0]
+0.61 user, 1.28 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13680KB
+Exit [0]
+0.76 user, 1.13 system, 2.10 elapsed -- Max VSize = 105416KB, Max RSS = 13680KB
+Exit [0]
+0.72 user, 1.18 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13704KB
+Exit [0]
+0.68 user, 1.22 system, 2.10 elapsed -- Max VSize = 105416KB, Max RSS = 13692KB
+Exit [0]
+0.58 user, 1.32 system, 2.10 elapsed -- Max VSize = 105416KB, Max RSS = 13680KB
+Exit [0]
+0.73 user, 0.25 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13668KB
+Exit [0]
+0.69 user, 0.26 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13652KB
+Exit [0]
+0.51 user, 0.26 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13656KB
+Exit [0]
+0.73 user, 0.25 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13652KB
+Exit [0]
+0.51 user, 0.25 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13652KB
+Exit [0]
+0.70 user, 0.24 system, 2.10 elapsed -- Max VSize = 105412KB, Max RSS = 13660KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: mpirun -mca btl tcp,self memtime lpo2lts-mpi --cache brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 17 47 710568
+[n16:24758] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_ofud: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+[n16:24758] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_openib: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-mpi --cache brp.tbf
+END OF HEADER
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 2/ 6): 2: new index tag 1 owned by 1
+( 2/ 6): 2: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 5/ 6): 5: new index tag 1 owned by 1
+( 5/ 6): 5: new index tag 2 owned by 2
+( 3/ 6): 3: new index tag 1 owned by 1
+( 3/ 6): 3: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 4/ 6): 4: new index tag 1 owned by 1
+( 4/ 6): 4: new index tag 2 owned by 2
+( 0/ 6): 0: new index tag 1 owned by 1
+( 0/ 6): 0: new index tag 2 owned by 2
+( 1/ 6): 1: new index tag 1 owned by 1
+( 1/ 6): 1: new index tag 2 owned by 2
+( 4/ 6): model brp.tbf loaded
+( 3/ 6): model brp.tbf loaded
+( 2/ 6): model brp.tbf loaded
+( 5/ 6): model brp.tbf loaded
+( 1/ 6): model brp.tbf loaded
+( 0/ 6): model brp.tbf loaded
+( 1/ 6): model created
+( 2/ 6): model created
+( 4/ 6): model created
+( 3/ 6): model created
+( 5/ 6): model created
+( 0/ 6): model created
+( 1/ 6): there are 0 state labels and 1 edge labels
+( 2/ 6): there are 0 state labels and 1 edge labels
+( 0/ 6): there are 0 state labels and 1 edge labels
+( 3/ 6): there are 0 state labels and 1 edge labels
+( 5/ 6): there are 0 state labels and 1 edge labels
+( 4/ 6): there are 0 state labels and 1 edge labels
+( 1/ 6): initial state computed at 1
+( 1/ 6): initial state translated at 1
+( 2/ 6): initial state computed at 2
+( 2/ 6): ( 0/ 6): initial state computed at 0
+( 0/ 6): initial state translated at 0
+( 0/ 6)( 3/ 6): initial state computed at 3
+( 3/ 6): initial state translated at 3
+initial state translated at 2
+: folding initial state at 0
+( 4/ 6): initial state computed at 4
+( 4/ 6): initial state translated at 4
+( 5/ 6): initial state computed at 5
+( 5/ 6): initial state translated at 5
+( 1/ 6): No output, just counting the number of states
+( 3/ 6): No output, just counting the number of states
+( 2/ 6): No output, just counting the number of states
+( 5/ 6): No output, just counting the number of states
+( 0/ 6): No output, just counting the number of states
+( 4/ 6): No output, just counting the number of states
+( 0/ 6): exploring level 1
+( 0/ 6): level 1: 1 explored 40 transitions 41 visited
+( 0/ 6): exploring level 2
+( 0/ 6): level 2: 41 explored 80 transitions 81 visited
+( 0/ 6): exploring level 3
+( 0/ 6): level 3: 81 explored 120 transitions 121 visited
+( 0/ 6): exploring level 4
+( 0/ 6): level 4: 121 explored 200 transitions 201 visited
+( 0/ 6): exploring level 5
+( 0/ 6): level 5: 201 explored 280 transitions 281 visited
+( 0/ 6): exploring level 6
+( 0/ 6): level 6: 281 explored 360 transitions 361 visited
+( 0/ 6): exploring level 7
+( 0/ 6): level 7: 361 explored 440 transitions 441 visited
+( 0/ 6): exploring level 8
+( 0/ 6): level 8: 441 explored 520 transitions 521 visited
+( 0/ 6): exploring level 9
+( 0/ 6): level 9: 521 explored 680 transitions 681 visited
+( 0/ 6): exploring level 10
+( 0/ 6): level 10: 681 explored 840 transitions 841 visited
+( 0/ 6): exploring level 11
+( 0/ 6): level 11: 841 explored 1000 transitions 1001 visited
+( 0/ 6): exploring level 12
+( 0/ 6): level 12: 1001 explored 1160 transitions 1134 visited
+( 0/ 6): exploring level 13
+( 0/ 6): level 13: 1134 explored 1332 transitions 1306 visited
+( 0/ 6): exploring level 14
+( 0/ 6): level 14: 1306 explored 1636 transitions 1610 visited
+( 0/ 6): exploring level 15
+( 0/ 6): level 15: 1610 explored 1940 transitions 1874 visited
+( 0/ 6): exploring level 16
+( 0/ 6): level 16: 1874 explored 2244 transitions 2138 visited
+( 0/ 6): exploring level 17
+( 0/ 6): level 17: 2138 explored 2508 transitions 2362 visited
+( 0/ 6): exploring level 18
+( 0/ 6): level 18: 2362 explored 2732 transitions 2586 visited
+( 0/ 6): exploring level 19
+( 0/ 6): level 19: 2586 explored 3088 transitions 2942 visited
+( 0/ 6): exploring level 20
+( 0/ 6): level 20: 2942 explored 3456 transitions 3270 visited
+( 0/ 6): exploring level 21
+( 0/ 6): level 21: 3270 explored 3824 transitions 3598 visited
+( 0/ 6): exploring level 22
+( 0/ 6): level 22: 3598 explored 4192 transitions 3887 visited
+( 0/ 6): exploring level 23
+( 0/ 6): level 23: 3887 explored 4481 transitions 4156 visited
+( 0/ 6): exploring level 24
+( 0/ 6): level 24: 4156 explored 4881 transitions 4556 visited
+( 0/ 6): exploring level 25
+( 0/ 6): level 25: 4556 explored 5347 transitions 4963 visited
+( 0/ 6): exploring level 26
+( 0/ 6): level 26: 4963 explored 5794 transitions 5358 visited
+( 0/ 6): exploring level 27
+( 0/ 6): level 27: 5358 explored 6318 transitions 5792 visited
+( 0/ 6): exploring level 28
+( 0/ 6): level 28: 5792 explored 6792 transitions 6202 visited
+( 0/ 6): exploring level 29
+( 0/ 6): level 29: 6202 explored 7214 transitions 6504 visited
+( 0/ 6): exploring level 30
+( 0/ 6): level 30: 6504 explored 7543 transitions 6804 visited
+( 0/ 6): exploring level 31
+( 0/ 6): level 31: 6804 explored 7886 transitions 7134 visited
+( 0/ 6): exploring level 32
+( 0/ 6): level 32: 7134 explored 8345 transitions 7567 visited
+( 0/ 6): exploring level 33
+( 0/ 6): level 33: 7567 explored 8827 transitions 7985 visited
+( 0/ 6): exploring level 34
+( 0/ 6): level 34: 7985 explored 9245 transitions 8235 visited
+( 0/ 6): exploring level 35
+( 0/ 6): level 35: 8235 explored 9522 transitions 8484 visited
+( 0/ 6): exploring level 36
+( 0/ 6): level 36: 8484 explored 9777 transitions 8727 visited
+( 0/ 6): exploring level 37
+( 0/ 6): level 37: 8727 explored 10149 transitions 9079 visited
+( 0/ 6): exploring level 38
+( 0/ 6): level 38: 9079 explored 10559 transitions 9412 visited
+( 0/ 6): exploring level 39
+( 0/ 6): level 39: 9412 explored 10892 transitions 9607 visited
+( 0/ 6): exploring level 40
+( 0/ 6): level 40: 9607 explored 11090 transitions 9726 visited
+( 0/ 6): exploring level 41
+( 0/ 6): level 41: 9726 explored 11215 transitions 9851 visited
+( 0/ 6): exploring level 42
+( 0/ 6): level 42: 9851 explored 11389 transitions 10019 visited
+( 0/ 6): exploring level 43
+( 0/ 6): level 43: 10019 explored 11615 transitions 10240 visited
+( 0/ 6): exploring level 44
+( 0/ 6): level 44: 10240 explored 11836 transitions 10363 visited
+( 0/ 6): exploring level 45
+( 0/ 6): level 45: 10363 explored 11959 transitions 10428 visited
+( 0/ 6): exploring level 46
+( 0/ 6): level 46: 10428 explored 12030 transitions 10460 visited
+( 0/ 6): exploring level 47
+( 0/ 6): level 47: 10460 explored 12062 transitions 10484 visited
+( 0/ 6): exploring level 48
+( 0/ 6): level 48: 10484 explored 12104 transitions 10523 visited
+( 0/ 6): exploring level 49
+( 0/ 6): level 49: 10523 explored 12143 transitions 10541 visited
+( 0/ 6): exploring level 50
+( 0/ 6): level 50: 10541 explored 12161 transitions 10550 visited
+( 0/ 6): exploring level 51
+State space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.63 user, 0.21 system, 1.00 elapsed -- Max VSize = 106588KB, Max RSS = 14128KB
+Exit [0]
+0.64 user, 0.21 system, 1.00 elapsed -- Max VSize = 106576KB, Max RSS = 14088KB
+Exit [0]
+0.62 user, 0.29 system, 1.00 elapsed -- Max VSize = 106640KB, Max RSS = 14208KB
+Exit [0]
+0.62 user, 0.30 system, 1.00 elapsed -- Max VSize = 106528KB, Max RSS = 14104KB
+Exit [0]
+0.62 user, 0.24 system, 1.00 elapsed -- Max VSize = 106528KB, Max RSS = 14072KB
+Exit [0]
+0.63 user, 0.23 system, 1.00 elapsed -- Max VSize = 106528KB, Max RSS = 14052KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: mpirun -mca btl tcp,self memtime lpo2lts-mpi --cache brp.tbf
+BEGIN OF HEADER
+Nodename: n25
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 32 49 582530
+[n25:31440] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_ofud: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+[n25:31440] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_openib: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-mpi --cache brp.tbf
+END OF HEADER
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 8/12): 8: new index tag 1 owned by 1
+( 8/12): 8: new index tag 2 owned by 2
+( 6/12): 6: new index tag 1 owned by 1
+( 7/12): ( 6/12): 6: new index tag 2 owned by 2
+7: new index tag 1 owned by 1
+( 7/12): 7: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 4/12): 4: new index tag 1 owned by 1
+( 4/12): 4: new index tag 2 owned by 2
+( 3/12): 3: new index tag 1 owned by 1
+( 3/12): 3: new index tag 2 owned by 2
+( 1/12): 1: new index tag 1 owned by 1
+( 1/12): 1: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 9/12): 9: new index tag 1 owned by 1
+( 9/12): 9: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 5/12): 5: new index tag 1 owned by 1
+( 5/12): 5: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(11/12): 11: new index tag 1 owned by 1
+(11/12): 11: new index tag 2 owned by 2
+(10/12): 10: new index tag 1 owned by 1
+(10/12): 10: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 2/12): 2: new index tag 1 owned by 1
+( 2/12): 2: new index tag 2 owned by 2
+( 4/12): model brp.tbf loaded
+( 3/12): model brp.tbf loaded
+( 2/12): model brp.tbf loaded
+( 5/12): model brp.tbf loaded
+( 1/12): model brp.tbf loaded
+( 9/12): model brp.tbf loaded
+( 6/12): model brp.tbf loaded
+(11/12): model brp.tbf loaded
+( 8/12): model brp.tbf loaded
+( 7/12): model brp.tbf loaded
+(10/12): model brp.tbf loaded
+( 0/12): 0: new index tag 1 owned by 1
+( 0/12): 0: new index tag 2 owned by 2
+( 0/12): model brp.tbf loaded
+( 3/12): model created
+( 2/12): model created
+( 1/12): model created
+( 4/12): model created
+( 5/12): model created
+( 0/12): model created
+( 7/12): model created
+( 9/12): model created
+(11/12): model created
+(10/12): model created
+( 1/12): there are 0 state labels and 1 edge labels
+( 0/12): there are 0 state labels and 1 edge labels
+( 6/12): model created
+( 5/12): there are 0 state labels and 1 edge labels
+( 3/12): there are 0 state labels and 1 edge labels
+( 2/12): there are 0 state labels and 1 edge labels
+( 4/12): there are 0 state labels and 1 edge labels
+( 8/12): model created
+( 1/12): initial state computed at 1
+( 1/12): initial state translated at 1
+( 4/12): initial state computed at 4
+( 4/12): initial state translated at 4
+( 5/12): initial state computed at 5
+( 5/12): initial state translated at 5
+( 3/12): initial state computed at 3
+( 3/12): initial state translated at 3
+( 2/12): initial state computed at 2
+( 2/12): initial state translated at 2
+( 0/12): initial state computed at 0
+( 0/12): initial state translated at 0
+( 0/12): folding initial state at 0
+( 7/12): there are 0 state labels and 1 edge labels
+( 9/12): there are 0 state labels and 1 edge labels
+( 8/12): there are 0 state labels and 1 edge labels
+(11/12): there are 0 state labels and 1 edge labels
+(10/12): there are 0 state labels and 1 edge labels
+( 6/12): there are 0 state labels and 1 edge labels
+( 8/12): initial state computed at 8
+( 8/12): initial state translated at 8
+( 9/12): initial state computed at 9
+( 9/12): initial state translated at 9
+(11/12): initial state computed at 11
+(11/12): initial state translated at 11
+( 7/12): initial state computed at 7
+( 7/12): initial state translated at 7
+( 1/12): No output, just counting the number of states
+( 2/12): No output, just counting the number of states
+( 0/12): No output, just counting the number of states
+( 6/12): initial state computed at 6
+( 6/12): initial state translated at 6
+( 4/12): No output, just counting the number of states
+( 5/12): No output, just counting the number of states
+( 3/12): No output, just counting the number of states
+(10/12): initial state computed at 10
+(10/12): initial state translated at 10
+( 7/12): No output, just counting the number of states
+( 6/12): No output, just counting the number of states
+(10/12): No output, just counting the number of states
+( 8/12): No output, just counting the number of states
+( 9/12): No output, just counting the number of states
+(11/12): No output, just counting the number of states
+( 0/12): exploring level 1
+( 0/12): level 1: 1 explored 40 transitions 41 visited
+( 0/12): exploring level 2
+( 0/12): level 2: 41 explored 80 transitions 81 visited
+( 0/12): exploring level 3
+( 0/12): level 3: 81 explored 120 transitions 121 visited
+( 0/12): exploring level 4
+( 0/12): level 4: 121 explored 200 transitions 201 visited
+( 0/12): exploring level 5
+( 0/12): level 5: 201 explored 280 transitions 281 visited
+( 0/12): exploring level 6
+( 0/12): level 6: 281 explored 360 transitions 361 visited
+( 0/12): exploring level 7
+( 0/12): level 7: 361 explored 440 transitions 441 visited
+( 0/12): exploring level 8
+( 0/12): level 8: 441 explored 520 transitions 521 visited
+( 0/12): exploring level 9
+( 0/12): level 9: 521 explored 680 transitions 681 visited
+( 0/12): exploring level 10
+( 0/12): level 10: 681 explored 840 transitions 841 visited
+( 0/12): exploring level 11
+( 0/12): level 11: 841 explored 1000 transitions 1001 visited
+( 0/12): exploring level 12
+( 0/12): level 12: 1001 explored 1160 transitions 1134 visited
+( 0/12): exploring level 13
+( 0/12): level 13: 1134 explored 1332 transitions 1306 visited
+( 0/12): exploring level 14
+( 0/12): level 14: 1306 explored 1636 transitions 1610 visited
+( 0/12): exploring level 15
+( 0/12): level 15: 1610 explored 1940 transitions 1874 visited
+( 0/12): exploring level 16
+( 0/12): level 16: 1874 explored 2244 transitions 2138 visited
+( 0/12): exploring level 17
+( 0/12): level 17: 2138 explored 2508 transitions 2362 visited
+( 0/12): exploring level 18
+( 0/12): level 18: 2362 explored 2732 transitions 2586 visited
+( 0/12): exploring level 19
+( 0/12): level 19: 2586 explored 3088 transitions 2942 visited
+( 0/12): exploring level 20
+( 0/12): level 20: 2942 explored 3456 transitions 3270 visited
+( 0/12): exploring level 21
+( 0/12): level 21: 3270 explored 3824 transitions 3598 visited
+( 0/12): exploring level 22
+( 0/12): level 22: 3598 explored 4192 transitions 3887 visited
+( 0/12): exploring level 23
+( 0/12): level 23: 3887 explored 4481 transitions 4156 visited
+( 0/12): exploring level 24
+( 0/12): level 24: 4156 explored 4881 transitions 4556 visited
+( 0/12): exploring level 25
+( 0/12): level 25: 4556 explored 5347 transitions 4963 visited
+( 0/12): exploring level 26
+( 0/12): level 26: 4963 explored 5794 transitions 5358 visited
+( 0/12): exploring level 27
+( 0/12): level 27: 5358 explored 6318 transitions 5792 visited
+( 0/12): exploring level 28
+( 0/12): level 28: 5792 explored 6792 transitions 6202 visited
+( 0/12): exploring level 29
+( 0/12): level 29: 6202 explored 7214 transitions 6504 visited
+( 0/12): exploring level 30
+( 0/12): level 30: 6504 explored 7543 transitions 6804 visited
+( 0/12): exploring level 31
+( 0/12): level 31: 6804 explored 7886 transitions 7134 visited
+( 0/12): exploring level 32
+( 0/12): level 32: 7134 explored 8345 transitions 7567 visited
+( 0/12): exploring level 33
+( 0/12): level 33: 7567 explored 8827 transitions 7985 visited
+( 0/12): exploring level 34
+( 0/12): level 34: 7985 explored 9245 transitions 8235 visited
+( 0/12): exploring level 35
+( 0/12): level 35: 8235 explored 9522 transitions 8484 visited
+( 0/12): exploring level 36
+( 0/12): level 36: 8484 explored 9777 transitions 8727 visited
+( 0/12): exploring level 37
+( 0/12): level 37: 8727 explored 10149 transitions 9079 visited
+( 0/12): exploring level 38
+( 0/12): level 38: 9079 explored 10559 transitions 9412 visited
+( 0/12): exploring level 39
+( 0/12): level 39: 9412 explored 10892 transitions 9607 visited
+( 0/12): exploring level 40
+( 0/12): level 40: 9607 explored 11090 transitions 9726 visited
+( 0/12): exploring level 41
+( 0/12): level 41: 9726 explored 11215 transitions 9851 visited
+( 0/12): exploring level 42
+( 0/12): level 42: 9851 explored 11389 transitions 10019 visited
+( 0/12): exploring level 43
+( 0/12): level 43: 10019 explored 11615 transitions 10240 visited
+( 0/12): exploring level 44
+( 0/12): level 44: 10240 explored 11836 transitions 10363 visited
+( 0/12): exploring level 45
+( 0/12): level 45: 10363 explored 11959 transitions 10428 visited
+( 0/12): exploring level 46
+( 0/12): level 46: 10428 explored 12030 transitions 10460 visited
+( 0/12): exploring level 47
+( 0/12): level 47: 10460 explored 12062 transitions 10484 visited
+( 0/12): exploring level 48
+( 0/12): level 48: 10484 explored 12104 transitions 10523 visited
+( 0/12): exploring level 49
+( 0/12): level 49: 10523 explored 12143 transitions 10541 visited
+( 0/12): exploring level 50
+( 0/12): level 50: 10541 explored 12161 transitions 10550 visited
+( 0/12): exploring level 51
+State space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.72 user, 0.21 system, 1.00 elapsed -- Max VSize = 107408KB, Max RSS = 14756KB
+Exit [0]
+0.72 user, 0.22 system, 1.00 elapsed -- Max VSize = 107408KB, Max RSS = 14752KB
+Exit [0]
+0.75 user, 0.19 system, 1.10 elapsed -- Max VSize = 107408KB, Max RSS = 14864KB
+Exit [0]
+0.57 user, 0.37 system, 1.10 elapsed -- Max VSize = 109584KB, Max RSS = 15076KB
+Exit [0]
+0.75 user, 0.18 system, 1.10 elapsed -- Max VSize = 107456KB, Max RSS = 14884KB
+Exit [0]
+0.57 user, 0.36 system, 1.10 elapsed -- Max VSize = 107408KB, Max RSS = 14896KB
+Exit [0]
+0.57 user, 0.37 system, 1.10 elapsed -- Max VSize = 107476KB, Max RSS = 14876KB
+Exit [0]
+0.60 user, 0.34 system, 1.10 elapsed -- Max VSize = 107408KB, Max RSS = 14892KB
+Exit [0]
+0.59 user, 0.35 system, 1.10 elapsed -- Max VSize = 107408KB, Max RSS = 14736KB
+Exit [0]
+0.58 user, 0.36 system, 1.10 elapsed -- Max VSize = 107280KB, Max RSS = 14724KB
+Exit [0]
+0.57 user, 0.36 system, 1.10 elapsed -- Max VSize = 107408KB, Max RSS = 14764KB
+Exit [0]
+0.59 user, 0.34 system, 1.10 elapsed -- Max VSize = 107408KB, Max RSS = 14764KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: mpirun -mca btl tcp,self memtime lpo2lts-mpi --cache brp.tbf
+BEGIN OF HEADER
+Nodename: n25
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 33 20 562585
+[n25:31592] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_ofud: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+[n25:31592] mca: base: component_find: unable to open /software/fmt/pkg/openmpi-1.4.1/lib/openmpi/mca_btl_openib: perhaps a missing symbol, or compiled for a different version of Open MPI? (ignored)
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-mpi --cache brp.tbf
+END OF HEADER
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: Start compiling ...
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(11/24): 11: new index tag 1 owned by 1
+(11/24): 11: new index tag 2 owned by 2
+( 6/24): 6: new index tag 1 owned by 1
+( 6/24): 6: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 5/24): 5: new index tag 1 owned by 1
+( 5/24): 5: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+(15/24): 15: new index tag 1 owned by 1
+(15/24): 15: new index tag 2 owned by 2
+(12/24): 12: new index tag 1 owned by 1
+(12/24): 12: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 3/24): 3: new index tag 1 owned by 1
+( 3/24): 3: new index tag 2 owned by 2
+( 0/24): 0: new index tag 1 owned by 1
+( 0/24): 0: new index tag 2 owned by 2
+( 4/24): 4: new index tag 1 owned by 1
+( 4/24): 4: new index tag 2 owned by 2
+( 2/24): 2: new index tag 1 owned by 1
+( 2/24): 2: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(13/24): 13: new index tag 1 owned by 1
+(13/24): 13: new index tag 2 owned by 2
+(16/24): 16: new index tag 1 owned by 1
+(16/24): 16: new index tag 2 owned by 2
+(23/24): 23: new index tag 1 owned by 1
+(23/24): 23: new index tag 2 owned by 2
+(20/24): 20: new index tag 1 owned by 1
+(20/24): 20: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 1/24): 1: new index tag 1 owned by 1
+( 1/24): 1: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+( 8/24): 8: new index tag 1 owned by 1
+( 8/24): 8: new index tag 2 owned by 2
+(10/24): 10: new index tag 1 owned by 1
+(10/24): 10: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(14/24): 14: new index tag 1 owned by 1
+(14/24): 14: new index tag 2 owned by 2
+(17/24): 17: new index tag 1 owned by 1
+(17/24): 17: new index tag 2 owned by 2
+(18/24): 18: new index tag 1 owned by 1
+(18/24): 18: new index tag 2 owned by 2
+(19/24): 19: new index tag 1 owned by 1
+(19/24): 19: new index tag 2 owned by 2
+(22/24): 22: new index tag 1 owned by 1
+(22/24): 22: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+MCRL grey box: .... end compiling.
+(21/24): 21: new index tag 1 owned by 1
+(21/24): 21: new index tag 2 owned by 2
+MCRL grey box: .... end compiling.
+( 7/24): 7: new index tag 1 owned by 1
+( 7/24): 7: new index tag 2 owned by 2
+( 2/24): model brp.tbf loaded
+( 0/24): model brp.tbf loaded
+( 3/24): model brp.tbf loaded
+( 4/24): model brp.tbf loaded
+( 5/24): model brp.tbf loaded
+( 1/24): model brp.tbf loaded
+( 7/24): model brp.tbf loaded
+(12/24): model brp.tbf loaded
+( 6/24): model brp.tbf loaded
+(14/24): model brp.tbf loaded
+(18/24): model brp.tbf loaded
+(11/24): model brp.tbf loaded
+(15/24): model brp.tbf loaded
+(21/24): model brp.tbf loaded
+(10/24): model brp.tbf loaded
+(13/24): model brp.tbf loaded
+(23/24): model brp.tbf loaded
+( 8/24): model brp.tbf loaded
+(17/24): model brp.tbf loaded
+(19/24): model brp.tbf loaded
+(16/24): model brp.tbf loaded
+(22/24): model brp.tbf loaded
+(20/24): model brp.tbf loaded
+( 9/24): 9: new index tag 1 owned by 1
+( 9/24): 9: new index tag 2 owned by 2
+( 9/24): model brp.tbf loaded
+( 0/24): model created
+( 5/24): model created
+( 3/24): model created
+( 4/24): model created
+( 2/24): model created
+( 1/24): model created
+( 1/24): there are 0 state labels and 1 edge labels
+( 2/24): there are 0 state labels and 1 edge labels
+( 0/24): there are 0 state labels and 1 edge labels
+( 5/24): there are 0 state labels and 1 edge labels
+( 3/24): there are 0 state labels and 1 edge labels
+( 4/24): there are 0 state labels and 1 edge labels
+( 7/24): model created
+(13/24): model created
+(21/24): model created
+( 6/24): model created
+(12/24): model created
+(18/24): model created
+(10/24): model created
+(14/24): model created
+(19/24): model created
+( 8/24): model created
+(15/24): model created
+(22/24): model created
+( 0/24): initial state computed at 0
+( 0/24): initial state translated at 0
+( 0/24): folding initial state at 0
+(11/24): model created
+(16/24): model created
+(20/24): model created
+( 1/24): initial state computed at 1
+( 1/24): initial state translated at 1
+( 2/24): initial state computed at 2
+( 2/24): initial state translated at 2
+( 3/24): initial state computed at 3
+( 3/24): initial state translated at 3
+( 9/24): model created
+(17/24): model created
+(23/24): model created
+( 5/24): initial state computed at 5
+( 5/24): initial state translated at 5
+( 4/24): initial state computed at 4
+( 4/24): initial state translated at 4
+(13/24): there are 0 state labels and 1 edge labels
+(23/24): there are 0 state labels and 1 edge labels
+(14/24): there are 0 state labels and 1 edge labels
+(22/24): there are 0 state labels and 1 edge labels
+(10/24): there are 0 state labels and 1 edge labels
+(15/24): there are 0 state labels and 1 edge labels
+(21/24): there are 0 state labels and 1 edge labels
+( 6/24): there are 0 state labels and 1 edge labels
+(16/24): there are 0 state labels and 1 edge labels
+(20/24): there are 0 state labels and 1 edge labels
+( 3/24): No output, just counting the number of states
+( 1/24): No output, just counting the number of states
+( 0/24): No output, just counting the number of states
+( 4/24): No output, just counting the number of states
+( 2/24): No output, just counting the number of states
+(11/24): there are 0 state labels and 1 edge labels
+(17/24): there are 0 state labels and 1 edge labels
+(18/24): there are 0 state labels and 1 edge labels
+( 5/24): No output, just counting the number of states
+( 7/24): there are 0 state labels and 1 edge labels
+(12/24): there are 0 state labels and 1 edge labels
+(19/24): there are 0 state labels and 1 edge labels
+( 8/24): there are 0 state labels and 1 edge labels
+(12/24): initial state computed at 12
+(12/24): initial state translated at 12
+(20/24): initial state computed at 20
+(20/24): initial state translated at 20
+( 9/24): there are 0 state labels and 1 edge labels
+(15/24): initial state computed at 15
+(15/24): initial state translated at 15
+(18/24): initial state computed at 18
+(18/24): initial state translated at 18
+( 6/24): initial state computed at 6
+( 6/24): initial state translated at 6
+(13/24): initial state computed at 13
+(13/24): initial state translated at 13
+(19/24): initial state computed at 19
+(19/24): initial state translated at 19
+(11/24): initial state computed at 11
+(11/24): initial state translated at 11
+(14/24): initial state computed at 14
+(14/24): initial state translated at 14
+(23/24): initial state computed at 23
+(23/24): initial state translated at 23
+( 8/24): initial state computed at 8
+( 8/24): initial state translated at 8
+(16/24): initial state computed at 16
+(16/24): initial state translated at 16
+(21/24): initial state computed at 21
+(21/24): initial state translated at 21
+( 7/24): initial state computed at 7
+( 7/24): initial state translated at 7
+(17/24): initial state computed at 17
+(17/24): initial state translated at 17
+(22/24): initial state computed at 22
+(22/24): initial state translated at 22
+(10/24): initial state computed at 10
+(10/24): initial state translated at 10
+(13/24): No output, just counting the number of states
+(23/24): No output, just counting the number of states
+( 9/24): (12/24): No output, just counting the number of states
+(18/24): No output, just counting the number of states
+initial state computed at 9
+( 9/24): initial state translated at 9
+(17/24): No output, just counting the number of states
+(22/24): No output, just counting the number of states
+( 6/24): No output, just counting the number of states
+(14/24): No output, just counting the number of states
+(19/24): No output, just counting the number of states
+( 8/24): No output, just counting the number of states
+(16/24): No output, just counting the number of states
+(21/24): No output, just counting the number of states
+( 7/24): No output, just counting the number of states
+(15/24): No output, just counting the number of states
+(20/24): No output, just counting the number of states
+(10/24): No output, just counting the number of states
+(11/24): No output, just counting the number of states
+( 9/24): No output, just counting the number of states
+( 0/24): exploring level 1
+( 0/24): level 1: 1 explored 40 transitions 41 visited
+( 0/24): exploring level 2
+( 0/24): level 2: 41 explored 80 transitions 81 visited
+( 0/24): exploring level 3
+( 0/24): level 3: 81 explored 120 transitions 121 visited
+( 0/24): exploring level 4
+( 0/24): level 4: 121 explored 200 transitions 201 visited
+( 0/24): exploring level 5
+( 0/24): level 5: 201 explored 280 transitions 281 visited
+( 0/24): exploring level 6
+( 0/24): level 6: 281 explored 360 transitions 361 visited
+( 0/24): exploring level 7
+( 0/24): level 7: 361 explored 440 transitions 441 visited
+( 0/24): exploring level 8
+( 0/24): level 8: 441 explored 520 transitions 521 visited
+( 0/24): exploring level 9
+( 0/24): level 9: 521 explored 680 transitions 681 visited
+( 0/24): exploring level 10
+( 0/24): level 10: 681 explored 840 transitions 841 visited
+( 0/24): exploring level 11
+( 0/24): level 11: 841 explored 1000 transitions 1001 visited
+( 0/24): exploring level 12
+( 0/24): level 12: 1001 explored 1160 transitions 1134 visited
+( 0/24): exploring level 13
+( 0/24): level 13: 1134 explored 1332 transitions 1306 visited
+( 0/24): exploring level 14
+( 0/24): level 14: 1306 explored 1636 transitions 1610 visited
+( 0/24): exploring level 15
+( 0/24): level 15: 1610 explored 1940 transitions 1874 visited
+( 0/24): exploring level 16
+( 0/24): level 16: 1874 explored 2244 transitions 2138 visited
+( 0/24): exploring level 17
+( 0/24): level 17: 2138 explored 2508 transitions 2362 visited
+( 0/24): exploring level 18
+( 0/24): level 18: 2362 explored 2732 transitions 2586 visited
+( 0/24): exploring level 19
+( 0/24): level 19: 2586 explored 3088 transitions 2942 visited
+( 0/24): exploring level 20
+( 0/24): level 20: 2942 explored 3456 transitions 3270 visited
+( 0/24): exploring level 21
+( 0/24): level 21: 3270 explored 3824 transitions 3598 visited
+( 0/24): exploring level 22
+( 0/24): level 22: 3598 explored 4192 transitions 3887 visited
+( 0/24): exploring level 23
+( 0/24): level 23: 3887 explored 4481 transitions 4156 visited
+( 0/24): exploring level 24
+( 0/24): level 24: 4156 explored 4881 transitions 4556 visited
+( 0/24): exploring level 25
+( 0/24): level 25: 4556 explored 5347 transitions 4963 visited
+( 0/24): exploring level 26
+( 0/24): level 26: 4963 explored 5794 transitions 5358 visited
+( 0/24): exploring level 27
+( 0/24): level 27: 5358 explored 6318 transitions 5792 visited
+( 0/24): exploring level 28
+( 0/24): level 28: 5792 explored 6792 transitions 6202 visited
+( 0/24): exploring level 29
+( 0/24): level 29: 6202 explored 7214 transitions 6504 visited
+( 0/24): exploring level 30
+( 0/24): level 30: 6504 explored 7543 transitions 6804 visited
+( 0/24): exploring level 31
+( 0/24): level 31: 6804 explored 7886 transitions 7134 visited
+( 0/24): exploring level 32
+( 0/24): level 32: 7134 explored 8345 transitions 7567 visited
+( 0/24): exploring level 33
+( 0/24): level 33: 7567 explored 8827 transitions 7985 visited
+( 0/24): exploring level 34
+( 0/24): level 34: 7985 explored 9245 transitions 8235 visited
+( 0/24): exploring level 35
+( 0/24): level 35: 8235 explored 9522 transitions 8484 visited
+( 0/24): exploring level 36
+( 0/24): level 36: 8484 explored 9777 transitions 8727 visited
+( 0/24): exploring level 37
+( 0/24): level 37: 8727 explored 10149 transitions 9079 visited
+( 0/24): exploring level 38
+( 0/24): level 38: 9079 explored 10559 transitions 9412 visited
+( 0/24): exploring level 39
+( 0/24): level 39: 9412 explored 10892 transitions 9607 visited
+( 0/24): exploring level 40
+( 0/24): level 40: 9607 explored 11090 transitions 9726 visited
+( 0/24): exploring level 41
+( 0/24): level 41: 9726 explored 11215 transitions 9851 visited
+( 0/24): exploring level 42
+( 0/24): level 42: 9851 explored 11389 transitions 10019 visited
+( 0/24): exploring level 43
+( 0/24): level 43: 10019 explored 11615 transitions 10240 visited
+( 0/24): exploring level 44
+( 0/24): level 44: 10240 explored 11836 transitions 10363 visited
+( 0/24): exploring level 45
+( 0/24): level 45: 10363 explored 11959 transitions 10428 visited
+( 0/24): exploring level 46
+( 0/24): level 46: 10428 explored 12030 transitions 10460 visited
+( 0/24): exploring level 47
+( 0/24): level 47: 10460 explored 12062 transitions 10484 visited
+( 0/24): exploring level 48
+( 0/24): level 48: 10484 explored 12104 transitions 10523 visited
+( 0/24): exploring level 49
+( 0/24): level 49: 10523 explored 12143 transitions 10541 visited
+( 0/24): exploring level 50
+( 0/24): level 50: 10541 explored 12161 transitions 10550 visited
+( 0/24): exploring level 51
+State space has 51 levels 10550 states 12170 transitions
+Exit [0]
+0.56 user, 0.48 system, 1.20 elapsed -- Max VSize = 109248KB, Max RSS = 16316KB
+Exit [0]
+0.58 user, 0.46 system, 1.20 elapsed -- Max VSize = 111624KB, Max RSS = 16752KB
+Exit [0]
+0.55 user, 0.49 system, 1.20 elapsed -- Max VSize = 109364KB, Max RSS = 16408KB
+Exit [0]
+0.54 user, 0.50 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16376KB
+Exit [0]
+0.57 user, 0.47 system, 1.20 elapsed -- Max VSize = 109320KB, Max RSS = 16404KB
+Exit [0]
+0.53 user, 0.51 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16388KB
+Exit [0]
+Exit [0]
+0.56 user, 0.48 system, 1.20 elapsed -- Max VSize = 109320KB, Max RSS = 16396KB
+0.75 user, 0.29 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16392KB
+Exit [0]
+0.73 user, 0.31 system, 1.20 elapsed -- Max VSize = 109320KB, Max RSS = 16368KB
+Exit [0]
+0.76 user, 0.29 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16360KB
+Exit [0]
+0.71 user, 0.33 system, 1.20 elapsed -- Max VSize = 109320KB, Max RSS = 16384KB
+Exit [0]
+0.55 user, 0.48 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16404KB
+Exit [0]
+0.71 user, 0.32 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16356KB
+Exit [0]
+0.74 user, 0.30 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16368KB
+Exit [0]
+0.70 user, 0.33 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16368KB
+Exit [0]
+0.56 user, 0.48 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16360KB
+Exit [0]
+0.71 user, 0.32 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16348KB
+Exit [0]
+Exit [0]
+0.53 user, 0.49 system, 1.20 elapsed -- Max VSize = 109316KB, Max RSS = 16364KB
+0.57 user, 0.46 system, 1.21 elapsed -- Max VSize = 109316KB, Max RSS = 16392KB
+Exit [0]
+0.57 user, 0.45 system, 1.21 elapsed -- Max VSize = 109320KB, Max RSS = 16404KB
+Exit [0]
+0.74 user, 0.28 system, 1.21 elapsed -- Max VSize = 109320KB, Max RSS = 16392KB
+Exit [0]
+0.55 user, 0.48 system, 1.21 elapsed -- Max VSize = 109316KB, Max RSS = 16384KB
+Exit [0]
+Exit [0]
+0.55 user, 0.47 system, 1.22 elapsed -- Max VSize = 109316KB, Max RSS = 16412KB
+0.72 user, 0.30 system, 1.22 elapsed -- Max VSize = 109316KB, Max RSS = 16364KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey --state vset --vset tree --cache brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 18 18 608272
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey --state vset --vset tree --cache brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: Creating an AtermDD tree domain.
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: 10550 reachable states represented symbolically with 3594 nodes
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+1.09 user, 0.07 system, 1.20 elapsed -- Max VSize = 50480KB, Max RSS = 15964KB
+REPORT ENDS HERE
+utility.c(2165):ERROR:50: Cannot open file '/software/fmt/modules/mcrl2/svn7795' for 'reading'
+Setting stack to 64MB
+command: memtime lpo2lts-grey --state vset --vset tree brp.tbf
+BEGIN OF HEADER
+Nodename: n16
+Hardware-name: x86_64
+OS: GNU/Linuxn
+Kernel-name: Linux
+Kernel-release: 2.6.33-5-desktop
+Kernel-version: #1 SMP PREEMPT 2010-02-25 20:06:12 +0100
+Hardware-platform: x86_64
+Processor: x86_64
+Memory-total: 24730196
+DateTime: 2010 06 17 12 18 49 702115
+ToolVersion: ltsmin-1.5-20-g6d5d0c
+Call: lpo2lts-grey --state vset --vset tree brp.tbf
+END OF HEADER
+lpo2lts-grey: No output, just counting the number of states
+lpo2lts-grey: loading model from brp.tbf
+lpo2lts-grey: Start compiling ...
+lpo2lts-grey: .... end compiling.
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: creating a new string index
+lpo2lts-grey: model brp.tbf loaded
+lpo2lts-grey: length is 21, there are 45 groups
+lpo2lts-grey: There are 0 state labels and 1 edge labels
+lpo2lts-grey: got initial state
+lpo2lts-grey: Creating an AtermDD tree domain.
+lpo2lts-grey: level 0 has 1 states, explored 0 states 0 transitions
+lpo2lts-grey: level 1 has 40 states, explored 1 states 40 transitions
+lpo2lts-grey: level 2 has 40 states, explored 41 states 80 transitions
+lpo2lts-grey: level 3 has 40 states, explored 81 states 120 transitions
+lpo2lts-grey: level 4 has 80 states, explored 121 states 200 transitions
+lpo2lts-grey: level 5 has 80 states, explored 201 states 280 transitions
+lpo2lts-grey: level 6 has 80 states, explored 281 states 360 transitions
+lpo2lts-grey: level 7 has 80 states, explored 361 states 440 transitions
+lpo2lts-grey: level 8 has 80 states, explored 441 states 520 transitions
+lpo2lts-grey: level 9 has 160 states, explored 521 states 680 transitions
+lpo2lts-grey: level 10 has 160 states, explored 681 states 840 transitions
+lpo2lts-grey: level 11 has 160 states, explored 841 states 1000 transitions
+lpo2lts-grey: level 12 has 133 states, explored 1001 states 1160 transitions
+lpo2lts-grey: level 13 has 172 states, explored 1134 states 1332 transitions
+lpo2lts-grey: level 14 has 304 states, explored 1306 states 1636 transitions
+lpo2lts-grey: level 15 has 264 states, explored 1610 states 1940 transitions
+lpo2lts-grey: level 16 has 264 states, explored 1874 states 2244 transitions
+lpo2lts-grey: level 17 has 224 states, explored 2138 states 2508 transitions
+lpo2lts-grey: level 18 has 224 states, explored 2362 states 2732 transitions
+lpo2lts-grey: level 19 has 356 states, explored 2586 states 3088 transitions
+lpo2lts-grey: level 20 has 328 states, explored 2942 states 3456 transitions
+lpo2lts-grey: level 21 has 328 states, explored 3270 states 3824 transitions
+lpo2lts-grey: level 22 has 289 states, explored 3598 states 4192 transitions
+lpo2lts-grey: level 23 has 269 states, explored 3887 states 4481 transitions
+lpo2lts-grey: level 24 has 400 states, explored 4156 states 4881 transitions
+lpo2lts-grey: level 25 has 407 states, explored 4556 states 5347 transitions
+lpo2lts-grey: level 26 has 395 states, explored 4963 states 5794 transitions
+lpo2lts-grey: level 27 has 434 states, explored 5358 states 6318 transitions
+lpo2lts-grey: level 28 has 410 states, explored 5792 states 6792 transitions
+lpo2lts-grey: level 29 has 302 states, explored 6202 states 7214 transitions
+lpo2lts-grey: level 30 has 300 states, explored 6504 states 7543 transitions
+lpo2lts-grey: level 31 has 330 states, explored 6804 states 7886 transitions
+lpo2lts-grey: level 32 has 433 states, explored 7134 states 8345 transitions
+lpo2lts-grey: level 33 has 418 states, explored 7567 states 8827 transitions
+lpo2lts-grey: level 34 has 250 states, explored 7985 states 9245 transitions
+lpo2lts-grey: level 35 has 249 states, explored 8235 states 9522 transitions
+lpo2lts-grey: level 36 has 243 states, explored 8484 states 9777 transitions
+lpo2lts-grey: level 37 has 352 states, explored 8727 states 10149 transitions
+lpo2lts-grey: level 38 has 333 states, explored 9079 states 10559 transitions
+lpo2lts-grey: level 39 has 195 states, explored 9412 states 10892 transitions
+lpo2lts-grey: level 40 has 119 states, explored 9607 states 11090 transitions
+lpo2lts-grey: level 41 has 125 states, explored 9726 states 11215 transitions
+lpo2lts-grey: level 42 has 168 states, explored 9851 states 11389 transitions
+lpo2lts-grey: level 43 has 221 states, explored 10019 states 11615 transitions
+lpo2lts-grey: level 44 has 123 states, explored 10240 states 11836 transitions
+lpo2lts-grey: level 45 has 65 states, explored 10363 states 11959 transitions
+lpo2lts-grey: level 46 has 32 states, explored 10428 states 12030 transitions
+lpo2lts-grey: level 47 has 24 states, explored 10460 states 12062 transitions
+lpo2lts-grey: level 48 has 39 states, explored 10484 states 12104 transitions
+lpo2lts-grey: level 49 has 18 states, explored 10523 states 12143 transitions
+lpo2lts-grey: level 50 has 9 states, explored 10541 states 12161 transitions
+lpo2lts-grey: 10550 reachable states represented symbolically with 3594 nodes
+lpo2lts-grey: state space has 51 levels 10550 states 12170 transitions
+Exit [0]
+1.17 user, 0.06 system, 1.30 elapsed -- Max VSize = 46240KB, Max RSS = 12820KB
+REPORT ENDS HERE

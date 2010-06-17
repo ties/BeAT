@@ -264,7 +264,7 @@ class FileReader:
 				#that's bad
 				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
 				return None
-
+		
 		regexes=[]
 		try:
 			t = Tool.objects.get(name=s[1])
@@ -329,6 +329,7 @@ class FileReader:
 			self.print_message(V_VERBOSE, "Warning: grabbing options failed: %s"%(e))
 			return None
 		counter = 0
+		args[-1]=args[-1][:-1]
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
 		#we need a value, however; we'll use True
 		for t in optlist:
