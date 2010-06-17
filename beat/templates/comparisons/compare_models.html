@@ -32,15 +32,16 @@
 			</tr>
 			{% endfor %}
 		</table>
+		<div id="flotgrafiek" style="height: 300px;" />
 		<script type="text/javascript">
+		var dateParts = new RegExp("([0-9]{2,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})");
+		
 		function djangoDateToJS(src){
 			try{
-				var date = /([0-9]{2,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})/g.exec(src);
+				var date = dateParts.exec(src);
 			
 				return new Date(date[1], date[2], date[3], date[4], date[5], date[6]);
 			} catch(e){
-				console.log(e);
-				console.log("on date " + src);
 				return new Date();
 			}
 		}
@@ -72,13 +73,33 @@
 			row = benchmarkData[i];
 			model = row.fields.model;
 			
-			var time = djangoDateToJS(row.fields.data_time).getTime();
-			var mem = row.fields.memory_RSIZE;
-			
-			datasets[model].data.append([time, mem]);
+			var time = djangoDateToJS(row.fields.date_time).getTime();
+			var mem = row.fields.memory_VSIZE;
+						
+			datasets[model].data.push([time, mem]);
+			datasets[model].data.push([time + 3600, mem + 0.1*mem]);
+			datasets[model].data.push([time + 7200, mem + 0.13*mem]);
 		}
+		delete benchmarkData;
 		
-			
+		var data = [];
+		for(i in datasets){
+			data.push(datasets[i]);
+		}
+		delete datasets;
+		
+		var options = {
+			xaxis: {
+				mode: "time",
+				timeformat: "%d %b %y"
+			},
+			legend: {
+				show:	false
+			}
+		};
+		$(function(){
+			$.plot($("#flotgrafiek"), data, options);
+		});
 		</script>
 		<p><a href="/compare/model/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 		
