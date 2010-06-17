@@ -6,27 +6,9 @@ from beat.benchmarks.models import *
 from datetime import datetime
 import sys
 import time
-
-dummydate = datetime.now()
-with_git = False
-if "with_git" in sys.argv:
-	with_git = True
-	from beat.gitinterface import *
-	repository = GitInterface(GIT_PATH)
-	if not os.path.exists(os.path.join(GIT_PATH,"ltsmin")):
-		repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
-	repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
-	repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
-
-#version = "ltsmin-1.5-20-g6d5d0c"
-if with_git:
-	dummydate = datetime(*repository.get_date(repository.get_matching_item(version[-6:]))[:6])
-
-for i in sys.argv:
-	if i.startswith("ltsmin"):
-		do_import(i)
-
 def do_import(version):
+	if with_git:
+		dummydate = datetime(*repository.get_date(repository.get_matching_item(version[-6:]))[:6])
 	emptyregex, created = Regex.objects.get_or_create(regex='')
 	hw, created = Hardware.objects.get_or_create(name="x", memory=600, cpu='AMD', disk_space=21456, kernelversion='2.6.32')
 	###################### nips version 1, 2lts-grey ######################
@@ -559,3 +541,20 @@ def do_import(version):
 	vo, created = ValidOption.objects.get_or_create(algorithm_tool=at, option=op, defaults={'regex':emptyregex})
 	rs, created = RegisteredShortcut.objects.get_or_create(algorithm_tool=at, option=op, shortcut='q')
 	###################### end of: lps version 1, -reach ######################
+	
+
+dummydate = datetime.now()
+with_git = False
+if "with_git" in sys.argv:
+	with_git = True
+	from beat.gitinterface import *
+	repository = GitInterface(GIT_PATH)
+	if not os.path.exists(os.path.join(GIT_PATH,"ltsmin")):
+		repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+	repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
+	repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+
+#version = "ltsmin-1.5-20-g6d5d0c"
+for i in sys.argv:
+	if i.startswith("ltsmin"):
+		do_import(i)
