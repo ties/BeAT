@@ -56,5 +56,53 @@
 			</table>
 			<input type="submit" value="Submit" />
 		</form>
+<<<<<<< HEAD
+		<script type="text/javascript">
+		var target_url = "{% url comparisons.views.compareform %}";
+		var defaulttext = $("option[selected=selected]").first().text();
+		
+		$(".form_a option").click(function(src){
+			benchmark_form_update('.form_a', src);			
+		});
+		$(".form_b option").click(function(src){
+			benchmark_form_update('.form_b', src);			
+		});
+		
+		
+		
+		var benchmark_form_update = function(form, src){
+			var res = {};
+			
+			$(form + " select").each(function(index, value){ 
+				var field = $(value).children(":selected");
+				var field = $.map(field, function(n, i){
+					return $(n).text();
+				});
+				
+				//fields heten id_(a|b)_[a-Z]+
+				var parts = /id_(?:a|b)_([a-z]+)/.exec(value.id);/* regular expression breaks when it has the g flag *wtf* */
+				
+				fieldname = parts[1];//value.id;
+				
+				if(field.length == 1){
+					if(field[0] != defaulttext){
+						res[fieldname] = field[0];
+					}
+				} else {
+					res[fieldname] = field;
+				}
+			});
+			
+			console.log(res);
+			
+			$.post(target_url, res,
+				function(data){
+					console.log(data);
+				}
+			);
+		}		
+		</script>
+=======
 
+>>>>>>> ba50f1a99c61b75dfd16eaf29ec1a225c8da0abd
 {% endblock %}
