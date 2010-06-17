@@ -41,7 +41,7 @@ class ModelComparison(models.Model):
 	type = models.CharField(max_length=20, choices=DATA_TYPES)
 	tool = models.ForeignKey('benchmarks.Tool')
 	algorithm = models.ForeignKey('benchmarks.Algorithm')
-	optionvalue = models.CommaSeparatedIntegerField(max_length=100, blank=True, null=True)
+	optionvalue = models.ManyToManyField('benchmarks.OptionValue', blank=True, null=True)
 	date_time = models.DateTimeField(verbose_name="Last edit",auto_now=True,auto_now_add=True)
 	name = models.CharField(max_length=255)
 	hash = models.CharField(max_length=40)

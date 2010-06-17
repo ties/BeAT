@@ -45,5 +45,34 @@
 		{{ form.as_p }}
 		<input type="submit" value="Export" />
 		</form>
+		<script type="text/javascript">
+		var target_url = "{% url comparisons.views.compareform %}";
+		
+		$(".form_a option").click(function(src){
+			benchmark_form_update('.form_a', src);			
+		});
+		$(".form_b option").click(function(src){
+			benchmark_form_update('.form_b', src);			
+		});
+		
+		
+		
+		var benchmark_form_update = function(form, src){
+			var res = {};
+			
+			$(form + " select").each(function(index, value){ 
+				res[value.id] = $(value).children(":selected");
+				res[value.id] = $.map(res[value.id], function(n, i){
+					return $(n).text();
+				});
+			});
+			
+			$.post(target_url, res,
+				function(data){
+					console.log(data);
+				}
+			);
+		}		
+		</script>
 
 {% endblock %}
