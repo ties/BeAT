@@ -73,6 +73,9 @@ class BenchmarkOptionValue(models.Model):
 	benchmark = models.ForeignKey('Benchmark')
 	optionvalue = models.ForeignKey('OptionValue')
 	
+	def __unicode__(self):
+		return "%s - %s" % (self.benchmark, self.optionvalue)
+	
 	class Meta:
 		verbose_name_plural = "Benchmark OptionValue"
 

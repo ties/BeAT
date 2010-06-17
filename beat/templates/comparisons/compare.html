@@ -7,6 +7,37 @@
 
 {% block content %}
 		<h2>Comparison: {{ comparison.name }}</h2>
+		<p><b>Generated on:</b> {{ comparison.date_time|date:"d-m-Y H:i" }}</p>
+		
+		<table>
+		<tr>
+		<td class="vtop">
+			<h3>Set A</h3>
+			<ul>
+				<li><b>Tool:</b> {{ comparison.algorithm_tool_a.tool }}</li>
+				<li><b>Algorithm:</b> {{ comparison.algorithm_tool_a.algorithm }}</li>
+				<li><b>Options:</b> <ul>{% for c in comparison.optionvalue_a.all %}
+						<li>{{ c }}</li>
+					{% empty %}
+						<li>None</li>
+					{% endfor %}</ul></li>
+			</ul>
+		</td>
+		
+		<td class="vtop">
+			<h3>Set B</h3>
+			<ul>
+				<li><b>Tool:</b> {{ comparison.algorithm_tool_b.tool }}</li>
+				<li><b>Algorithm:</b> {{ comparison.algorithm_tool_b.algorithm }}</li>
+				<li><b>Options:</b> 
+					<ul>{% for c in comparison.optionvalue_b.all %}
+						<li>{{ c }}</li>
+					{% empty %}
+						<li>None</li>
+					{%endfor %}</ul></li>
+			</ul>
+		</td></tr></table>
+		
 		<img src="scatterplot.png" alt="benchmark chart" />
 		<p><a href="/compare/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 		
