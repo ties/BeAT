@@ -13,7 +13,8 @@ if "with_git" in sys.argv:
 	with_git = True
 	from beat.gitinterface import *
 	repository = GitInterface(GIT_PATH)
-	repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
+	if not os.path.exists(os.path.join(GIT_PATH,"ltsmin")):
+		repository.clone_repository("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 	repository.switch_repository(os.path.join(GIT_PATH, "ltsmin"))
 	repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 
