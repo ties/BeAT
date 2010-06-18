@@ -85,21 +85,20 @@ class FileReader:
 		#this fixes an issue; this function returned a list for the empty regex, but it makes more sense to get a dictionary
 		if not regex:
 			return {}
-		#compile the expression
+		#compile expression
 		if flags:
 			compiled = re.compile(regex, flags)
 		else:
 			compiled = re.compile(regex)
-		#do a match
+		#attempt a match
 		match = compiled.match(input)
 		if match:
-			#there was a match, fetch the group dictionary
 			list = match.groupdict()
 			if not list:
-				#the groups in the expression were not named, or there were no groups
+				#if there is no groupdict, named groups may not be used
+				#figure out if there are non-named groups, eg using brackets only
 				list = []
 				i=0
-				#read all the named groups
 				try:
 					#this is quite ugly.
 					while True:
@@ -110,14 +109,10 @@ class FileReader:
 					#check if there were any numbered groups at all, return them
 					if i!=0:
 						return list
-				#no groups: return True
+				#no groups, but a match occurred: return True
 				list = True
 			return list
 		else:
-			#there was no match, something probably went wrong
-			#self.print_message(V_VERBOSE, "Warning: Regex  %s on input %s has an empty dictionary."%(regex, input))
-			#if flags:
-			#	self.print_message(V_NOISY,"Notice: Flags argument to compiler: %s"%(flags))
 			return None
 	#end of match_regex
 	
@@ -131,15 +126,17 @@ class FileReader:
 				A dictionary, as specified by parse_log.
 		"""
 		self.print_message(V_NOISY, "Notice: Reading the header...")
+
 		# # # # # # # # # # # # seperate the header
+
 		header = []
-		#we save the ids of the 'Call: ' and 'DateTime: ' lines, so we can find them quickly
-		call = 0
-		dt = 0
+		call = 0 #var for the line number for the line "Call: ..."
+		dt = 0	 #var for the line number for the line "Datetime: ..."
+		offset = 0	#offset, to skip content between logs or before the header
+		
 		header_started = False
 		i = 0
 		done = False
-		offset = 0				#offset, to skip content between logs or before the header
 		#iterate 'till we've seen the whole log or when the header ends
 		while i < len(lines) and not done:
 			if header_started:
@@ -156,7 +153,6 @@ class FileReader:
 			elif lines[i].startswith("BEGIN OF HEADER"):
 				header_started = True
 				offset = i
-			#point to the next line
 			i += 1
 		
 		#split the header off
@@ -165,7 +161,7 @@ class FileReader:
 		# # # # # # # # # # # # analyze the header
 		match = header_regex.match(''.join(header))
 		if not match:
-			self.print_message(V_QUIET, "Error: matching of regex on header failed. Are you sure the header is correctly formatted?")
+			self.print_message(V_QUIET, "Error: Could not analyze header. Are you sure the header is correctly formatted?")
 			return None
 		self.print_message(V_NOISY, "Notice: header is: %s"%(''.join(header)))
 		m = match.groupdict()
@@ -173,39 +169,43 @@ class FileReader:
 			#matching the regex went quite wrong, the log must be broken
 			self.print_message(V_QUIET, "Error: missing data in the header. Are you sure this log is complete?")
 			return None
+		
 		#m contains the keys toolversion, name, memory_kb, processor, OS, Kernel_n, Kernel_r, Kernel_v
 		
 		toolversion = m.get('toolversion')
 		tv = toolversion.split('-')
 		
+		#currently, only one hardware item is supported and disk size is not taken into account.
 		hardware = [(m.get('name'), m.get('memory_kb'), m.get('processor'), 0, m.get('Kernel_r'))]
 
-		#parse the Call to find the supplied options
+		#deduce information from the "Call: ..." line in the header
 		tmp = self.parse_call(header[call][6:], toolversion)
 		if tmp:
-			#unpack the tuple
 			(regexes, s, optlist, modelname) = tmp
 		else:
-			#tmp is none, so something went wrong in parse_call()
+			#An error occurred, skip this log
 			return None
-		#s[0] contains the whole call, s[1] contains the tool name and s[2] contains the algorithm name
+		
+		#note: s[0] contains the whole call, s[1] contains the tool name and s[2] contains the algorithm name
 		
 		#fetch datetime info and create an object out of it
 		dt = header[dt][10:].split(' ')
 		dt = datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), int(dt[3]), int(dt[4]), int(dt[5]))
-		self.print_message(V_NOISY, "Notice: Complete!")
-		
+		self.print_message(V_NOISY, "Notice: Header analysis complete!")
+		self.print_message(V_NOISY, "Deduced information: %s\nTool: %s\nAlgorithm: %s\nOptions: %s\nModel: %s\nTime of run start:%s"%(m, s[1], s[2], optlist,modelname,dt))
 		# # # # # # # # # # # # #parse the log content
+		# we apply the regular expressions found in the database.
 		m = {}
 		first=True
 		for rex in regexes:
+			self.print_message(V_NOISY, "Applying regex: %s"%(rex))
 			tmp = self.match_regex(rex.regex, ''.join(lines), re.MULTILINE + re.DOTALL)
 			if not first:
 				self.print_message(V_NOISY, "Notice: regex match gives: %s\n\tregex was:\"%s\""% (tmp,rex.regex))
 			if not tmp and first:
 				#the regex for the tool did not match, print an error and return None
-				self.print_message(V_QUIET, "Error: Parse error. The input failed to match on the regex.")
-				self.print_message(V_NOISY, "Notice: Details of error: %s\non\n%s"% (rex.regex, ''.join(lines)) )
+				self.print_message(V_QUIET, "Error: Parse error. The log failed to match on the regex of the tool.")
+				self.print_message(V_NOISY, "Notice: Details of error: \nExpression:\n%s\nLog:\n%s"% (rex.regex, ''.join(lines)) )
 				return None
 			else:
 				first=False
@@ -214,11 +214,12 @@ class FileReader:
 				if tmp[key]:
 					m[key]=tmp[key]
 
-		#we'll use m for basic information, matched for any user-specified groups
+		#collect the user-specified data
 		matched ={}
 		for key in m:
 			if key not in ["etime","utime","stime","tcount","scount","vsize","rss","kill"]:
 				matched[key]=m[key]
+		
 		#collect all relevant information into one dictionary
 		data = {
 			'model': modelname,
@@ -233,7 +234,7 @@ class FileReader:
 			'extravals':matched
 		}
 		
-		self.print_message(V_NOISY, "Notice: resulting dictionary: %s"% (m))
+		self.print_message(V_NOISY, "Notice: Derived data: %s"% (m))
 
 		if data:
 			self.print_message(V_NOISY, "Notice: Read successful!")
@@ -256,15 +257,16 @@ class FileReader:
 				or None, when the call cannot be parsed because the combination of tool and algorithm does not appear in the database.
 		"""
 		s = self.match_regex(r'^memtime (.*?)((?:2|-).*?)(?:$| .*$)', call)
-		#s should be like: [call, toolname, algorithmname]
+		#s should result in: [call, toolname, algorithmname]
 		if not s:
-			#this is a fix introduced for an alternative naming scheme
+			#this is a fix introduced for an alternative naming scheme, where "memtime" is not included in the Call line
 			s = self.match_regex(r'^.*?(.*?)((?:2|-).*?)(?:$| .*$)', call)
 			if not s:
 				#that's bad
 				self.print_message(V_QUIET, "Error: invalid call in log: %s" %(call))
 				return None
 		
+		#query the database for the regex that goes with the AlgorithmTool and then query those of the options
 		regexes=[]
 		try:
 			t = Tool.objects.get(name=s[1])
@@ -293,12 +295,12 @@ class FileReader:
 					pass
 		#handle database related errors
 		except ObjectDoesNotExist:
-			self.print_message(V_VERBOSE, "Error: unknown log: %s%s (version %s)" %(s[1], s[2], version))
+			self.print_message(V_QUIET, "Error: This algorithm/tool/version combination is not known: %s%s (version %s)" %(s[1], s[2], version))
 			return None
 		except MultipleObjectsReturned:
-			self.print_message(V_VERBOSE, "Error: multiple parsers for %s %s (version %s)" %(s[1], 1, s[2]))
+			self.print_message(V_SILENT, "Error: multiple parsers for %s %s (version %s). This indicates database integrity issues!" %(s[1], 1, s[2]))
 			return None
-		#translate all options Option->ascii, ignoring unicode-only characters
+		#translate all options Option->ascii, ignoring unicode-only characters, and reformat them to match what gnu_getopt expects
 		tmp = opts
 		opts = []
 		for i in tmp:
@@ -308,7 +310,7 @@ class FileReader:
 				else:
 					opts.append(i.name.encode('ascii', 'ignore')[2:])
 			elif i.name.startswith(" "):
-				#short option only: don't remember this
+				#short option only: this is a bit of an ugly hack to get around our database limitation, which concerns itself primarely with long options
 				pass
 			else:
 				if i.takes_argument:
@@ -328,8 +330,10 @@ class FileReader:
 		except getopt.GetoptError as e:
 			self.print_message(V_VERBOSE, "Warning: grabbing options failed: %s"%(e))
 			return None
-		counter = 0
+		#this fixes a bug related to a '\n' character being behind the model name, which occurred when model is the last string on the "Call: ..." line
 		args[-1]=args[-1][:-1]
+
+		counter = 0
 		#getopt.gnu_getopt returns tuples, where the value is empty if the option is provided
 		#we need a value, however; we'll use True
 		for t in optlist:
@@ -350,9 +354,9 @@ class FileReader:
 		self.print_message(V_NOISY, "read options and arguments, resulting in:\noptions:%s\nargs:%s"%(optlist,args))
 		(head, tail) = os.path.split(args[0])
 		#tail contains the filename of the log
-		#that's formatted as <modelname>.e<number>
+		#that is formatted as <modelname>.e<number> in our tests.
 		#we can use the logextension regex to chop that .e<number> part off.
-		#should this not work, we'll just use the full argument that is in the log
+		#should this not work (as with a real-life log), we'll just use the full argument that is in the log
 		match = logextension.match(tail)
 		if match:
 			tail = match.group(1)
@@ -468,6 +472,9 @@ class FileReader:
 		else:
 			self.print_message(V_NOISY, "Notice: Validity checked and passed, writing to DB...")
 		
+		#note that if the logs were generated using our tools, most of the information below is already in there
+		#data that is already used is queried with a get, data that may be new is added using a get_or_create query
+		
 		#Model
 		name = data['model']
 		#a model is identified by name and version.
@@ -479,7 +486,6 @@ class FileReader:
 
 		#Algorithm
 		name = data['algorithm']
-		#an algorithm only has a name
 		a = Algorithm.objects.get(name=name)
 
 		#Tool
@@ -510,11 +516,11 @@ class FileReader:
 		
 		#Benchmark
 		date, utime, stime, etime, tcount, scount, mVSIZE, mRSS, finished = data['benchmark']
-		#convert these to float explicitly
+		#convert these to Decimal explicitly
 		utime = Decimal(utime)
 		stime = Decimal(stime)
 		etime = Decimal(etime)
-		#now create and save the db object
+		#now create and save the db object, uniquely identified by model, algorithm_tool and datetime of the run
 		b, created = Benchmark.objects.get_or_create(model=m, algorithm_tool = at,
 			date_time=date, 
 			defaults={'user_time':utime, 'system_time':stime, 'elapsed_time':etime,
@@ -522,7 +528,7 @@ class FileReader:
 				'transition_count':tcount, 'states_count':scount, 'memory_VSIZE':mVSIZE,
 				'memory_RSS':mRSS, 'finished':finished, 'logfile':None}
 		)
-		#connect the manytomany relations. this has to happen ONLY if newly created, or when we override existing data
+		#connect the manytomany relations. this has to happen ONLY if newly created, or when we want to override existing data
 		if created or self.override:
 			if self.override:
 				#delete and then create
@@ -613,9 +619,7 @@ class FileReader:
 			runs_in_file=[]
 			self.print_message(V_NOISY, "Notice: Reading from file: %s"%(f))
 			
-			#read the whole file, filling the runs_in_file matrix
-			#with open(f, 'r') as file:
-			#print f
+			#read the file, chopping it into seperate logs
 			file = open(f, 'r')
 			new_run=True
 			j=0
@@ -643,6 +647,7 @@ class FileReader:
 					#write to the database
 					error=True
 					created=False
+					bench = None
 					try:
 						(created, bench)=self.write_to_db(data)
 						if created:
@@ -663,13 +668,6 @@ class FileReader:
 							self.print_message(V_QUIET, "Error: FileReaderError: %s" %( fre.error))
 							errorcounter+=1
 						self.print_message(V_NOISY, "Details:%s"%( fre.debug_data))
-					#handle other errors
-					#except Exception, e:
-						#an unknown error occured, skip this part
-					#	self.print_message(V_QUIET, "Error: parsing of run %s failed by unexpected error: %s"%(runcounter, e))
-					#	errorcounter+=1
-					#	error=True
-					#print the right message
 					finally:
 						if error:
 							self.print_message(V_QUIET, "Note: Error writing to database from file %s"%(f))
@@ -694,7 +692,6 @@ class FileReader:
 		#we're done! return how many errors we got
 		return errorcounter
 	#end of main
-
 
 	def write_to_log(self, lines, filename):
 		"""Saves the log contained in lines as a file specified by filename """
