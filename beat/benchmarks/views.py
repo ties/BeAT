@@ -11,7 +11,8 @@ import json
 
 #@login_required(redirect_field_name='next')
 def index(request):
-	return render_to_response('base.html', context_instance=RequestContext(request))
+	benches = Benchmark.objects.order_by("date_time")[0:10]
+	return render_to_response('base.html', {'benches':benches}, context_instance=RequestContext(request))
 
 
 """

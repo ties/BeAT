@@ -59,20 +59,46 @@
 		{% block structure %}
 			
 				<div class="span-10">
-					<div class="blok"><h3>Lorem ipsum dolor sit amet</h3> consectetur adipiscing elit. Pellentesque vestibulum, ante ac facilisis cursus, ante est bibendum nulla, sed pulvinar erat dui in justo. Aliquam auctor adipiscing dui at tempor. Aliquam erat volutpat. Fusce eleifend arcu laoreet risus rhoncus fermentum suscipit turpis vehicula. Sed nisi lacus, mattis sit amet elementum dictum, facilisis quis mauris. Nullam sit amet enim mi, nec blandit mauris. Nullam sit amet lacus magna, eu vulputate nibh. Pellentesque nunc turpis, fringilla et sodales vel, sagittis a augue. Duis consequat lacus eu nisl faucibus interdum. In id sem in purus tempor bibendum in sit amet mi.
-
-Mauris quis diam sed quam ullamcorper mattis ac nec velit. Aliquam gravida cursus pellentesque. Mauris eleifend eros ac tortor feugiat quis rutrum justo blandit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla sapien turpis, ultrices id congue eu, semper sed felis. Pellentesque eu odio ligula, sed lobortis nisi. Ut posuere facilisis felis, in eleifend orci ultrices consectetur. Morbi id turpis a metus adipiscing gravida. Donec aliquet, est ut euismod varius, nisl erat porttitor odio, sit amet molestie nisi est ac mauris. Ut posuere aliquam ligula, eget molestie diam tristique eu. Mauris arcu mauris, mollis eget adipiscing et, hendrerit feugiat lectus.
-
-Aenean commodo tellus in leo volutpat pretium. Cras imperdiet tempor nulla nec feugiat. Aenean bibendum bibendum erat, et consectetur diam faucibus in. Vivamus molestie, est vitae lacinia tempus, ipsum elit faucibus nisi, vitae porttitor tellus purus vitae enim. Vivamus quis elit vitae est sollicitudin sagittis eget eget orci. Aliquam erat volutpat. Cras ac vulputate eros. Integer augue lorem, cursus eu mattis sit amet, accumsan sed enim. Suspendisse dapibus arcu nulla, a dapibus nisi. Suspendisse urna nibh, sollicitudin quis molestie a, porta eget sem. Nulla vulputate, purus ac consectetur consectetur, diam erat scelerisque mauris, scelerisque tempor velit diam ut elit. Ut in diam sapien. Fusce tristique erat at dui vestibulum suscipit at at risus. Fusce lobortis aliquet placerat. Phasellus quam magna, cursus sed interdum a, lobortis sed augue. Fusce sodales laoreet mi. Nulla scelerisque tellus ut tortor pharetra auctor. In sollicitudin orci ullamcorper dolor scelerisque vestibulum. Praesent nec sem eget est hendrerit tincidunt in ac diam. </div>
+					<div class="blok">
+						<h3>Be<i>AT</i></h3>
+						<p>
+							FormalMethodsTools has developed a toolkit to evaluate software on a cluster of machines. This toolkit includes a scheduler. The toolkit produces a lot of data, most importantly the run time, the amount of required memory, the number of states and the amount of transitions. Apart from this, they cluster hardware varies, as well as the OS and so on. The most important goal of the project is to keep track of this kind of data.
+						</p>
+						<p>
+The data that is produced, is currently inserted into a database by hand. This process has to be automated.
+Also, there are new requirements to gather more data and the database needs to be extensible such that results can be compared with third-party tools (assuming these tools produce similar data). We have expressed the desire to incorporate this from the start of the project.
+Since we build a new database, we need to create a module to collect and format the data such that it can be placed in this database. We have not yet discussed the transition between the old and new database. This module should also be able to detect anomalies in the data, such as the fact that a program was shut down by the batch scheduler, had a segmentation fault or crashed otherwise. 
+						</p>
+						<p>
+The second aspect of the system is the user-interface. The project owner wants this to go through a web-interface. It has been decided to be done with Python, using the Django framework. This interface should allow the user to examine the raw data, as well as information deduced from the raw data (such as averages, accuracy estimates, plots and charts). If possible, we should build a module that allows the user to export this information to a format that can quickly be incorporated into a research paper. The plots and charts should allow for both comparison between pieces of software and for a regression-like examination (ie. to see changes over a series of versions of the same piece of software).
+						</p>
+					</div>
 				</div>
 				<div class="span-8">
-					<div class="blok"><h3>Nulla facilisi.</h3> Quisque facilisis quam sed felis hendrerit ac euismod eros ultricies. Aliquam vitae nunc at enim accumsan vehicula. Vestibulum tincidunt, lorem in cursus dignissim, massa ipsum laoreet dui, at facilisis ligula nisl vel sem. Donec lorem tortor, pharetra id imperdiet id, eleifend sit amet nunc. Ut vel libero tortor.
+					<div class="blok">
+						<h3>Latest Graph.</h3>
+						<img src="{{ MEDIA_URL }}img/scatterplot.png" width="100%" />
 					</div>
 					<div class="blok">
-						<h3>Nulla facilisi.</h3> Quisque facilisis quam sed felis hendrerit ac euismod eros ultricies. Aliquam vitae nunc at enim accumsan vehicula. Vestibulum tincidunt, lorem in cursus dignissim, massa ipsum laoreet dui, at facilisis ligula nisl vel sem. Donec lorem tortor, pharetra id imperdiet id, eleifend sit amet nunc. Ut vel libero tortor. Morbi metus metus, euismod sit amet auctor vel, egestas id purus. Duis volutpat rhoncus ullamcorper. Suspendisse ut lectus sem. Vivamus tempus enim a purus aliquam luctus aliquet ipsum pellentesque. 
-					</div>
-					<div class="blok">
-						<h3>Sed a leo ac turpis</h3> dapibus aliquam nec ac purus. Proin quis libero vitae erat ultricies commodo. Quisque dignissim consequat rutrum. Praesent elementum, ante id venenatis viverra, velit nibh consectetur diam, sit amet interdum elit dolor vitae orci. Nullam lorem nibh, sodales at congue quis, tempor vel diam. Cras ac nunc turpis, sed condimentum neque. Suspendisse potenti.
+						<h3>Latest imported logs</h3>
+						<table border="1">
+							<tr>
+								<th>Model</th>
+								<th>States</th>
+								<th>Runtime</th>
+								<th>Memory (RSS)</th>
+								<th>Finished</th>
+							</tr>
+						{% for b in benches %}
+						 <tr>
+							<td>{{ b.model }}</td>
+							<td>{{ b.states_count }}</td>
+							<td>{{ b.total_time }}</td>
+							<td>{{ b.memory_RSS }}</td>
+							<td>{{ b.finished }}</td>
+						</tr>
+						{% endfor %}
+						</table>
 					</div>
 				</div>
 			

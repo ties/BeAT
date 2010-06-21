@@ -25,7 +25,7 @@ Produces a scatterplot from a set of benchmarks.
 TODO:
 @param id Comparison id to retrieve a set of Benchmark id's from the db (currently takes the whole dataset - no id yet)
 """ 
-#@cache_page(60 * 15)
+@cache_page(60 * 15)
 def scatterplot(request, id, format='png'):
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -339,7 +339,11 @@ def compare_detail(request, id, model=False):
 		
 		list = zip(model,t1,t2,m1,m2)
 		
-		scatterjson = json.dumps(list)
+		#less then cute.
+		from StringIO import StringIO
+		io = StringIO()
+		json.dumps(list)
+		scatterjson = io.getvalue()
 		
 		form = ExportGraphForm()
 		response = render_to_response('comparisons/compare.html', { 'comparison' : c, 'form' : form, 'list' : list, 'scatterdata' : scatterjson }, context_instance=RequestContext(request))
