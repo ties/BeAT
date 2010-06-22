@@ -111,11 +111,10 @@ def tool_upload(request):
 			#note that get_matching_item() returns the oldest revision if a match is not found, so this check is needed:
 			if str(matching_item).startswith(version_name[-6:]):
 				dummydate = datetime.datetime(*repository.get_date(repository.get_matching_item(version_name[-6:]))[:6])			
-				
+				emptyregex,created=Regex.objects.get_or_create(regex="")
 				a, created = Algorithm.objects.get_or_create(name=algorithm_name)
 				t, created = Tool.objects.get_or_create(name=tool_name)
-				rx, created = Regex.objects.get_or_create(regex=options)
-				dummydate = datetime(*repository.get_date(repository.get_matching_item(revision))[:6])
+				rx, created = Regex.objects.get_or_create(regex=expression)
 				at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=version_name[:6])
 				y = options.split('\n') #split the options field into lines
 				for z in y:
@@ -148,7 +147,10 @@ def tool_upload(request):
 				error="Could not find the provided version in the git."
 	else:
 		form = ToolUploadForm()
-	return render_to_response('upload_tool.html', {'form': form, 'error' : error}, context_instance=RequestContext(request))
+	if error:
+		return render_to_response('upload_tool.html', {'form': form, 'error' : error}, context_instance=RequestContext(request))
+	else:
+		return render_to_response('upload_tool_complete.html', context_instance=RequestContext(request))
 
 def test_regex(request):
 	dump = json.dumps({'result': regex_tester.test_regex(request.POST.get('regex'), request.POST.get('testlog'))})
