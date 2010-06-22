@@ -6,8 +6,8 @@ TOOL 			= 'tool'
 MEMORY 			= 'memory'
 RUNTIME 		= 'runtime'
 STATES 			= 'states'
-TRANSITIONS 	='transitions'
-DATE 			='date'
+TRANSITIONS 	= 'transitions'
+DATE 			= 'date'
 OPTIONS 		= 'options'
 FINISHED 		= 'finished'
 COMPUTERNAME 	= 'computername'
@@ -125,11 +125,7 @@ class FinishedFilter(Filter):
 		self.finished = str(finished)
 	
 	def apply(self,qs):
-		if self.finished==TRUE:
-			qs = qs.filter(finished__exact=True)
-		elif self.finished==FALSE:
-			qs = qs.filter(finished__exact=False)
-		
+		qs = qs.filter(finished__exact=self.finished)
 		return qs
 
 class CPUFilter(Filter):

@@ -60,6 +60,10 @@ table.paging tr td{
 	cursor: pointer;
 }
 
+table.benchmarks tr td:nth-child(n+2){
+	cursor: pointer;
+}
+
 .benchmarks tr:nth-child(odd){
 	background-color: #eee;
 }
@@ -127,12 +131,13 @@ ul.mega li.mega div{
 	border:1px solid black;
 	background: white;
 	width: 18em;
-	min-height: 120px;/* make it so this works with other browsers */
-	/*overflow: auto;*/
+	height: 180px;
+	overflow: auto;
 	position: absolute;
 	top: 1.2em;
 	left: 0em;
 	z-index: 100;
+	margin-bottom: 20px;
 }
 
 ul.mega li.mega div select{

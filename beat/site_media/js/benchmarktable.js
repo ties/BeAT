@@ -209,8 +209,8 @@ function showResults(){
 			var benchmark = benchmarks[i];
 			var check = (checked_benchmarks.indexOf(benchmark.id)!=-1);
 			
-			table+='<tr><td><input type="checkbox"'+(check ? ' checked' : '')+' name="benchmarks" value="' + benchmark.id + '" /></td>\n\
-				<td><label for="{{ ' + benchmark.id + ' }}">' + benchmark.model__name + '</label></td>';
+			table+='<tr id="row' + benchmark.id + '"><td><input type="checkbox"'+(check ? ' checked' : '')+' name="benchmarks" value="' + benchmark.id + '" /></td>\n\
+				<td>' + benchmark.model__name + '</td>';
 			
 			for (var j=0; j<columns.length;j++){
 				if (columns[j].checked)		table+='<td>'+benchmark[columns[j].db_name]+'</td>';
@@ -223,6 +223,11 @@ function showResults(){
 		}
 	}
 	$("table.benchmarks").html(getTableHeaders()+table);
+	
+	$("table.benchmarks tr td:nth-child(n+2)").click(function(){
+		var id = $(this).parent().attr('id').substr(3);
+		window.open('/benchmarks/'+id);
+	});
 	
 	//right align all numbers
 	if (benchmarks.length){
@@ -476,6 +481,7 @@ function registerFunctionsAndEvents(){
 		if ($(this).attr('value') == "All" )	checkAll();
 		else									checkNone();
 	});
+	
 	$("#InvertAll").click(function(){
 		checkInvert();
 	});
@@ -516,14 +522,16 @@ function configureColumnSelection(){
 }
 
 function configureExtraValues(){
-	//copied code, does not work!
-	$("#columns input").click(function(){
+	$("#extravalues input").click(function(){
 		var val = $(this).attr('value');
-		for (var i = 0; i<columns.length;i++){
-			if (columns[i].db_name == val)	columns[i].checked = this.checked;
+		for (var i=data.extracolumns.length-1; i>=0; i--){
+			console.log(data.extracolumns[i].toString());
+			if (data.extracolumns[i] == val){
+				data.extracolumns.splice(i,1);
+				return;
+			}
 		}
-		
-		data.columns = getColumns();
+		data['extracolumns'].push(val);
 	});
 }
 

@@ -348,10 +348,10 @@
 								}
 								filterobj.error = (filterobj.value[0].length==0);
 								setErrorCSS(filterobj);
-								sendTrigger();
+								//sendTrigger();
 							});
 						
-						$(checkbox).attr('selected',(index!=-1));
+						$(checkbox).attr('checked',(index!=-1));
 						
 						$(td1).append($(checkbox));
 						$(td2).append(option.name);
@@ -359,9 +359,9 @@
 						var value;
 						if (option.takes_argument){
 							value = $('<input type="text" id="optionValue'+option.id+'" class="optionValue">')
-										.change(function(){
+										.keyup(function(){
 											filterobj.value[1][indexOf(filterobj.value[0],option.id)] = $(this).val();
-											sendTrigger();
+											//sendTrigger();
 										});
 							if (index!=-1)	$(value).val(filterobj.value[1][index]);
 						}else{
@@ -385,7 +385,7 @@
 						interval: 100,
 						over: function(){$(this).addClass('hovering')},
 						timeout: 500,
-						out: function(){$(this).removeClass('hovering')}
+						out: function(){$(this).removeClass('hovering'); sendTrigger();}
 					});
 					
 					
