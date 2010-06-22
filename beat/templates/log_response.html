@@ -44,6 +44,8 @@
 	<p>
 	{% for i in log %}
 	{{i|linebreaksbr}}
+	{% empty %}
+	Log not found
 	{% endfor %}
 	</p>
 	<!-- END OF CONTENT -->
