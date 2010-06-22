@@ -141,7 +141,6 @@ class GitInterface:
 	Allows pulling form git needs the git server as a string
 	"""
 	def pull_from_git(self, git):
-		print "cd %s; git pull %s" % (self.folder, git)
 		chdir(self.folder)
 		system("git pull %s master" % git)
 
