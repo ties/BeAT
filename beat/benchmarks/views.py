@@ -115,7 +115,7 @@ def tool_upload(request):
 				a, created = Algorithm.objects.get_or_create(name=algorithm_name)
 				t, created = Tool.objects.get_or_create(name=tool_name)
 				rx, created = Regex.objects.get_or_create(regex=options)
-				dummydate = datetime(*repository.get_date(repository.get_matching_item(revision))[:6])
+				dummydate = datetime(*repository.get_date(repository.get_matching_item(version_name[-6:]))[:6])
 				at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=version_name[:6])
 				y = options.split('\n') #split the options field into lines
 				for z in y:
