@@ -65,14 +65,6 @@
 		var a_algorithmtools = [];
 		
 		
-		/* bind form handlers */
-		$(".form_a option").click(function(src){
-			benchmark_form_update('.form_a', src);			
-		});
-		$(".form_b option").click(function(src){
-			benchmark_form_update('.form_b', src);			
-		});
-		
 		var val;
 		/* populate algorithmtool fields */
 		$("#id_a_algorithmtool option").each(function(i,opt){
@@ -88,6 +80,7 @@
 		
 		var benchmark_form_update = function(form, src){
 			var res = {};
+			var foundField = false;
 			
 			$(form + " select").each(function(index, value){ 
 				var field = $(value).children(":selected");
@@ -103,14 +96,19 @@
 				if(field.length == 1){
 					if(field[0] != defaulttext){
 						res[fieldname] = field[0];
+						foundField = true;
 					}
 				} else {
 					res[fieldname] = field;
 				}
 			});
 			
-			update_result_select($("#id_a_algorithmtool"), a_algorithmtools, res);
-			update_result_select($("#id_b_algorithmtool"), b_algorithmtools, res);
+			var name = /form_(a|b)/.exec(form);
+			
+			/* a_algorithmtools == self["a_algorithmtools"] */
+			if(foundField){
+				update_result_select($("#id_" + name[1] + "_algorithmtool"), self[name[1] + "_algorithmtools"], res);
+			}
 		}
 
 		function update_result_select(widget, algorithmtools, result){
@@ -121,31 +119,38 @@
 				if(typeof result.algo != "undefined"){
 					if(value.text.indexOf(result.algo) == -1){
 						valid = false;
-						console.log("no: " + result.algo);
 					}
 				} if(typeof result.tool != "undefined"){
 					if(value.text.indexOf(result.tool) == -1){
 						valid = false;
-						console.log("no: " + result.tool);
 					}
 				} if(typeof result.version != "undefined"){
 					if(value.text.indexOf(result.version) == -1){
 						valid = false;
-						console.log("no: " + result.version);
 					}
 				}
-				console.log("in " + value.text);
-
-				if(valid){
-					widget.add(new Option(result.text, result.value));
-				}
 				
-				if(widget.filter(":empty").size() != 0){
-					widget.attr("enabled", true);
-				} else {
-					widget.attr("enabled", false);
+				if(valid){
+					widget.append(new Option(value.text, value.value));
 				}
 			});
+			
+			if(widget.filter(":empty").size() != 0){
+				widget.attr("enabled", true);
+			} else {
+				widget.attr("enabled", false);
+			}
 		}		
+		
+				/* bind form handlers */
+		$(".form_a option").click(function(src){
+			benchmark_form_update('.form_a', src);			
+		});
+		$(".form_b option").click(function(src){
+			benchmark_form_update('.form_b', src);			
+		});
+		
+		benchmark_form_update('.form_a', null);			
+		benchmark_form_update('.form_b', null);			
 		</script>
 {% endblock %}
