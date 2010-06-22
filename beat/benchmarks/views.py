@@ -108,7 +108,6 @@ def tool_upload(request):
 			expression = form.cleaned_data['expression']
 			options = form.cleaned_data['options']
 			matching_item = repository.get_matching_item(version_name[-6:])
-			print matching_item
 			#note that get_matching_item() returns the oldest revision if a match is not found, so this check is needed:
 			if str(matching_item).startswith(version_name[-6:]):
 				dummydate = datetime.datetime(*repository.get_date(repository.get_matching_item(version_name[-6:]))[:6])			
