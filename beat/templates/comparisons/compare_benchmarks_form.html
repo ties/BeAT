@@ -61,8 +61,8 @@
 		var target_url = "{% url comparisons.views.compareform %}";
 		var defaulttext = $("option[selected=selected]").first().text();
 		
-		var b_algorithmtools;
-		var a_algorithmtools;
+		var b_algorithmtools = [];
+		var a_algorithmtools = [];
 		
 		
 		/* bind form handlers */
@@ -73,12 +73,15 @@
 			benchmark_form_update('.form_b', src);			
 		});
 		
+		var val;
 		/* populate algorithmtool fields */
-		$("#id_a_algorithmtool option").each(function(opt){
-			a_algorithmtools.push({ value: opt.value(), text: opt.text() });
+		$("#id_a_algorithmtool option").each(function(i,opt){
+			opt = $(opt);
+			a_algorithmtools.push({ value: opt.val(), text: opt.text() });
 		});
-		$("#id_b_algorithmtool option").each(function(opt){
-			b_algorithmtools.push({ value: opt.value(), text: opt.text() });
+		$("#id_b_algorithmtool option").each(function(i,opt){
+			opt = $(opt);
+			b_algorithmtools.push({ value: opt.val(), text: opt.text() });
 		});
 		
 		
@@ -106,9 +109,43 @@
 				}
 			});
 			
-			console.log(res);
-			
-			
+			update_result_select($("#id_a_algorithmtool"), a_algorithmtools, res);
+			update_result_select($("#id_b_algorithmtool"), b_algorithmtools, res);
+		}
+
+		function update_result_select(widget, algorithmtools, result){
+			widget.empty();
+			$.each(algorithmtools, function(index, value){/* value.value en value.text */
+				var valid = true;
+				
+				if(typeof result.algo != "undefined"){
+					if(value.text.indexOf(result.algo) == -1){
+						valid = false;
+						console.log("no: " + result.algo);
+					}
+				} if(typeof result.tool != "undefined"){
+					if(value.text.indexOf(result.tool) == -1){
+						valid = false;
+						console.log("no: " + result.tool);
+					}
+				} if(typeof result.version != "undefined"){
+					if(value.text.indexOf(result.version) == -1){
+						valid = false;
+						console.log("no: " + result.version);
+					}
+				}
+				console.log("in " + value.text);
+
+				if(valid){
+					widget.add(new Option(result.text, result.value));
+				}
+				
+				if(widget.filter(":empty").size() != 0){
+					widget.attr("enabled", true);
+				} else {
+					widget.attr("enabled", false);
+				}
+			});
 		}		
 		</script>
 {% endblock %}
