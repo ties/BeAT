@@ -285,8 +285,8 @@ def compare_detail(request, id, model=False):
 		
 		#models = Model.objects.values('id').annotate(num_models=Count('name'))
 		#benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
-		#benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).order_by('model__name')
-		benches = benchFind(benches,[o.id for o in c.optionvalue.all()])
+		benchesNoOptionFilter = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).order_by('model__name')
+		benches = benchFind(benchesNoOptionFilter,[o.id for o in c.optionvalue.all()])
 		
 		models = Model.objects.filter(id__in=[b.model.id for b in benches])
 

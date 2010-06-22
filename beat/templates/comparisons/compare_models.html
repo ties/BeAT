@@ -47,13 +47,37 @@
 		}
 		
 		{% autoescape off %}
-			benchmarkData = {{ benchjson }}
-			modelData = {{ modeljson }}
+			var benchmarkData = {{ benchjson }};
+			var modelData = {{ modeljson }};
+			var defaultView = "{{ comparison.type }}";
 		{%  endautoescape %}
+		
+		/*
+		ModelComparison support:
+			transitions => transition_count
+			states => states_count
+			memory_VSIZE
+			memory_RSS
+			elapsed_time
+			total_time
+		*/
+		function transform_fieldname (input_name) {
+			switch(input_name){
+				case "transitions":
+					return "transition_count";
+					break;
+				case "states_count":
+					return "states_count";
+					break;
+				default:
+					return input_name;
+			}
+		}
 		
 		var models = {};
 		var datasets = {};
 		
+		/* transform the modelData to a format that we can use */
 		for(i in modelData){
 			var name = modelData[i].fields.name;
 			var pk = modelData[i].pk;
@@ -68,38 +92,38 @@
 		delete modelData;
 		
 		
-		
-		for(i in benchmarkData){
-			row = benchmarkData[i];
-			model = row.fields.model;
-			
-			var time = djangoDateToJS(row.fields.date_time).getTime();
-			var mem = row.fields.memory_VSIZE;
-						
-			datasets[model].data.push([time, mem]);
-			datasets[model].data.push([time + 3600, mem + 0.1*mem]);
-			datasets[model].data.push([time + 7200, mem + 0.13*mem]);
-		}
-		delete benchmarkData;
-		
-		var data = [];
-		for(i in datasets){
-			data.push(datasets[i]);
-		}
-		delete datasets;
-		
-		var options = {
-			xaxis: {
-				mode: "time",
-				timeformat: "%d %b %y"
-			},
-			legend: {
-				show:	false
+		function show_flot(widget, view){
+			for(i in benchmarkData){
+				row = benchmarkData[i];
+				model = row.fields.model;
+				
+				var time = djangoDateToJS(row.fields.date_time).getTime();
+				var data = row.fields[transform_fieldname(view)];
+					
+				datasets[model].data.push([time, data]);
 			}
-		};
-		$(function(){
-			$.plot($("#flotgrafiek"), data, options);
-		});
+			
+			var data = [];
+			for(i in datasets){
+				data.push(datasets[i]);
+			}
+			delete datasets;
+			
+			var options = {
+				xaxis: {
+					mode: "time",
+					timeformat: "%d %b %y"
+				},
+				legend: {
+					show:	false
+				}
+			};
+			$(function(){
+				$.plot(widget, data, options);
+			});
+		}
+		
+		show_flot($("#flotgrafiek"), defaultView);
 		</script>
 		<p><a href="/compare/model/{{ comparison.id }}?auth={{ comparison.hash }}">Permalink</a></p>
 		

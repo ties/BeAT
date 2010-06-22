@@ -61,11 +61,24 @@
 		var target_url = "{% url comparisons.views.compareform %}";
 		var defaulttext = $("option[selected=selected]").first().text();
 		
+		var b_algorithmtools;
+		var a_algorithmtools;
+		
+		
+		/* bind form handlers */
 		$(".form_a option").click(function(src){
 			benchmark_form_update('.form_a', src);			
 		});
 		$(".form_b option").click(function(src){
 			benchmark_form_update('.form_b', src);			
+		});
+		
+		/* populate algorithmtool fields */
+		$("#id_a_algorithmtool option").each(function(opt){
+			a_algorithmtools.push({ value: opt.value(), text: opt.text() });
+		});
+		$("#id_b_algorithmtool option").each(function(opt){
+			b_algorithmtools.push({ value: opt.value(), text: opt.text() });
 		});
 		
 		
@@ -95,11 +108,7 @@
 			
 			console.log(res);
 			
-			$.post(target_url, res,
-				function(data){
-					console.log(data);
-				}
-			);
+			
 		}		
 		</script>
 {% endblock %}
