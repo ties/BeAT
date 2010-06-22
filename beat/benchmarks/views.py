@@ -95,11 +95,11 @@ def tool_upload(request):
 	#switch to and pull the repository
 	#this can later be extended to use a user-provided repository
 	repository = g.GitInterface(os.path.join(GIT_PATH, 'ltsmin'))
-	repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 
-	
+	at = None
 	error = False
 	if request.method == 'POST':
+		repository.pull_from_git("http://fmt.cs.utwente.nl/tools/scm/ltsmin.git")
 		form = ToolUploadForm(request.POST)
 		if form.is_valid():
 			version_name = form.cleaned_data['version_name']
@@ -146,11 +146,11 @@ def tool_upload(request):
 				form = ToolUploadForm(initial={'tool_name' : tool_name, 'algorithm_name' : algorithm_name, 'version_name' : version_name, 'expression' : expression, 'options' : options})
 				error="Could not find the provided version in the git."
 	else:
-		form = ToolUploadForm()
+		return render_to_response('upload_tool.html', {'form': ToolUploadForm()}, context_instance=RequestContext(request))
 	if error:
 		return render_to_response('upload_tool.html', {'form': form, 'error' : error}, context_instance=RequestContext(request))
 	else:
-		return render_to_response('upload_tool_complete.html', context_instance=RequestContext(request))
+		return render_to_response('upload_tool_complete.html', {'id':at.id}, context_instance=RequestContext(request))
 
 def test_regex(request):
 	dump = json.dumps({'result': regex_tester.test_regex(request.POST.get('regex'), request.POST.get('testlog'))})
