@@ -721,10 +721,13 @@ class FileReader:
 		fh = os.path.join(LOGS_PATH, filename + ".header")
 
 		if self.use_dulwich:
-			from beat.tools.logsave import create_log, __init_code__
-			repo = __init_code__()
-			create_log(repo, lines, f)
-			create_log(repo, header, fh)
+			from beat.tools.logsave import create_log, __init_code__, GitFileError
+			try:
+				repo = __init_code__()
+				create_log(repo, lines, f)
+				create_log(repo, header, fh)
+			except GitFileError as gfe:
+				self.print_message(V_QUIET, "Failed to write log to git repository: %s", gfe.error)
 		else:
 			with open(f, 'wb') as file:
 				for x in lines:

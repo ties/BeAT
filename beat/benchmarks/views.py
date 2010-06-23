@@ -69,17 +69,22 @@ def log_response(request, id):
 	hw = b.hardware.all()
 	ev = ExtraValue.objects.filter(benchmark=b)
 	loglist = []
-	if not path: # check to see if path is not a path
-		try: # try to get the data form beat if it is not a system path
+	if not os.path.exists(path):
+		#read log from git repository containing logs
+		try:
 			from beat.tools.logsave import __init_code__, get_log
 			repo = losgsave.__init_code__()
 			log = get_log(repo, path)
-		except: #else return file not found
+		except:
 			log = 'Error: log file not found'
-	else: # rad out the file and put it in the form
-		with open(path, 'rb') as file:
-			for line in file:
-				loglist.append(line)
+	else:
+		try:
+			#read log from file
+			with open(path, 'rb') as file:
+				for line in file:
+					loglist.append(line)
+		except IOError:
+			log = 'IOError: log file not found'
 	return render_to_response('log_response.html', {'ev':ev,'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
 
 """
