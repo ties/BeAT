@@ -57,23 +57,28 @@ var columns =	[
 var hardwarecolumns =	[
 							{
 								name: 		"Processor",
-								checked: 	false
+								checked: 	false,
+								db_name:	"cpu"
 							},
 							{
 								name: 		"Physical Memory",
-								checked: 	false
+								checked: 	false,
+								db_name:	"memory"
 							},
 							{
 								name: 		"Computername",
-								checked: 	false
+								checked: 	false,
+								db_name:	"computername"
 							},
 							{
 								name: 		"Kernel Version",
-								checked: 	false
+								checked: 	false,
+								db_name:	"kernelversion"
 							},
 							{
 								name:		"Disk Space",
-								checked:	false
+								checked:	false,
+								db_name:	"disk_space"
 							}
 						];
 
@@ -242,6 +247,9 @@ function showResults(){
 			for (var j=0; j<data.extracolumns.length;j++){
 				table+='<td>'+benchmark[data.extracolumns[j]]+'</td>';
 			}
+			for (var j=0; j<hardwarecolumns.length;j++){
+				if (hardwarecolumns[j].checked)		table+='<td>'+benchmark[hardwarecolumns[j].db_name]+'</td>';
+			}
 			table+='</tr>';
 			
 		}
@@ -300,7 +308,15 @@ function getTableHeaders(){
 		}
 		res+='<th id="'+data.extracolumns[i]+'"><span class="'+c+'">'+data.extracolumns[i]+'</span></th>';
 	}
-	
+	for (var i=0;i<hardwarecolumns.length;i++){
+		if (hardwarecolumns[i].checked){
+			var c = '';
+			if (hardwarecolumns[i].db_name == data.sort){
+				c = (data.sortorder == ASCENDING ? 'ascending' : 'descending');
+			}
+			res+='<th id="'+hardwarecolumns[i].db_name+'"><span class="'+c+'">'+hardwarecolumns[i].name+'</span></th>';
+		}
+	}
 	res+='</tr>';
 	return res;
 }
@@ -407,7 +423,7 @@ function getColumns(){
 function getHardwareColumns(){
 	var res = [];
 	for (var i=0;i<hardwarecolumns.length;i++){
-		if (hardwarecolumns[i].checked)		res.push(hardwarecolumns[i].name);
+		if (hardwarecolumns[i].checked)		res.push(hardwarecolumns[i].db_name);
 	}
 	return res;
 }
@@ -577,7 +593,7 @@ function configureHardwareColumnSelection(){
 	$("#hardwarecolumns input").click(function(){
 		var val = $(this).attr('value');
 		for (var i = 0; i<hardwarecolumns.length;i++){
-			if (hardwarecolumns[i].name == val)	hardwarecolumns[i].checked = this.checked;
+			if (hardwarecolumns[i].db_name == val)	hardwarecolumns[i].checked = this.checked;
 		}
 		data.hardwarecolumns = getHardwareColumns();
 	});
@@ -635,7 +651,7 @@ function showHardwareColumnOptions(){
 	
 	var html = '';
 	for (var i=0;i<hardwarecolumns.length;i++){
-		html+= '<input type="checkbox" value="'+hardwarecolumns[i].name+'"'+(hardwarecolumns[i].checked ? ' checked' : '')+'>'+hardwarecolumns[i].name+'<br />';
+		html+= '<input type="checkbox" value="'+hardwarecolumns[i].db_name+'"'+(hardwarecolumns[i].checked ? ' checked' : '')+'>'+hardwarecolumns[i].name+'<br />';
 	}
 	$("#hardwarecolumns").html(html);
 	

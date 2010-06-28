@@ -8,6 +8,12 @@ import json
 SORT_ASCENDING = 'ASC'
 SORT_DESCENDING = 'DESC'
 
+PROCESSOR = 'cpu'
+PHYSICALMEMORY = 'memory'
+COMPUTERNAME = 'computername'
+KERNELVERSION = 'kernelversion'
+DISKSPACE = 'disk_space'
+
 DEFAULTSORT = 'id'
 DEFAULTSORTORDER = SORT_ASCENDING
 SORTS = {}
@@ -15,14 +21,16 @@ DEFAULTCOLUMNS = []
 DEFAULTFILTERS = {}
 DEFAULTPAGE = 0
 DEFAULTPAGESIZE = 200
+DEFAULTHARDWARECOLUMNS = []
 
 DEFAULTDATA = 	{
-					'filters':		DEFAULTFILTERS,
-					'sort':			DEFAULTSORT,
-					'sortorder':	DEFAULTSORTORDER,
-					'columns':		DEFAULTCOLUMNS,
-					'page':			DEFAULTPAGE,
-					'pagesize':		DEFAULTPAGESIZE
+					'filters':			DEFAULTFILTERS,
+					'sort':				DEFAULTSORT,
+					'sortorder':		DEFAULTSORTORDER,
+					'columns':			DEFAULTCOLUMNS,
+					'page':				DEFAULTPAGE,
+					'pagesize':			DEFAULTPAGESIZE,
+					'hardwarecolumns': 	DEFAULTHARDWARECOLUMNS
 				}
 
 def getBenchmarks(request):
@@ -88,7 +96,16 @@ def getResponse(qs,data):
 	
 	qs = qs.extra(select = selectdict)
 	
+	hwdict = {}
+	for hwval in data['hardwarecolumns']:
+		columns.append(hwval)
+		hwdict[hwval] = 'SELECT ' + hwval + ' FROM benchmarks_benchmarkhardware, benchmarks_hardware WHERE benchmarks_benchmarkhardware.hardware_id = benchmarks_hardware.id AND benchmarks_benchmarkhardware.benchmark_id = benchmarks_benchmark.id'
+	
+	qs = qs.extra(select = hwdict)
+	
 	qs = apply(qs.values, columns)
+	
+	
 	benchmark_ids = list(qs.values_list('id',flat=True))
 	qs = sortQuerySet(qs,data['sort'],data['sortorder'])
 	
@@ -133,17 +150,13 @@ def getCPUs(qs):
 	return list
 
 def getComputerNames(qs):
-	hw = Hardware.objects.values("id","name")
+	hw = Hardware.objects.values("id","computername")
 	list = []
 	for item in hw:
-		list.append({'id':item['id'],'name':item['name']})
+		list.append({'id':item['id'],'name':item['computername']})
 	return list
 
 def sortQuerySet(qs,sort,sortorder):
-	#translate if needed
-	#if sort in SORTS.keys():
-		#sort = SORTS[sort]
-		
 	if sortorder == SORT_DESCENDING:
 		sort = '-' + sort
 	qs = qs.order_by(sort)

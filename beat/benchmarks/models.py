@@ -50,7 +50,7 @@ class Benchmark(models.Model):
 #self.print_message(V_VERBOSE, "Note: Tried to data to database, but essential data already exists, id: %s from file %s, with data %s"%(bench.pk, f, bench.get_print_data()))		
 
 class Hardware(models.Model):
-	name = models.CharField(max_length=200) 
+	computername = models.CharField(max_length=200) 
 	memory = models.BigIntegerField(verbose_name="memory (KB)")
 	cpu = models.CharField(max_length=200, verbose_name="CPU name")
 	disk_space = models.BigIntegerField(verbose_name="disk space (KB)")
