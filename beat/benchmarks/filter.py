@@ -3,7 +3,8 @@ from datetime import datetime
 MODEL 			= 'model'
 ALGORITHM 		= 'algorithm'
 TOOL 			= 'tool'
-MEMORY 			= 'memory'
+MEMORY_RSS		= 'memory_RSS'
+MEMORY_VSIZE	= 'memory_VSIZE'
 RUNTIME 		= 'runtime'
 STATES 			= 'states'
 TRANSITIONS 	= 'transitions'
@@ -26,7 +27,7 @@ FALSE 			= 'false'
 
 LISTFILTERS = [MODEL,ALGORITHM,TOOL,COMPUTERNAME]
 
-VALUEFILTERS = [MEMORY,RUNTIME,STATES,TRANSITIONS,RAM]
+VALUEFILTERS = [MEMORY_RSS,MEMORY_VSIZE,RUNTIME,STATES,TRANSITIONS,RAM]
 
 class Filter(object):
 	def __init__(self, type, row):
@@ -68,8 +69,10 @@ class ValueFilter(Filter):
 			f="states_count"
 		elif self.type==TRANSITIONS:
 			f="transition_count"
-		elif self.type==MEMORY:
+		elif self.type==MEMORY_RSS:
 			f="memory_RSS"
+		elif self.type==MEMORY_VSIZE:
+			f="memory_VSIZE"
 		elif self.type==RUNTIME:
 			f="total_time"
 		elif self.type==RAM:

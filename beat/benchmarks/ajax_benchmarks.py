@@ -85,6 +85,7 @@ def getResponse(qs,data):
 	for extraval in data['extracolumns']:
 		columns.append(extraval)
 		selectdict[extraval] = "SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE '"+extraval+"'"
+	
 	qs = qs.extra(select = selectdict)
 	
 	qs = apply(qs.values, columns)

@@ -2,24 +2,25 @@
  * jQuery plugin for the filtertable
  **/
 (function($) {
-	var EMPTY = 'empty';
-	var MODEL = 'model';
-	var ALGORITHM = 'algorithm';
-	var TOOL = 'tool';
-	var MEMORY = 'memory';
-	var RUNTIME ='runtime';
-	var STATES ='states';
-	var TRANSITIONS ='transitions';
-	var DATE ='date';
-	var OPTIONS = 'options';
-	var FINISHED = 'finished';
-	var CPU = 'cpu';
-	var RAM = 'ram';
-	var COMPUTERNAME = 'computername';
+	var EMPTY 			= 'empty';
+	var MODEL 			= 'model';
+	var ALGORITHM 		= 'algorithm';
+	var TOOL 			= 'tool';
+	var MEMORY_RSS 		= 'memory_RSS';
+	var MEMORY_VSIZE 	= 'memory_VSIZE';
+	var RUNTIME 		= 'runtime';
+	var STATES 			= 'states';
+	var TRANSITIONS 	= 'transitions';
+	var DATE 			= 'date';
+	var OPTIONS 		= 'options';
+	var FINISHED 		= 'finished';
+	var CPU 			= 'cpu';
+	var RAM 			= 'ram';
+	var COMPUTERNAME 	= 'computername';
 	
-	var ALLFILTERS = [EMPTY,MODEL,ALGORITHM,TOOL,MEMORY,RUNTIME,STATES,TRANSITIONS,DATE,OPTIONS,FINISHED,CPU,RAM,COMPUTERNAME];
+	var ALLFILTERS = [EMPTY,MODEL,ALGORITHM,TOOL,MEMORY_RSS,MEMORY_VSIZE,RUNTIME,STATES,TRANSITIONS,DATE,OPTIONS,FINISHED,CPU,RAM,COMPUTERNAME];
 	var LISTFILTERS = [MODEL,ALGORITHM,TOOL,COMPUTERNAME];
-	var VALUEFILTERS = [MEMORY,RUNTIME,STATES,TRANSITIONS,RAM];
+	var VALUEFILTERS = [MEMORY_RSS,MEMORY_VSIZE,RUNTIME,STATES,TRANSITIONS,RAM];
 	var UNIQUEFILTERS = [MODEL,ALGORITHM,TOOL,OPTIONS,CPU,COMPUTERNAME];
 
 	var FILTERTEMPLATE = '{"type" : "", "row" : -1, "style":"", "value" : "", "error" : true}';
@@ -224,7 +225,8 @@
 					
 				break;
 				
-				case MEMORY:
+				case MEMORY_RSS:
+				case MEMORY_VSIZE:
 				case RUNTIME:
 				case STATES:
 				case TRANSITIONS:
@@ -348,7 +350,6 @@
 								}
 								filterobj.error = (filterobj.value[0].length==0);
 								setErrorCSS(filterobj);
-								//sendTrigger();
 							});
 						
 						$(checkbox).attr('checked',(index!=-1));
@@ -361,7 +362,6 @@
 							value = $('<input type="text" id="optionValue'+option.id+'" class="optionValue">')
 										.keyup(function(){
 											filterobj.value[1][indexOf(filterobj.value[0],option.id)] = $(this).val();
-											//sendTrigger();
 										});
 							if (index!=-1)	$(value).val(filterobj.value[1][index]);
 						}else{
@@ -594,25 +594,3 @@
 	};
 
 })(jQuery);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

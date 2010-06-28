@@ -54,6 +54,29 @@ var columns =	[
 					}
 				];
 
+var hardwarecolumns =	[
+							{
+								name: 		"Processor",
+								checked: 	false
+							},
+							{
+								name: 		"Physical Memory",
+								checked: 	false
+							},
+							{
+								name: 		"Computername",
+								checked: 	false
+							},
+							{
+								name: 		"Kernel Version",
+								checked: 	false
+							},
+							{
+								name:		"Disk Space",
+								checked:	false
+							}
+						];
+
 /** Global variable where id's of checked benchmarks are stored **/
 var checked_benchmarks = [];
 
@@ -68,14 +91,15 @@ var benchmarks = [];
 var benchmark_ids = [];
 
 var data =	{
-				sort:			"id",
-				sortorder:		ASCENDING,
-				columns:		getColumns(),
-				extracolumns:	[],
-				page:			0,
-				pagesize:		200,
-				filters:		[],
-				subset:			[]
+				sort:				"id",
+				sortorder:			ASCENDING,
+				columns:			getColumns(),
+				extracolumns:		[],
+				page:				0,
+				pagesize:			200,
+				filters:			[],
+				subset:				[],
+				hardwarecolumns:	getHardwareColumns()
 			};
 
 var table;
@@ -368,9 +392,22 @@ function updateCheckboxes(){
  *			result is in JSON-format, containing an object with an array "columns", containing all selected column-names
  */
 function getColumns(){
-	var res = new Array('id','model__name');
+	var res = ['id','model__name'];
 	for (var i=0;i<columns.length;i++){
 		if (columns[i].checked)		res.push(columns[i].db_name);
+	}
+	return res;
+}
+
+/**
+ * Function that returns the selected columns
+ * @ensure 	result!='undefined'
+ *			result is in JSON-format, containing an object with an array "columns", containing all selected column-names
+ */
+function getHardwareColumns(){
+	var res = [];
+	for (var i=0;i<hardwarecolumns.length;i++){
+		if (hardwarecolumns[i].checked)		res.push(hardwarecolumns[i].name);
 	}
 	return res;
 }
@@ -417,6 +454,7 @@ function setSubset(){
  */
 $(document).ready(function(){
 	showColumnOptions();
+	showHardwareColumnOptions();
 	registerFunctionsAndEvents();
 	var temporarycontext = 	{
 								models: 	[],
@@ -459,6 +497,7 @@ function registerFunctionsAndEvents(){
 	
 	configureHover();
 	configureColumnSelection();
+	configureHardwareColumnSelection();
 	configurePagesize();
 	
 	$("#next").click(function(){
@@ -525,13 +564,22 @@ function configureExtraValues(){
 	$("#extravalues input").click(function(){
 		var val = $(this).attr('value');
 		for (var i=data.extracolumns.length-1; i>=0; i--){
-			console.log(data.extracolumns[i].toString());
 			if (data.extracolumns[i] == val){
 				data.extracolumns.splice(i,1);
 				return;
 			}
 		}
-		data['extracolumns'].push(val);
+		data.extracolumns.push(val);
+	});
+}
+
+function configureHardwareColumnSelection(){
+	$("#hardwarecolumns input").click(function(){
+		var val = $(this).attr('value');
+		for (var i = 0; i<hardwarecolumns.length;i++){
+			if (hardwarecolumns[i].name == val)	hardwarecolumns[i].checked = this.checked;
+		}
+		data.hardwarecolumns = getHardwareColumns();
 	});
 }
 
@@ -580,6 +628,16 @@ function showColumnOptions(){
 		html+= '<input type="checkbox" value="'+columns[i].db_name+'"'+(columns[i].checked ? ' checked' : '')+'>'+columns[i].name+'<br />';
 	}
 	$("#columns").html(html);
+	
+}
+
+function showHardwareColumnOptions(){
+	
+	var html = '';
+	for (var i=0;i<hardwarecolumns.length;i++){
+		html+= '<input type="checkbox" value="'+hardwarecolumns[i].name+'"'+(hardwarecolumns[i].checked ? ' checked' : '')+'>'+hardwarecolumns[i].name+'<br />';
+	}
+	$("#hardwarecolumns").html(html);
 	
 }
 
