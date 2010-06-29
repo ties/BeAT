@@ -14,7 +14,6 @@ FINISHED 		= 'finished'
 COMPUTERNAME 	= 'computername'
 CPU 			= 'cpu'
 RAM				= 'ram'
-COMPUTERNAME	= 'computername'
 
 EQUAL 			= 'equal'
 GREATERTHAN 	= 'greaterthan'
@@ -49,8 +48,6 @@ class ListFilter(Filter):
 			f = "algorithm_tool__tool__in"
 		elif self.type == COMPUTERNAME:
 			f = "hardware__in"
-		elif self.type == CPU:
-			f = "hardware__cpu__in"
 		
 		col = {}
 		col[f] = list(set(self.list))

@@ -14,25 +14,6 @@ COMPUTERNAME = 'computername'
 KERNELVERSION = 'kernelversion'
 DISKSPACE = 'disk_space'
 
-DEFAULTSORT = 'id'
-DEFAULTSORTORDER = SORT_ASCENDING
-SORTS = {}
-DEFAULTCOLUMNS = []
-DEFAULTFILTERS = {}
-DEFAULTPAGE = 0
-DEFAULTPAGESIZE = 200
-DEFAULTHARDWARECOLUMNS = []
-
-DEFAULTDATA = 	{
-					'filters':			DEFAULTFILTERS,
-					'sort':				DEFAULTSORT,
-					'sortorder':		DEFAULTSORTORDER,
-					'columns':			DEFAULTCOLUMNS,
-					'page':				DEFAULTPAGE,
-					'pagesize':			DEFAULTPAGESIZE,
-					'hardwarecolumns': 	DEFAULTHARDWARECOLUMNS
-				}
-
 def getBenchmarks(request):
 	data = json.loads(request.POST['data'])
 	data['filters'] = convertfilters(data['filters'])

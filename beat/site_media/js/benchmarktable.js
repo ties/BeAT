@@ -43,6 +43,11 @@ var columns =	[
 						checked: 	false
 					},
 					{
+						name:		"Version",
+						db_name:	"algorithm_tool__version",
+						checked:	false
+					},
+					{
 						name: 		"Date",
 						db_name: 	"date_time",
 						checked: 	false
