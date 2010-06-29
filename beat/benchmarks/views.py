@@ -122,10 +122,14 @@ def tool_upload(request):
 				rx, created = Regex.objects.get_or_create(regex=expression)
 				at, created = AlgorithmTool.objects.get_or_create(algorithm=a, tool=t, regex=rx, date=dummydate, version=version_name[:6])
 				y = options.split('\n') #split the options field into lines
+				print y
 				for z in y:
+					if z.endswith('\r'):
+						z=z[:-1]
 					#figure out what the shortcut is, if any, and whether this option takes an argument
 					shortcut = ""
-					if z[-2] is ':':
+					if z[-2] == ':':
+						print "shortcut"
 						takes_arg=(z[-3]=='=')
 						shortcut=z[-1]
 					else:
