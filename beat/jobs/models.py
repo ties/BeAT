@@ -13,8 +13,9 @@ class JobsFilter(models.Model):
 	algorithm = models.ForeignKey('benchmarks.Algorithm')
 	options = models.CharField(max_length=255)
 	model = models.ForeignKey('benchmarks.Model')
-	prefix = models.CharField(max_length=255)
-	postfix = models.CharField(max_length=255)
+	gitversion = models.CharField(max_length=255)
+	#prefix = models.CharField(max_length=255)
+	#postfix = models.CharField(max_length=255)
 	
 	
 	def __unicode__(self):

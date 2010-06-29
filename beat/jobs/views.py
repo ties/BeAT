@@ -14,8 +14,9 @@ def jobgen_load(request,id):
 				'algorithm':jfilter.algorithm.pk,
 				'options':jfilter.options,
 				'model':jfilter.model.pk,
-				'prefix':jfilter.prefix,
-				'postfix':jfilter.postfix
+				'gitversion':jfilter.gitversion
+				#'prefix':jfilter.prefix,
+				#'postfix':jfilter.postfix
 			}
 	jobform = JobGenForm(data)
 	suiteform = SuiteGenForm()
@@ -45,8 +46,9 @@ def jobgen_create(request):
 			algorithm = form.cleaned_data['algorithm']
 			options = form.cleaned_data['options']
 			model = form.cleaned_data['model']
-			prefix = form.cleaned_data['prefix']
-			postfix = form.cleaned_data['postfix']
+			gitversion = form.cleaned_data['gitversion']
+			#prefix = form.cleaned_data['prefix']
+			#postfix = form.cleaned_data['postfix']
 			
 			if name:
 				c, created = JobsFilter.objects.get_or_create(
@@ -57,15 +59,18 @@ def jobgen_create(request):
 					algorithm = algorithm,
 					options = options,
 					model = model,
-					prefix = prefix,
-					postfix = postfix
+					gitversion = gitversion
+					#prefix = prefix,
+					#postfix = postfix
 				)
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
-			job = j.jobgen(nodes, "%s%s"%(tool.name,algorithm.name),options,model,prefix=prefix,postfix=postfix,filename="%s.pbs"%(name));
-			
+			if name:
+				job = j.jobgen(nodes, "%s%s"%(tool.name,algorithm.name),options,model,filename="%s"%(name),version=gitversion)
+			else:
+				job = j.jobgen(nodes, "%s%s"%(tool.name,algorithm.name),options,model,filename=None,version=gitversion)
 			import tempfile
-			filename = job.name
+			filename = name if name else job.name
 			if name:
 				filename = 'beat_%s.pbs'%name
 			else:
@@ -94,11 +99,13 @@ def suitegen_create(request):
 		if (form.is_valid()):
 			# Process the data in form.cleaned_data
 			models = form.cleaned_data['models']
+			versions = form.cleaned_data['versions']
 			import beat.jobs.jobs
 			import beat.jobs.jobs_fileserv
 			j = beat.jobs.jobs.JobGenerator()
-			for model in models:
-				j.suitegen(model.name)
+			for version in versions:
+				for model in models:
+					j.suitegen(model.name, version)
 			filename, file = beat.jobs.jobs_fileserv.to_tar(j.jobs)
 			response = HttpResponse(mimetype='application/x-gzip')
 			response['Content-Disposition'] = 'attachment; filename=%s' % filename

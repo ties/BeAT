@@ -16,17 +16,16 @@ class JobGenerator:
 	__directory = "."
 	jobs = []
 	
-	def pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=""):
-		if not filename:
-			filename = toolname
-		#t = Template( open(templatepath).read() )
-		t = loader.get_template('jTemplate.tpl')
-		c = Context({"nodes": nodes, "toolname": toolname, "tooloptions": tooloptions, "modelname":modelname, "prefix":prefix, "postfix":postfix, "filename":filename})
+	def pbsgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename="", version=""):
+		t = loader.get_template('main.tpl')
+		c = Context({"nodes": nodes, "toolname": toolname, "tooloptions": tooloptions, "modelname":modelname, "prefix":prefix, "postfix":postfix, "filename":filename, "version":version})
 		result = t.render(c);
 		return result
 	
-	def jobgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=None):
-		j= Job( filename+".pbs", self.pbsgen(nodes, toolname, tooloptions, modelname, prefix=prefix, postfix=postfix, filename=filename) )
+	def jobgen(self, nodes, toolname, tooloptions, modelname, prefix="", postfix="", filename=None, version=""):
+		if not filename:
+			filename = toolname
+		j= Job( filename, self.pbsgen(nodes, toolname, tooloptions, modelname, prefix=prefix, postfix=postfix, filename=filename, version=version) )
 		self.jobs.append(j)
 		return j
 	
@@ -35,7 +34,7 @@ class JobGenerator:
 	def __extension_to_type(self, extension):
 		return self.__ext2type.get(extension)
 	
-	def suitegen(self, modelname):
+	def suitegen(self, modelname,version):
 		
 		base = modelname[:modelname.rfind('.')]
 		lang = self.__extension_to_type(modelname[modelname.rfind('.'):])
@@ -46,26 +45,25 @@ class JobGenerator:
 		stdNodes = "1:E5220,walltime=4:00:00"
 		filenameBase = base + "-" + lang
 		
-		self.jobgen( stdNodes, greytool, "", modelname, filename=filenameBase+"-idx" )
-		self.jobgen( stdNodes, greytool, "--cache", modelname, filename=filenameBase+"-idx-cache" )
+		self.jobgen( stdNodes, greytool, "", modelname, filename=filenameBase+"-idx", version=version )
+		self.jobgen( stdNodes, greytool, "--cache", modelname, filename=filenameBase+"-idx-cache", version=version )
 		for vset in ["list", "tree", "fdd"]:
-			self.jobgen( stdNodes, greytool, "--state vset --vset "+vset, modelname, filename=filenameBase+"-"+vset )
-			self.jobgen( stdNodes, greytool, "--state vset --vset "+vset+" --cache", modelname, filename=filenameBase+"-"+vset+"-cache" )
+			self.jobgen( stdNodes, greytool, "--state vset --vset "+vset, modelname, filename=filenameBase+"-"+vset, version=version )
+			self.jobgen( stdNodes, greytool, "--state vset --vset "+vset+" --cache", modelname, filename=filenameBase+"-"+vset+"-cache", version=version )
 		for order in ["bfs", "bfs2", "chain"]:
 			for vset in ["list", "fdd"]:
-				self.jobgen( stdNodes, reachtool, "--order "+order+" --vset "+vset, modelname, filename=filenameBase+"-"+order+"-"+vset )
+				self.jobgen( stdNodes, reachtool, "--order "+order+" --vset "+vset, modelname, filename=filenameBase+"-"+order+"-"+vset, version=version )
 		
 		for W in [1, 2, 4]:
 			mpiNodes = str(W)+":ppn=6:E5220,walltime=4:00:00"
-			self.jobgen( mpiNodes, mpitool, "", modelname, filename=filenameBase+"-mpi-"+str(W)+"-6", prefix="mpirun -mca btl tcp,self" )
-			self.jobgen( mpiNodes, mpitool, "--cache", modelname, filename=filenameBase+"-mpi-cache-"+str(W)+"-6", prefix="mpirun -mca btl tcp,self" )
+			self.jobgen( mpiNodes, mpitool, "", modelname, filename=filenameBase+"-mpi-"+str(W)+"-6", prefix="mpirun -mca btl tcp,self", version=version )
+			self.jobgen( mpiNodes, mpitool, "--cache", modelname, filename=filenameBase+"-mpi-cache-"+str(W)+"-6", prefix="mpirun -mca btl tcp,self", version=version )
 		
 	def generate_all(self):
 		contents = os.listdir('.')
 		for f in contents:
 			if os.path.isfile(f) and os.path.splitext(f)[1] in self.__ext2type:
 				self.suitegen(os.path.basename(f))
-		
 
 if __name__ == '__main__':
 	j = JobGenerator()

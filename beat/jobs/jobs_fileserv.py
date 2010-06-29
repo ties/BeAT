@@ -1,6 +1,7 @@
 import tarfile
 import tempfile
-
+import datetime
+import time
 
 def to_tar(jobs):
 	"""
@@ -16,6 +17,12 @@ def to_tar(jobs):
 		file.seek(0)
 		tarinf = tarfile.TarInfo(name=job.name)
 		tarinf.size = len(job.script)
+		tarinf.mtime = time.mktime(datetime.datetime.now().timetuple())
+		tarinf.type = tarfile.REGTYPE
+		tarinf.uname = 'beat'
+		tarinf.gname = 'beat'
+		tarinf.uid = 666
+		tarinf.gid = 666
 		tfile.addfile(tarinf,file)
 	tfile.close()
 	tar_tempfile.flush()
