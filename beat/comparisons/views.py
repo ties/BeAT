@@ -56,8 +56,8 @@ def scatterplot(request, id, format='png'):
 
 	if len(b1) != 0:
 		# Make new arrays with only the elapsed time
-		t1 = [(float(b.elapsed_time)) for b in b1]
-		t2 = [(float(b.elapsed_time)) for b in b2]
+		t1 = [(float(b.total_time)) for b in b1]
+		t2 = [(float(b.total_time)) for b in b2]
 		
 		# Color mask: if t[i] < t[2] --> blue dot in graph; else red dot
 		mask = []
