@@ -54,15 +54,16 @@ def jobgen_create(request):
 				c, created = JobsFilter.objects.get_or_create(
 					user = user,
 					name = name,
+					
 					nodes = nodes,
 					tool = tool,
 					algorithm = algorithm,
 					options = options,
 					model = model,
 					gitversion = gitversion
-					#prefix = prefix,
-					#postfix = postfix
-				)
+				)	
+				#prefix = prefix,
+				#postfix = postfix
 			import beat.jobs.jobs
 			j = beat.jobs.jobs.JobGenerator()
 			if name:
@@ -80,12 +81,13 @@ def jobgen_create(request):
 			file.flush()
 			file.seek(0)
 			response = HttpResponse(mimetype='application/pbs')
-			response['Content-Disposition'] = 'attachment; filename=%s' % filename
+			response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 			response.write(file.read())
 			response.flush()
 			return response
 			#return render_to_response('jobs/jobgen_create.html', { 'job':[job] }, context_instance=RequestContext(request))
 		else:
+			print 'jobs.views.jobgen_create form invalid'
 			return redirect('/jobgen/')
 	else:
 		return redirect('/jobgen/')
@@ -108,7 +110,7 @@ def suitegen_create(request):
 					j.suitegen(model.name, version)
 			filename, file = beat.jobs.jobs_fileserv.to_tar(j.jobs)
 			response = HttpResponse(mimetype='application/x-gzip')
-			response['Content-Disposition'] = 'attachment; filename=%s' % filename
+			response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 			file.seek(0)	# Just making sure...
 			response.write(file.read())
 			response.flush()

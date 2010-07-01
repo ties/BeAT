@@ -15,7 +15,7 @@ def to_tar(jobs):
 		file.write(job.script)
 		file.flush()
 		file.seek(0)
-		tarinf = tarfile.TarInfo(name=job.name)
+		tarinf = tarfile.TarInfo(name="%s.pbs" % job.name)
 		tarinf.size = len(job.script)
 		tarinf.mtime = time.mktime(datetime.datetime.now().timetuple())
 		tarinf.type = tarfile.REGTYPE
