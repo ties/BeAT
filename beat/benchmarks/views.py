@@ -128,7 +128,6 @@ def tool_upload(request):
 					#figure out what the shortcut is, if any, and whether this option takes an argument
 					shortcut = ""
 					if z[-2] == ':':
-						print "shortcut"
 						takes_arg=(z[-3]=='=')
 						shortcut=z[-1]
 					else:
