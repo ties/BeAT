@@ -100,6 +100,7 @@ def create_log(repo, contents, filename, overwrite=False):
 
 	commit = Commit()
 	commit.tree=tree.id
+	commit.parents=[repo.head()]
 	commit.author = commit.committer = "Logwriter a@a.a"
 	commit.commit_time = commit.author_time = int(time())
 	commit.commit_timezone = commit.author_timezone = parse_timezone('+0100')
