@@ -68,24 +68,26 @@ def log_response(request, id):
 	ov = b.optionvalue.all()
 	hw = b.hardware.all()
 	ev = ExtraValue.objects.filter(benchmark=b)
-	loglist = []
+	log = ""
+	
 	if not os.path.exists(path):
 		#read log from git repository containing logs
 		try:
 			from beat.tools.logsave import __init_code__, get_log
-			repo = losgsave.__init_code__()
+			repo = __init_code__()
 			log = get_log(repo, path)
-		except:
-			log = 'Error: log file not found'
+		except Exception as e:
+			log = "Error: log file not found %s"%e
 	else:
 		try:
 			#read log from file
 			with open(path, 'rb') as file:
 				for line in file:
-					loglist.append(line)
+					log+=line
 		except IOError:
-			log = 'IOError: log file not found'
-	return render_to_response('log_response.html', {'ev':ev,'log':loglist,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
+			log = "IOError while reading from log. Please retry or report a bug."
+	return render_to_response('log_response.html', {'ev':ev,'log':log,'b': b, 'ov':ov, 'hardware':hw,}, context_instance=RequestContext(request))
+
 
 """
 This method allows for the uploading of tool to the database. 

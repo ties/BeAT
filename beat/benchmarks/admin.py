@@ -17,7 +17,7 @@ class AlgorithmToolInline(admin.TabularInline):
 class BenchmarkAdmin(admin.ModelAdmin):
 	list_display = ('model', 'algorithm_tool', 'date_time', 'finished', 'user_time', 'system_time', 'total_time', 'elapsed_time', 'memory_VSIZE', 'memory_RSS', 'states_count', 'transition_count')
 	list_filter = ['date_time']
-	search_fields = ['model__name', 'algorithm_tool__tool__name', 'algorithm_name__algorithm__name']
+	search_fields = ['model__name', 'algorithm_tool__tool__name', 'algorithm_tool__algorithm__name']
 	fieldsets = [
 		('Configuration', {'fields': ['model','algorithm_tool','finished']}),
 		('Date information', {'fields': ['date_time']}),

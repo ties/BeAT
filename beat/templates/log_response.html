@@ -42,11 +42,11 @@
 	</table>
 	<h2>Log File</h2>
 	<p>
-	{% for i in log %}
-	{{i|linebreaksbr}}
-	{% empty %}
-	Log not found
-	{% endfor %}
+	{% if log %}
+	{{log|linebreaksbr}}
+	{% else %}
+	Empty log. Possibly an error was encountered during import, or the log file has been removed manually.
+	{% endif %}
 	</p>
 	<!-- END OF CONTENT -->
 {% endblock %}

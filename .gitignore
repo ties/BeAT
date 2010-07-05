@@ -21,3 +21,4 @@ cwd
 cwd/*
 cache/
 fixtures/
+*.log
