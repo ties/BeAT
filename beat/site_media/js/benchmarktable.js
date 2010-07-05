@@ -395,7 +395,7 @@ function configurePagesize(){
 		if (/(^-?\d\d*$)/.test($("#pagesize").val())){
 			data.pagesize = parseInt($("#pagesize").val());
 			data.page = 0;
-			update();
+			update(true);
 		}
 		return false;
 	});
@@ -463,7 +463,7 @@ function nextPage(){
 	var check = benchmark_ids.length > ((data.page+1) * data.pagesize);
 	if (check){
 		data.page++;
-		update();
+		update(true);
 	}
 }
 
@@ -474,18 +474,18 @@ function nextPage(){
 function previousPage(){
 	if (data.page>0){
 		data.page--;
-		update();
+		update(true);
 	}
 }
 
 function lastPage(){
 	data.page = Math.ceil(benchmark_ids.length / data.pagesize) - 1
-	update();
+	update(true);
 }
 
 function firstPage(){
 	data.page = 0;
-	update();
+	update(true);
 }
 
 function showMultisort(){
