@@ -82,14 +82,14 @@ def makeResponse(qs=Benchmark.objects.all(),filters=[],sort=[],columns=[MODEL],p
 	
 	result['benchmark_ids'] = list(qs.values_list('id',flat=True)) 				#Get all possible identifiers in the QuerySet
 	
+	result['columns'] = getColumns(qs) 											#Get all possible columns
+	
 	#Select columns
 	qs = addColumns(qs,columns)
-	
 	#Sort the queryset
 	qs = sortQuerySet(qs,sort)
 	
 	result['benchmarks'] = list(qs[ page * pagesize : (page+1) * pagesize ]) 	#Get paged benchmarks
-	result['columns'] = getColumns(qs) 											#Get all possible columns
 	return result
 
 def getModels(qs):
@@ -206,7 +206,7 @@ def addColumns(qs,columns):
 		elif c not in STANDARDCOLUMNSARRAY:
 			qs = qs.extra(select={c:"SELECT value FROM benchmarks_extravalue WHERE benchmark_id=benchmarks_benchmark.id AND name LIKE '" + c + "'"})
 	
-	return apply(qs.values, columns)
+	return apply(qs.values, columns + ['id'])
 
 def sa(qs):
 	res = []
