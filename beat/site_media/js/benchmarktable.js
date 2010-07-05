@@ -134,9 +134,15 @@ function updateColumns(){
 	for (var i = 0; i < columns.length; i++){
 		var col = $('<input type="checkbox" value="'+columns[i].dbname+'" />')
 					.change(function(){
-						if ($(this).attr('checked'))
+						if ($(this).attr('checked')){
 							data.columns.push($(this).val());
-						else
+							var newcols = [];
+							for (var j = 0; j < columns.length; j++){
+								if (data.columns.indexOf(columns[j].dbname)!=-1)
+									newcols.push(columns[j].dbname);
+							}
+							data.columns = newcols;
+						}else
 							data.columns.splice(data.columns.indexOf($(this).val()), 1);
 					})
 					.attr('checked',(data.columns.indexOf(columns[i].dbname)!=-1));
@@ -522,7 +528,6 @@ function showMultisort(){
 					//update data.sort
 					var val = $(this).val();
 					data.sort[i][1] = val;
-					
 					//update table
 					update();
 				});
