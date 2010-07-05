@@ -1,4 +1,5 @@
 from datetime import datetime
+from beat.benchmarks.models import *
 
 MODEL 			= 'model__name'
 ALGORITHM 		= 'algorithm_tool__algorithm__name'
@@ -42,23 +43,19 @@ class ListFilter(Filter):
 	def apply(self,qs):
 		f = ""
 		if self.type == MODEL:
-			f = "model__name__in"
+			qs = qs.filter(model__name__in=self.list)
 		elif self.type == ALGORITHM:
-			f = "algorithm_tool__algorithm__name__in"
+			qs = qs.filter(algorithm_tool__algorithm__name__in=self.list)
 		elif self.type == TOOL:
-			f = "algorithm_tool__tool__name__in"
+			qs = qs.filter(algorithm_tool__tool__name__in=self.list)
 		elif self.type == COMPUTERNAME:
-			f = "hardware__computername__in"
+			qs = qs.filter(hardware__computername__in=self.list)
 		elif self.type == CPU:
-			f = "hardware__cpu__in"
+			qs = qs.filter(hardware__cpu__in=self.list)
 		elif self.type == KERNELVERSION:
-			f = "hardware__kernelversion__in"
+			qs = qs.filter(hardware__kernelversion__in=self.list)
 		elif self.type == VERSION:
-			f = "algorithm_tool__version__in"
-		
-		col = {}
-		col[f] = list(set(self.list))
-		qs = qs.filter(**col)
+			qs = qs.filter(algorithm_tool__version__in=self.list)
 		return qs
 
 class ValueFilter(Filter):
@@ -104,7 +101,12 @@ class OptionsFilter(Filter):
 	
 	def apply(self,qs):
 		for k,v in self.options.iteritems():
-			qs = qs.filter(optionvalue__option__id__exact=k,optionvalue__value__iexact=str(v))
+			try:
+				ov = OptionValue.objects.get(option=k,value=v)
+				qs = qs.filter(optionvalue__in = [ov.id])
+			except OptionValue.DoesNotExist:
+				return Benchmark.objects.filter(id__in=[0])
+			
 		return qs
 
 class DateFilter(Filter):
@@ -131,19 +133,10 @@ class DateFilter(Filter):
 class FinishedFilter(Filter):
 	def __init__(self,row,finished):
 		super(FinishedFilter,self).__init__(FINISHED,row)
-		self.finished = str(finished)
+		self.finished = (str(finished).lower()=="true")
 	
 	def apply(self,qs):
 		qs = qs.filter(finished__exact=self.finished)
-		return qs
-
-class CPUFilter(Filter):
-	def __init__(self,row,list):
-		super(CPUFilter,self).__init__(CPU,row)
-		self.list = list
-	
-	def apply(self,qs):
-		qs = qs.filter(hardware__cpu__in=self.list)
 		return qs
 
 def convertfilters(arr):
@@ -164,6 +157,4 @@ def convertfilters(arr):
 			result[row] = OptionsFilter(row,options)
 		elif type==FINISHED:
 			result[row] = FinishedFilter(row,filter['value'])
-		#elif type==CPU:
-			#result[row] = CPUFilter(row,filter['value'])
 	return result

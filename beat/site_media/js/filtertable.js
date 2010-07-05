@@ -22,6 +22,8 @@
 	var KERNELVERSION	= 'kernelversion';
 	var DISKSPACE		= 'disk_space';
 	
+	var LISTFILTERSIZE 	= 10;
+	
 	function filtername(type){
 		switch(type){
 			case EMPTY:
@@ -172,7 +174,7 @@
 				});
 				
 				$(tbl).append($(row));
-				if (LISTFILTERS.indexOf(obj.type)!=-1)	$("#filterValue"+obj.row).tokenInput(context[obj.type], 10, obj.value);
+				if (LISTFILTERS.indexOf(obj.type)!=-1)	$("#filterValue"+obj.row).tokenInput(context[obj.type], LISTFILTERSIZE, obj.value);
 				if (obj.error){
 					$("#filterrow"+obj.row+" td input").css("background",ERRORCOLOR);
 					$("#filterrow"+obj.row+" td .token-input-input-token").css("background",ERRORCOLOR);
@@ -431,7 +433,7 @@
 				$(row).append(col);
 			});
 			
-			if (LISTFILTERS.indexOf(filterobj.type)!=-1)	$("#filterValue"+filterobj.row).tokenInput(context[filterobj.type], 10, filterobj.value);
+			if (LISTFILTERS.indexOf(filterobj.type)!=-1)	$("#filterValue"+filterobj.row).tokenInput(context[filterobj.type], LISTFILTERSIZE, filterobj.value);
 			if (filterobj.error){
 				$("#filterrow"+filterobj.row+" td input").css("background",ERRORCOLOR);
 				$("#filterrow"+filterobj.row+" td .token-input-input-token").css("background",ERRORCOLOR);

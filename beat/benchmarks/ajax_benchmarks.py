@@ -93,25 +93,13 @@ def makeResponse(qs=Benchmark.objects.all(),filters=[],sort=[],columns=[MODEL],p
 	return result
 
 def getModels(qs):
-	return sa(qs.values_list('model__name',flat=True).order_by('model__name').distinct())
-	models = []
-	for model in qs.values_list('model__name',flat=True).order_by('model__name').distinct():
-		models.append(model)
-	return models
+	return sa(qs.values_list('model__name',flat=True).distinct())
 
 def getAlgorithms(qs):
-	return sa(qs.values_list('algorithm_tool__algorithm__name',flat=True).order_by('algorithm_tool__algorithm__name').distinct())
-	algorithms = []
-	for algorithm in qs.values('algorithm_tool__algorithm','algorithm_tool__algorithm__name').order_by('algorithm_tool__algorithm__name').distinct():
-		algorithms.append({'id':algorithm['algorithm_tool__algorithm'],'name':algorithm['algorithm_tool__algorithm__name']})
-	return algorithms
+	return sa(qs.values_list('algorithm_tool__algorithm__name',flat=True).distinct())
 
 def getTools(qs):
-	return sa(qs.values_list('algorithm_tool__tool__name',flat=True).order_by('algorithm_tool__tool__name').distinct())
-	tools = []
-	for tool in qs.values('algorithm_tool__tool','algorithm_tool__tool__name').order_by('algorithm_tool__tool__name').distinct():
-		tools.append({'id':tool['algorithm_tool__tool'],'name':tool['algorithm_tool__tool__name']})
-	return tools
+	return sa(qs.values_list('algorithm_tool__tool__name',flat=True).distinct())
 
 def getOptions(qs):
 	optionlist = OptionValue.objects.filter(benchmark__in = qs).values("option__id","option__name","option__takes_argument").distinct()
@@ -124,35 +112,15 @@ def getOptions(qs):
 
 def getCPUs(qs):
 	return sa(BenchmarkHardware.objects.filter(benchmark__in = qs).values_list('hardware__cpu',flat=True).distinct())
-	hw = Hardware.objects.values_list("cpu",flat=True).distinct()
-	list = []
-	for i in range(0,len(hw)):
-		list.append({'id':i,'name':hw[i]})
-	return list
 
 def getComputerNames(qs):
 	return sa(BenchmarkHardware.objects.filter(benchmark__in = qs).values_list('hardware__computername',flat=True).distinct())
-	hw = Hardware.objects.values("id","computername")
-	list = []
-	for item in hw:
-		list.append({'id':item['id'],'name':item['computername']})
-	return list
 
 def getVersions(qs):
 	return sa(qs.values_list('algorithm_tool__version',flat=True).distinct())
-	versions = qs.values_list('algorithm_tool__version',flat=True).distinct()
-	res = []
-	for v in versions:
-		res.append(str(v))
-	return res
 
 def getKernelVersions(qs):
 	return sa(BenchmarkHardware.objects.filter(benchmark__in = qs).values_list('hardware__kernelversion',flat=True).distinct())
-	kernelversions = BenchmarkHardware.objects.filter(benchmark__in = qs).values_list('hardware__kernelversion',flat=True).distinct()
-	res = []
-	for v in kernelversions:
-		res.append(str(v))
-	return res
 
 def sortQuerySet(qs,sort):
 	if sort != []:
