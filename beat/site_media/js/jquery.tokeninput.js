@@ -14,17 +14,6 @@
 (function($) {
 
 $.fn.tokenInput = function (searcharray,numberofresults,prepop) {
-	var prepopulate = new Array();
-	
-	if (prepop && prepop.length){
-		for (var i=0;i<searcharray.length;i++){
-			var index = prepop.indexOf(searcharray[i].id);
-			if (index!=-1){
-				prepopulate.push(searcharray[i]);
-			}
-		}
-	}
-	
 	var settings = {
 		hintText: "Type in a search term",
 		noResultsText: "No results",
@@ -38,6 +27,16 @@ $.fn.tokenInput = function (searcharray,numberofresults,prepop) {
 		searcharray: searcharray,
 		numberofresults: numberofresults
 	};
+	
+	var prepopulate = [];
+	if (prepop && prepop.length){
+		for (var i=0;i<searcharray.length;i++){
+			var index = prepop.indexOf(searcharray[i]);
+			if (index!=-1){
+				prepopulate.push(searcharray[i]);
+			}
+		}
+	}
 	
 	if (prepopulate && prepopulate.length)	settings.prePopulate = prepopulate;
 
@@ -77,6 +76,7 @@ $.TokenList = function (input, settings) {
 		DOWN: 40,
 		COMMA: 188
 	};
+	
 	var saved_tokens = [];
 	var token_count = 0;
 	var timeout;
@@ -234,7 +234,7 @@ $.TokenList = function (input, settings) {
 		li_data = settings.prePopulate;
 		if(li_data && li_data.length) {
 			for(var i in li_data) {
-				var this_token = $("<li><p>"+li_data[i].name+"</p> </li>")
+				var this_token = $("<li><p>"+li_data[i]+"</p> </li>")
 					.addClass(settings.classes.token)
 					.insertBefore(input_token);
 				$("<span>x</span>")
@@ -245,13 +245,13 @@ $.TokenList = function (input, settings) {
 						return false;
 					});
 
-				$.data(this_token.get(0), "tokeninput", {"id": li_data[i].id, "name": li_data[i].name});
+				$.data(this_token.get(0), "tokeninput", li_data[i]);
 
 				input_box.val("");
 
 				hide_dropdown();
 
-				var id_string = li_data[i].id + ","
+				var id_string = li_data[i] + ","
 				hidden_input.val(hidden_input.val() + id_string);
 			}
 		}
@@ -278,7 +278,7 @@ $.TokenList = function (input, settings) {
 		return element;
 	}
 
-	function insert_token(id, value) {
+	function insert_token(value) {
 	  var this_token = $("<li><p>"+ value +"</p> </li>")
 	  .addClass(settings.classes.token)
 	  .insertBefore(input_token);
@@ -291,14 +291,14 @@ $.TokenList = function (input, settings) {
 			  return false;
 		  });
 
-	  $.data(this_token.get(0), "tokeninput", {"id": id, "name": value});
+	  $.data(this_token.get(0), "tokeninput", value);
 
 	  return this_token;
 	}
 
 	function add_token (item) {
 		var li_data = $.data(item.get(0), "tokeninput");
-		var this_token = insert_token(li_data.id, li_data.name);
+		var this_token = insert_token(li_data);
 
 		input_box
 			.val("")
@@ -306,7 +306,7 @@ $.TokenList = function (input, settings) {
 
 		hide_dropdown();
 
-		var id_string = li_data.id + ","
+		var id_string = li_data + ","
 		hidden_input.val(hidden_input.val() + id_string);
 		$(hidden_input).trigger('change');
 		token_count++;
@@ -361,7 +361,7 @@ $.TokenList = function (input, settings) {
 		input_box.focus();
 
 		var str = hidden_input.val()
-		var start = str.indexOf(token_data.id+",");
+		var start = str.indexOf(token_data + ",");
 		var end = str.indexOf(",", start) + 1;
 
 		if(end >= str.length) {
@@ -418,7 +418,7 @@ $.TokenList = function (input, settings) {
 
 			for(var i in results) {
 				if (results.hasOwnProperty(i)) {
-					var this_li = $("<li>"+highlight_term(results[i].name, query)+"</li>")
+					var this_li = $("<li>"+highlight_term(results[i], query)+"</li>")
 									  .appendTo(dropdown_ul);
 
 					if(i%2) {
@@ -431,7 +431,7 @@ $.TokenList = function (input, settings) {
 						select_dropdown_item(this_li);
 					}
 
-					$.data(this_li.get(0), "tokeninput", {"id": results[i].id, "name": results[i].name});
+					$.data(this_li.get(0), "tokeninput", results[i]);
 				}
 			}
 
@@ -492,13 +492,28 @@ $.TokenList = function (input, settings) {
 	
 	function search_for_results(query,searcharray,numberofresults){
 		var i=0;
-		var res = new Array();
+		var res = [];
+		var cur = hidden_input.val().split(',');
 		while (i<searcharray.length && res.length<numberofresults){
-			if (searcharray[i].name.toLowerCase().indexOf(query.toLowerCase())!=-1)
+			if (searcharray[i].toLowerCase().indexOf(query.toLowerCase())!=-1 && 
+				cur.indexOf(searcharray[i])==-1)
 				res.push(searcharray[i]);
+			
 			i++;
 		}
 		return res;
+	}
+	
+	Array.prototype.indexOf = function (element,offset) {
+		if (typeof offset=='undefined'){
+			offset=0;
+		}
+		for (var i = offset; i < this.length; i++) {
+			if (this[i] == element) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 };

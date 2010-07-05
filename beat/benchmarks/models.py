@@ -57,7 +57,7 @@ class Hardware(models.Model):
 	kernelversion = models.CharField(max_length=200, verbose_name="Kernel version")
 
 	def __unicode__(self):
-		return "%s @ %sKB RAM, %s, %s" % (self.name, self.memory, self.cpu, self.kernelversion)
+		return "%s @ %sKB RAM, %s, %s" % (self.computername, self.memory, self.cpu, self.kernelversion)
 	
 	class Meta:
 		verbose_name_plural = "Hardware"

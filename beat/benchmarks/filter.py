@@ -1,19 +1,22 @@
 from datetime import datetime
 
-MODEL 			= 'model'
-ALGORITHM 		= 'algorithm'
-TOOL 			= 'tool'
+MODEL 			= 'model__name'
+ALGORITHM 		= 'algorithm_tool__algorithm__name'
+TOOL 			= 'algorithm_tool__tool__name'
 MEMORY_RSS		= 'memory_RSS'
 MEMORY_VSIZE	= 'memory_VSIZE'
-RUNTIME 		= 'runtime'
-STATES 			= 'states'
-TRANSITIONS 	= 'transitions'
-DATE 			= 'date'
+RUNTIME 		= 'total_time'
+STATES 			= 'states_count'
+TRANSITIONS 	= 'transition_count'
+DATE 			= 'date_time'
 OPTIONS 		= 'options'
 FINISHED 		= 'finished'
 COMPUTERNAME 	= 'computername'
 CPU 			= 'cpu'
-RAM				= 'ram'
+RAM				= 'memory'
+VERSION			= 'algorithm_tool__version'
+KERNELVERSION	= 'kernelversion'
+DISKSPACE		= 'disk_space'
 
 EQUAL 			= 'equal'
 GREATERTHAN 	= 'greaterthan'
@@ -21,12 +24,10 @@ LESSTHAN 		= 'lessthan'
 ON 				= 'on'
 BEFORE			= 'before'
 AFTER 			= 'after'
-TRUE 			= 'true'
-FALSE 			= 'false'
 
-LISTFILTERS = [MODEL,ALGORITHM,TOOL,COMPUTERNAME]
-
-VALUEFILTERS = [MEMORY_RSS,MEMORY_VSIZE,RUNTIME,STATES,TRANSITIONS,RAM]
+LISTFILTERS = [MODEL,ALGORITHM,TOOL,COMPUTERNAME,VERSION,KERNELVERSION,CPU]
+VALUEFILTERS = [MEMORY_RSS,MEMORY_VSIZE,RUNTIME,STATES,TRANSITIONS,RAM,DISKSPACE]
+CONTEXTFILTERS = [MODEL,ALGORITHM,TOOL,COMPUTERNAME,CPU,OPTIONS,VERSION,KERNELVERSION]
 
 class Filter(object):
 	def __init__(self, type, row):
@@ -41,13 +42,19 @@ class ListFilter(Filter):
 	def apply(self,qs):
 		f = ""
 		if self.type == MODEL:
-			f = "model__in"
+			f = "model__name__in"
 		elif self.type == ALGORITHM:
-			f = "algorithm_tool__algorithm__in"
+			f = "algorithm_tool__algorithm__name__in"
 		elif self.type == TOOL:
-			f = "algorithm_tool__tool__in"
+			f = "algorithm_tool__tool__name__in"
 		elif self.type == COMPUTERNAME:
-			f = "hardware__in"
+			f = "hardware__computername__in"
+		elif self.type == CPU:
+			f = "hardware__cpu__in"
+		elif self.type == KERNELVERSION:
+			f = "hardware__kernelversion__in"
+		elif self.type == VERSION:
+			f = "algorithm_tool__version__in"
 		
 		col = {}
 		col[f] = list(set(self.list))
@@ -74,6 +81,8 @@ class ValueFilter(Filter):
 			f="total_time"
 		elif self.type==RAM:
 			f="hardware__memory"
+		elif self.type==DISKSPACE:
+			f="hardware__disk_space"
 		
 		if self.style==EQUAL:
 			f+="__exact"
@@ -143,10 +152,7 @@ def convertfilters(arr):
 		row = filter['row']
 		type = filter['type']
 		if type in LISTFILTERS:
-			list = []
-			for v in filter['value']:
-				list.append(int(v))
-			result[row] = ListFilter(type,row,list)
+			result[row] = ListFilter(type,row,filter['value'])
 		elif type in VALUEFILTERS:
 			result[row] = ValueFilter(type,row,str(filter['style']),float(filter['value']))
 		elif type==DATE:
@@ -158,6 +164,6 @@ def convertfilters(arr):
 			result[row] = OptionsFilter(row,options)
 		elif type==FINISHED:
 			result[row] = FinishedFilter(row,filter['value'])
-		elif type==CPU:
-			result[row] = CPUFilter(row,filter['value'])
+		#elif type==CPU:
+			#result[row] = CPUFilter(row,filter['value'])
 	return result

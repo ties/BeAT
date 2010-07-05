@@ -38,21 +38,49 @@ table.paging tr td{
 }
 
 .filterStyle{
+	width: 80px;
+}
+
+.filterType{
 	width: 120px;
 }
 
-.filterType, .filterValue, .optionValue{
+.filterValue, .optionValue{
 	width: 80px;
 }
 
 #filters{
-	width: 320px;
+	width: 400px;
+	display: inline;
+	margin-bottom: 0px;
+	padding-left : 20px;
+	padding-right: 20px;
 }
 
 #filters td, #filters tr, #filters th, #filters select, #filters input{
 	margin:0px;
 	padding:0px;
 	vertical-align: top;
+}
+
+#multisort{
+	display:inline;
+	margin-bottom: 0px;
+	line-height: 1;
+}
+
+#multisort td, #multisort tr, #multisort select, #multisort input{
+	margin:0px;
+	padding: 0px;
+	vertical-align: top;
+}
+
+#multisort td.columnname select{
+	width: 150px;
+}
+
+#multisort td.sortorder select{
+	width: 80px;
 }
 
 .remove img, .add img{
@@ -166,4 +194,23 @@ table.compare_form  select {
 }
 .vtop {
 	vertical-align: top;
+}
+
+.filtersandmultisort{
+	border-left: #BBB 2px solid;
+	border-right: #BBB 2px solid;
+	border-top: #BBB 2px solid;
+	padding-top: 11px;
+	padding-bottom: 12px;
+}
+
+#columns{
+	color: black;
+}
+#megaul_columns{
+	min-width: 130px;
+}
+#megali_columns{
+	color: #555;
+	padding-right: 40px;
 }

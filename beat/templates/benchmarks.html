@@ -4,32 +4,18 @@
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/benchmarktable.js"></script>
 		<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/filtertable.js"></script>
 		<h2 class="benchmarktitle">Benchmark Table</h2>
-		<ul class="mega">
-			<li class="mega">
-				<select size="1" onclick="return false;">
-					<option value="">Columns (hover)</option>
-				</select>
-				<div id="extracolumns">
-					<span id="columns">
-						
-					</span>
-					<span id="hardwarecolumns">
-						
-					</span>
-					<span id="extravalues">
-						
-					</span>
-				</div>
+		<ul class="mega" id="megaul_columns">
+			<li class="mega" id="megali_columns">
+				Columns (hover) 
+				<div id="columns"></div>
 			</li>
 		</ul>
 		<span id="ajaxload"></span>
 		<br />
-		
-		<!-- FILTER TABLE -->
-		<table id="filters" cellpadding="0" cellspacing="0"></table>
-		<!-- END FILTER TABLE -->
-		
-		<!-- BENCHMARK TABLE -->
+		<div class="filtersandmultisort">
+			<table id="filters" cellpadding="0" cellspacing="0"></table>
+			<table id="multisort" cellpadding="0" cellspacing="0"></table>
+		</div>
 		<table class="benchmarks">
 			<tr>
 				<th>&nbsp;</th>

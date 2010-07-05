@@ -1,91 +1,8 @@
-/** Constant for ascending sortorder **/
+/** Constant for ascending/descending sortorder **/
 var ASCENDING = "ASC";
-/** Constant for descending sortorder **/
 var DESCENDING = "DESC";
 
-var DELAY = 600;
-
-/** Global variable which keeps default column names, the names of these columns in the database and whether they are checked or not **/
-var columns =	[
-					{
-						name: 		"States",
-						db_name: 	"states_count",
-						checked: 	true
-					},
-					{
-						name: 		"Transitions",
-						db_name: 	"transition_count",
-						checked: 	false
-					},
-					{
-						name: 		"Runtime",
-						db_name: 	"total_time",
-						checked: 	true
-					},
-					{
-						name: 		"Memory (RSS)",
-						db_name: 	"memory_RSS",
-						checked: 	true
-					},
-					{
-						name: 		"Memory (VSIZE)",
-						db_name: 	"memory_VSIZE",
-						checked: 	false
-					},
-					{
-						name: 		"Tool",
-						db_name: 	"algorithm_tool__tool__name",
-						checked: 	false
-					},
-					{
-						name: 		"Algorithm",
-						db_name: 	"algorithm_tool__algorithm__name",
-						checked: 	false
-					},
-					{
-						name:		"Version",
-						db_name:	"algorithm_tool__version",
-						checked:	false
-					},
-					{
-						name: 		"Date",
-						db_name: 	"date_time",
-						checked: 	false
-					},
-					{
-						name: 		"Finished",
-						db_name: 	"finished",
-						checked: 	true
-					}
-				];
-
-var hardwarecolumns =	[
-							{
-								name: 		"Processor",
-								checked: 	false,
-								db_name:	"cpu"
-							},
-							{
-								name: 		"Physical Memory",
-								checked: 	false,
-								db_name:	"memory"
-							},
-							{
-								name: 		"Computername",
-								checked: 	false,
-								db_name:	"computername"
-							},
-							{
-								name: 		"Kernel Version",
-								checked: 	false,
-								db_name:	"kernelversion"
-							},
-							{
-								name:		"Disk Space",
-								checked:	false,
-								db_name:	"disk_space"
-							}
-						];
+var DELAY = 2000;
 
 /** Global variable where id's of checked benchmarks are stored **/
 var checked_benchmarks = [];
@@ -100,16 +17,16 @@ var benchmarks = [];
 /** Global variable that keeps all the benchmark_ids **/
 var benchmark_ids = [];
 
+/** All possible columns **/
+var columns;
+
 var data =	{
-				sort:				"id",
-				sortorder:			ASCENDING,
-				columns:			getColumns(),
-				extracolumns:		[],
+				sort:				[],
+				columns:			['model__name','states_count','total_time','memory_RSS','finished'], //This is for the first request
 				page:				0,
-				pagesize:			200,
+				pagesize:			25,
 				filters:			[],
 				subset:				[],
-				hardwarecolumns:	getHardwareColumns()
 			};
 
 var table;
@@ -198,33 +115,33 @@ function update(direct){
  *				The filters on the page are renewed
  */
 function handleResponse(json){
-	
 	$(table).updateContext(json);
 	
 	benchmarks = json.benchmarks;
 	benchmark_ids = json.benchmark_ids;
 	
+	columns = json.columns;
+	showMultisort();
+	
 	updateCheckedBenchmarks();
-	updateExtraValues(json.extracolumns);
+	
+	updateColumns();
 	showResults();
 }
 
-function updateExtraValues(arr){
-	//filter old values from data['extracolumns']
-	var extracolumns = [];
-	for (var i=0; i<data['extracolumns'].length; i++){
-		if (arr.indexOf(data['extracolumns'][i])!=-1)	extracolumns.push(data['extracolumns'][i]);
+function updateColumns(){
+	$('#columns').empty();
+	for (var i = 0; i < columns.length; i++){
+		var col = $('<input type="checkbox" value="'+columns[i].dbname+'" />')
+					.change(function(){
+						if ($(this).attr('checked'))
+							data.columns.push($(this).val());
+						else
+							data.columns.splice(data.columns.indexOf($(this).val()), 1);
+					})
+					.attr('checked',(data.columns.indexOf(columns[i].dbname)!=-1));
+		$('#columns').append(col).append(' '+columns[i].name+'<br />');
 	}
-	data['extracolumns'] = extracolumns;
-	
-	//write new table
-	var html = '';
-	for (var i=0; i<arr.length; i++){
-		html+= '<input type="checkbox" value="'+arr[i]+'"'+(extracolumns.indexOf(arr[i])!=-1 ? ' checked' : '')+'>'+arr[i]+'<br />';
-	}
-	$("#extravalues").html(html);
-	//configure
-	configureExtraValues();
 }
 
 /**
@@ -240,20 +157,13 @@ function showResults(){
 	if (benchmarks.length){
 		for (var i = 0; i<benchmarks.length; i++){
 			
-			var benchmark = benchmarks[i];
-			var check = (checked_benchmarks.indexOf(benchmark.id)!=-1);
+			var b = benchmarks[i];
+			var check = (checked_benchmarks.indexOf(b.id)!=-1);
 			
-			table+='<tr id="row' + benchmark.id + '"><td><input type="checkbox"'+(check ? ' checked' : '')+' name="benchmarks" value="' + benchmark.id + '" /></td>\n\
-				<td>' + benchmark.model__name + '</td>';
+			table+='<tr id="row' + b.id + '"><td><input type="checkbox"'+(check ? ' checked' : '')+' name="benchmarks" value="' + b.id + '" /></td>';
 			
-			for (var j=0; j<columns.length;j++){
-				if (columns[j].checked)		table+='<td>'+benchmark[columns[j].db_name]+'</td>';
-			}
-			for (var j=0; j<data.extracolumns.length;j++){
-				table+='<td>'+benchmark[data.extracolumns[j]]+'</td>';
-			}
-			for (var j=0; j<hardwarecolumns.length;j++){
-				if (hardwarecolumns[j].checked)		table+='<td>'+benchmark[hardwarecolumns[j].db_name]+'</td>';
+			for (var j = 0; j < data.columns.length; j++){
+				table+= '<td>' + b[data.columns[j]] + '</td>';
 			}
 			table+='</tr>';
 			
@@ -268,19 +178,18 @@ function showResults(){
 	
 	//right align all numbers
 	if (benchmarks.length){
-		var i = 3;
+		var i = 2;
 		for (var j=0; j<columns.length;j++){
-			if (columns[j].checked){
-				if (typeof benchmarks[0][columns[j].db_name] == "number"){
+			if (data.columns.indexOf(columns[j].dbname)!=-1){
+				if (typeof benchmarks[0][columns[j].dbname] == "number"){
 					$(".benchmarks tr td:nth-child(" + i + ")").css('text-align','right');
-					i++;
 				}
+				i++;
 			}
 		}
 	}
 	
 	updatePagingTable();
-	configureSorting();
 	configureCheckboxes();
 }
 
@@ -292,35 +201,9 @@ function showResults(){
  */
 function getTableHeaders(){
 	var res = '<tr><th>&nbsp;</th>';
-	//contains model by default
-	var c = '';
-	if (data.sort == 'model__name')		c = (data.sortorder==ASCENDING ? 'ascending' : 'descending');
-	res+='<th id="model__name"><span class="'+c+'">Model</span></th>';
-	
-	for (var i=0;i<columns.length;i++){
-		if (columns[i].checked){
-			var c = '';
-			if (columns[i].db_name == data.sort){
-				c = (data.sortorder == ASCENDING ? 'ascending' : 'descending');
-			}
-			res+='<th id="'+columns[i].db_name+'"><span class="'+c+'">'+columns[i].name+'</span></th>';
-		}
-	}
-	for (var i=0; i<data.extracolumns.length; i++){
-		var c = '';
-		if (data.extracolumns[i] == data.sort){
-			c = (data.sortorder == ASCENDING ? 'ascending' : 'descending');
-		}
-		res+='<th id="'+data.extracolumns[i]+'"><span class="'+c+'">'+data.extracolumns[i]+'</span></th>';
-	}
-	for (var i=0;i<hardwarecolumns.length;i++){
-		if (hardwarecolumns[i].checked){
-			var c = '';
-			if (hardwarecolumns[i].db_name == data.sort){
-				c = (data.sortorder == ASCENDING ? 'ascending' : 'descending');
-			}
-			res+='<th id="'+hardwarecolumns[i].db_name+'"><span class="'+c+'">'+hardwarecolumns[i].name+'</span></th>';
-		}
+	for (var i = 0; i < columns.length; i++){
+		if (data.columns.indexOf(columns[i].dbname)!=-1)
+			res+= '<th id="'+columns[i].dbname+'"><span class="">'+columns[i].name+'</span></th>';
 	}
 	res+='</tr>';
 	return res;
@@ -349,7 +232,7 @@ function updatePagingTable(){
  **/
 function updateCheckedBenchmarks(){
 	var len = checked_benchmarks.length;
-	var newarr = new Array();
+	var newarr = [];
 	
 	for (var i=0;i<benchmark_ids.length;i++){
 		if (checked_benchmarks.indexOf(benchmark_ids[i])!=-1)	newarr.push(benchmark_ids[i]);
@@ -375,7 +258,7 @@ function checkAll(){
  *				The checkboxes are updated (updateCheckboxes is called)
  **/
 function checkNone(){
-	checked_benchmarks = new Array();
+	checked_benchmarks = [];
 	$("#CheckAll").attr("value","All");
 	updateCheckboxes();
 }
@@ -388,7 +271,7 @@ function checkNone(){
  *				The checkboxes are updated (updateCheckboxes is called)
  **/
 function checkInvert(){
-	var newarr = new Array();
+	var newarr = [];
 	for (var i=0;i<benchmark_ids.length;i++){
 		if (checked_benchmarks.indexOf(benchmark_ids[i])==-1)	newarr.push(benchmark_ids[i]);
 	}
@@ -407,60 +290,6 @@ function updateCheckboxes(){
 	});
 }
 
-/**
- * Function that returns the selected columns
- * @ensure 	result!='undefined'
- *			result is in JSON-format, containing an object with an array "columns", containing all selected column-names
- */
-function getColumns(){
-	var res = ['id','model__name'];
-	for (var i=0;i<columns.length;i++){
-		if (columns[i].checked)		res.push(columns[i].db_name);
-	}
-	return res;
-}
-
-/**
- * Function that returns the selected columns
- * @ensure 	result!='undefined'
- *			result is in JSON-format, containing an object with an array "columns", containing all selected column-names
- */
-function getHardwareColumns(){
-	var res = [];
-	for (var i=0;i<hardwarecolumns.length;i++){
-		if (hardwarecolumns[i].checked)		res.push(hardwarecolumns[i].db_name);
-	}
-	return res;
-}
-
-/**
- * Function to change the current sorting
- * @require 	sort != 'undefined'
- *				id != 'undefined'
- * @ensure 		If sort.sort == id then sort.sortorder is changed to the other possible value
- *				If sort.sort != id then sort.sort = id
- *				The headers of the benchmarktable are updated to the new sorting
- *				paging.page is set to 0 and the benchmarktable is updated
- **/
-function setSorting(id){
-	$("table.benchmarks tr th span").removeClass();
-	if (data.sort == id){
-		if(data.sortorder == ASCENDING){
-			data.sortorder = DESCENDING;
-			$("#"+id+" span").addClass('descending');
-		}else{
-			data.sortorder = ASCENDING;
-			$("#"+id+" span").addClass('ascending');
-		}
-	}else{
-		data.sort = id;
-		data.sortorder = ASCENDING;
-		$("#"+id+" span").addClass('ascending');
-	}
-	data.page = 0;
-	update();
-}
-
 function setSubset(){
 	data.subset = checked_benchmarks;
 	update(true);
@@ -474,8 +303,7 @@ function setSubset(){
  *			makeRequest is called with a makeData over getFilters(), getSort(), getColumns() and getPaing()
  */
 $(document).ready(function(){
-	showColumnOptions();
-	showHardwareColumnOptions();
+	showMultisort();
 	registerFunctionsAndEvents();
 	var temporarycontext = 	{
 								models: 	[],
@@ -483,8 +311,11 @@ $(document).ready(function(){
 								tools: 		[],
 								options: 	[]
 							};
+	
 	table = $("#filters").filtertable([], temporarycontext);
+	
 	$(document).bind($(table).triggercode(),function(){
+		data.page = 0;
 		update();
 	});
 	
@@ -517,8 +348,6 @@ function registerFunctionsAndEvents(){
 	}
 	
 	configureHover();
-	configureColumnSelection();
-	configureHardwareColumnSelection();
 	configurePagesize();
 	
 	$("#next").click(function(){
@@ -567,44 +396,6 @@ function configurePagesize(){
 }
 
 /**
- * Function to configure the selecting of a column
- * @ensure When clicking on a column checkbox, the corresponding value in columns.checked_columns is set to the value of the checkbox
- **/
-function configureColumnSelection(){
-	$("#columns input").click(function(){
-		var val = $(this).attr('value');
-		for (var i = 0; i<columns.length;i++){
-			if (columns[i].db_name == val)	columns[i].checked = this.checked;
-		}
-		
-		data.columns = getColumns();
-	});
-}
-
-function configureExtraValues(){
-	$("#extravalues input").click(function(){
-		var val = $(this).attr('value');
-		for (var i=data.extracolumns.length-1; i>=0; i--){
-			if (data.extracolumns[i] == val){
-				data.extracolumns.splice(i,1);
-				return;
-			}
-		}
-		data.extracolumns.push(val);
-	});
-}
-
-function configureHardwareColumnSelection(){
-	$("#hardwarecolumns input").click(function(){
-		var val = $(this).attr('value');
-		for (var i = 0; i<hardwarecolumns.length;i++){
-			if (hardwarecolumns[i].db_name == val)	hardwarecolumns[i].checked = this.checked;
-		}
-		data.hardwarecolumns = getHardwareColumns();
-	});
-}
-
-/**
  * Function that configures the click-event for the checkboxes in the benchmarktable (for selecting benchmarks)
  * @ensure When clicking on a checkbox, it's value is either added or removed from checked_benchmarks
  **/
@@ -640,29 +431,6 @@ function configureHover(){
 }
 
 /**
- * Function that sets the inner html of the columns-element
- **/
-function showColumnOptions(){
-	
-	var html = '';
-	for (var i=0;i<columns.length;i++){
-		html+= '<input type="checkbox" value="'+columns[i].db_name+'"'+(columns[i].checked ? ' checked' : '')+'>'+columns[i].name+'<br />';
-	}
-	$("#columns").html(html);
-	
-}
-
-function showHardwareColumnOptions(){
-	
-	var html = '';
-	for (var i=0;i<hardwarecolumns.length;i++){
-		html+= '<input type="checkbox" value="'+hardwarecolumns[i].db_name+'"'+(hardwarecolumns[i].checked ? ' checked' : '')+'>'+hardwarecolumns[i].name+'<br />';
-	}
-	$("#hardwarecolumns").html(html);
-	
-}
-
-/**
  * Function called when a mega drop-down menu must be shown
  * @ensure	$(elem).hasClass("hovering")==True
  */
@@ -679,22 +447,6 @@ function removeMega(elem){
 	$(elem).removeClass("hovering");
 	data.page = 0;
 	update();
-}
-
-/**
- * Function that configures the click-event of the headers of the benchmarktable
- * @ensure When clicking a header, the function setSorting is called
- **/
-function configureSorting(){
-	var headers = $("table.benchmarks tr th");
-	$(headers).each(function(i,h){
-		var header = $(h);
-		if (header.attr('id')!='' ){
-			header.click(function(){
-				setSorting(this.id);
-			});
-		}
-	});
 }
 
 /**
@@ -728,4 +480,91 @@ function lastPage(){
 function firstPage(){
 	data.page = 0;
 	update();
+}
+
+function showMultisort(){
+	//empty multisort to draw again
+	$('#multisort').empty();
+	
+	$(data.sort).each(function(i,s){
+		//make column selection
+		var sel = $('<select />');
+		$(sel).append('<option value="-1">-----</option>')
+				.change(function(){
+					//on change, update data.sort
+					var val = $(this).val();
+					if (val == "-1"){
+						data.sort.splice(i,1);
+						showMultisort();
+					}else{
+						data.sort[i][0] = val;
+					}
+					//update
+					update();
+				});
+		
+		//add column names to select-element
+		$(columns).each(function(j,col){
+			if (data.columns.indexOf(col.dbname)!=-1){
+				var opt = $('<option value="'+col.dbname+'">'+col.name+'</option>');
+				if (s[0] == col.dbname)  $(opt).attr('selected',true);
+				$(sel).append(opt);
+			}
+		});
+		
+		//add sortorder selection
+		var order = $('<select />');
+		var order_asc = $('<option value="'+ASCENDING+'">Asc</option>').attr('selected',s[1]==ASCENDING);
+		var order_desc = $('<option value="'+DESCENDING+'">Desc</option>').attr('selected',s[1]==DESCENDING);
+		$(order).append(order_asc)
+				.append(order_desc)
+				.change(function(){
+					//update data.sort
+					var val = $(this).val();
+					data.sort[i][1] = val;
+					
+					//update table
+					update();
+				});
+		
+		//add to multisort table
+		var leftcol = $('<td />')
+						.append(sel)
+						.addClass('columnname');
+		var rightcol = $('<td />')
+						.append(order)
+						.addClass('sortorder');
+		var row = $('<tr />').append(leftcol).append(rightcol);
+		$('#multisort').append(row);
+	});
+	
+	//add empty sort to the end of the table
+	var sel = $('<select />');
+	$(sel).append('<option value="-1">-----</option>')
+			.change(function(){
+				data.sort[data.sort.length] = [$(this).val(),ASCENDING];
+				showMultisort();
+				update();
+			});
+	$(columns).each(function(j,col){
+		if (data.columns.indexOf(col.dbname)!=-1){
+			var opt = $('<option value="'+col.dbname+'">'+col.name+'</option>');
+			$(sel).append(opt);
+		}
+	});
+
+	var order = $('<select />');
+	var order_asc = $('<option value="'+ASCENDING+'">Asc</option>');
+	var order_desc = $('<option value="'+DESCENDING+'">Desc</option>');
+	$(order).append(order_asc)
+			.append(order_desc);
+	
+	var leftcol = $('<td />')
+					.append(sel)
+					.addClass('columnname');
+	var rightcol = $('<td />')
+					.append(order)
+					.addClass('sortorder');
+	var row = $('<tr />').append(leftcol).append(rightcol);
+	$('#multisort').append(row);
 }
