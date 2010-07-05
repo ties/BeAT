@@ -724,8 +724,8 @@ class FileReader:
 			from beat.tools.logsave import create_log, __init_code__, GitFileError
 			try:
 				repo = __init_code__()
-				create_log(repo, lines, f)
-				create_log(repo, header, fh)
+				create_log(repo, lines, filename)
+				create_log(repo, header, filename + ".header")
 			except GitFileError as gfe:
 				self.print_message(V_QUIET, "Failed to write log to git repository: %s", gfe.error)
 		else:

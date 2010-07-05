@@ -75,14 +75,15 @@ def create_log(repo, contents, filename, overwrite=False):
 	If a file with name filename exists, False is returned, unless overwrite=True.
 	Arguments:
 		contents		the contents of the log, as a simple string
-		filename		the specific filename to use. defaults to None, which automatically generates a filename.
+		filename		the specific filename to use.
 		overwrite		whether or not to overwrite existing files. defaults to False, does change behavior when filename=None.
 	Returns:
 		False on failure, the filename to which the log was saved on success.
 	Raises:
 		GitFileError	when the file exists while overwrite is False
 	"""		
-	
+	if not filename:
+		return "Error: empty filename"
 	if not contents:
 		return "Error: empty contents"
 	if type(contents) is list:
