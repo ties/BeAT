@@ -65,12 +65,13 @@ Shows a log file for the given database id. if no such file is found it will ret
 def log_response(request, id):	
 	b = Benchmark.objects.get(pk=id)
 	path = b.logfile
+	
 	ov = b.optionvalue.all()
 	hw = b.hardware.all()
 	ev = ExtraValue.objects.filter(benchmark=b)
 	log = ""
 	
-	if not os.path.exists(path):
+	if not path or not os.path.exists(path):
 		#read log from git repository containing logs
 		try:
 			from beat.tools.logsave import __init_code__, get_log
