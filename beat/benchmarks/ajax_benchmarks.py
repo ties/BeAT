@@ -1,3 +1,6 @@
+"""
+This file contains functions to make a response for the client, given the data the client send (like filters, columns, etc.)
+"""
 from django.template import RequestContext
 from beat.benchmarks.models import *
 from beat.benchmarks.filter import *
@@ -5,9 +8,12 @@ from datetime import datetime
 import json,copy
 from beat import settings
 
+#The constant ASCENDING, containing the string the client sends if it wants to sort on a column ascending
 ASCENDING = 'ASC'
+#The constant DESCENDING, containing the string the client sends if it wants to sort on a column descending
 DESCENDING = 'DESC'
 
+#The constant STANDARDCOLUMNS, contains all the names of the standard columns and the String which should be shown in the webinterface
 STANDARDCOLUMNS = 	[
 						{'dbname':MODEL,'name':'Model name'},
 						{'dbname':STATES,'name':'States'},
@@ -28,8 +34,10 @@ STANDARDCOLUMNS = 	[
 						{'dbname':OPTIONS,'name':'Options'},
 					]
 
+#The STANDARDCOLUMNSARRAY, a list of all the standard column names
 STANDARDCOLUMNSARRAY = [MODEL,STATES,TRANSITIONS,RUNTIME,MEMORY_RSS,MEMORY_VSIZE,TOOL,ALGORITHM,VERSION,DATE,FINISHED,COMPUTERNAME,CPU,RAM,KERNELVERSION,DISKSPACE,OPTIONS]
 
+#The constant HARDWARECOLUMNS, contains all the names of the columns that come from the Hardware table and the String which should be shown in the webinterface
 HARDWARECOLUMNS = 	[
 						{'dbname':COMPUTERNAME,'name':'Computername'},
 						{'dbname':CPU,'name':'Processor'},
@@ -38,8 +46,13 @@ HARDWARECOLUMNS = 	[
 						{'dbname':DISKSPACE,'name':'Disk space'},
 					]
 
+#The HARDWARECOLUMNSARRAY, a list of all the hardware column names
 HARDWARECOLUMNSARRAY = [COMPUTERNAME,CPU,RAM,KERNELVERSION,DISKSPACE]
 
+"""
+Function getBenchmarks
+Called by ajax_execute, decodes the JSON-object the client send and returns the response
+"""
 def getBenchmarks(request):
 	data = json.loads(request.POST['data'])
 	return makeResponse(Benchmark.objects.all()
@@ -50,7 +63,14 @@ def getBenchmarks(request):
 						, data['pagesize']
 						, data['subset'])
 
+"""
+Function makeResponse
+Makes a response for the client.
+Takes an initial QuerySet and filters it, sorts it, gets all specified columns and selects the currect benchmarks for paging
+This response also contains the context for all filters requiring context
+"""
 def makeResponse(qs=Benchmark.objects.all(),filters=[],sort=[],columns=[MODEL],page=0,pagesize=200,subset=[]):
+	#initial result
 	result = 	{	'benchmarks'		: [],
 					'columns'			: {},
 					'benchmark_ids'		: [],
@@ -68,7 +88,7 @@ def makeResponse(qs=Benchmark.objects.all(),filters=[],sort=[],columns=[MODEL],p
 	if len(subset) != 0:
 		qs = qs.filter(id__in = subset)
 	
-	#Apply all the filters, get modelnames/algorithmnames/toolnames/options/processornames/computernames before applying the corresponding filter
+	#Apply all the filters, get context before applying a ListFilter
 	for k,f in filters.iteritems():
 		if f.type in CONTEXTFILTERS:
 			result[f.type] = getContext(qs,f.type)
@@ -80,27 +100,45 @@ def makeResponse(qs=Benchmark.objects.all(),filters=[],sort=[],columns=[MODEL],p
 		if len(result[s]) == 0:
 			result[s] = getContext(qs,s)
 	
-	result['benchmark_ids'] = list(qs.values_list('id',flat=True)) 				#Get all possible identifiers in the QuerySet
-	
-	result['columns'] = getColumns(qs) 											#Get all possible columns
-	
+	#Get all possible identifiers in the QuerySet
+	result['benchmark_ids'] = list(qs.values_list('id',flat=True))
+	#Get all possible columns
+	result['columns'] = getColumns(qs)
 	#Select columns
 	qs = addColumns(qs,columns)
 	#Sort the queryset
 	qs = sortQuerySet(qs,sort)
 	
-	result['benchmarks'] = list(qs[ page * pagesize : (page+1) * pagesize ]) 	#Get paged benchmarks
+	#Get paged benchmarks
+	result['benchmarks'] = list(qs[ page * pagesize : (page+1) * pagesize ])
+	
 	return result
 
+"""
+Function getModels
+Takes a QuerySet and returns a list of all model names of the benchmarks in this QuerySet
+"""
 def getModels(qs):
 	return sa(qs.values_list('model__name',flat=True).distinct())
 
+"""
+Function getAlgorithms
+Takes a QuerySet and returns a list of all algorithm names of the benchmarks in this QuerySet
+"""
 def getAlgorithms(qs):
 	return sa(qs.values_list('algorithm_tool__algorithm__name',flat=True).distinct())
 
+"""
+Function getTools
+Takes a QuerySet and returns a list of all tool names of the benchmarks in this QuerySet
+"""
 def getTools(qs):
 	return sa(qs.values_list('algorithm_tool__tool__name',flat=True).distinct())
 
+"""
+Function getOptions
+Takes a QuerySet and returns a list of all option identifiers, names, and takes_argument's of the benchmarks in this QuerySet
+"""
 def getOptions(qs):
 	optionlist = OptionValue.objects.filter(benchmark__in = qs).values("option__id","option__name","option__takes_argument").distinct()
 	options = []
@@ -110,18 +148,39 @@ def getOptions(qs):
 	
 	return options
 
+"""
+Function getCPUs
+Takes a QuerySet and returns a list of all processors of the benchmarks in this QuerySet
+"""
 def getCPUs(qs):
 	return sa(BenchmarkHardware.objects.filter(benchmark__in = qs).values_list('hardware__cpu',flat=True).distinct())
 
+"""
+Function getComputerNames
+Takes a QuerySet and returns a list of all computer names of the benchmarks in this QuerySet
+"""
 def getComputerNames(qs):
 	return sa(BenchmarkHardware.objects.filter(benchmark__in = qs).values_list('hardware__computername',flat=True).distinct())
 
+"""
+Function getVersions
+Takes a QuerySet and returns a list of all algorithm-tool versions of the benchmarks in this QuerySet
+"""
 def getVersions(qs):
 	return sa(qs.values_list('algorithm_tool__version',flat=True).distinct())
 
+"""
+Function getKernelVersions
+Takes a QuerySet and returns a list of all kernel versions of the benchmarks in this QuerySet
+"""
 def getKernelVersions(qs):
 	return sa(BenchmarkHardware.objects.filter(benchmark__in = qs).values_list('hardware__kernelversion',flat=True).distinct())
 
+"""
+Function sortQuerySet
+Takes a QuerySet and an array of column names and ascending/descending
+Sorts the QuerySet on these columns
+"""
 def sortQuerySet(qs,sort):
 	if sort != []:
 		order = []
@@ -136,6 +195,10 @@ def sortQuerySet(qs,sort):
 	
 	return qs.order_by('id')
 
+"""
+Function getColumns
+Takes a QuerySet and returns a list of all available column names, which includes the standard columns (and thus hardware columns) and extra columns
+"""
 def getColumns(qs):
 	cols = copy.deepcopy(STANDARDCOLUMNS)
 	extracols = ExtraValue.objects.filter(benchmark__in=qs.values_list("id")).values_list("name",flat=True).distinct()
@@ -144,6 +207,10 @@ def getColumns(qs):
 	
 	return cols
 
+"""
+Function getContext
+Takes a QuerySet and a filter type and returns the corresponding context
+"""
 def getContext(qs,type):
 	if type == MODEL:
 		return getModels(qs)
@@ -162,6 +229,12 @@ def getContext(qs,type):
 	elif type == KERNELVERSION:
 		return getKernelVersions(qs)
 
+"""
+Function addColumns
+Takes a QuerySet and a list of column names and makes sure the columns are available for the QuerySet.
+If a column name is not a standard columns, the function searches the value in the ExtraValue table.
+The identifier of each benchmark is added as well
+"""
 def addColumns(qs,columns):
 	for c in columns:
 		if c == OPTIONS:
@@ -176,6 +249,10 @@ def addColumns(qs,columns):
 	
 	return apply(qs.values, columns + ['id'])
 
+"""
+Function sa (StringArray)
+Takes a QuerySet which only has one value set through values(_list) and returns a list of strings of that value.
+"""
 def sa(qs):
 	res = []
 	for v in qs:

@@ -2,6 +2,7 @@
 var ASCENDING = "ASC";
 var DESCENDING = "DESC";
 
+/** Constant DELAY which specifies the delay between a change and an update **/
 var DELAY = 2000;
 
 /** Global variable where id's of checked benchmarks are stored **/
@@ -9,6 +10,7 @@ var checked_benchmarks = [];
 
 /** Global variable which is true when the table is updating and false otherwise **/
 var updating = false;
+/** Global variable which specifies whether there needs to be another update when a running update is finished **/
 var updateagain = false;
 
 /** Global variable that keeps the benchmarks of the current page **/
@@ -20,6 +22,7 @@ var benchmark_ids = [];
 /** All possible columns **/
 var columns;
 
+/** Global variable data, which contains all data to be sent to the server **/
 var data =	{
 				sort:				[],
 				columns:			['model__name','states_count','total_time','memory_RSS','finished'], //This is for the first request
@@ -29,19 +32,23 @@ var data =	{
 				subset:				[],
 			};
 
+/** Global variable table, contains the filter table **/
 var table;
+/** Global variable timeout, contains the result of a setTimeout call which is used to update the benchmark table **/
 var timeout;
 
+/** Global variable previousRequest, which contains the JSON.strinify value of data when makeRequest is called. **/
 var previousRequest;
+/** Global variable previousSucceededRequest, which contains the value of the last previousRequest after a succeeded request to the server. **/
 var previousSucceededRequest;
 
 /**
  * Function that sends a request to the server
  * @param d object The data to be send with the request (a JSON object)
- * @require d != 'undefined'
+ * @require d != undefined
  * @ensure	The reply of the filter is send to handleResponse 
- *			Errors are handled by giving an alert of the errordescription
- *			An ajax load image is visible on the page while a request is being made
+ *			Errors are handled by giving an alert of the error description
+ *			An AJAX load image is visible on the page while a request is being made
  **/
 function makeRequest(d){
 	if (updating){
@@ -77,7 +84,11 @@ function makeRequest(d){
 	});
 }
 
-//function that will start the makerequest
+/**
+ * Function that is called to make a request
+ * @require table!=undefined
+ * @param direct If this value is true, makeRequest is called directly, else, a setTimeout with DELAY is called
+ **/
 function update(direct){
 	var filters = $(table).filters();
 	
@@ -95,41 +106,54 @@ function update(direct){
 		
 		clearTimeout(timeout);
 		if (!direct && !updating)		timeout = setTimeout(function(){makeRequest(data);},DELAY);
-		else							timeout = setTimeout(function(){makeRequest(data);},0);
+		else							makeRequest(data);
 		
 	}
 }
 
 /**
  * Function that handles the response from the server
- * @param json object The contents of the servers' reply (a JSON object)
- * @require 	json!='undefined'
+ * @param json 	The contents of the servers' reply (a JSON object)
+ * @require 	json!=undefined
  *				json is in JSON-format
- *				json contains the variables options, models, algorithms, tools, columns and benchmarks
- * @ensure 		possible_options == json.options
- *				possible_lists == new Array(json.models,json.algorithms,json.tools)
- *				benchmarks == json.benchmarks
+ * @ensure 		benchmarks == json.benchmarks
  *				benchmark_ids == json.benchmark_ids
+ *				columns == json.columns
  *				The checked_benchmarks variable is updated so that it does not contain id's that are not in the current QuerySet
  *				The benchmarktable is updated with the newest values
  *				The filters on the page are renewed
- */
+ *				The possible columns are updated
+ *				The sort table is renewed
+ **/
 function handleResponse(json){
-	$(table).updateContext(json);
-	
+	//update local variables
 	benchmarks = json.benchmarks;
 	benchmark_ids = json.benchmark_ids;
-	
 	columns = json.columns;
+	
+	//update context of the filter table
+	$(table).updateContext(json);
+	
+	//update the sort table
 	showMultisort();
 	
-	updateCheckedBenchmarks();
+	//remove all identifiers in checked_benchmarks that aren't in the QuerySet anymore
+	var newarr = [];
+	for (var i=0;i<benchmark_ids.length;i++){
+		if (checked_benchmarks.indexOf(benchmark_ids[i])!=-1)	newarr.push(benchmark_ids[i]);
+	}
+	checked_benchmarks = newarr;
 	
-	updateColumns();
+	//show the new columns
+	showColumns();
+	//show results
 	showResults();
 }
 
-function updateColumns(){
+/**
+ * Function to show all possible columns so the user can check or uncheck which columns he wants to see in the benchmark table
+ **/
+function showColumns(){
 	$('#columns').empty();
 	for (var i = 0; i < columns.length; i++){
 		var col = $('<input type="checkbox" value="'+columns[i].dbname+'" />')
@@ -152,13 +176,10 @@ function updateColumns(){
 
 /**
  * Function that shows the results of a request in the benchmarktable
- * @require benchmarks!='undefined'
- * @ensure 	The benchmarkresults contained in benchmarks are shown in the benchmarktable
- *			The pagingtable (the small table under the benchmarktable showing the current resperpage etc.) is updated (updatePagingTable is called)
- *			The headers are configured with sorting-functionality (configureSorting is called)
- *			The checkboxes are configured with the click-event (configureCheckboxes is called)
+ * @require benchmarks != undefined
  **/
 function showResults(){
+	//create benchmark table
 	var table = "";
 	if (benchmarks.length){
 		for (var i = 0; i<benchmarks.length; i++){
@@ -175,8 +196,17 @@ function showResults(){
 			
 		}
 	}
-	$("table.benchmarks").html(getTableHeaders()+table);
 	
+	var headers = '<tr><th>&nbsp;</th>';
+	for (var i = 0; i < columns.length; i++){
+		if (data.columns.indexOf(columns[i].dbname)!=-1)
+			headers+= '<th id="'+columns[i].dbname+'"><span class="">'+columns[i].name+'</span></th>';
+	}
+	headers+='</tr>';
+	
+	$("table.benchmarks").html(headers+table);
+	
+	//make rows clickable to view benchmark
 	$("table.benchmarks tr td:nth-child(n+2)").click(function(){
 		var id = $(this).parent().attr('id').substr(3);
 		window.open('/benchmarks/'+id);
@@ -195,217 +225,13 @@ function showResults(){
 		}
 	}
 	
-	updatePagingTable();
-	configureCheckboxes();
-}
-
-/**
- * Function that returns the headers to be added to the top of the table
- * @require 	sort!='undefined'
- *				columns!='undefined'
- * @ensure 	The result contains a header for model__name and the headers for all checked columns
- */
-function getTableHeaders(){
-	var res = '<tr><th>&nbsp;</th>';
-	for (var i = 0; i < columns.length; i++){
-		if (data.columns.indexOf(columns[i].dbname)!=-1)
-			res+= '<th id="'+columns[i].dbname+'"><span class="">'+columns[i].name+'</span></th>';
-	}
-	res+='</tr>';
-	return res;
-}
-
-/**
- * Function that updates the paging table (small table under the benchmarktable containing the previous/next page buttons etc.)
- * @require 	paging != 'undefined'
- *				benchmark_ids != 'undefined'
- * @ensure		The paging table (with id=paginginfo) is updated
- **/
-function updatePagingTable(){
+	//update paging table
 	var start = (data.page * data.pagesize + 1);
 	var end = (benchmark_ids.length < ((data.page + 1) * data.pagesize) ? benchmark_ids.length : ((data.page + 1) * data.pagesize));
-	var txt = 'Showing results '+start+'-'+end+' of '+(benchmark_ids.length)+
-		' results with <form id="pagesizeform" style="display:inline;"><input type="text" name="pagesize" id="pagesize" value="'+data.pagesize+'" size="3" /></form> results per page';
-	$("#paginginfo").html(txt);
-	configurePagesize();
-}
-
-/**
- * Function to update the global variable checked_benchmarks
- * @require 	checked_benchmarks != 'undefined'
- *				benchmark_ids != 'undefined'
- * @ensure		checked_benchmarks contains all elements of old.checked_benchmarks that are also in benchmark_ids
- **/
-function updateCheckedBenchmarks(){
-	var len = checked_benchmarks.length;
-	var newarr = [];
+	var txt = start+'-'+end+' of '+(benchmark_ids.length);
+	$("#pagingnumbers").html(txt);
 	
-	for (var i=0;i<benchmark_ids.length;i++){
-		if (checked_benchmarks.indexOf(benchmark_ids[i])!=-1)	newarr.push(benchmark_ids[i]);
-	}
-	checked_benchmarks = newarr;
-}
-
-/**
- * Function to check all benchmarks in the current QuerySet
- * @require 	benchmark_ids != 'undefined'
- * @ensure 		checked_benchmarks = benchmark_ids.slice()
- *				The checkboxes are updated (updateCheckboxes is called)
- **/
-function checkAll(){
-	checked_benchmarks = benchmark_ids.slice();
-	$("#CheckAll").attr("value","None");
-	updateCheckboxes();
-}
-
-/**
- * Function to change current selection to an empty list
- * @ensure 		checked_benchmarks.length==0
- *				The checkboxes are updated (updateCheckboxes is called)
- **/
-function checkNone(){
-	checked_benchmarks = [];
-	$("#CheckAll").attr("value","All");
-	updateCheckboxes();
-}
-
-/**
- * Function to invert te current selection
- * @require 	checked_benchmarks != 'undefined'
- *				benchmark_ids != 'undefined'
- * @ensure 		checked_benchmarks = benchmark_ids - old.checked_benchmarks
- *				The checkboxes are updated (updateCheckboxes is called)
- **/
-function checkInvert(){
-	var newarr = [];
-	for (var i=0;i<benchmark_ids.length;i++){
-		if (checked_benchmarks.indexOf(benchmark_ids[i])==-1)	newarr.push(benchmark_ids[i]);
-	}
-	checked_benchmarks = newarr;
-	updateCheckboxes();
-}
-
-/**
- * Function that updates all checkboxes to checked or unchecked
- * @require 	checked_benchmarks != 'undefined'
- * @ensure 		All checkboxes where checkbox.value is in checked_benchmarks are checked, all others are unchecked
- **/
-function updateCheckboxes(){
-	$("table.benchmarks input").each(function(i,obj){
-		$(obj).attr('checked',(checked_benchmarks.indexOf(obj.value)!=-1));
-	});
-}
-
-function setSubset(){
-	data.subset = checked_benchmarks;
-	update(true);
-}
-
-/**
- * Function that is called when the document has finished loading.
- * @ensure	showColumnOptions is called
- *			registerFunctionsAndEvents is called
- *			The first filter f is added to filters with f.type=EMPTY and f.row=0
- *			makeRequest is called with a makeData over getFilters(), getSort(), getColumns() and getPaing()
- */
-$(document).ready(function(){
-	showMultisort();
-	registerFunctionsAndEvents();
-	var temporarycontext = 	{
-								models: 	[],
-								algorithms: [],
-								tools: 		[],
-								options: 	[]
-							};
-	
-	table = $("#filters").filtertable([], temporarycontext);
-	
-	$(document).bind($(table).triggercode(),function(){
-		data.page = 0;
-		update();
-	});
-	
-	update(true);
-	
-});
-
-/** ------------------ Functions for events etc! -------------------------- **/
-
-/**
- * Function that registers some functions and events
- * @ensure 	Array.index is defined
- *			configureHover is called
- *			configureLiveUpdate is called
- *			configureColumnSelection is called
- *			Functionality for clicking the next-button, previous-button, check all/none-button and invert-button is added
- **/
-function registerFunctionsAndEvents(){
-	
-	Array.prototype.indexOf = function (element,offset) {
-		if (typeof offset=='undefined'){
-			offset=0;
-		}
-		for (var i = offset; i < this.length; i++) {
-			if (this[i] == element) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
-	configureHover();
-	configurePagesize();
-	
-	$("#next").click(function(){
-		nextPage();
-	});
-	
-	$("#previous").click(function(){
-		previousPage();
-	});
-	
-	$("#last").click(function(){
-		lastPage();
-	});
-	
-	$("#first").click(function(){
-		firstPage();
-	});
-	
-	$("#CheckAll").click(function(){
-		if ($(this).attr('value') == "All" )	checkAll();
-		else									checkNone();
-	});
-	
-	$("#InvertAll").click(function(){
-		checkInvert();
-	});
-	$("#checkedfilter").click(function(){
-		setSubset();
-	});
-	
-	$("#csvform").submit(function(){
-		var ids = JSON.stringify(checked_benchmarks);
-		$("#ids").val(ids);
-	});
-}
-
-function configurePagesize(){
-	$("#pagesizeform").submit(function(){
-		if (/(^-?\d\d*$)/.test($("#pagesize").val())){
-			data.pagesize = parseInt($("#pagesize").val());
-			data.page = 0;
-			update(true);
-		}
-		return false;
-	});
-}
-
-/**
- * Function that configures the click-event for the checkboxes in the benchmarktable (for selecting benchmarks)
- * @ensure When clicking on a checkbox, it's value is either added or removed from checked_benchmarks
- **/
-function configureCheckboxes(){
+	//configure clicking of checkbox
 	$("table.benchmarks input").click(function(){
 		var id = parseInt($(this).attr('value'));
 		var index = checked_benchmarks.indexOf(id);
@@ -419,10 +245,39 @@ function configureCheckboxes(){
 }
 
 /**
- * Function that adds hoverIntent to all <li>-elements with class "mega"
- * @ensure	Every <li>-element with the class "mega" has the hoverIntent configured with addMega as mouseover function and removeMega as mouseoutfunction
+ * Function that updates all checkboxes to checked or unchecked
+ * @require 	checked_benchmarks != undefined
+ * @ensure 		All checkboxes where checkbox.value is in checked_benchmarks are checked, all others are unchecked
+ **/
+function updateCheckboxes(){
+	$("table.benchmarks input").each(function(i,obj){
+		$(obj).attr('checked',(checked_benchmarks.indexOf(obj.value)!=-1));
+	});
+}
+
+/**
+ * Function that is called when the document has finished loading.
+ * @ensure	The Array,indefOf function is registered
+ *			Some basic events like "All".click are registered
+ *			Mega drop down menu's are configured
+ *			The filter table is added
+ *			update(true) is called
  */
-function configureHover(){
+$(document).ready(function(){
+	//make Array.indexOf function
+	Array.prototype.indexOf = function (element,offset) {
+		if (typeof offset==undefined){
+			offset=0;
+		}
+		for (var i = offset; i < this.length; i++) {
+			if (this[i] == element) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	//configure mega drop down menu's
 	$("li.mega").each(function(i,elem){
 		var config = {
 			sensitivity: 1,
@@ -434,7 +289,94 @@ function configureHover(){
 		
 		$(elem).hoverIntent(config);
 	});
-}
+	
+	//configure changing of pagesize
+	$("#pagesizeform").submit(function(){
+		if (/(^-?\d\d*$)/.test($("#pagesize").val())){
+			data.pagesize = parseInt($("#pagesize").val());
+			data.page = 0;
+			update(true);
+		}
+		return false;
+	});
+	
+	//configure next button
+	$("#next").click(function(){
+		var check = benchmark_ids.length > ((data.page+1) * data.pagesize);
+		if (check){
+			data.page++;
+			update(true);
+		}
+	});
+	
+	//configure previous button
+	$("#previous").click(function(){
+		if (data.page>0){
+			data.page--;
+			update(true);
+		}
+	});
+	
+	//configure last button
+	$("#last").click(function(){
+		data.page = Math.ceil(benchmark_ids.length / data.pagesize) - 1
+		update(true);
+	});
+	
+	//configure first button
+	$("#first").click(function(){
+		data.page = 0;
+		update(true);
+	});
+	
+	//configure check all button
+	$("#checkall").click(function(){
+		if ($(this).val() == "All"){
+			checked_benchmarks = benchmark_ids.slice();
+			$(this).val("None");
+			updateCheckboxes();
+		}
+		else{
+			checked_benchmarks = [];
+			$("#checkall").val("All");
+			updateCheckboxes();
+		}
+	});
+	
+	//configure invert button
+	$("#invert").click(function(){
+		var newarr = [];
+		for (var i=0;i<benchmark_ids.length;i++){
+			if (checked_benchmarks.indexOf(benchmark_ids[i])==-1)	newarr.push(benchmark_ids[i]);
+		}
+		checked_benchmarks = newarr;
+		updateCheckboxes();
+	});
+	
+	//configure filter selected button
+	$("#checkedfilter").click(function(){
+		data.subset = checked_benchmarks;
+		update(true);
+	});
+	
+	//configure export button
+	$("#csvform").submit(function(){
+		var ids = JSON.stringify(checked_benchmarks);
+		$("#ids").val(ids);
+	});
+	
+	//make filter table
+	table = $("#filters").filtertable([], {});
+	
+	//bind triggercode to an update funtion
+	$(document).bind($(table).triggercode(),function(){
+		data.page = 0;
+		update();
+	});
+	
+	update(true);
+	
+});
 
 /**
  * Function called when a mega drop-down menu must be shown
@@ -456,38 +398,9 @@ function removeMega(elem){
 }
 
 /**
- * Function to go to the next page of the benchmarktable, if there is one
- * @ensure paging.page = old.paging.page + 1 and makeRequest is called if there is a next page and the filters don't contain an error
+ * Function that manages the sort table
+ * @require data.sort != undefined
  **/
-function nextPage(){
-	var check = benchmark_ids.length > ((data.page+1) * data.pagesize);
-	if (check){
-		data.page++;
-		update(true);
-	}
-}
-
-/**
- * Function to go to the previous page of the benchmarktable, if there is one
- * @ensure paging.page = old.paging.page - 1 and makeRequest is called if there is a previous page and the filters don't contain an error
- **/
-function previousPage(){
-	if (data.page>0){
-		data.page--;
-		update(true);
-	}
-}
-
-function lastPage(){
-	data.page = Math.ceil(benchmark_ids.length / data.pagesize) - 1
-	update(true);
-}
-
-function firstPage(){
-	data.page = 0;
-	update(true);
-}
-
 function showMultisort(){
 	//empty multisort to draw again
 	$('#multisort').empty();
