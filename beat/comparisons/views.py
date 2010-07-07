@@ -16,20 +16,42 @@ from benchmarks.ajax_execute import BenchmarkJSON
 # MatPlotLib
 import numpy as np
 
+def benchFind(b, ovs):
+	"""
+	Finds the benchmarks from b with the optionvalues as specified in ovs
+	@param b Benchmark object
+	@param ovs A list of OptionValue ids.
+	"""
+	
+	res = []
+	for benchmark in b:
+		opts = [o.id for o in benchmark.optionvalue.all()]
+		if (set(opts) == set(ovs)):
+			res.append(benchmark)
+	return res
 
 def printlabel(at, ov):
+	"""
+	Method to produce a label for the axes of a graph, print the used AlgorithmTool and all OptionValues.
+	@param at AlgorithmTool object
+	@param ov OptionValue objects
+	"""
+	
 	return str(at) + ' ' + str(','.join([str(o) for o in ov.all()]))
 
-"""
-Produces a scatterplot from a set of benchmarks.
-TODO:
-@param id Comparison id to retrieve a set of Benchmark id's from the db (currently takes the whole dataset - no id yet)
-""" 
 @cache_page(60 * 15)
 def scatterplot(request, id, format='png'):
+	"""
+	Produces a scatterplot from a set of benchmarks.
+	Filters two sets of Benchmark objects based on the Comparison object and takes total_time and memory_VSIZE values from them.
+	@param id The identifier of the Comparison object.
+	@param format The export format for the graph, png is default. Choices: ['png','pdf','ps','eps','svg']
+	""" 
+	
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.figure import Figure
+	
 	# Colorconverter to make red and blue dots in the plot
 	from matplotlib.colors import ColorConverter
 	cc=ColorConverter()
@@ -37,7 +59,7 @@ def scatterplot(request, id, format='png'):
 	import math
 	fig=Figure(facecolor='w')
 	
-	# Make a subplot for the Elapsed Time data of a benchmark set
+	# Make a subplot for the Total Time data of a benchmark set
 	ax=fig.add_subplot(211)
 	
 	# Fetch two benchmarks sets from DB
@@ -45,30 +67,63 @@ def scatterplot(request, id, format='png'):
 	at_a = c.algorithm_tool_a
 	at_b = c.algorithm_tool_b
 	
+	# First filter AlgorithmTool
 	b1 = Benchmark.objects.filter(algorithm_tool=at_a)
 	b2 = Benchmark.objects.filter(algorithm_tool=at_b)
 	
+	# Only keep Benchmark that have overlapping Models.
 	b1 = b1.filter(model__in=[b.model.pk for b in b2])
 	b2 = b2.filter(model__in=[b.model.pk for b in b1])
 	
+	# Filter the selected options from Benchmark sets.
 	b1 = benchFind(b1,[o.id for o in c.optionvalue_a.all()])
 	b2 = benchFind(b2,[o.id for o in c.optionvalue_b.all()])
+	
+	# Calculate the average values for Models that are double in the set.
+	model_list = []
+	for b in b2:
+		if not b.model.pk in model_list:
+			model_list.append(b.model.pk)
+	t1avg = []
+	t2avg = []
+	m1avg = []
+	m2avg = []
+	for model in model_list:
+		tmp1 = []
+		for bench in b1:
+			if bench.model.pk == model:
+				tmp1.append(bench)
+		tmp2 = []
+		for bench in b2:
+			if bench.model.pk == model:
+				tmp2.append(bench)
+		if tmp1 and tmp2:
+			x=[(float(b.total_time)) for b in tmp1]
+			t1avg.append(float(sum(x))/len(x))
+			x=[(float(b.total_time)) for b in tmp2]
+			t2avg.append(float(sum(x))/len(x))
+			x=[(float(b.memory_VSIZE)) for b in tmp1]
+			m1avg.append(float(sum(x))/len(x))
+			x=[(float(b.memory_VSIZE)) for b in tmp2]
+			m2avg.append(float(sum(x))/len(x))
 
-	if len(b1) != 0:
-		# Make new arrays with only the elapsed time
-		t1 = [(float(b.total_time)) for b in b1]
-		t2 = [(float(b.total_time)) for b in b2]
+	# Check for empty set
+	if len(t1avg) != 0:
 		
-		# Color mask: if t[i] < t[2] --> blue dot in graph; else red dot
+		# Use the averages, in case any doubles occur
+		t1 = t1avg
+		t2 = t2avg
+		
+		# Color mask: if t[1] < t[2] --> red dot in graph; else blue dot
 		mask = []
 		for index in range(len(t1)):
 			if t1[index] < t2[index]:
-				mask.append(cc.to_rgb('blue'))
-			else:
 				mask.append(cc.to_rgb('red'))
+			else:
+				mask.append(cc.to_rgb('blue'))
 		
 		# Draw a linear function from .001 until the first power of 10 greater than max_value
-		max_value_t = max(max(t1),max(t2))
+		max_value_t = max(max(t1avg),max(t2avg))
 		max_value_t = math.pow(10,math.ceil(math.log10(max_value_t)))
 		ax.plot(np.arange(0,max_value_t,step=.001),np.arange(0,max_value_t,step=.001),'k-')
 		
@@ -85,8 +140,10 @@ def scatterplot(request, id, format='png'):
 			
 		# -------- Plotting memory data starts here in a new subplot ---------
 		ax=fig.add_subplot(212)
-		m1 = [b.memory_VSIZE for b in b1]
-		m2 = [b.memory_VSIZE for b in b2]
+		
+		# Average memory values.
+		m1 = m1avg
+		m2 = m2avg
 		
 		# Color mask again
 		mask = []
@@ -125,23 +182,16 @@ def scatterplot(request, id, format='png'):
 	canvas = FigureCanvas(fig)
 	response = graph.export(canvas, c.name, format)
 	return response
-
-#finds the benchmarks from b with the optionvalues as specified in ovs
-def benchFind(b, ovs):
-	res = []
-	for benchmark in b:
-		opts = [o.id for o in benchmark.optionvalue.all()]
-		if (set(opts) == set(ovs)):
-			res.append(benchmark)
-	return res
 	
-"""
-Output a graph for model comparison.
-So each seperate model has one line; the data for this line is determined by benchmarks that are filtered from the db.
-@param id ModelComparison ID from the database, used filter the benchmark data from the db.
-"""
-#@cache_page(60 * 15)
+
+@cache_page(60 * 15)
 def graph_model(request, id, format='png'):
+	"""
+	Output a graph for model comparison.
+	Each seperate Model has one line; the data for this line is determined by Benchmarks that are filtered from the db.
+	@param id ModelComparison ID from the database, used to filter the Benchmark data from the db.
+	@param format The export format for the graph. Choices: ['png','pdf','ps','eps','svg']
+	"""
 	# General library stuff
 	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 	from matplotlib.lines import Line2D
@@ -160,7 +210,6 @@ def graph_model(request, id, format='png'):
 	c_option = comparison.optionvalue
 	
 	fig=Figure(facecolor='w')
-	#fig = plt.figure(facecolor='w')
 	ax=fig.add_subplot(111)
 	
 	# Lists of colors, styles and markers to get a nice unique style for each line
@@ -208,19 +257,20 @@ def graph_model(request, id, format='png'):
 				marker + style + color,
 				label = m['name'])
 
-	#Mark-up
+	# Mark-up
 	title = c_tool.name + c_algo.name
 	if c_option.all():
 		options = [str(o) for o in c_option.all()]
 		title = title + ' [' + ','.join(options) + ']'
-	
 	ax.set_title(title)
-	leg = ax.legend(fancybox=True, loc='upper left',bbox_to_anchor = (1,1.15), markerscale=5)
 	
+	# Print legend for lines in the graph.
+	leg = ax.legend(fancybox=True, loc='upper left',bbox_to_anchor = (1,1.15), markerscale=5)
 	if leg:
 		for t in leg.get_texts():
 			t.set_fontsize('xx-small')
 		
+	# Print labels for the axes.
 	y_label = c_type
 	for l in ModelComparison.DATA_TYPES:
 		a,b = l
@@ -234,16 +284,18 @@ def graph_model(request, id, format='png'):
 
 	# Output
 	canvas = FigureCanvas(fig)
-	#fig.savefig('benchmark.pdf')
 	response = graph.export(canvas, comparison.name, format)
 	return response
 
 	
-def compareform(request):
-	return export_graph(1,2,true)
-	
 @login_required()
 def export_graph(request, id, model=False):
+	"""
+	Method that handles clicking of the export graph button. It uses the ExportGraphForm that is defined in forms.py.
+	The format is taken from the POSTed form and used in the method to produce a graph.
+	@param id The id of the ModelComparison or Comparison object. This ID is taken from the URL.
+	@param model Boolean value to inidicate whether it is a ModelComparison or Comparison object being exported.
+	"""
 	if request.method == 'POST': # If the form has been submitted...
 		form = ExportGraphForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
@@ -259,77 +311,76 @@ def export_graph(request, id, model=False):
 		'comparison' : Comparison.objects.get(pk=id), 'form': form,
 	}, context_instance=RequestContext(request))
 	
-"""
-Deletes a Comparison if model=False; else deletes a ModelComparison
-@param id The id of the (Model)Comparison that needs to be deleted
-@TODO user authorisation
-"""	
+	
 @login_required()
 def comparison_delete(request, id, model=False):
+	"""
+	Deletes a Comparison if model=False; else deletes a ModelComparison
+	@param id The id of the (Model)Comparison that needs to be deleted
+	@param model Boolean value to inidicate whether it is a ModelComparison or Comparison object being deleted.
+	"""
 	if model:
 		c = ModelComparison.objects.get(pk=id)
 	else:
 		c = Comparison.objects.get(pk=id)
-	c.delete()
-	return redirect('/user/compare/')
+	
+	# Check if the user is authorized to delete the object
+	if c.user == request.user:
+		c.delete()
+		return redirect('/user/compare/')
+	else:
+		return HttpResponseForbidden('<h1>You are not authorized to view this page.</h1>')
 
-"""
-Shows the comparison graph that is saved by a user.
-@param id Comparison id if model=False; else ModelComparison id
-"""		
 def compare_detail(request, id, model=False):
+	"""
+	Shows the comparison graph that is saved by a user.
+	@param id Comparison object id
+	@param model Boolean value to inidicate whether it is a ModelComparison or Comparison object being viewed.
+	"""
+	
 	# Check if the comparison is a ModelComparison or Comparison
 	# Then retrieve the correct object and make a response object with it
 	if model:
+		# Find the ModelComparison or give a 404 error.
 		c = get_object_or_404(ModelComparison,pk=id)
 		
-		#models = Model.objects.values('id').annotate(num_models=Count('name'))
-		#benches = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).filter(model__in=[m['id'] for m in models])
+		# Filter selected OptionValues.
 		benchesNoOptionFilter = Benchmark.objects.filter(algorithm_tool__tool=c.tool, algorithm_tool__algorithm = c.algorithm).order_by('model__name')
 		benches = benchFind(benchesNoOptionFilter,[o.id for o in c.optionvalue.all()])
 		
+		# Filter the Model names.
 		models = Model.objects.filter(id__in=[b.model.id for b in benches])
 
-		# Fetch an array of containing arrays of benchmark objects with equal model
-#		results = []
-#		last_model = benches[0].model
-#		last_array = []
-#		results.append(last_array)
-#		for b in benches:
-#			if b.model == last_model:
-#				last_array.append(b)
-#			else:
-#				last_model = b.model
-#				last_array = results.append([b])
-#				
-#		resultsjson = json.dumps(results,cls=BenchmarkJSON)
- 
+		# JSON serialization for flot graph.
 		benchjson = serializers.serialize("json", benches)		
 		modeljson = serializers.serialize("json", models)
 		
+		# Empty export form, so the user can choose an export format.
 		form = ExportGraphForm()
+		
 		response = render_to_response('comparisons/compare_models.html', { 'comparison' : c, 'form' : form, 'benches' : benches, 'benchjson' : benchjson, 'modeljson' : modeljson}, context_instance=RequestContext(request))
 	else:
+		# Get the Comparison object or 404.
 		c = get_object_or_404(Comparison,pk=id)
 		
+		# Filter the AlgorithmTool.
 		at_a = c.algorithm_tool_a
 		at_b = c.algorithm_tool_b
-		
 		b1 = Benchmark.objects.filter(algorithm_tool=at_a)
 		b2 = Benchmark.objects.filter(algorithm_tool=at_b)
 		
+		# Filter on Models.
 		b1 = b1.filter(model__in=[b.model.pk for b in b2])
 		b2 = b2.filter(model__in=[b.model.pk for b in b1])
 		
+		# Filter on OptionValues.
 		b1 = benchFind(b1,[o.id for o in c.optionvalue_a.all()])
 		b2 = benchFind(b2,[o.id for o in c.optionvalue_b.all()])
-		
-		#b1 = intersect.intersect(b1,b2)
 
-		# Model should be consistent for b1 and b2, so doesn't matter which you pick
+		# Model should be consistent for b1 and b2, so doesn't matter which you pick.
 		model = [b.model.name for b in b1]
 		
-		# Memory
+		# Get memory values from Benchmark sets.
 		m1 = [b.memory_VSIZE for b in b1]
 		m2 = [b.memory_VSIZE for b in b2]
 		
@@ -356,20 +407,19 @@ def compare_detail(request, id, model=False):
 	
 	# Otherwise, forbidden to see this page
 	else:
-		return HttpResponseForbidden('<h1>You are not authorised to view this page.</h1>')
+		return HttpResponseForbidden('<h1>You are not authorized to view this page.</h1>')
 
-"""
-ModelCompareForm handler
-"""	
+	
 @login_required()
 def compare_model(request):
 	"""
-	return render_to_response('compare_models_form.html', { 'tools' : Tool.objects.all() }, context_instance=RequestContext(request))
+	CompareModelsForm handler. Creates a ModelComparison object if the form is valid and returns the graph.
 	"""
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareModelsForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
 			
+			# Create a ModelComparison object with posted form data.
 			c = ModelComparison.objects.create(
 				user = request.user, 
 				algorithm = form.cleaned_data['algorithm'],
@@ -378,9 +428,11 @@ def compare_model(request):
 				name = form.cleaned_data['name']
 			)
 			
+			# Add Many-To-Many relations for the OptionValues.
 			for o in OptionValue.objects.filter(id__in=form.cleaned_data['option']):
 				c.optionvalue.add(o)
 			
+			# Fix the hash and name.
 			c.hash = c.getHash()
 			if (c.name == ''): 
 				c.name = str(c.id)
@@ -398,12 +450,16 @@ def compare_model(request):
 	
 @login_required()
 def compare_scatterplot(request):
+	"""
+	CompareScatterplotForm handler. Creates a Comparison object if the form is valid and returns the graph.
+	"""
 	if request.method == 'POST': # If the form has been submitted...
 		form = CompareScatterplotForm(request.POST) # A form bound to the POST data
 		if form.is_valid(): # All validation rules pass
 			id_a = form.cleaned_data['a_algorithmtool']
 			id_b = form.cleaned_data['b_algorithmtool']
 			
+			# Create a Comparison object with posted form data.
 			c = Comparison.objects.create(
 				user = request.user, 
 				algorithm_tool_a = id_a,
@@ -411,6 +467,7 @@ def compare_scatterplot(request):
 				name = form.cleaned_data['name']
 			)
 			
+			# Add Many-To-Many relations for the OptionValues.
 			for o_a in OptionValue.objects.filter(id__in=form.cleaned_data['a_options']):
 				c.optionvalue_a.add(o_a)
 			for o_b in OptionValue.objects.filter(id__in=form.cleaned_data['b_options']):
@@ -427,45 +484,3 @@ def compare_scatterplot(request):
 	return render_to_response('comparisons/compare_benchmarks_form.html', {
 		'form': form,
 	}, context_instance=RequestContext(request))
-
-	
-"""
-DEPRECATED
-Old graph function to plot a histogram with benchmark data from db
-"""
-def simple(request, id, format='png'):
-	
-	# General library stuff
-	from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-	from matplotlib.figure import Figure
-	fig=Figure(facecolor='w')
-	ax=fig.add_subplot(211)
-	
-	# DB stuff
-	benchmark_IDs = Comparison.objects.get(pk=id)
-	benchmarks = Benchmark.objects.filter(pk__in=benchmark_IDs.benchmarks.split(','))
-	states = [b.states_count for b in benchmarks]
-	elapsed_time = [b.elapsed_time for b in benchmarks]
-	memory_vsize = [b.memory_VSIZE for b in benchmarks]
-	
-	# Plot data
-	width = 0.4
-	numBench = benchmarks.count()
-	ax.bar(np.arange(numBench), states, width, align='center')
-	ax.set_xticks(np.arange(benchmarks.count()))
-	ax.set_xticklabels(benchmarks, size='small')
-	ax.set_ylabel('States')
-	#ax.figure.set_figheight(2)
-	ax.grid(True)
-	
-	# Output
-	ax=fig.add_subplot(212)
-	ax.plot(elapsed_time, memory_vsize, 'ro')
-	ax.set_xlabel('Elapsed Time')
-	ax.set_ylabel('Memory VSIZE')
-	canvas = FigureCanvas(fig)
-	
-	#fig.set_size_inches(4,8)
-	title = benchmark_IDs.name
-	response = graph.export(canvas, title, format)
-	return response

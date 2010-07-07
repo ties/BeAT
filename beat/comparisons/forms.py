@@ -41,4 +41,3 @@ class CompareModelsForm(forms.Form):
 	tool = forms.ModelChoiceField(Tool.objects.all(), empty_label=None)
 	algorithm = forms.ModelChoiceField(Algorithm.objects.all(), empty_label=None)
 	option = forms.ModelMultipleChoiceField(OptionValue.objects.all(), required=False)
-	#models = forms.ModelMultipleChoiceField(Model.objects.all())

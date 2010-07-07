@@ -15,8 +15,6 @@ urlpatterns = patterns('beat.comparisons.views',
 	(r'^tool/(?P<id>\d+)/scatterplot.png$', 'scatterplot'),
 	(r'^model/(?P<id>\d+)/benchmark.png$', 'graph_model'),
 	
-	(r'^compareform/$', 'compareform'),
-
 	# Exporting graphs
 	url (r'^tool/(?P<id>\d+)/export$', 'export_graph',name="export_benchmark_graph"),
 	url (r'^model/(?P<id>\d+)/export$', 'export_graph', {'model': True}, name="export_model_graph"),
