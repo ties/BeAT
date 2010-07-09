@@ -12,31 +12,103 @@ Contents
 6. Adding support for new tools
 
 
-Importing log files
+1. Importing log files
 
-Current assumption: the log files are named {as those of elwin}.
+Quick information about possible options is provided by calling "python filereader.py --help" on the command line. Most of this information should speak for itself, but complete documentation will be in the report. Below, basic usage of the script is outlined.
 
-Information about possible options is provided by calling "python filereader.py --help" on the command line.
+Procedure to import a series of log files in some folder, using the absolute path, called pathToLogFolder in the remainder of this section:
 
-Procedure to import a series of log files in some folder, using the absolute path (pathToLogFolder):
-
-* open a shell and browse to the main BeAT folder {on the test server, this is /var/www/django/BeAT}
-* make sure you have rights to write in ./beat/logs
+* open a shell and browse to the main BeAT folder, which contains the filereader.py script {on the test server, this is /var/www/django/BeAT}
+* make sure you have rights to write in the folder specified as "LOGS_PATH" in the ./beat/settings.py file. By default, this value should be ./beat/logs.
+* make sure the environment variable DJANGO_SETTINGS_MODULE is set to "beat.settings".
 * call filereader.py on the log files, using the options (explained below) as desired. For example, the command:
 find ./ltsmin-output/ -type f | xargs python filereader.py --noisy
-feeds all logs in ./ltsmin-output/ -type f to the filereader with the option noisy.
+feeds all files in ./ltsmin-output/ to the filereader with the option noisy. Note that using xargs means each file will be parsed separately (eg. The amount of errors reported, if any, will not be accurate). Using a sufficiently new kernel, it is possible to provide a much larger amount of arguments to a script, essentially making xargs obsolete [1].
 
 Alternatively, the pop_existing_db.sh script can be used; it sets the environment variable DJANGO_SETTINGS_MODULE to beat.settings and pushes all output into a file (log1.txt~), which can be used for debugging of the import script. The script will generate output on the fly, so tools such as less can be used to see the output as it is generated in the file. Execution of this script is as follows:
 ./pop_existing_db.sh ./ltsmin-ouput/*
+Note this assumes xargs is not required.
 
-options:
+Possible options:
+--dulwich
+    use the dulwich module to record the parsed logs into a git repository rather than raw files
+    uses the LOGS_PATH variable. Only use this option if a repository exists at the location specified by LOGS_PATH. Doing otherwise will result in errors.
 --override
-	overrides existing data in the database (without further warning!)
+    overrides existing data in the database (without further warning!)
+
 --noisy
-	sets the verbosity as high as possible
+    sets the verbosity as high as possible
 --verbose (short option -v)
-	sets the verbosity high
+    sets the verbosity high
 --quiet (short option -q)
-	sets the verbosity to one line per run (since a log may contain multiple runs)
+    sets the verbosity to one line per run (since a log may contain multiple runs)
 --silent
-	prints only warnings that indicate database failure
+    prints only warnings that indicate database failure
+
+[1] http://en.wikipedia.org/wiki/Xargs
+
+2. Viewing Benchmarks
+
+To view the raw data extracted from the logs, the benchmark table section of the website can be used ( http://beat.ewi.utwente.nl/benchmarks/ , where beat.ewi.utwente.nl is the location of the server). The available features are outlined below. Benchmarks may also be selected and exported to a CSV format.
+
+On the aforementioned page, the viewed columns can be selected by hovering over the selection bar on the top of the page (labeled as such). Below this, filters can be selected; + and - to add/remove filters, the boxes to select them and enter values to search for. Data can be sorted by clicking on the column name. If the set of benchmarks currently being viewed is greater than a set number (default 200), it will span multiple pages and one can navigate through these using the buttons on the bottom of the page.
+
+3. Comparing tools: scatterplots
+
+The user may compare two algorithmtools with various options. BeAT will then create two scatterplots that shows the first algorithmtool on the x axis and the second on the y axis. The scatterplots graph two sets of data: running time (user+system time) and used virtual memory. A point is graphed for each model that has been executed on both algorithmtools. The data is displayed below the graph. The graph can be exported to a variety of formats, as well as being share-able using the generated permalink. Someone who uses the permalink can see the data without logging in.
+
+These scatterplots can be used to compare the performance of two algorithmtools, or to see the effect of an option on a large set of models. A simple example would be to compare some version of nips2lts-grey to the same version of nips2lts-grey, but with the option --cache, to investigate the effect of caching on performance.
+
+4. Comparing models: data over time
+
+Using this type of graphs, the user may see results of a series of models running on an algorithmtool with a set of options. After selecting this algorithmtool and options, a graph based on the chosen data type is created. Using the date related to a particular version (and thus git revision) of an algorithmtool is recorded, BeAT plots the progress of an algorithmtool over time. This can, for example, be used to detect sudden increases in running time (indicating a bug), or to show development progress.
+
+5. Generating jobs
+
+To fill the database with data, running benchmarks is necessary. The easiest way to create compatible logs is to use the job generation section of BeAT. This page allows the user to create either suites of jobs, or specific jobs, for certain models. Suites enumerate certain combinations of options and algorithmtools that are considered sensible, while generating specific jobs allows the user more control over the process. Specific jobs can be saved in order to reconfigure them later. All generated jobs are provided as a tarball compressed with gzip, which the user can alter at will or simply move to the server and execute them.
+Generating a specific job requires the following information:
+Nodes: the amount and type of nodes that should be used, in PBS format. A time limit can also be provided.
+Tool & Algorithm: the algorithmtool that should be used to evaluate the model.
+Options: options that are provided to the algorithmtool
+Model: the model that should be evaluated.
+The name field is used to store the selection, while the prefix and postfix fields provide the user with a means to prepare and reset the environment (bash can be used here).
+
+6. "Tool Upload": Adding support for new tools
+
+On the tool upload page, support for new algorithmtools can be added. As an example, the required information for one such entry is given below. The field 'Test log' can be used to test the provided regular expression (or actually, any regular expression on any input), by pasting a log in this field and clicking the 'test regex' button on the bottom of the page. The generated results (a string representation of a python dictionary) is returned to the result box, below the 'test log' box. For example, the expression "hello (?P<message>.*)" on the input "hello world" results in a dictionary that maps "message" to "world", represented as {u'message' : u'world'} [1].
+
+The example input for this page:
+Tool name:
+nips
+Algorithm name:
+2lts-grey
+Version:
+ltsmin-1.5-20-g6d5d0c
+Regular expression:
+nips2lts-grey: .*(\\r\\n|\\n)(nips2lts-grey: state space has \\d+ levels (?P<scount>\\d+) states (?P<tcount>\\d+).*(\\r\\n|\\n)Exit|(?P<kill>Killed|.*segmentation fault.*)) \\[[0-9]+\\](\\r\\n|\\n)(?P<utime>[0-9.]+) user, (?P<stime>[0-9.]+) system, (?P<etime>[0-9.]+) elapsed --( Max | )VSize = (?P<vsize>\\d+)KB,( Max | )RSS = (?P<rss>\\d+)KB
+Options:
+--strategy=
+--deadlock:d
+--trace=
+--cache:c
+--regroup=:r
+--vset=
+--cache-ratio=
+--max-increase=
+--min-free-nodes=
+--fdd-bits=
+--block-size=
+--cluster-size=
+--plain
+--grey
+--matrix
+--write-state
+--debug
+--version
+--help:h
+--usage
+:v
+:q
+
+[1]: the string is printed as u'string' because unicode strings are used.
+
